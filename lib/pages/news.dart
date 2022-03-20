@@ -1,0 +1,351 @@
+import 'package:anger_buddy/logic/feedback/feedback.dart';
+import 'package:anger_buddy/logic/sync_manager.dart';
+import 'package:anger_buddy/network/news.dart';
+import 'package:anger_buddy/pages/no_connection.dart';
+import 'package:anger_buddy/utils/mini_utils.dart';
+import 'package:anger_buddy/utils/network_assistant.dart';
+import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:anger_buddy/utils/url.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
+
+class PageNewsList extends StatefulWidget {
+  const PageNewsList({Key? key}) : super(key: key);
+
+  @override
+  _PageNewsListState createState() => _PageNewsListState();
+}
+
+class _PageNewsListState extends State<PageNewsList> {
+  AsyncDataResponse<List<NewsApiDataElement>>? data;
+
+  void loadNews({bool? force}) {
+    getNews(force: force).listen((event) {
+      setState(() {
+        data = event;
+      });
+    });
+  }
+
+  @override
+  initState() {
+    super.initState();
+    loadNews();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          //Action button to load new data
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: (data?.allowReload ?? true)
+                  ? () {
+                      loadNews(force: true);
+                    }
+                  : null,
+            ),
+          ],
+          title: const Text("Nachrichten"),
+        ),
+        body: Stack(children: [
+          data != null && data!.data.isNotEmpty
+              ? ListView(
+                  children: [
+                    const SizedBox(height: 10),
+                    FutureBuilder<SyncManager?>(
+                        builder: (context, snap) {
+                          if (snap.data?.never == false) {
+                            return LastSync(snap.data!.syncDate);
+                          } else {
+                            return Container();
+                          }
+                        },
+                        future: SyncManager.getLastSync("news")),
+                    const SizedBox(height: 10),
+                    for (var newsElem in data!.data)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 2.0),
+                        child: Hero(
+                          tag: "news_${newsElem.id}",
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4.0, vertical: 12),
+                              child: ListTile(
+                                title: Padding(
+                                  padding: const EdgeInsets.only(bottom: 2.0),
+                                  child: Opacity(
+                                    opacity: 0.87,
+                                    child: Text(newsElem.title!,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        )),
+                                  ),
+                                ),
+                                subtitle: Opacity(
+                                  opacity: 0.67,
+                                  child: Text(newsElem.desc!,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
+                                isThreeLine: false,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PageNewsDetails(data: newsElem)),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 20),
+                  ],
+                )
+              : ((data == null)
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : const NoConnectionColumn()),
+          if (data?.loadingAction ==
+              AsyncDataResponseLoadingAction.currentlyLoading)
+            const Positioned(
+              child: LinearProgressIndicator(),
+              top: 0,
+              left: 0,
+              right: 0,
+            ),
+        ]));
+  }
+}
+
+class PageNewsDetails extends StatelessWidget {
+  final NewsApiDataElement data;
+  const PageNewsDetails({Key? key, required this.data}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Nachricht"),
+          actions: [
+            IconButton(
+                icon: const Icon(Icons.feedback),
+                onPressed: () {
+                  giveFeedback(context);
+                })
+          ],
+        ),
+        /*bottomNavigationBar: BottomAppBar(
+          color: Colors.red.shade500,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.zoom_in,
+                        color: Colors.white,
+                      )),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.zoom_out,
+                        color: Colors.white,
+                      )),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.mark_as_unread,
+                        color: Colors.white,
+                      )),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.bookmark_add,
+                        color: Colors.white,
+                      )),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.share,
+                        color: Colors.white,
+                      )),
+                ]),
+          ),
+        ),*/
+        body: ListView(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Opacity(
+                    opacity: 0.92,
+                    child: Text(data.title!,
+                        style: const TextStyle(
+                            fontSize: 26, fontWeight: FontWeight.bold)),
+                  ),
+                  const SizedBox(height: 2),
+                  Opacity(
+                    opacity: 0.60,
+                    child: Text(
+                      time2string(
+                        data.pubDate,
+                        includeWeekday: true,
+                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Hero(
+              tag: "news_${data.id}",
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Html(
+                      data: data.content!,
+                      style: {
+                        "p": Style(
+                          fontSize: FontSize.larger,
+                          lineHeight: LineHeight.number(1.3),
+                          color:
+                              // 87% Opacity
+                              Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .color!
+                                  .withAlpha(222),
+                        ),
+                      },
+                      customRender: {
+                        "div": (RenderContext rcontext, Widget child) {
+                          if (rcontext.tree.elementClasses
+                              .contains("wp-block-file")) {
+                            return Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: OutlinedButton.icon(
+                                    onPressed: () {
+                                      var hrefChild = findChild(
+                                          rcontext.tree.element, "href");
+                                      if (hrefChild != null) {
+                                        launchURL(hrefChild.attributes["href"]!,
+                                            context);
+                                      }
+                                    },
+                                    icon: const Icon(Icons.download),
+                                    label: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: Text(
+                                          "Download\n${rcontext.tree.element!.text}"),
+                                    )),
+                              ),
+                            );
+                          }
+                        },
+                      },
+                      tagsList: Html.tags..addAll(["bird", "flutter"]),
+                      onLinkTap: (String? url,
+                          RenderContext rcontext,
+                          Map<String, String> attributes,
+                          dom.Element? element) {
+                        printInDebug(url);
+                        printInDebug(attributes);
+                        printInDebug(element);
+                        if (url == null) {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                  title: const Text('Fehler'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('OK'),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                    )
+                                  ],
+                                  content:
+                                      const Text('Die Url ist fehlerhaft.')));
+                        }
+                        launchURL(url!, context);
+                      },
+                      onImageTap: (String? url,
+                          RenderContext context,
+                          Map<String, String> attributes,
+                          dom.Element? element) {
+                        //open image in webview, or launch image in browser, or any other logic here
+                      }),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Center(
+            child: TextButton.icon(
+                onPressed: () {
+                  giveFeedback(context);
+                },
+                icon: const Icon(Icons.report_problem_outlined),
+                label: const Text("Probleme bei der Darstellung?")),
+          ),
+          const SizedBox(height: 12),
+        ]));
+  }
+}
+
+// Find first child in list with specifify attribute
+dom.Element? findChild(dom.Element? element, String attribute) {
+  if (element == null) {
+    return null;
+  }
+  if (element.attributes[attribute] != null) {
+    return element;
+  }
+  for (var child in element.children) {
+    if (child is dom.Element) {
+      var result = findChild(child, attribute);
+      if (result != null) {
+        return result;
+      }
+    }
+  }
+  return null;
+}
+
+// Add Text that displays, when data was last synced
+class LastSync extends StatelessWidget {
+  final DateTime lastSync;
+
+  const LastSync(this.lastSync, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+      child: Opacity(
+        opacity: 0.60,
+        child: Text(
+          "Zuletzt aktualisiert: ${time2string(lastSync, includeTime: true)}",
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+}

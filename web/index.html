@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+    <base href="$FLUTTER_BASE_HREF" />
+
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta name="description" content="A new Flutter project." />
+
+    <!-- iOS meta tags & icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="anger_buddy" />
+    <link rel="apple-touch-icon" href="icons/Icon-192.png" />
+
+    <title>anger_buddy</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" type="text/css" href="splash/style.css" />
+    <link rel="stylesheet" type="text/css" href="splash/style.css" />
+    <style>
+      body,
+      html {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(#cfcfcf, #fff);
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+    <style>
+      .MuiCircularProgress-root {
+        display: inline-block;
+      }
+      .MuiCircularProgress-static {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+      }
+      .MuiCircularProgress-indeterminate {
+        animation: MuiCircularProgress-keyframes-circular-rotate 1.4s linear
+          infinite;
+      }
+      .MuiCircularProgress-determinate {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+      }
+      .MuiCircularProgress-colorPrimary {
+        color: #3f51b5;
+      }
+      .MuiCircularProgress-colorSecondary {
+        color: #f50057;
+      }
+      .MuiCircularProgress-svg {
+        display: block;
+        animation: loading_animation 1.4s infinite;
+      }
+      .MuiCircularProgress-circle {
+        stroke: currentColor;
+      }
+      .MuiCircularProgress-circleStatic {
+        transition: stroke-dashoffset 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+      }
+      .MuiCircularProgress-circleIndeterminate {
+        animation: MuiCircularProgress-keyframes-circular-dash 1.4s ease-in-out
+          infinite;
+        stroke-dasharray: 80px, 200px;
+        stroke-dashoffset: 0;
+      }
+      .MuiCircularProgress-circleDeterminate {
+        transition: stroke-dashoffset 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+      }
+      @keyframes MuiCircularProgress-keyframes-circular-rotate {
+        0% {
+          transform-origin: 50% 50%;
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes MuiCircularProgress-keyframes-circular-dash {
+        0% {
+          stroke-dasharray: 1px, 200px;
+          stroke-dashoffset: 0;
+        }
+        50% {
+          stroke-dasharray: 100px, 200px;
+          stroke-dashoffset: -15px;
+        }
+        100% {
+          stroke-dasharray: 100px, 200px;
+          stroke-dashoffset: -125px;
+        }
+      }
+      .MuiCircularProgress-circleDisableShrink {
+        animation: none;
+      }
+      @keyframes loading_animation {
+        0% {
+          color: #4285f4;
+        }
+        25% {
+          color: #ea4335;
+        }
+        50% {
+          color: #f9bb2d;
+        }
+        75% {
+          color: #34a853;
+        }
+      }
+    </style>
+  </head>
+  <body
+    style="
+      position: fixed;
+      inset: 0px;
+      overflow: hidden;
+      padding: 0px;
+      margin: 0px;
+      user-select: none;
+      touch-action: none;
+      font: 14px sans-serif;
+      color: red;
+    "
+  >
+    <img
+      height="150"
+      style="margin-bottom: 16px"
+      src="https://angerapp-demo.robertstuendl.com/assets/assets/mainLogo.png"
+    />
+    <div
+      id="loading-indicator"
+      style="width: 60px; height: 60px"
+      role="progressbar"
+      class="MuiCircularProgress-root MuiCircularProgress-colorPrimary MuiCircularProgress-indeterminate"
+    >
+      <svg viewBox="22 22 44 44" class="MuiCircularProgress-svg">
+        <circle
+          cx="44"
+          cy="44"
+          r="20.2"
+          fill="none"
+          stroke-width="3.6"
+          class="MuiCircularProgress-circle MuiCircularProgress-circleIndeterminate"
+        ></circle>
+      </svg>
+    </div>
+    <!-- This script installs service_worker.js to provide PWA functionality to
+       application. For more information, see:
+       https://developers.google.com/web/fundamentals/primers/service-workers -->
+    <script>
+      var serviceWorkerVersion = null;
+      var scriptLoaded = false;
+      function loadMainDartJs() {
+        if (scriptLoaded) {
+          return;
+        }
+        scriptLoaded = true;
+        var scriptTag = document.createElement("script");
+        scriptTag.src = "main.dart.js";
+        scriptTag.type = "application/javascript";
+        document.body.append(scriptTag);
+      }
+
+      if ("serviceWorker" in navigator) {
+        // Service workers are supported. Use them.
+        window.addEventListener("load", function () {
+          // Wait for registration to finish before dropping the <script> tag.
+          // Otherwise, the browser will load the script multiple times,
+          // potentially different versions.
+          var serviceWorkerUrl =
+            "flutter_service_worker.js?v=" + serviceWorkerVersion;
+          navigator.serviceWorker.register(serviceWorkerUrl).then((reg) => {
+            function waitForActivation(serviceWorker) {
+              serviceWorker.addEventListener("statechange", () => {
+                if (serviceWorker.state == "activated") {
+                  console.log("Installed new service worker.");
+                  loadMainDartJs();
+                }
+              });
+            }
+            if (!reg.active && (reg.installing || reg.waiting)) {
+              // No active web worker and we have installed or are installing
+              // one for the first time. Simply wait for it to activate.
+              waitForActivation(reg.installing || reg.waiting);
+            } else if (!reg.active.scriptURL.endsWith(serviceWorkerVersion)) {
+              // When the app updates the serviceWorkerVersion changes, so we
+              // need to ask the service worker to update.
+              console.log("New service worker available.");
+              reg.update();
+              waitForActivation(reg.installing);
+            } else {
+              // Existing service worker is still good.
+              console.log("Loading app from service worker.");
+              loadMainDartJs();
+            }
+          });
+
+          // If service worker doesn't succeed in a reasonable amount of time,
+          // fallback to plaint <script> tag.
+          setTimeout(() => {
+            if (!scriptLoaded) {
+              console.warn(
+                "Failed to load app from service worker. Falling back to plain <script> tag."
+              );
+              loadMainDartJs();
+            }
+          }, 4000);
+        });
+      } else {
+        // Service workers not supported. Just drop the <script> tag.
+        loadMainDartJs();
+      }
+    </script>
+  </body>
+</html>
