@@ -264,6 +264,17 @@ class _EventsThisWeekEvent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              if (event.type == eventType.klausur &&
+                  (currentClass.value != null && event.info?["klasse"] != null
+                      ? (event.info?["klasse"] ?? 0) == currentClass.value
+                      : true)) ...[
+                specialChip(context, Icons.warning),
+                const SizedBox(width: 7),
+              ],
+              if (event.type == eventType.ferien) ...[
+                specialChip(context, Icons.beach_access),
+                const SizedBox(width: 7),
+              ],
               Flexible(
                 child: Column(
                   children: [
@@ -280,17 +291,6 @@ class _EventsThisWeekEvent extends StatelessWidget {
                   ],
                 ),
               ),
-              if (event.type == eventType.klausur &&
-                  (currentClass.value != null && event.info?["klasse"] != null
-                      ? (event.info?["klasse"] ?? 0) == currentClass.value
-                      : true)) ...[
-                const SizedBox(width: 10),
-                specialChip(context, "Klausur/Prüfung", Icons.warning)
-              ],
-              if (event.type == eventType.ferien) ...[
-                const SizedBox(width: 10),
-                specialChip(context, "Ferien", Icons.beach_access)
-              ],
             ],
           )
         ],
@@ -298,18 +298,24 @@ class _EventsThisWeekEvent extends StatelessWidget {
     );
   }
 
-  Widget specialChip(BuildContext context, String title, IconData icon) {
-    return Chip(
-      avatar: Icon(icon,
-          size: 16,
-          color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9)),
-      label: Text(title,
-          style: Theme.of(context).textTheme.caption?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9))),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-      labelPadding: const EdgeInsets.only(right: 8),
-      backgroundColor: Theme.of(context).colorScheme.primaryVariant,
-      visualDensity: VisualDensity.compact,
+  Widget specialChip(BuildContext context, IconData icon) {
+    // return Chip(
+    //   avatar: Icon(icon,
+    //       size: 16,
+    //       color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9)),
+    //   label: Text(""),
+    //   // label: Text(title,
+    //   //     style: Theme.of(context).textTheme.caption?.copyWith(
+    //   //         color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9))),
+    //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+    //   labelPadding: const EdgeInsets.only(right: 8),
+    //   backgroundColor: Theme.of(context).colorScheme.primaryVariant,
+    //   visualDensity: VisualDensity.compact,
+    // );
+    return Icon(
+      icon,
+      size: 18,
+      color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
     );
   }
 }
