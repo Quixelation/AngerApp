@@ -141,15 +141,15 @@ class _RenderPdfState extends State<_RenderPdf> {
     return error
         ? Column(
             children: [
-              SizedBox(height: 64),
-              Text("Es gab einen Fehler beim Laden des PDFs"),
-              Opacity(
+              const SizedBox(height: 64),
+              const Text("Es gab einen Fehler beim Laden des PDFs"),
+              const Opacity(
                 opacity: 0.57,
                 child: Text(
                     "PDFs werden noch nicht offiziell in der Web-App unterstützt",
                     style: TextStyle()),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               OutlinedButton(
                   onPressed: () {
                     launchURL(
@@ -157,7 +157,7 @@ class _RenderPdfState extends State<_RenderPdf> {
                             widget.file.directusFileId),
                         context);
                   },
-                  child: Text("PDF öffnen"))
+                  child: const Text("PDF öffnen"))
             ],
           )
         : pdfPinchController == null

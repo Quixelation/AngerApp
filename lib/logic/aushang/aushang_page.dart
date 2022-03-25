@@ -54,10 +54,10 @@ class _PageAushangListState extends State<PageAushangList> {
   Widget build(BuildContext context) {
     final needToLogin = !(aushangCreds?.loaded ?? false);
     return Scaffold(
-      appBar: AppBar(title: Text("Aushänge")),
+      appBar: AppBar(title: const Text("Aushänge")),
       body: (data == null || needToLogin)
           ? (needToLogin == true
-              ? _PageAushangCreds()
+              ? const _PageAushangCreds()
               : const Center(child: CircularProgressIndicator()))
           : ListView(children: [
               _LoggedInAs(aushangCreds!),
@@ -67,7 +67,7 @@ class _PageAushangListState extends State<PageAushangList> {
                   subtitle:
                       "Bitte überprüfe deine Internet-Verbindung und versuche es in ein paar Minuten erneut. Sollte das Problem bestehen bleiben, dann wende dich bitte an angerapp@robertstuendl.com",
                 )
-              else ...[SizedBox(height: 16), ...buildAushangList()]
+              else ...[const SizedBox(height: 16), ...buildAushangList()]
             ]),
     );
   }

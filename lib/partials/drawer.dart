@@ -1,6 +1,5 @@
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
-import 'package:anger_buddy/logic/calendar/calendar_month.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
 import 'package:anger_buddy/logic/feedback/feedback.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
@@ -21,7 +20,6 @@ import 'package:anger_buddy/pages/settings.dart';
 import 'package:anger_buddy/pages/under_construction.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:anger_buddy/utils/url.dart';
-import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
@@ -61,18 +59,18 @@ class MainDrawer extends StatelessWidget {
             builder: (context, snapshot) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => PageCurrentClass(),
-                    );
-                  },
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(color: Colors.grey[700]!),
-                    ),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(color: Colors.grey[700]!),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => PageCurrentClass(),
+                      );
+                    },
                     child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: ListTile(
