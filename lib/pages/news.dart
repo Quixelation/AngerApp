@@ -9,6 +9,7 @@ import 'package:anger_buddy/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:master_detail_scaffold/master_detail_scaffold.dart';
 
 class PageNewsList extends StatefulWidget {
   const PageNewsList({Key? key}) : super(key: key);
@@ -66,47 +67,30 @@ class _PageNewsListState extends State<PageNewsList> {
                         },
                         future: SyncManager.getLastSync("news")),
                     const SizedBox(height: 10),
-                    for (var newsElem in data!.data)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 2.0),
-                        child: Hero(
-                          tag: "news_${newsElem.id}",
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 4.0, vertical: 12),
-                              child: ListTile(
-                                title: Padding(
-                                  padding: const EdgeInsets.only(bottom: 2.0),
-                                  child: Opacity(
-                                    opacity: 0.87,
-                                    child: Text(newsElem.title!,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        )),
+                    if (MediaQuery.of(context).size.width > 600)
+                      //Split all elemnents in 2 columns with alternating content
+                      Column(
+                        children: [
+                          for (var i = 0; i < data!.data.length; i += 2)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: NewsCard(
+                                    data!.data[i],
                                   ),
                                 ),
-                                subtitle: Opacity(
-                                  opacity: 0.67,
-                                  child: Text(newsElem.desc!,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                                isThreeLine: false,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            PageNewsDetails(data: newsElem)),
-                                  );
-                                },
-                              ),
+                                if (i + 1 < data!.data.length)
+                                  Expanded(
+                                    child: NewsCard(
+                                      data!.data[i + 1],
+                                    ),
+                                  ),
+                              ],
                             ),
-                          ),
-                        ),
-                      ),
+                        ],
+                      )
+                    else
+                      for (var newsElem in data!.data) NewsCard(newsElem),
                     const SizedBox(height: 20),
                   ],
                 )
@@ -124,6 +108,45 @@ class _PageNewsListState extends State<PageNewsList> {
               right: 0,
             ),
         ]));
+  }
+
+  Widget NewsCard(NewsApiDataElement newsElem) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+      child: Hero(
+        tag: "news_${newsElem.id}",
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 12),
+            child: ListTile(
+              title: Padding(
+                padding: const EdgeInsets.only(bottom: 2.0),
+                child: Opacity(
+                  opacity: 0.87,
+                  child: Text(newsElem.title!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+              ),
+              subtitle: Opacity(
+                opacity: 0.67,
+                child: Text(newsElem.desc!,
+                    maxLines: 3, overflow: TextOverflow.ellipsis),
+              ),
+              isThreeLine: false,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PageNewsDetails(data: newsElem)),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

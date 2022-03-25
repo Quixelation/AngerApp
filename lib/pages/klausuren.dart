@@ -94,23 +94,44 @@ class _PageKlausurenState extends State<PageKlausuren> {
                 : ListView(
                     children: [
                       const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          selectClassBtn(5),
-                          selectClassBtn(6),
-                          selectClassBtn(7),
-                          selectClassBtn(8),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          selectClassBtn(9),
-                          selectClassBtn(10),
-                          selectClassBtn(11),
-                          selectClassBtn(12),
-                        ],
-                      ),
+                      ...(MediaQuery.of(context).size.width > 600
+                          ? [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Row(
+                                  children: [
+                                    selectClassBtn(5),
+                                    selectClassBtn(6),
+                                    selectClassBtn(7),
+                                    selectClassBtn(8),
+                                    selectClassBtn(9),
+                                    selectClassBtn(10),
+                                    selectClassBtn(11),
+                                    selectClassBtn(12),
+                                  ],
+                                ),
+                              )
+                            ]
+                          : [
+                              Row(
+                                children: [
+                                  selectClassBtn(5),
+                                  selectClassBtn(6),
+                                  selectClassBtn(7),
+                                  selectClassBtn(8),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  selectClassBtn(9),
+                                  selectClassBtn(10),
+                                  selectClassBtn(11),
+                                  selectClassBtn(12),
+                                ],
+                              )
+                            ]),
                       const SizedBox(height: 12),
                       ...buildKlausurList(klausurenResp!.data!)
                     ],

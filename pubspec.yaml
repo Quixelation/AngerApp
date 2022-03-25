@@ -58,6 +58,7 @@ dependencies:
   responsive_grid: ^2.0.0
   pdfx: ^2.0.1+1
   calendar_view: ^0.0.4
+  master_detail_scaffold: ^2.0.0
 
 dev_dependencies:
   flutter_test:
