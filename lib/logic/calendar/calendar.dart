@@ -3,6 +3,7 @@ library calendar;
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:anger_buddy/components/month_calendar.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
@@ -11,7 +12,6 @@ import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:calendar_view/calendar_view.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:icalendar_parser/icalendar_parser.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -142,11 +142,16 @@ Stream<AsyncDataResponse<List<EventData>?>> getCalendarEventData(
           allowReload: true);
     }
   } else if (DateTime.now().difference(lastSync.syncDate).inDays.abs() > 1) {
-    final eventsFromDb = await _getEventsFromDb();
-    yield AsyncDataResponse(
-        data: eventsFromDb,
-        loadingAction: AsyncDataResponseLoadingAction.currentlyLoading,
-        allowReload: false);
+    List<EventData>? eventsFromDb;
+    try {
+      eventsFromDb = await _getEventsFromDb();
+      yield AsyncDataResponse(
+          data: eventsFromDb,
+          loadingAction: AsyncDataResponseLoadingAction.currentlyLoading,
+          allowReload: false);
+    } catch (e) {
+      // Dont need to handle
+    }
     // Fetch new data
     try {
       // Mit einem Try-Catch, falls die Netzwerkanfrage scheitert
@@ -157,7 +162,7 @@ Stream<AsyncDataResponse<List<EventData>?>> getCalendarEventData(
       logger.e(e);
       // TODO: Den Nutzer über den Error informieren
       yield AsyncDataResponse(
-          data: eventsFromDb,
+          data: eventsFromDb ?? [],
           loadingAction: AsyncDataResponseLoadingAction.none,
           allowReload: false);
     }

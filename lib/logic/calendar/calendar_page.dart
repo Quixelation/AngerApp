@@ -134,40 +134,42 @@ class _PageCalendarState extends State<PageCalendar>
                         },
                   icon: const Icon(Icons.refresh))
             ],
-            title: Text(intToMonthString(_focusedDay.month) +
-                ", " +
-                (_focusedDay.year.toString()))),
+            title: MediaQuery.of(context).size.width > 600
+                ? null
+                : Text(intToMonthString(_focusedDay.month) +
+                    ", " +
+                    (_focusedDay.year.toString()))),
         body: Stack(
           children: [
             eventData?.data != null || loadingADR
-                ? MediaQuery.of(context).size.width > 600
-                    ? MonthView()
-                    : Flex(
-                        direction: MediaQuery.of(context).orientation ==
+                ? Flex(
+                    direction: MediaQuery.of(context).size.width > 600
+                        ? Axis.horizontal
+                        : MediaQuery.of(context).orientation ==
                                 Orientation.portrait
                             ? Axis.vertical
                             : Axis.horizontal,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 10),
-                          buildTableCal(eventList),
-                          const Divider(),
-                          Flexible(
-                              child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ..._getEventsForDay(_selectedDay, eventList)
-                                      .map((e) => _eventCard(e))
-                                ],
-                              ),
-                            ),
-                          ))
-                        ],
-                      )
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 10),
+                      buildTableCal(eventList),
+                      const Divider(),
+                      Flexible(
+                          child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ..._getEventsForDay(_selectedDay, eventList)
+                                  .map((e) => _eventCard(e))
+                            ],
+                          ),
+                        ),
+                      ))
+                    ],
+                  )
                 : const NoConnectionColumn(),
             if (!(eventData != null &&
                     eventData!.loadingAction !=
@@ -185,7 +187,7 @@ class _PageCalendarState extends State<PageCalendar>
         pageAnimationDuration: const Duration(milliseconds: 500),
         pageJumpingEnabled: true,
         shouldFillViewport: true,
-        headerVisible: false,
+        headerVisible: MediaQuery.of(context).size.width > 600,
         focusedDay: _focusedDay,
         firstDay: DateTime.now().subtract(const Duration(days: 30)),
         lastDay: DateTime.now().add(const Duration(days: 365)),
@@ -235,40 +237,59 @@ class _PageCalendarState extends State<PageCalendar>
 
             return FadeTransition(
               opacity: _animationController,
-              child: Container(
-                decoration: DateTime(time.year, time.month, time.day)
-                        .isAtSameMomentAs(
-                            date.toLocal().subtract(const Duration(hours: 1)))
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary,
-                        ))
-                    : BoxDecoration(
-                        border: Border.all(
-                        color: Colors.transparent,
+              // child: Container(
+              //   decoration: DateTime(time.year, time.month, time.day)
+              //           .isAtSameMomentAs(
+              //               date.toLocal().subtract(const Duration(hours: 1)))
+              //       ? BoxDecoration(
+              //           borderRadius: BorderRadius.circular(8),
+              //           border: Border.all(
+              //             color: Theme.of(context).colorScheme.primary,
+              //           ))
+              //       : BoxDecoration(
+              //           border: Border.all(
+              //           color: Colors.transparent,
+              //         )),
+              //   child: Center(
+              //     child: Padding(
+              //       padding:
+              //           const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              //       child: Container(
+              //         height: 100,
+              //         width: 100,
+              //         decoration: BoxDecoration(
+              //             borderRadius: BorderRadius.circular(8),
+              //             shape: BoxShape.rectangle,
+              //             color: Theme.of(context).colorScheme.primary),
+              //         child: Padding(
+              //           padding: const EdgeInsets.all(0),
+              //           child: Center(
+              //             child: Text(
+              //               '${date.day}',
+              //               style: const TextStyle(color: Colors.white)
+              //                   .copyWith(fontSize: 16.0),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              child: Center(
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
                       )),
-                child: Center(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                    child: Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          shape: BoxShape.rectangle,
+                  child: Center(
+                    child: Text(
+                      '${date.day}',
+                      style: const TextStyle().copyWith(
+                          fontSize: 16.0,
                           color: Theme.of(context).colorScheme.primary),
-                      child: Padding(
-                        padding: const EdgeInsets.all(0),
-                        child: Center(
-                          child: Text(
-                            '${date.day}',
-                            style: const TextStyle(color: Colors.white)
-                                .copyWith(fontSize: 16.0),
-                          ),
-                        ),
-                      ),
                     ),
                   ),
                 ),
@@ -276,12 +297,22 @@ class _PageCalendarState extends State<PageCalendar>
             );
           },
           todayBuilder: (context, date, _) {
+            // return Container(
+            //   decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(8),
+            //       border: Border.all(
+            //         color: Theme.of(context).colorScheme.primary,
+            //       )),
+            //   child: Center(
+            //     child: Text(
+            //       '${date.day}',
+            //       style: const TextStyle().copyWith(
+            //           fontSize: 16.0,
+            //           color: Theme.of(context).colorScheme.primary),
+            //     ),
+            //   ),
+            // );
             return Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                  )),
               child: Center(
                 child: Text(
                   '${date.day}',
