@@ -79,32 +79,29 @@ class _MyAppState extends State<MyApp> {
     precacheImage(const AssetImage("assets/AngerWiki.jpg"), context);
 
     return FeatureDiscovery(
-      child: CalendarControllerProvider(
-        controller: AppManager.calController,
-        child: MaterialApp(
-          title: 'Anger Buddy',
-          theme: ThemeData.from(
-              colorScheme: ColorScheme.fromSwatch(
-                  primarySwatch: mainColor.color,
-                  accentColor: mainColor.accentColor,
-                  primaryColorDark: mainColor.color.shade700,
-                  backgroundColor: Color.lerp(
-                      Colors.grey.shade200, Colors.grey.shade300, 0.5),
-                  brightness: Brightness.light)),
-          darkTheme: ThemeData.from(
-                  colorScheme: ColorScheme.fromSwatch(
-                      primarySwatch: mainColor.color,
-                      accentColor: mainColor.accentColor,
-                      cardColor: const Color(0xff151515),
-                      primaryColorDark: mainColor.color.shade700,
-                      backgroundColor: const Color(0xff121212),
-                      brightness: Brightness.dark))
-              .copyWith(
-                  drawerTheme: const DrawerThemeData(
-                      backgroundColor: Color(0xFF232323))),
-          themeMode: ThemeMode.system,
-          home: const _IntroductionScreenSwitcher(),
-        ),
+      child: MaterialApp(
+        title: 'AngerApp',
+        theme: ThemeData.from(
+            colorScheme: ColorScheme.fromSwatch(
+                primarySwatch: mainColor.color,
+                accentColor: mainColor.accentColor,
+                primaryColorDark: mainColor.color.shade700,
+                backgroundColor:
+                    Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
+                brightness: Brightness.light)),
+        darkTheme: ThemeData.from(
+                colorScheme: ColorScheme.fromSwatch(
+                    primarySwatch: mainColor.color,
+                    accentColor: mainColor.accentColor,
+                    cardColor: const Color(0xff151515),
+                    primaryColorDark: mainColor.color.shade700,
+                    backgroundColor: const Color(0xff121212),
+                    brightness: Brightness.dark))
+            .copyWith(
+                drawerTheme:
+                    const DrawerThemeData(backgroundColor: Color(0xFF232323))),
+        themeMode: ThemeMode.system,
+        home: const _IntroductionScreenSwitcher(),
       ),
     );
   }
