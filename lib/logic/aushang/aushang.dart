@@ -12,6 +12,7 @@ import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sembast/sembast.dart';
@@ -40,6 +41,7 @@ Future<List<Aushang>> fetchAllAushaenge() async {
         status: aushang["status"],
         dateCreated: DateTime.parse(aushang["date_created"]),
         dateUpdated: DateTime.parse(aushang["date_updated"]),
+        textContent: aushang["textContent"],
         files: (aushang["files"] as List<dynamic>)
             .map((e) => int.parse(e.toString()))
             .toList()));
@@ -54,6 +56,7 @@ class Aushang {
   late final String id;
   late final String name;
   late final String status;
+  late final String textContent;
   late final DateTime dateCreated;
   late final DateTime dateUpdated;
   late final List<int> files;
@@ -63,6 +66,7 @@ class Aushang {
       required this.status,
       required this.dateCreated,
       required this.dateUpdated,
+      required this.textContent,
       required this.files});
   Map<String, dynamic> toMap() {
     return {
@@ -71,6 +75,7 @@ class Aushang {
       "status": status,
       "dateCreated": dateCreated.toString(),
       "dateUpdated": dateUpdated.toString(),
+      "textContent": textContent.toString(),
       "files": files,
     };
   }
@@ -81,6 +86,7 @@ class Aushang {
     status = map["status"];
     dateCreated = DateTime.parse(map["dateCreated"]);
     dateUpdated = DateTime.parse(map["dateUpdated"]);
+    textContent = map["textContent"];
     files = (map["files"] as List<dynamic>)
         .map((e) => int.parse(e.toString()))
         .toList();

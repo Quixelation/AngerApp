@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>terms</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+      code[class*="language-"],
+      pre[class*="language-"] {
+        color: #393a34;
+        font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New",
+          Courier, monospace;
+        direction: ltr;
+        text-align: left;
+        white-space: pre;
+        word-spacing: normal;
+        word-break: normal;
+        font-size: 0.95em;
+        line-height: 1.2em;
+
+        -moz-tab-size: 4;
+        -o-tab-size: 4;
+        tab-size: 4;
+
+        -webkit-hyphens: none;
+        -moz-hyphens: none;
+        -ms-hyphens: none;
+        hyphens: none;
+      }
+
+      pre[class*="language-"]::-moz-selection,
+      pre[class*="language-"] ::-moz-selection,
+      code[class*="language-"]::-moz-selection,
+      code[class*="language-"] ::-moz-selection {
+        background: #c1def1;
+      }
+
+      pre[class*="language-"]::selection,
+      pre[class*="language-"] ::selection,
+      code[class*="language-"]::selection,
+      code[class*="language-"] ::selection {
+        background: #c1def1;
+      }
+
+      /* Code blocks */
+      pre[class*="language-"] {
+        padding: 1em;
+        margin: 0.5em 0;
+        overflow: auto;
+        border: 1px solid #dddddd;
+        background-color: white;
+      }
+
+      /* Inline code */
+      :not(pre) > code[class*="language-"] {
+        padding: 0.2em;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        background: #f8f8f8;
+        border: 1px solid #dddddd;
+      }
+
+      .token.comment,
+      .token.prolog,
+      .token.doctype,
+      .token.cdata {
+        color: #008000;
+        font-style: italic;
+      }
+
+      .token.namespace {
+        opacity: 0.7;
+      }
+
+      .token.string {
+        color: #a31515;
+      }
+
+      .token.punctuation,
+      .token.operator {
+        color: #393a34; /* no highlight */
+      }
+
+      .token.url,
+      .token.symbol,
+      .token.number,
+      .token.boolean,
+      .token.variable,
+      .token.constant,
+      .token.inserted {
+        color: #36acaa;
+      }
+
+      .token.atrule,
+      .token.keyword,
+      .token.attr-value,
+      .language-autohotkey .token.selector,
+      .language-json .token.boolean,
+      .language-json .token.number,
+      code[class*="language-css"] {
+        color: #0000ff;
+      }
+
+      .token.function {
+        color: #393a34;
+      }
+      .token.deleted,
+      .language-autohotkey .token.tag {
+        color: #9a050f;
+      }
+
+      .token.selector,
+      .language-autohotkey .token.keyword {
+        color: #00009f;
+      }
+
+      .token.important,
+      .token.bold {
+        font-weight: bold;
+      }
+
+      .token.italic {
+        font-style: italic;
+      }
+
+      .token.class-name,
+      .language-json .token.property {
+        color: #2b91af;
+      }
+
+      .token.tag,
+      .token.selector {
+        color: #800000;
+      }
+
+      .token.attr-name,
+      .token.property,
+      .token.regex,
+      .token.entity {
+        color: #ff0000;
+      }
+
+      .token.directive.tag .tag {
+        background: #ffff00;
+        color: #393a34;
+      }
+
+      /* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+      .line-numbers .line-numbers-rows {
+        border-right-color: #a5a5a5;
+      }
+
+      .line-numbers-rows > span:before {
+        color: #2b91af;
+      }
+
+      /* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+      .line-highlight {
+        background: rgba(193, 222, 241, 0.2);
+        background: -webkit-linear-gradient(
+          left,
+          rgba(193, 222, 241, 0.2) 70%,
+          rgba(221, 222, 241, 0)
+        );
+        background: linear-gradient(
+          to right,
+          rgba(193, 222, 241, 0.2) 70%,
+          rgba(221, 222, 241, 0)
+        );
+      }
+
+      /* highlight */
+      pre[data-line] {
+        position: relative;
+        padding: 1em 0 1em 3em;
+      }
+      pre[data-line] .line-highlight-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: transparent;
+        display: block;
+        width: 100%;
+      }
+
+      pre[data-line] .line-highlight {
+        position: absolute;
+        left: 0;
+        right: 0;
+        padding: inherit 0;
+        margin-top: 1em;
+        background: hsla(24, 20%, 50%, 0.08);
+        background: linear-gradient(
+          to right,
+          hsla(24, 20%, 50%, 0.1) 70%,
+          hsla(24, 20%, 50%, 0)
+        );
+        pointer-events: none;
+        line-height: inherit;
+        white-space: pre;
+      }
+
+      pre[data-line] .line-highlight:before,
+      pre[data-line] .line-highlight[data-end]:after {
+        content: attr(data-start);
+        position: absolute;
+        top: 0.4em;
+        left: 0.6em;
+        min-width: 1em;
+        padding: 0 0.5em;
+        background-color: hsla(24, 20%, 50%, 0.4);
+        color: hsl(24, 20%, 95%);
+        font: bold 65%/1.5 sans-serif;
+        text-align: center;
+        vertical-align: 0.3em;
+        border-radius: 999px;
+        text-shadow: none;
+        box-shadow: 0 1px white;
+      }
+
+      pre[data-line] .line-highlight[data-end]:after {
+        content: attr(data-end);
+        top: auto;
+        bottom: 0.4em;
+      }
+      @font-face {
+        font-family: "Roboto Mono";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Roboto Mono"), local("RobotoMono-Regular"),
+          url(https://fonts.gstatic.com/s/robotomono/v7/L0x5DF4xlVMF-BfR8bXMIjhLq3o.ttf)
+            format("truetype");
+      }
+      @font-face {
+        font-family: "Source Sans Pro";
+        font-style: normal;
+        font-weight: 300;
+        src: local("Source Sans Pro Light"), local("SourceSansPro-Light"),
+          url(https://fonts.gstatic.com/s/sourcesanspro/v13/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdr.ttf)
+            format("truetype");
+      }
+      @font-face {
+        font-family: "Source Sans Pro";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Source Sans Pro Regular"), local("SourceSansPro-Regular"),
+          url(https://fonts.gstatic.com/s/sourcesanspro/v13/6xK3dSBYKcSV-LCoeQqfX1RYOo3qOK7g.ttf)
+            format("truetype");
+      }
+      @font-face {
+        font-family: "Source Sans Pro";
+        font-style: normal;
+        font-weight: 600;
+        src: local("Source Sans Pro SemiBold"), local("SourceSansPro-SemiBold"),
+          url(https://fonts.gstatic.com/s/sourcesanspro/v13/6xKydSBYKcSV-LCoeQqfX1RYOo3i54rwlxdr.ttf)
+            format("truetype");
+      }
+      * {
+        -webkit-font-smoothing: antialiased;
+        -webkit-overflow-scrolling: touch;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -webkit-text-size-adjust: none;
+        -webkit-touch-callout: none;
+        box-sizing: border-box;
+      }
+      body:not(.ready) {
+        overflow: hidden;
+      }
+      body:not(.ready) .app-nav,
+      body:not(.ready) > nav,
+      body:not(.ready) [data-cloak] {
+        display: none;
+      }
+      div#app {
+        font-size: 30px;
+        font-weight: lighter;
+        margin: 40vh auto;
+        text-align: center;
+      }
+      div#app:empty:before {
+        content: "Loading...";
+      }
+      .emoji {
+        height: 19.2px;
+        height: 1.2rem;
+        vertical-align: middle;
+      }
+      .progress {
+        background-color: #42b983;
+        background-color: var(--theme-color, #42b983);
+        height: 2px;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        transition: width 0.2s, opacity 0.4s;
+        width: 0;
+        z-index: 5;
+      }
+      .search .search-keyword,
+      .search a:hover {
+        color: #42b983;
+        color: var(--theme-color, #42b983);
+      }
+      .search .search-keyword {
+        font-style: normal;
+        font-weight: 700;
+      }
+      body,
+      html {
+        height: 100%;
+      }
+      body {
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        color: #34495e;
+        font-family: Source Sans Pro, Helvetica Neue, Arial, sans-serif;
+        font-size: 15px;
+        letter-spacing: 0;
+        margin: 0;
+        overflow-x: hidden;
+      }
+      img {
+        max-width: 100%;
+      }
+      a[disabled] {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      kbd {
+        color: #34495e;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        display: inline-block;
+        font-size: 12px !important;
+        line-height: 12px;
+        margin-bottom: 3px;
+        padding: 3px 5px;
+        vertical-align: middle;
+      }
+      .task-list-item {
+        list-style-type: none;
+      }
+      li input[type="checkbox"] {
+        margin: 0 0.2em 0.25em -1.6em;
+        vertical-align: middle;
+      }
+      .app-nav {
+        left: 0;
+        margin: 25px 60px 0 0;
+        position: absolute;
+        right: 0;
+        text-align: right;
+        z-index: 2;
+      }
+      .app-nav p {
+        margin: 0;
+      }
+      .app-nav > a {
+        margin: 0 16px;
+        margin: 0 1rem;
+        padding: 5px 0;
+      }
+      .app-nav li,
+      .app-nav ul {
+        display: inline-block;
+        list-style: none;
+        margin: 0;
+      }
+      .app-nav a {
+        color: inherit;
+        font-size: 16px;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      .app-nav a.active,
+      .app-nav a:hover {
+        color: #42b983;
+        color: var(--theme-color, #42b983);
+      }
+      .app-nav a.active {
+        border-bottom: 2px solid #42b983;
+        border-bottom: 2px solid var(--theme-color, #42b983);
+      }
+      .app-nav li {
+        display: inline-block;
+        margin: 0 16px;
+        margin: 0 1rem;
+        padding: 5px 0;
+        position: relative;
+      }
+      .app-nav li ul {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-bottom-color: #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        display: none;
+        max-height: calc(100vh - 61px);
+        overflow-y: scroll;
+        padding: 10px 0;
+        position: absolute;
+        right: -15px;
+        text-align: left;
+        top: 100%;
+        white-space: nowrap;
+      }
+      .app-nav li ul li {
+        display: block;
+        font-size: 14px;
+        line-height: 16px;
+        line-height: 1rem;
+        margin: 0;
+        margin: 8px 14px;
+        white-space: nowrap;
+      }
+      .app-nav li ul a {
+        display: block;
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+      }
+      .app-nav li ul a.active {
+        border-bottom: 0;
+      }
+      .app-nav li:hover ul {
+        display: block;
+      }
+      .app-nav.no-badge {
+        margin-right: 25px;
+      }
+      .github-corner {
+        border-bottom: 0;
+        position: fixed;
+        right: 0;
+        text-decoration: none;
+        top: 0;
+        z-index: 1;
+      }
+      .github-corner svg {
+        color: #fff;
+        fill: #42b983;
+        fill: var(--theme-color, #42b983);
+        height: 80px;
+        width: 80px;
+      }
+      .github-corner:hover .octo-arm {
+        -webkit-animation: a 0.56s ease-in-out;
+        animation: a 0.56s ease-in-out;
+      }
+      main {
+        display: block;
+        position: relative;
+        width: 100vw;
+        height: 100%;
+        z-index: 0;
+      }
+      .anchor {
+        display: inline-block;
+        text-decoration: none;
+        transition: all 0.3s;
+      }
+      .anchor span {
+        color: #34495e;
+      }
+      .anchor:hover {
+        text-decoration: underline;
+      }
+      .sidebar {
+        border-right: 1px solid rgba(0, 0, 0, 0.07);
+        overflow-y: auto;
+        padding: 40px 0 0;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        transition: -webkit-transform 0.25s ease-out;
+        transition: transform 0.25s ease-out;
+        transition: transform 0.25s ease-out, -webkit-transform 0.25s ease-out;
+        width: 300px;
+        z-index: 3;
+      }
+      .sidebar > h1 {
+        margin: 0 auto 16px;
+        margin: 0 auto 1rem;
+        font-size: 24px;
+        font-size: 1.5rem;
+        font-weight: 300;
+        text-align: center;
+      }
+      .sidebar > h1 a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .sidebar > h1 .app-nav {
+        display: block;
+        position: static;
+      }
+      .sidebar .sidebar-nav {
+        line-height: 2em;
+        padding-bottom: 40px;
+      }
+      .sidebar ul {
+        margin: 0;
+        padding: 0;
+      }
+      .sidebar li > p {
+        font-weight: 700;
+        margin: 0;
+      }
+      .sidebar ul,
+      .sidebar ul li {
+        list-style: none;
+      }
+      .sidebar ul li a {
+        border-bottom: none;
+        display: block;
+      }
+      .sidebar ul li ul {
+        padding-left: 20px;
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 4px;
+      }
+      .sidebar:hover::-webkit-scrollbar-thumb {
+        background: hsla(0, 0%, 53%, 0.4);
+      }
+      .sidebar:hover::-webkit-scrollbar-track {
+        background: hsla(0, 0%, 53%, 0.1);
+      }
+      .sidebar-toggle {
+        background-color: transparent;
+        background-color: hsla(0, 0%, 100%, 0.8);
+        border: 0;
+        outline: none;
+        padding: 10px;
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        text-align: center;
+        transition: opacity 0.3s;
+        width: 30px;
+        width: 284px;
+        z-index: 4;
+      }
+      .sidebar-toggle .sidebar-toggle-button:hover {
+        opacity: 0.4;
+      }
+      .sidebar-toggle span {
+        background-color: #42b983;
+        background-color: var(--theme-color, #42b983);
+        display: block;
+        margin-bottom: 4px;
+        width: 16px;
+        height: 2px;
+      }
+      body.sticky .sidebar,
+      body.sticky .sidebar-toggle {
+        position: fixed;
+      }
+      .content {
+        padding-top: 60px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 300px;
+        position: absolute;
+        transition: left 0.25s ease;
+      }
+      .markdown-preview > * {
+        box-sizing: border-box;
+        font-size: inherit;
+      }
+      .markdown-preview > :first-child {
+        margin-top: 0 !important;
+      }
+      .markdown-preview hr {
+        border: none;
+        border-bottom: 1px solid #eee;
+        margin: 2em 0;
+      }
+      .markdown-preview table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: block;
+        margin-bottom: 16px;
+        margin-bottom: 1rem;
+        overflow: auto;
+        width: 100%;
+      }
+      .markdown-preview th {
+        font-weight: 700;
+      }
+      .markdown-preview td,
+      .markdown-preview th {
+        border: 1px solid #ddd;
+        padding: 6px 13px;
+      }
+      .markdown-preview tr {
+        border-top: 1px solid #ccc;
+      }
+      .markdown-preview p.tip,
+      .markdown-preview tr:nth-child(2n) {
+        background-color: #f8f8f8;
+      }
+      .markdown-preview p.tip {
+        border-bottom-right-radius: 2px;
+        border-left: 4px solid #f66;
+        border-top-right-radius: 2px;
+        margin: 2em 0;
+        padding: 12px 24px 12px 30px;
+        position: relative;
+      }
+      .markdown-preview p.tip code {
+        background-color: #efefef;
+      }
+      .markdown-preview p.tip em {
+        color: #34495e;
+      }
+      .markdown-preview p.tip:before {
+        background-color: #f66;
+        border-radius: 100%;
+        color: #fff;
+        content: "!";
+        font-family: Dosis, Source Sans Pro, Helvetica Neue, Arial, sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        left: -12px;
+        line-height: 20px;
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        top: 14px;
+      }
+      .markdown-preview p.warn {
+        background: rgba(66, 185, 131, 0.1);
+        border-radius: 2px;
+        padding: 16px;
+        padding: 1rem;
+      }
+      body.close .sidebar {
+        -webkit-transform: translateX(-300px);
+        transform: translateX(-300px);
+      }
+      body.close .sidebar-toggle {
+        width: auto;
+      }
+      body.close .content {
+        left: 0;
+      }
+      @media print {
+        .app-nav,
+        .github-corner,
+        .sidebar,
+        .sidebar-toggle {
+          display: none;
+        }
+      }
+      @media screen and (max-width: 768px) {
+        .github-corner,
+        .sidebar,
+        .sidebar-toggle {
+          position: fixed;
+        }
+        .app-nav {
+          margin-top: 16px;
+        }
+        .app-nav li ul {
+          top: 30px;
+        }
+        main {
+          height: auto;
+          overflow-x: hidden;
+        }
+        .sidebar {
+          left: -300px;
+          transition: -webkit-transform 0.25s ease-out;
+          transition: transform 0.25s ease-out;
+          transition: transform 0.25s ease-out, -webkit-transform 0.25s ease-out;
+        }
+        .content {
+          left: 0;
+          max-width: 100vw;
+          position: static;
+          padding-top: 20px;
+          transition: -webkit-transform 0.25s ease;
+          transition: transform 0.25s ease;
+          transition: transform 0.25s ease, -webkit-transform 0.25s ease;
+        }
+        .app-nav,
+        .github-corner {
+          transition: -webkit-transform 0.25s ease-out;
+          transition: transform 0.25s ease-out;
+          transition: transform 0.25s ease-out, -webkit-transform 0.25s ease-out;
+        }
+        .sidebar-toggle {
+          background-color: transparent;
+          width: auto;
+          padding: 30px 30px 10px 10px;
+        }
+        body.close .sidebar {
+          -webkit-transform: translateX(300px);
+          transform: translateX(300px);
+        }
+        body.close .sidebar-toggle {
+          background-color: hsla(0, 0%, 100%, 0.8);
+          transition: background-color 1s;
+          width: 284px;
+          padding: 10px;
+        }
+        body.close .content {
+          -webkit-transform: translateX(300px);
+          transform: translateX(300px);
+        }
+        body.close .app-nav,
+        body.close .github-corner {
+          display: none;
+        }
+        .github-corner .octo-arm {
+          -webkit-animation: a 0.56s ease-in-out;
+          animation: a 0.56s ease-in-out;
+        }
+        .github-corner:hover .octo-arm {
+          -webkit-animation: none;
+          animation: none;
+        }
+      }
+      @-webkit-keyframes a {
+        0%,
+        to {
+          -webkit-transform: rotate(0);
+          transform: rotate(0);
+        }
+        20%,
+        60% {
+          -webkit-transform: rotate(-25deg);
+          transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+          -webkit-transform: rotate(10deg);
+          transform: rotate(10deg);
+        }
+      }
+      @keyframes a {
+        0%,
+        to {
+          -webkit-transform: rotate(0);
+          transform: rotate(0);
+        }
+        20%,
+        60% {
+          -webkit-transform: rotate(-25deg);
+          transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+          -webkit-transform: rotate(10deg);
+          transform: rotate(10deg);
+        }
+      }
+      section.cover {
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        background-position: 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100vh;
+        display: none;
+      }
+      section.cover .cover-main {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        margin: -20px 16px 0;
+        text-align: center;
+        z-index: 1;
+      }
+      section.cover a {
+        color: inherit;
+      }
+      section.cover a,
+      section.cover a:hover {
+        text-decoration: none;
+      }
+      section.cover p {
+        line-height: 24px;
+        line-height: 1.5rem;
+        margin: 1em 0;
+      }
+      section.cover h1 {
+        color: inherit;
+        font-size: 40px;
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin: 10px 0 40px;
+        margin: 0.625rem 0 2.5rem;
+        position: relative;
+        text-align: center;
+      }
+      section.cover h1 a {
+        display: block;
+      }
+      section.cover h1 small {
+        bottom: -7px;
+        bottom: -0.4375rem;
+        font-size: 16px;
+        font-size: 1rem;
+        position: absolute;
+      }
+      section.cover blockquote {
+        font-size: 24px;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+      section.cover ul {
+        line-height: 1.8;
+        list-style-type: none;
+        margin: 1em auto;
+        max-width: 500px;
+        padding: 0;
+      }
+      section.cover .cover-main > p:last-child a {
+        border-color: #42b983;
+        border: 1px solid var(--theme-color, #42b983);
+        border-radius: 2rem;
+        box-sizing: border-box;
+        color: #42b983;
+        color: var(--theme-color, #42b983);
+        display: inline-block;
+        font-size: 16.8px;
+        font-size: 1.05rem;
+        letter-spacing: 1.6px;
+        letter-spacing: 0.1rem;
+        margin-right: 16px;
+        margin-right: 1rem;
+        padding: 0.75em 32px;
+        padding: 0.75em 2rem;
+        text-decoration: none;
+        transition: all 0.15s ease;
+      }
+      section.cover .cover-main > p:last-child a:last-child {
+        background-color: #42b983;
+        background-color: var(--theme-color, #42b983);
+        color: #fff;
+        margin-right: 0;
+      }
+      section.cover .cover-main > p:last-child a:last-child:hover {
+        color: inherit;
+        opacity: 0.8;
+      }
+      section.cover .cover-main > p:last-child a:hover {
+        color: inherit;
+      }
+      section.cover blockquote > p > a {
+        border-bottom: 2px solid #42b983;
+        border-bottom: 2px solid var(--theme-color, #42b983);
+        transition: color 0.3s;
+      }
+      section.cover blockquote > p > a:hover {
+        color: #42b983;
+        color: var(--theme-color, #42b983);
+      }
+      section.cover.show {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+      }
+      section.cover.has-mask .mask {
+        background-color: #fff;
+        opacity: 0.8;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      .sidebar,
+      body {
+        background-color: #fff;
+      }
+      .sidebar {
+        color: #364149;
+      }
+      .sidebar li {
+        margin: 6px 0 6px 15px;
+      }
+      .sidebar ul li a {
+        color: #505d6b;
+        font-size: 14px;
+        font-weight: 400;
+        overflow: hidden;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .sidebar ul li a:hover {
+        text-decoration: underline;
+      }
+      .sidebar ul li ul {
+        padding: 0;
+      }
+      .sidebar ul li.active > a {
+        border-right: 2px solid;
+        color: #42b983;
+        color: var(--theme-color, #42b983);
+        font-weight: 600;
+      }
+      .app-sub-sidebar li:before {
+        content: "-";
+        padding-right: 4px;
+        float: left;
+      }
+      .markdown-preview h1,
+      .markdown-preview h2,
+      .markdown-preview h3,
+      .markdown-preview h4,
+      .markdown-preview strong {
+        color: #2c3e50;
+        font-weight: 600;
+      }
+      .markdown-preview a {
+        color: #42b983;
+        color: var(--theme-color, #42b983);
+        font-weight: 600;
+      }
+      .md-sidebar-toc a {
+        color: #42b983;
+        font-weight: 600;
+      }
+      .markdown-preview h1 {
+        font-size: 32px;
+        font-size: 2rem;
+        margin: 0 0 16px;
+        margin: 0 0 1rem;
+      }
+      .markdown-preview h2 {
+        font-size: 28px;
+        font-size: 1.75rem;
+        margin: 45px 0 12.8px;
+        margin: 45px 0 0.8rem;
+      }
+      .markdown-preview h3 {
+        font-size: 24px;
+        font-size: 1.5rem;
+        margin: 40px 0 9.6px;
+        margin: 40px 0 0.6rem;
+      }
+      .markdown-preview h4 {
+        font-size: 20px;
+        font-size: 1.25rem;
+      }
+      .markdown-preview h5,
+      .markdown-preview h6 {
+        font-size: 16px;
+        font-size: 1rem;
+      }
+      .markdown-preview h6 {
+        color: #777;
+      }
+      .markdown-preview figure,
+      .markdown-preview p {
+        margin: 1.2em 0;
+      }
+      .markdown-preview ol,
+      .markdown-preview p,
+      .markdown-preview ul {
+        line-height: 25.6px;
+        line-height: 1.6rem;
+        word-spacing: 0.8px;
+        word-spacing: 0.05rem;
+      }
+      .markdown-preview ol,
+      .markdown-preview ul {
+        padding-left: 24px;
+        padding-left: 1.5rem;
+      }
+      .markdown-preview blockquote {
+        border-left: 4px solid #42b983;
+        border-left: 4px solid var(--theme-color, #42b983);
+        color: #858585;
+        background-color: #f0f0f0;
+        margin: 2em 0;
+        padding-left: 20px;
+      }
+      .markdown-preview blockquote p {
+        font-weight: 600;
+        margin-left: 0;
+      }
+      .markdown-preview iframe {
+        margin: 1em 0;
+      }
+      .markdown-preview em {
+        color: #7f8c8d;
+      }
+      .markdown-preview {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      .markdown-preview .pagebreak,
+      .markdown-preview .newpage {
+        page-break-before: always;
+      }
+      .markdown-preview pre.line-numbers {
+        position: relative;
+        padding-left: 3.8em;
+        counter-reset: linenumber;
+      }
+      .markdown-preview pre.line-numbers > code {
+        position: relative;
+      }
+      .markdown-preview pre.line-numbers .line-numbers-rows {
+        position: absolute;
+        pointer-events: none;
+        top: 1em;
+        font-size: 100%;
+        left: 0;
+        width: 3em;
+        letter-spacing: -1px;
+        border-right: 1px solid #999;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      .markdown-preview pre.line-numbers .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+      }
+      .markdown-preview pre.line-numbers .line-numbers-rows > span:before {
+        content: counter(linenumber);
+        color: #999;
+        display: block;
+        padding-right: 0.8em;
+        text-align: right;
+      }
+      .markdown-preview .mathjax-exps .MathJax_Display {
+        text-align: center !important;
+      }
+      .markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+        display: none;
+      }
+      .markdown-preview:not([for="preview"]) .code-chunk .status {
+        display: none;
+      }
+      .markdown-preview:not([for="preview"]) .code-chunk .output-div {
+        margin-bottom: 16px;
+      }
+      .scrollbar-style::-webkit-scrollbar {
+        width: 8px;
+      }
+      .scrollbar-style::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: transparent;
+      }
+      .scrollbar-style::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background-color: rgba(150, 150, 150, 0.66);
+        border: 4px solid rgba(150, 150, 150, 0.66);
+        background-clip: content-box;
+      }
+      html body[for="html-export"]:not([data-presentation-mode]) {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])
+        .markdown-preview {
+        position: relative;
+        top: 0;
+      }
+      @media screen and (min-width: 914px) {
+        html
+          body[for="html-export"]:not([data-presentation-mode])
+          .markdown-preview {
+          padding: 2em calc(50% - 457px + 2em);
+        }
+      }
+      @media screen and (max-width: 914px) {
+        html
+          body[for="html-export"]:not([data-presentation-mode])
+          .markdown-preview {
+          padding: 2em;
+        }
+      }
+      @media screen and (max-width: 450px) {
+        html
+          body[for="html-export"]:not([data-presentation-mode])
+          .markdown-preview {
+          font-size: 14px !important;
+          padding: 1em;
+        }
+      }
+      @media print {
+        html
+          body[for="html-export"]:not([data-presentation-mode])
+          #sidebar-toc-btn {
+          display: none;
+        }
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])
+        #sidebar-toc-btn {
+        position: fixed;
+        bottom: 8px;
+        left: 8px;
+        font-size: 28px;
+        cursor: pointer;
+        color: inherit;
+        z-index: 99;
+        width: 32px;
+        text-align: center;
+        opacity: 0.4;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        #sidebar-toc-btn {
+        opacity: 1;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .md-sidebar-toc {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 100%;
+        padding: 32px 0 48px 0;
+        font-size: 14px;
+        box-shadow: 0 0 4px rgba(150, 150, 150, 0.33);
+        box-sizing: border-box;
+        overflow: auto;
+        background-color: inherit;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .md-sidebar-toc::-webkit-scrollbar {
+        width: 8px;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .md-sidebar-toc::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: transparent;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .md-sidebar-toc::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background-color: rgba(150, 150, 150, 0.66);
+        border: 4px solid rgba(150, 150, 150, 0.66);
+        background-clip: content-box;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .md-sidebar-toc
+        a {
+        text-decoration: none;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .md-sidebar-toc
+        ul {
+        padding: 0 1.6em;
+        margin-top: 0.8em;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .md-sidebar-toc
+        li {
+        margin-bottom: 0.8em;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .md-sidebar-toc
+        ul {
+        list-style-type: none;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+        .markdown-preview {
+        left: 300px;
+        width: calc(100% - 300px);
+        padding: 2em calc(50% - 457px - 150px);
+        margin: 0;
+        box-sizing: border-box;
+      }
+      @media screen and (max-width: 1274px) {
+        html
+          body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+          .markdown-preview {
+          padding: 2em;
+        }
+      }
+      @media screen and (max-width: 450px) {
+        html
+          body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc]
+          .markdown-preview {
+          width: 100%;
+        }
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc])
+        .markdown-preview {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc])
+        .md-sidebar-toc {
+        display: none;
+      }
+      /* Please visit the URL below for more information: */
+      /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+    </style>
+  </head>
+  <body for="html-export">
+    <div class="mume markdown-preview">
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/purecss@2.1.0/build/pure-min.css"
+        integrity="sha384-yHIFVG6ClnONEA5yB5DJXfW2/KC173DIQrYoZMEtBvGzmf0PKiGyNEqe9N6BNDBH"
+        crossorigin="anonymous"
+      />
+      <a class="pure-button pure-button-primary" href="..\..">Zur App</a>
+      <h1 style="margin-top: 30px; margin-bottom: 5px !important">
+        Nutzungbedingungen und Datenschutz
+      </h1>
+      <span style="margin-bottom: 30px !important">Stand: 11. April 2022</span>
+      <div class="code-chunk" data-id="code-chunk-id-0" data-cmd="toc">
+        <div class="input-div">
+          <div class="btn-group">
+            <div class="run-btn btn"><span>&#x25B6;&#xFE0E;</span></div>
+            <div class="run-all-btn btn">all</div>
+          </div>
+          <div class="status">running...</div>
+        </div>
+        <div class="output-div"></div>
+      </div>
+      <ul>
+        <li><a href="#verantwortlicher">Verantwortlicher</a></li>
+        <li>
+          <a href="#verbindung-zum-staatlichen-angergymnasium-jena"
+            >Verbindung zum staatlichen Angergymnasium Jena</a
+          >
+        </li>
+        <li><a href="#auschluss">Auschluss</a></li>
+        <li><a href="#pflichten-des-nutzers">Pflichten des Nutzers</a></li>
+        <li>
+          <a href="#daten">Daten</a>
+          <ul>
+            <li>
+              <a href="#garantie-auf-korrektheit">Garantie auf Korrektheit</a>
+            </li>
+            <li><a href="#zust%C3%A4ndigkeit">Zust&#xE4;ndigkeit</a></li>
+            <li>
+              <a href="#speicherung-der-daten">Speicherung der Daten</a>
+              <ul>
+                <li><a href="#nachrichten">Nachrichten</a></li>
+                <li><a href="#kalender">Kalender</a></li>
+                <li><a href="#vertretungsplan">Vertretungsplan</a></li>
+                <li><a href="#weitere">Weitere</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#push-services">Push-Services</a></li>
+        <li>
+          <a href="#datenschutzerkl%C3%A4rung">Datenschutzerkl&#xE4;rung</a>
+          <ul>
+            <li><a href="#einleitung">Einleitung</a></li>
+            <li>
+              <a href="#%C3%BCbersicht-der-verarbeitungen"
+                >&#xDC;bersicht der Verarbeitungen</a
+              >
+              <ul>
+                <li>
+                  <a href="#arten-der-verarbeiteten-daten"
+                    >Arten der verarbeiteten Daten</a
+                  >
+                </li>
+                <li>
+                  <a href="#kategorien-betroffener-personen"
+                    >Kategorien betroffener Personen</a
+                  >
+                </li>
+                <li>
+                  <a href="#zwecke-der-verarbeitung">Zwecke der Verarbeitung</a>
+                </li>
+                <li>
+                  <a href="#ma%C3%9Fgebliche-rechtsgrundlagen"
+                    >Ma&#xDF;gebliche Rechtsgrundlagen</a
+                  >
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="#sicherheitsma%C3%9Fnahmen">Sicherheitsma&#xDF;nahmen</a>
+            </li>
+            <li>
+              <a href="#%C3%BCbermittlung-von-personenbezogenen-daten"
+                >&#xDC;bermittlung von personenbezogenen Daten</a
+              >
+            </li>
+            <li>
+              <a href="#datenverarbeitung-in-drittl%C3%A4ndern"
+                >Datenverarbeitung in Drittl&#xE4;ndern</a
+              >
+            </li>
+            <li>
+              <a href="#l%C3%B6schung-von-daten">L&#xF6;schung von Daten</a>
+            </li>
+            <li><a href="#einsatz-von-cookies">Einsatz von Cookies</a></li>
+            <li>
+              <a href="#bereitstellung-des-onlineangebotes-und-webhosting"
+                >Bereitstellung des Onlineangebotes und Webhosting</a
+              >
+            </li>
+            <li>
+              <a href="#registrierung-anmeldung-und-nutzerkonto"
+                >Registrierung, Anmeldung und Nutzerkonto</a
+              >
+            </li>
+            <li>
+              <a href="#blogs-und-publikationsmedien"
+                >Blogs und Publikationsmedien</a
+              >
+            </li>
+            <li>
+              <a href="#kontakt-und-anfragenverwaltung"
+                >Kontakt- und Anfragenverwaltung</a
+              >
+            </li>
+            <li>
+              <a
+                href="#%C3%A4nderung-und-aktualisierung-der-datenschutzerkl%C3%A4rung"
+                >&#xC4;nderung und Aktualisierung der
+                Datenschutzerkl&#xE4;rung</a
+              >
+            </li>
+            <li>
+              <a href="#rechte-der-betroffenen-personen"
+                >Rechte der betroffenen Personen</a
+              >
+            </li>
+            <li><a href="#begriffsdefinitionen">Begriffsdefinitionen</a></li>
+            <li><a href="#quelle">Quelle</a></li>
+          </ul>
+        </li>
+      </ul>
+      <h1 class="mume-header" id="verantwortlicher">Verantwortlicher</h1>
+
+      <p>
+        Verantwortlicher ist &quot;Robert Steffen St&#xFC;ndl&quot; &lt;<a
+          href="mailto:robert.st.stuendl@gmail.com"
+          >robert.st.stuendl@gmail.com</a
+        >&gt;
+      </p>
+      <h1
+        class="mume-header"
+        id="verbindung-zum-staatlichen-angergymnasium-jena"
+      >
+        Verbindung zum staatlichen Angergymnasium Jena
+      </h1>
+
+      <p>
+        Bei der AngerApp handelt es sich um eine offizielle App, welche keine
+        Garantien gew&#xE4;hrt, aber in direkter Verbindung zum staatlichen
+        Angergymnasium Jena steht.
+      </p>
+      <h1 class="mume-header" id="auschluss">Auschluss</h1>
+
+      <p>
+        Das Team der App beh&#xE4;lt sich das Recht vor, die Nutzung der App
+        jederzeit und ohne vorherige Ank&#xFC;ndigkung zu beenden oder zu
+        pausieren.
+      </p>
+      <h1 class="mume-header" id="pflichten-des-nutzers">
+        Pflichten des Nutzers
+      </h1>
+
+      <p>
+        Wir weisen ausdr&#xFC;cklich darauf hin, dass es sich bei der AngerApp
+        um ein Sch&#xFC;ler-Projekt handelt. Der Nutzer best&#xE4;tigt mit der
+        Benutzung dieser App, dass er f&#xFC;r jegliche Probleme am Handy,
+        welche durch die App auftreten k&#xF6;nnen, verantwortlich ist.
+      </p>
+      <p>
+        Desweiteren best&#xE4;tigt der Nutzer durch die Benutzung der App, dass
+        dieser jegliche L&#xFC;cken und Fehler nicht nutzt, um der App bzw. den
+        Entwicklern zu schaden, sondern diese (freiwillig) an die Entwickler
+        bekannt gibt (E-Mail:
+        <a href="mailto:angerapp@robertstuendl.com"
+          >angerapp@robertstuendl.com</a
+        >).
+      </p>
+      <h1 class="mume-header" id="daten">Daten</h1>
+
+      <h2 class="mume-header" id="garantie-auf-korrektheit">
+        Garantie auf Korrektheit
+      </h2>
+
+      <p>
+        Wir k&#xF6;nnen (bis auf weiteres) keine Garantie auf die Korrektheit
+        der Daten geben.
+      </p>
+      <h2 class="mume-header" id="zust%C3%A4ndigkeit">Zust&#xE4;ndigkeit</h2>
+
+      <p>
+        Zust&#xE4;ndig f&#xFC;r die Daten ist das
+        <a
+          href="https://angergymnasium.jena.de/beispiel-seite/datenschutzerklaerung/"
+          >Angergymnasium Jena</a
+        >
+        sowie dessen Sch&#xFC;lerrat.
+      </p>
+      <h2 class="mume-header" id="speicherung-der-daten">
+        Speicherung der Daten
+      </h2>
+
+      <h3 class="mume-header" id="nachrichten">Nachrichten</h3>
+
+      <p>
+        Die Daten f&#xFC;r die Nachrichten werden von dem Server der Adresse
+        &quot;<a href="http://angergymnasium.jena.de">angergymnasium.jena.de</a
+        >&quot; abgerufen.
+      </p>
+      <p>Zust&#xE4;ndig f&#xFC;r das Hosting ist das Medienzentrum Jena.</p>
+      <p>
+        Die Datenschutzerkl&#xE4;rung f&#xFC;r diesen Server finden Sie hier:
+        <a
+          href="https://angergymnasium.jena.de/beispiel-seite/datenschutzerklaerung/"
+          >https://angergymnasium.jena.de/beispiel-seite/datenschutzerklaerung/</a
+        >
+      </p>
+      <h3 class="mume-header" id="kalender">Kalender</h3>
+
+      <p>
+        Die Daten f&#xFC;r den Kalender werden von den Google-Servern abgerufen.
+      </p>
+      <p>
+        Die Datenschutzerkl&#xE4;rung f&#xFC;r diese Server finden Sie hier:
+        <a href="https://www.google.com/intl/de/policies/privacy/"
+          >https://www.google.com/intl/de/policies/privacy/</a
+        >
+      </p>
+      <h3 class="mume-header" id="vertretungsplan">Vertretungsplan</h3>
+
+      <p>
+        Die Daten f&#xFC;r den Vertretungsplan werden von dem Server der Adresse
+        &quot;<a href="http://newspointweb.de">newspointweb.de</a>&quot;
+        abgerufen.
+      </p>
+      <p>
+        Die Datenschutzerkl&#xE4;rung f&#xFC;r diesen Server finden Sie hier:
+        <a href="https://newspointweb.de/content.aspx?c=privacy_statement.htm"
+          >https://newspointweb.de/content.aspx?c=privacy_statement.htm/</a
+        >
+      </p>
+      <h3 class="mume-header" id="weitere">Weitere</h3>
+
+      <p>
+        Alle, nicht oben gennanten Daten, werden auf den Servern des
+        Medienzentrum Jena gehostet.
+      </p>
+      <h1 class="mume-header" id="push-services">Push-Services</h1>
+
+      <p>
+        Die App nutzt Push-Services der Betriebssystemhersteller. Dies sind
+        Kurzmitteilungen, die auf dem Ger&#xE4;tedisplay des Nutzers angezeigt
+        werden k&#xF6;nnen und mit denen dieser aktiv informiert wird.
+      </p>
+      <p>
+        Im Fall der Nutzung des Push-Services wird ein Device-Token von Apple
+        oder eine Registration-ID von Google zugeteilt. Es handelt sich hierbei
+        um verschl&#xFC;sselte, anonymisierte Ger&#xE4;te-IDs. Der Zweck der
+        Verwendung ist allein die Erbringung der Push-Services. Ein
+        R&#xFC;ckschluss auf den einzelnen Nutzer ist f&#xFC;r uns (bzw. das
+        Team hinter der App) nicht m&#xF6;glich. Der Push-Service kann bei
+        Bedarf in der App angepasst oder deaktiviert werden. Wir nutzen den
+        Dienst Firebase Cloud Messaging.
+      </p>
+      <p>
+        Firebase Cloud Messaging ist Teil der Backend-Service Plattform. Weitere
+        Services von Firebase werden nicht eingesetzt.
+      </p>
+      <p>
+        Weitere Informationen zu den Nutzungsbedingungen von Firebase Cloud
+        Messaging erhalten Sie auf der Webseite von Firebase:
+        <a href="https://firebase.google.com/terms/"
+          >https://firebase.google.com/terms/</a
+        >
+      </p>
+      <h1 class="mume-header" id="datenschutzerkl%C3%A4rung">
+        Datenschutzerkl&#xE4;rung
+      </h1>
+
+      <h2 class="mume-header" id="einleitung">Einleitung</h2>
+
+      <p>
+        Mit der folgenden Datenschutzerkl&#xE4;rung m&#xF6;chten wir Sie
+        dar&#xFC;ber aufkl&#xE4;ren, welche Arten Ihrer personenbezogenen Daten
+        (nachfolgend auch kurz als &quot;Daten&#x201C; bezeichnet) wir zu
+        welchen Zwecken und in welchem Umfang verarbeiten. Die
+        Datenschutzerkl&#xE4;rung gilt f&#xFC;r alle von uns durchgef&#xFC;hrten
+        Verarbeitungen personenbezogener Daten, sowohl im Rahmen der Erbringung
+        unserer Leistungen als auch insbesondere auf unseren Webseiten, in
+        mobilen Applikationen sowie innerhalb externer Onlinepr&#xE4;senzen, wie
+        z.B. unserer Social-Media-Profile (nachfolgend zusammenfassend
+        bezeichnet als &quot;Onlineangebot&#x201C;).
+      </p>
+      <p>Die verwendeten Begriffe sind nicht geschlechtsspezifisch.</p>
+      <h2 class="mume-header" id="%C3%BCbersicht-der-verarbeitungen">
+        &#xDC;bersicht der Verarbeitungen
+      </h2>
+
+      <p>
+        Die nachfolgende &#xDC;bersicht fasst die Arten der verarbeiteten Daten
+        und die Zwecke ihrer Verarbeitung zusammen und verweist auf die
+        betroffenen Personen.
+      </p>
+      <h3 class="mume-header" id="arten-der-verarbeiteten-daten">
+        Arten der verarbeiteten Daten
+      </h3>
+
+      <ul>
+        <li>Bestandsdaten.</li>
+        <li>Kontaktdaten.</li>
+        <li>Inhaltsdaten.</li>
+        <li>Nutzungsdaten.</li>
+        <li>Meta-/Kommunikationsdaten.</li>
+      </ul>
+      <h3 class="mume-header" id="kategorien-betroffener-personen">
+        Kategorien betroffener Personen
+      </h3>
+
+      <ul>
+        <li>Kommunikationspartner.</li>
+        <li>Nutzer.</li>
+      </ul>
+      <h3 class="mume-header" id="zwecke-der-verarbeitung">
+        Zwecke der Verarbeitung
+      </h3>
+
+      <ul>
+        <li>Erbringung vertraglicher Leistungen und Kundenservice.</li>
+        <li>Kontaktanfragen und Kommunikation.</li>
+        <li>Sicherheitsma&#xDF;nahmen.</li>
+        <li>Verwaltung und Beantwortung von Anfragen.</li>
+        <li>Feedback.</li>
+        <li>
+          Bereitstellung unseres Onlineangebotes und Nutzerfreundlichkeit.
+        </li>
+      </ul>
+      <h3 class="mume-header" id="ma%C3%9Fgebliche-rechtsgrundlagen">
+        Ma&#xDF;gebliche Rechtsgrundlagen
+      </h3>
+
+      <p>
+        Im Folgenden erhalten Sie eine &#xDC;bersicht der Rechtsgrundlagen der
+        DSGVO, auf deren Basis wir personenbezogene Daten verarbeiten. Bitte
+        nehmen Sie zur Kenntnis, dass neben den Regelungen der DSGVO nationale
+        Datenschutzvorgaben in Ihrem bzw. unserem Wohn- oder Sitzland gelten
+        k&#xF6;nnen. Sollten ferner im Einzelfall speziellere Rechtsgrundlagen
+        ma&#xDF;geblich sein, teilen wir Ihnen diese in der
+        Datenschutzerkl&#xE4;rung mit.
+      </p>
+      <ul>
+        <li>
+          <strong
+            >Vertragserf&#xFC;llung und vorvertragliche Anfragen (Art. 6 Abs. 1
+            S. 1 lit. b. DSGVO)</strong
+          >
+          - Die Verarbeitung ist f&#xFC;r die Erf&#xFC;llung eines Vertrags,
+          dessen Vertragspartei die betroffene Person ist, oder zur
+          Durchf&#xFC;hrung vorvertraglicher Ma&#xDF;nahmen erforderlich, die
+          auf Anfrage der betroffenen Person erfolgen.
+        </li>
+        <li>
+          <strong
+            >Rechtliche Verpflichtung (Art. 6 Abs. 1 S. 1 lit. c. DSGVO)</strong
+          >
+          - Die Verarbeitung ist zur Erf&#xFC;llung einer rechtlichen
+          Verpflichtung erforderlich, der der Verantwortliche unterliegt.
+        </li>
+        <li>
+          <strong
+            >Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f. DSGVO)</strong
+          >
+          - Die Verarbeitung ist zur Wahrung der berechtigten Interessen des
+          Verantwortlichen oder eines Dritten erforderlich, sofern nicht die
+          Interessen oder Grundrechte und Grundfreiheiten der betroffenen
+          Person, die den Schutz personenbezogener Daten erfordern,
+          &#xFC;berwiegen.
+        </li>
+      </ul>
+      <p>
+        Zus&#xE4;tzlich zu den Datenschutzregelungen der
+        Datenschutz-Grundverordnung gelten nationale Regelungen zum Datenschutz
+        in Deutschland. Hierzu geh&#xF6;rt insbesondere das Gesetz zum Schutz
+        vor Missbrauch personenbezogener Daten bei der Datenverarbeitung
+        (Bundesdatenschutzgesetz &#x2013; BDSG). Das BDSG enth&#xE4;lt
+        insbesondere Spezialregelungen zum Recht auf Auskunft, zum Recht auf
+        L&#xF6;schung, zum Widerspruchsrecht, zur Verarbeitung besonderer
+        Kategorien personenbezogener Daten, zur Verarbeitung f&#xFC;r andere
+        Zwecke und zur &#xDC;bermittlung sowie automatisierten
+        Entscheidungsfindung im Einzelfall einschlie&#xDF;lich Profiling. Des
+        Weiteren regelt es die Datenverarbeitung f&#xFC;r Zwecke des
+        Besch&#xE4;ftigungsverh&#xE4;ltnisses (&#xA7; 26 BDSG), insbesondere im
+        Hinblick auf die Begr&#xFC;ndung, Durchf&#xFC;hrung oder Beendigung von
+        Besch&#xE4;ftigungsverh&#xE4;ltnissen sowie die Einwilligung von
+        Besch&#xE4;ftigten. Ferner k&#xF6;nnen Landesdatenschutzgesetze der
+        einzelnen Bundesl&#xE4;nder zur Anwendung gelangen.
+      </p>
+      <h2 class="mume-header" id="sicherheitsma%C3%9Fnahmen">
+        Sicherheitsma&#xDF;nahmen
+      </h2>
+
+      <p>
+        Wir treffen nach Ma&#xDF;gabe der gesetzlichen Vorgaben unter
+        Ber&#xFC;cksichtigung des Stands der Technik, der Implementierungskosten
+        und der Art, des Umfangs, der Umst&#xE4;nde und der Zwecke der
+        Verarbeitung sowie der unterschiedlichen Eintrittswahrscheinlichkeiten
+        und des Ausma&#xDF;es der Bedrohung der Rechte und Freiheiten
+        nat&#xFC;rlicher Personen geeignete technische und organisatorische
+        Ma&#xDF;nahmen, um ein dem Risiko angemessenes Schutzniveau zu
+        gew&#xE4;hrleisten.
+      </p>
+      <p>
+        Zu den Ma&#xDF;nahmen geh&#xF6;ren insbesondere die Sicherung der
+        Vertraulichkeit, Integrit&#xE4;t und Verf&#xFC;gbarkeit von Daten durch
+        Kontrolle des physischen und elektronischen Zugangs zu den Daten als
+        auch des sie betreffenden Zugriffs, der Eingabe, der Weitergabe, der
+        Sicherung der Verf&#xFC;gbarkeit und ihrer Trennung. Des Weiteren haben
+        wir Verfahren eingerichtet, die eine Wahrnehmung von Betroffenenrechten,
+        die L&#xF6;schung von Daten und Reaktionen auf die Gef&#xE4;hrdung der
+        Daten gew&#xE4;hrleisten. Ferner ber&#xFC;cksichtigen wir den Schutz
+        personenbezogener Daten bereits bei der Entwicklung bzw. Auswahl von
+        Hardware, Software sowie Verfahren entsprechend dem Prinzip des
+        Datenschutzes, durch Technikgestaltung und durch datenschutzfreundliche
+        Voreinstellungen.
+      </p>
+      <p>
+        SSL-Verschl&#xFC;sselung (https): Um Ihre via unserem Online-Angebot
+        &#xFC;bermittelten Daten zu sch&#xFC;tzen, nutzen wir eine
+        SSL-Verschl&#xFC;sselung. Sie erkennen derart verschl&#xFC;sselte
+        Verbindungen an dem Pr&#xE4;fix https:// in der Adresszeile Ihres
+        Browsers.
+      </p>
+      <h2
+        class="mume-header"
+        id="%C3%BCbermittlung-von-personenbezogenen-daten"
+      >
+        &#xDC;bermittlung von personenbezogenen Daten
+      </h2>
+
+      <p>
+        Im Rahmen unserer Verarbeitung von personenbezogenen Daten kommt es vor,
+        dass die Daten an andere Stellen, Unternehmen, rechtlich
+        selbstst&#xE4;ndige Organisationseinheiten oder Personen
+        &#xFC;bermittelt oder sie ihnen gegen&#xFC;ber offengelegt werden. Zu
+        den Empf&#xE4;ngern dieser Daten k&#xF6;nnen z.B. mit IT-Aufgaben
+        beauftragte Dienstleister oder Anbieter von Diensten und Inhalten, die
+        in eine Webseite eingebunden werden, geh&#xF6;ren. In solchen Fall
+        beachten wir die gesetzlichen Vorgaben und schlie&#xDF;en insbesondere
+        entsprechende Vertr&#xE4;ge bzw. Vereinbarungen, die dem Schutz Ihrer
+        Daten dienen, mit den Empf&#xE4;ngern Ihrer Daten ab.
+      </p>
+      <h2 class="mume-header" id="datenverarbeitung-in-drittl%C3%A4ndern">
+        Datenverarbeitung in Drittl&#xE4;ndern
+      </h2>
+
+      <p>
+        Sofern wir Daten in einem Drittland (d.h., au&#xDF;erhalb der
+        Europ&#xE4;ischen Union (EU), des Europ&#xE4;ischen Wirtschaftsraums
+        (EWR)) verarbeiten oder die Verarbeitung im Rahmen der Inanspruchnahme
+        von Diensten Dritter oder der Offenlegung bzw. &#xDC;bermittlung von
+        Daten an andere Personen, Stellen oder Unternehmen stattfindet, erfolgt
+        dies nur im Einklang mit den gesetzlichen Vorgaben.
+      </p>
+      <p>
+        Vorbehaltlich ausdr&#xFC;cklicher Einwilligung oder vertraglich oder
+        gesetzlich erforderlicher &#xDC;bermittlung verarbeiten oder lassen wir
+        die Daten nur in Drittl&#xE4;ndern mit einem anerkannten
+        Datenschutzniveau, vertraglichen Verpflichtung durch sogenannte
+        Standardschutzklauseln der EU-Kommission, beim Vorliegen von
+        Zertifizierungen oder verbindlicher internen Datenschutzvorschriften
+        verarbeiten (Art. 44 bis 49 DSGVO, Informationsseite der EU-Kommission:
+        <a
+          href="https://ec.europa.eu/info/law/law-topic/data-protection/international-dimension-data-protection_de"
+          >https://ec.europa.eu/info/law/law-topic/data-protection/international-dimension-data-protection_de</a
+        >).
+      </p>
+      <h2 class="mume-header" id="l%C3%B6schung-von-daten">
+        L&#xF6;schung von Daten
+      </h2>
+
+      <p>
+        Die von uns verarbeiteten Daten werden nach Ma&#xDF;gabe der
+        gesetzlichen Vorgaben gel&#xF6;scht, sobald deren zur Verarbeitung
+        erlaubten Einwilligungen widerrufen werden oder sonstige Erlaubnisse
+        entfallen (z.B. wenn der Zweck der Verarbeitung dieser Daten entfallen
+        ist oder sie f&#xFC;r den Zweck nicht erforderlich sind).
+      </p>
+      <p>
+        Sofern die Daten nicht gel&#xF6;scht werden, weil sie f&#xFC;r andere
+        und gesetzlich zul&#xE4;ssige Zwecke erforderlich sind, wird deren
+        Verarbeitung auf diese Zwecke beschr&#xE4;nkt. D.h., die Daten werden
+        gesperrt und nicht f&#xFC;r andere Zwecke verarbeitet. Das gilt z.B.
+        f&#xFC;r Daten, die aus handels- oder steuerrechtlichen Gr&#xFC;nden
+        aufbewahrt werden m&#xFC;ssen oder deren Speicherung zur Geltendmachung,
+        Aus&#xFC;bung oder Verteidigung von Rechtsanspr&#xFC;chen oder zum
+        Schutz der Rechte einer anderen nat&#xFC;rlichen oder juristischen
+        Person erforderlich ist.
+      </p>
+      <p>
+        Unsere Datenschutzhinweise k&#xF6;nnen ferner weitere Angaben zu der
+        Aufbewahrung und L&#xF6;schung von Daten beinhalten, die f&#xFC;r die
+        jeweiligen Verarbeitungen vorrangig gelten.
+      </p>
+      <h2 class="mume-header" id="einsatz-von-cookies">Einsatz von Cookies</h2>
+
+      <p>
+        Cookies sind kleine Textdateien, bzw. sonstige Speichervermerke, die
+        Informationen auf Endger&#xE4;ten speichern und Informationen aus den
+        Endger&#xE4;ten auslesen. Z.B. um den Login-Status in einem Nutzerkonto,
+        einen Warenkorbinhalt in einem E-Shop, die aufgerufenen Inhalte oder
+        verwendete Funktionen eines Onlineangebotes speichern. Cookies
+        k&#xF6;nnen ferner zu unterschiedlichen Zwecken eingesetzt werden, z.B.
+        zu Zwecken der Funktionsf&#xE4;higkeit, Sicherheit und Komfort von
+        Onlineangeboten sowie der Erstellung von Analysen der
+        Besucherstr&#xF6;me.
+      </p>
+      <p>
+        <strong>Hinweise zur Einwilligung:</strong> Wir setzen Cookies im
+        Einklang mit den gesetzlichen Vorschriften ein. Daher holen wir von den
+        Nutzern eine vorhergehende Einwilligung ein, au&#xDF;er wenn diese
+        gesetzlich nicht gefordert ist. Eine Einwilligung ist insbesondere nicht
+        notwendig, wenn das Speichern und das Auslesen der Informationen, also
+        auch von Cookies, unbedingt erforderlich sind, um dem den Nutzern einen
+        von ihnen ausdr&#xFC;cklich gew&#xFC;nschten Telemediendienst (also
+        unser Onlineangebot) zur Verf&#xFC;gung zu stellen. Die widerrufliche
+        Einwilligung wird gegen&#xFC;ber den Nutzern deutlich kommuniziert und
+        enth&#xE4;lt die Informationen zu der jeweiligen Cookie-Nutzung.
+      </p>
+      <p>
+        <strong>Hinweise zu datenschutzrechtlichen Rechtsgrundlagen:</strong>
+        Auf welcher datenschutzrechtlichen Rechtsgrundlage wir die
+        personenbezogenen Daten der Nutzer mit Hilfe von Cookies verarbeiten,
+        h&#xE4;ngt davon ab, ob wir Nutzer um eine Einwilligung bitten. Falls
+        die Nutzer einwilligen, ist die Rechtsgrundlage der Verarbeitung Ihrer
+        Daten die erkl&#xE4;rte Einwilligung. Andernfalls werden die mithilfe
+        von Cookies verarbeiteten Daten auf Grundlage unserer berechtigten
+        Interessen (z.B. an einem betriebswirtschaftlichen Betrieb unseres
+        Onlineangebotes und Verbesserung seiner Nutzbarkeit) verarbeitet oder,
+        wenn dies im Rahmen der Erf&#xFC;llung unserer vertraglichen Pflichten
+        erfolgt, wenn der Einsatz von Cookies erforderlich ist, um unsere
+        vertraglichen Verpflichtungen zu erf&#xFC;llen. Zu welchen Zwecken die
+        Cookies von uns verarbeitet werden, dar&#xFC;ber kl&#xE4;ren wir im
+        Laufe dieser Datenschutzerkl&#xE4;rung oder im Rahmen von unseren
+        Einwilligungs- und Verarbeitungsprozessen auf.
+      </p>
+      <p>
+        <strong>Speicherdauer:</strong> Im Hinblick auf die Speicherdauer werden
+        die folgenden Arten von Cookies unterschieden:
+      </p>
+      <ul>
+        <li>
+          <strong
+            >Tempor&#xE4;re Cookies (auch: Session- oder
+            Sitzungs-Cookies):</strong
+          >
+          Tempor&#xE4;re Cookies werden sp&#xE4;testens gel&#xF6;scht, nachdem
+          ein Nutzer ein Online-Angebot verlassen und sein Endger&#xE4;t (z.B.
+          Browser oder mobile Applikation) geschlossen hat.
+        </li>
+        <li>
+          <strong>Permanente Cookies:</strong> Permanente Cookies bleiben auch
+          nach dem Schlie&#xDF;en des Endger&#xE4;tes gespeichert. So
+          k&#xF6;nnen beispielsweise der Login-Status gespeichert oder
+          bevorzugte Inhalte direkt angezeigt werden, wenn der Nutzer eine
+          Website erneut besucht. Ebenso k&#xF6;nnen die mit Hilfe von Cookies
+          erhobenen Daten der Nutzer zur Reichweitenmessung verwendet werden.
+          Sofern wir Nutzern keine expliziten Angaben zur Art und Speicherdauer
+          von Cookies mitteilen (z. B. im Rahmen der Einholung der
+          Einwilligung), sollten Nutzer davon ausgehen, dass Cookies permanent
+          sind und die Speicherdauer bis zu zwei Jahre betragen kann.
+        </li>
+      </ul>
+      <p>
+        <strong
+          >Allgemeine Hinweise zum Widerruf und Widerspruch (Opt-Out):</strong
+        >
+        Nutzer k&#xF6;nnen die von ihnen abgegebenen Einwilligungen jederzeit
+        Widerrufen und zudem einen Widerspruch gegen die Verarbeitung
+        entsprechend den gesetzlichen Vorgaben im Art. 21 DSGVO einlegen
+        (weitere Hinweise zum Widerspruch erfolgen im Rahmen dieser
+        Datenschutzerkl&#xE4;rung). Nutzer k&#xF6;nnen Ihren Widerspruch auch
+        mittels der Einstellungen Ihres Browsers erkl&#xE4;ren.
+      </p>
+      <p>
+        <strong
+          >Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und
+          Diensten:</strong
+        >
+      </p>
+      <ul>
+        <li>
+          <strong
+            >Verarbeitung von Cookie-Daten auf Grundlage einer
+            Einwilligung:</strong
+          >
+          Wir setzen ein Verfahren zum Cookie-Einwilligungs-Management ein, in
+          dessen Rahmen die Einwilligungen der Nutzer in den Einsatz von
+          Cookies, bzw. der im Rahmen des
+          Cookie-Einwilligungs-Management-Verfahrens genannten Verarbeitungen
+          und Anbieter eingeholt sowie von den Nutzern verwaltet und widerrufen
+          werden k&#xF6;nnen. Hierbei wird die Einwilligungserkl&#xE4;rung
+          gespeichert, um deren Abfrage nicht erneut wiederholen zu m&#xFC;ssen
+          und die Einwilligung entsprechend der gesetzlichen Verpflichtung
+          nachweisen zu k&#xF6;nnen. Die Speicherung kann serverseitig und/oder
+          in einem Cookie (sogenanntes Opt-In-Cookie, bzw. mithilfe
+          vergleichbarer Technologien) erfolgen, um die Einwilligung einem
+          Nutzer, bzw. dessen Ger&#xE4;t zuordnen zu k&#xF6;nnen. Vorbehaltlich
+          individueller Angaben zu den Anbietern von Cookie-Management-Diensten,
+          gelten die folgenden Hinweise: Die Dauer der Speicherung der
+          Einwilligung kann bis zu zwei Jahren betragen. Hierbei wird ein
+          pseudonymer Nutzer-Identifikator gebildet und mit dem Zeitpunkt der
+          Einwilligung, Angaben zur Reichweite der Einwilligung (z. B. welche
+          Kategorien von Cookies und/oder Diensteanbieter) sowie dem Browser,
+          System und verwendeten Endger&#xE4;t gespeichert.
+        </li>
+      </ul>
+      <h2
+        class="mume-header"
+        id="bereitstellung-des-onlineangebotes-und-webhosting"
+      >
+        Bereitstellung des Onlineangebotes und Webhosting
+      </h2>
+
+      <p>
+        Um unser Onlineangebot sicher und effizient bereitstellen zu
+        k&#xF6;nnen, nehmen wir die Leistungen von einem oder mehreren
+        Webhosting-Anbietern in Anspruch, von deren Servern (bzw. von ihnen
+        verwalteten Servern) das Onlineangebot abgerufen werden kann. Zu diesen
+        Zwecken k&#xF6;nnen wir Infrastruktur- und Plattformdienstleistungen,
+        Rechenkapazit&#xE4;t, Speicherplatz und Datenbankdienste sowie
+        Sicherheitsleistungen und technische Wartungsleistungen in Anspruch
+        nehmen.
+      </p>
+      <p>
+        Zu den im Rahmen der Bereitstellung des Hostingangebotes verarbeiteten
+        Daten k&#xF6;nnen alle die Nutzer unseres Onlineangebotes betreffenden
+        Angaben geh&#xF6;ren, die im Rahmen der Nutzung und der Kommunikation
+        anfallen. Hierzu geh&#xF6;ren regelm&#xE4;&#xDF;ig die IP-Adresse, die
+        notwendig ist, um die Inhalte von Onlineangeboten an Browser ausliefern
+        zu k&#xF6;nnen, und alle innerhalb unseres Onlineangebotes oder von
+        Webseiten get&#xE4;tigten Eingaben.
+      </p>
+      <ul>
+        <li>
+          <strong>Verarbeitete Datenarten:</strong> Inhaltsdaten (z.B. Eingaben
+          in Onlineformularen); Nutzungsdaten (z.B. besuchte Webseiten,
+          Interesse an Inhalten, Zugriffszeiten); Meta-/Kommunikationsdaten
+          (z.B. Ger&#xE4;te-Informationen, IP-Adressen).
+        </li>
+        <li>
+          <strong>Betroffene Personen:</strong> Nutzer (z.B. Webseitenbesucher,
+          Nutzer von Onlinediensten).
+        </li>
+        <li>
+          <strong>Zwecke der Verarbeitung:</strong> Bereitstellung unseres
+          Onlineangebotes und Nutzerfreundlichkeit.
+        </li>
+        <li>
+          <strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs.
+          1 S. 1 lit. f. DSGVO).
+        </li>
+      </ul>
+      <p>
+        <strong
+          >Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und
+          Diensten:</strong
+        >
+      </p>
+      <ul>
+        <li>
+          <strong>Erhebung von Zugriffsdaten und Logfiles:</strong> Wir selbst
+          (bzw. unser Webhostinganbieter) erheben Daten zu jedem Zugriff auf den
+          Server (sogenannte Serverlogfiles). Zu den Serverlogfiles k&#xF6;nnen
+          die Adresse und Name der abgerufenen Webseiten und Dateien, Datum und
+          Uhrzeit des Abrufs, &#xFC;bertragene Datenmengen, Meldung &#xFC;ber
+          erfolgreichen Abruf, Browsertyp nebst Version, das Betriebssystem des
+          Nutzers, Referrer URL (die zuvor besuchte Seite) und im Regelfall
+          IP-Adressen und der anfragende Provider geh&#xF6;ren. Die
+          Serverlogfiles k&#xF6;nnen zum einen zu Zwecken der Sicherheit
+          eingesetzt werden, z.B., um eine &#xDC;berlastung der Server zu
+          vermeiden (insbesondere im Fall von missbr&#xE4;uchlichen Angriffen,
+          sogenannten DDoS-Attacken) und zum anderen, um die Auslastung der
+          Server und ihre Stabilit&#xE4;t sicherzustellen; L&#xF6;schung von
+          Daten: Logfile-Informationen werden f&#xFC;r die Dauer von maximal 30
+          Tagen gespeichert und danach gel&#xF6;scht oder anonymisiert. Daten,
+          deren weitere Aufbewahrung zu Beweiszwecken erforderlich ist, sind bis
+          zur endg&#xFC;ltigen Kl&#xE4;rung des jeweiligen Vorfalls von der
+          L&#xF6;schung ausgenommen.
+        </li>
+      </ul>
+      <h2 class="mume-header" id="registrierung-anmeldung-und-nutzerkonto">
+        Registrierung, Anmeldung und Nutzerkonto
+      </h2>
+
+      <p>
+        Nutzer k&#xF6;nnen ein Nutzerkonto anlegen. Im Rahmen der Registrierung
+        werden den Nutzern die erforderlichen Pflichtangaben mitgeteilt und zu
+        Zwecken der Bereitstellung des Nutzerkontos auf Grundlage vertraglicher
+        Pflichterf&#xFC;llung verarbeitet. Zu den verarbeiteten Daten
+        geh&#xF6;ren insbesondere die Login-Informationen (Nutzername, Passwort
+        sowie eine E-Mail-Adresse).
+      </p>
+      <p>
+        Im Rahmen der Inanspruchnahme unserer Registrierungs- und
+        Anmeldefunktionen sowie der Nutzung des Nutzerkontos speichern wir die
+        IP-Adresse und den Zeitpunkt der jeweiligen Nutzerhandlung. Die
+        Speicherung erfolgt auf Grundlage unserer berechtigten Interessen als
+        auch jener der Nutzer an einem Schutz vor Missbrauch und sonstiger
+        unbefugter Nutzung. Eine Weitergabe dieser Daten an Dritte erfolgt
+        grunds&#xE4;tzlich nicht, es sei denn, sie ist zur Verfolgung unserer
+        Anspr&#xFC;che erforderlich oder es besteht eine gesetzliche
+        Verpflichtung hierzu.
+      </p>
+      <p>
+        Die Nutzer k&#xF6;nnen &#xFC;ber Vorg&#xE4;nge, die f&#xFC;r deren
+        Nutzerkonto relevant sind, wie z.B. technische &#xC4;nderungen, per
+        E-Mail informiert werden.
+      </p>
+      <ul>
+        <li>
+          <strong>Verarbeitete Datenarten:</strong> Bestandsdaten (z.B. Namen,
+          Adressen); Kontaktdaten (z.B. E-Mail, Telefonnummern); Inhaltsdaten
+          (z.B. Eingaben in Onlineformularen); Meta-/Kommunikationsdaten (z.B.
+          Ger&#xE4;te-Informationen, IP-Adressen).
+        </li>
+        <li>
+          <strong>Betroffene Personen:</strong> Nutzer (z.B. Webseitenbesucher,
+          Nutzer von Onlinediensten).
+        </li>
+        <li>
+          <strong>Zwecke der Verarbeitung:</strong> Erbringung vertraglicher
+          Leistungen und Kundenservice; Sicherheitsma&#xDF;nahmen; Verwaltung
+          und Beantwortung von Anfragen.
+        </li>
+        <li>
+          <strong>Rechtsgrundlagen:</strong> Vertragserf&#xFC;llung und
+          vorvertragliche Anfragen (Art. 6 Abs. 1 S. 1 lit. b. DSGVO);
+          Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f. DSGVO).
+        </li>
+      </ul>
+      <h2 class="mume-header" id="blogs-und-publikationsmedien">
+        Blogs und Publikationsmedien
+      </h2>
+
+      <p>
+        Wir nutzen Blogs oder vergleichbare Mittel der Onlinekommunikation und
+        Publikation (nachfolgend &quot;Publikationsmedium&quot;). Die Daten der
+        Leser werden f&#xFC;r die Zwecke des Publikationsmediums nur insoweit
+        verarbeitet, als es f&#xFC;r dessen Darstellung und die Kommunikation
+        zwischen Autoren und Lesern oder aus Gr&#xFC;nden der Sicherheit
+        erforderlich ist. Im &#xDC;brigen verweisen wir auf die Informationen
+        zur Verarbeitung der Besucher unseres Publikationsmediums im Rahmen
+        dieser Datenschutzhinweise.
+      </p>
+      <ul>
+        <li>
+          <strong>Verarbeitete Datenarten:</strong> Bestandsdaten (z.B. Namen,
+          Adressen); Kontaktdaten (z.B. E-Mail, Telefonnummern); Inhaltsdaten
+          (z.B. Eingaben in Onlineformularen); Nutzungsdaten (z.B. besuchte
+          Webseiten, Interesse an Inhalten, Zugriffszeiten);
+          Meta-/Kommunikationsdaten (z.B. Ger&#xE4;te-Informationen,
+          IP-Adressen).
+        </li>
+        <li>
+          <strong>Betroffene Personen:</strong> Nutzer (z.B. Webseitenbesucher,
+          Nutzer von Onlinediensten).
+        </li>
+        <li>
+          <strong>Zwecke der Verarbeitung:</strong> Erbringung vertraglicher
+          Leistungen und Kundenservice; Feedback (z.B. Sammeln von Feedback via
+          Online-Formular); Sicherheitsma&#xDF;nahmen; Verwaltung und
+          Beantwortung von Anfragen.
+        </li>
+        <li>
+          <strong>Rechtsgrundlagen:</strong> Vertragserf&#xFC;llung und
+          vorvertragliche Anfragen (Art. 6 Abs. 1 S. 1 lit. b. DSGVO);
+          Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f. DSGVO).
+        </li>
+      </ul>
+      <p>
+        <strong
+          >Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und
+          Diensten:</strong
+        >
+      </p>
+      <ul>
+        <li>
+          <strong>Kommentare und Beitr&#xE4;ge:</strong> Wenn Nutzer Kommentare
+          oder sonstige Beitr&#xE4;ge hinterlassen, k&#xF6;nnen ihre IP-Adressen
+          auf Grundlage unserer berechtigten Interessen gespeichert werden. Das
+          erfolgt zu unserer Sicherheit, falls jemand in Kommentaren und
+          Beitr&#xE4;gen widerrechtliche Inhalte hinterl&#xE4;sst
+          (Beleidigungen, verbotene politische Propaganda etc.). In diesem Fall
+          k&#xF6;nnen wir selbst f&#xFC;r den Kommentar oder Beitrag belangt
+          werden und sind daher an der Identit&#xE4;t des Verfassers
+          interessiert. Des Weiteren behalten wir uns vor, auf Grundlage unserer
+          berechtigten Interessen die Angaben der Nutzer zwecks Spamerkennung zu
+          verarbeiten. Auf derselben Rechtsgrundlage behalten wir uns vor, im
+          Fall von Umfragen die IP-Adressen der Nutzer f&#xFC;r deren Dauer zu
+          speichern und Cookies zu verwenden, um Mehrfachabstimmungen zu
+          vermeiden. Die im Rahmen der Kommentare und Beitr&#xE4;ge mitgeteilten
+          Informationen zur Person, etwaige Kontakt- sowie
+          Webseiteninformationen als auch die inhaltlichen Angaben werden von
+          uns bis zum Widerspruch der Nutzer dauerhaft gespeichert.
+        </li>
+      </ul>
+      <h2 class="mume-header" id="kontakt-und-anfragenverwaltung">
+        Kontakt- und Anfragenverwaltung
+      </h2>
+
+      <p>
+        Bei der Kontaktaufnahme mit uns (z.B. per Kontaktformular, E-Mail,
+        Telefon oder via soziale Medien) sowie im Rahmen bestehender Nutzer- und
+        Gesch&#xE4;ftsbeziehungen werden die Angaben der anfragenden Personen
+        verarbeitet soweit dies zur Beantwortung der Kontaktanfragen und
+        etwaiger angefragter Ma&#xDF;nahmen erforderlich ist.
+      </p>
+      <p>
+        Die Beantwortung der Kontaktanfragen sowie die Verwaltung von Kontakt-
+        und Anfragedaten im Rahmen von vertraglichen oder vorvertraglichen
+        Beziehungen erfolgt zur Erf&#xFC;llung unserer vertraglichen Pflichten
+        oder zur Beantwortung von (vor)vertraglichen Anfragen und im
+        &#xDC;brigen auf Grundlage der berechtigten Interessen an der
+        Beantwortung der Anfragen und Pflege von Nutzer- bzw.
+        Gesch&#xE4;ftsbeziehungen.
+      </p>
+      <ul>
+        <li>
+          <strong>Verarbeitete Datenarten:</strong> Bestandsdaten (z.B. Namen,
+          Adressen); Kontaktdaten (z.B. E-Mail, Telefonnummern); Inhaltsdaten
+          (z.B. Eingaben in Onlineformularen).
+        </li>
+        <li><strong>Betroffene Personen:</strong> Kommunikationspartner.</li>
+        <li>
+          <strong>Zwecke der Verarbeitung:</strong> Kontaktanfragen und
+          Kommunikation; Erbringung vertraglicher Leistungen und Kundenservice.
+        </li>
+        <li>
+          <strong>Rechtsgrundlagen:</strong> Vertragserf&#xFC;llung und
+          vorvertragliche Anfragen (Art. 6 Abs. 1 S. 1 lit. b. DSGVO);
+          Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f. DSGVO); Rechtliche
+          Verpflichtung (Art. 6 Abs. 1 S. 1 lit. c. DSGVO).
+        </li>
+      </ul>
+      <p>
+        <strong
+          >Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und
+          Diensten:</strong
+        >
+      </p>
+      <ul>
+        <li>
+          <strong>Kontaktformular:</strong> Wenn Nutzer &#xFC;ber unser
+          Kontaktformular, E-Mail oder andere Kommunikationswege mit uns in
+          Kontakt treten, verarbeiten wir die uns in diesem Zusammenhang
+          mitgeteilten Daten zur Bearbeitung des mitgeteilten Anliegens. Zu
+          diesem Zweck verarbeiten wir personenbezogene Daten im Rahmen
+          vorvertraglicher und vertraglicher Gesch&#xE4;ftsbeziehungen, soweit
+          dies zu deren Erf&#xFC;llung erforderlich ist und im &#xDC;brigen auf
+          Grundlage unserer berechtigten Interessen sowie der Interessen der
+          Kommunikationspartner an der Beantwortung der Anliegen und unserer
+          gesetzlichen Aufbewahrungspflichten.
+        </li>
+      </ul>
+      <h2
+        class="mume-header"
+        id="%C3%A4nderung-und-aktualisierung-der-datenschutzerkl%C3%A4rung"
+      >
+        &#xC4;nderung und Aktualisierung der Datenschutzerkl&#xE4;rung
+      </h2>
+
+      <p>
+        Wir bitten Sie, sich regelm&#xE4;&#xDF;ig &#xFC;ber den Inhalt unserer
+        Datenschutzerkl&#xE4;rung zu informieren. Wir passen die
+        Datenschutzerkl&#xE4;rung an, sobald die &#xC4;nderungen der von uns
+        durchgef&#xFC;hrten Datenverarbeitungen dies erforderlich machen. Wir
+        informieren Sie, sobald durch die &#xC4;nderungen eine
+        Mitwirkungshandlung Ihrerseits (z.B. Einwilligung) oder eine sonstige
+        individuelle Benachrichtigung erforderlich wird.
+      </p>
+      <p>
+        Sofern wir in dieser Datenschutzerkl&#xE4;rung Adressen und
+        Kontaktinformationen von Unternehmen und Organisationen angeben, bitten
+        wir zu beachten, dass die Adressen sich &#xFC;ber die Zeit &#xE4;ndern
+        k&#xF6;nnen und bitten die Angaben vor Kontaktaufnahme zu pr&#xFC;fen.
+      </p>
+      <h2 class="mume-header" id="rechte-der-betroffenen-personen">
+        Rechte der betroffenen Personen
+      </h2>
+
+      <p>
+        Ihnen stehen als Betroffene nach der DSGVO verschiedene Rechte zu, die
+        sich insbesondere aus Art. 15 bis 21 DSGVO ergeben:
+      </p>
+      <ul>
+        <li>
+          <strong
+            >Widerspruchsrecht: Sie haben das Recht, aus Gr&#xFC;nden, die sich
+            aus Ihrer besonderen Situation ergeben, jederzeit gegen die
+            Verarbeitung der Sie betreffenden personenbezogenen Daten, die
+            aufgrund von Art. 6 Abs. 1 lit. e oder f DSGVO erfolgt, Widerspruch
+            einzulegen; dies gilt auch f&#xFC;r ein auf diese Bestimmungen
+            gest&#xFC;tztes Profiling. Werden die Sie betreffenden
+            personenbezogenen Daten verarbeitet, um Direktwerbung zu betreiben,
+            haben Sie das Recht, jederzeit Widerspruch gegen die Verarbeitung
+            der Sie betreffenden personenbezogenen Daten zum Zwecke derartiger
+            Werbung einzulegen; dies gilt auch f&#xFC;r das Profiling, soweit es
+            mit solcher Direktwerbung in Verbindung steht.</strong
+          >
+        </li>
+        <li>
+          <strong>Widerrufsrecht bei Einwilligungen:</strong> Sie haben das
+          Recht, erteilte Einwilligungen jederzeit zu widerrufen.
+        </li>
+        <li>
+          <strong>Auskunftsrecht:</strong> Sie haben das Recht, eine
+          Best&#xE4;tigung dar&#xFC;ber zu verlangen, ob betreffende Daten
+          verarbeitet werden und auf Auskunft &#xFC;ber diese Daten sowie auf
+          weitere Informationen und Kopie der Daten entsprechend den
+          gesetzlichen Vorgaben.
+        </li>
+        <li>
+          <strong>Recht auf Berichtigung:</strong> Sie haben entsprechend den
+          gesetzlichen Vorgaben das Recht, die Vervollst&#xE4;ndigung der Sie
+          betreffenden Daten oder die Berichtigung der Sie betreffenden
+          unrichtigen Daten zu verlangen.
+        </li>
+        <li>
+          <strong
+            >Recht auf L&#xF6;schung und Einschr&#xE4;nkung der
+            Verarbeitung:</strong
+          >
+          Sie haben nach Ma&#xDF;gabe der gesetzlichen Vorgaben das Recht, zu
+          verlangen, dass Sie betreffende Daten unverz&#xFC;glich gel&#xF6;scht
+          werden, bzw. alternativ nach Ma&#xDF;gabe der gesetzlichen Vorgaben
+          eine Einschr&#xE4;nkung der Verarbeitung der Daten zu verlangen.
+        </li>
+        <li>
+          <strong>Recht auf Daten&#xFC;bertragbarkeit:</strong> Sie haben das
+          Recht, Sie betreffende Daten, die Sie uns bereitgestellt haben, nach
+          Ma&#xDF;gabe der gesetzlichen Vorgaben in einem strukturierten,
+          g&#xE4;ngigen und maschinenlesbaren Format zu erhalten oder deren
+          &#xDC;bermittlung an einen anderen Verantwortlichen zu fordern.
+        </li>
+        <li>
+          <strong>Beschwerde bei Aufsichtsbeh&#xF6;rde:</strong> Sie haben
+          unbeschadet eines anderweitigen verwaltungsrechtlichen oder
+          gerichtlichen Rechtsbehelfs das Recht auf Beschwerde bei einer
+          Aufsichtsbeh&#xF6;rde, insbesondere in dem Mitgliedstaat ihres
+          gew&#xF6;hnlichen Aufenthaltsorts, ihres Arbeitsplatzes oder des Orts
+          des mutma&#xDF;lichen Versto&#xDF;es, wenn Sie der Ansicht sind, dass
+          die Verarbeitung der Sie betreffenden personenbezogenen Daten gegen
+          die Vorgaben der DSGVO verst&#xF6;&#xDF;t.
+        </li>
+      </ul>
+      <h2 class="mume-header" id="begriffsdefinitionen">
+        Begriffsdefinitionen
+      </h2>
+
+      <p>
+        In diesem Abschnitt erhalten Sie eine &#xDC;bersicht &#xFC;ber die in
+        dieser Datenschutzerkl&#xE4;rung verwendeten Begrifflichkeiten. Viele
+        der Begriffe sind dem Gesetz entnommen und vor allem im Art. 4 DSGVO
+        definiert. Die gesetzlichen Definitionen sind verbindlich. Die
+        nachfolgenden Erl&#xE4;uterungen sollen dagegen vor allem dem
+        Verst&#xE4;ndnis dienen. Die Begriffe sind alphabetisch sortiert.
+      </p>
+      <ul>
+        <li>
+          <strong>Personenbezogene Daten:</strong> &quot;Personenbezogene
+          Daten&#x201C; sind alle Informationen, die sich auf eine
+          identifizierte oder identifizierbare nat&#xFC;rliche Person (im
+          Folgenden &quot;betroffene Person&#x201C;) beziehen; als
+          identifizierbar wird eine nat&#xFC;rliche Person angesehen, die direkt
+          oder indirekt, insbesondere mittels Zuordnung zu einer Kennung wie
+          einem Namen, zu einer Kennnummer, zu Standortdaten, zu einer
+          Online-Kennung (z.B. Cookie) oder zu einem oder mehreren besonderen
+          Merkmalen identifiziert werden kann, die Ausdruck der physischen,
+          physiologischen, genetischen, psychischen, wirtschaftlichen,
+          kulturellen oder sozialen Identit&#xE4;t dieser nat&#xFC;rlichen
+          Person sind.
+        </li>
+        <li>
+          <strong>Verantwortlicher:</strong> Als &quot;Verantwortlicher&#x201C;
+          wird die nat&#xFC;rliche oder juristische Person, Beh&#xF6;rde,
+          Einrichtung oder andere Stelle, die allein oder gemeinsam mit anderen
+          &#xFC;ber die Zwecke und Mittel der Verarbeitung von personenbezogenen
+          Daten entscheidet, bezeichnet.
+        </li>
+        <li>
+          <strong>Verarbeitung:</strong> &quot;Verarbeitung&quot; ist jeder mit
+          oder ohne Hilfe automatisierter Verfahren ausgef&#xFC;hrte Vorgang
+          oder jede solche Vorgangsreihe im Zusammenhang mit personenbezogenen
+          Daten. Der Begriff reicht weit und umfasst praktisch jeden Umgang mit
+          Daten, sei es das Erheben, das Auswerten, das Speichern, das
+          &#xDC;bermitteln oder das L&#xF6;schen.
+        </li>
+      </ul>
+      <h2 class="mume-header" id="quelle">Quelle</h2>
+
+      <p>
+        <a
+          href="https://datenschutz-generator.de/"
+          title="Rechtstext von Dr. Schwenke - f&#xFC;r weitere Informationen bitte anklicken."
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          ><img
+            src="https://datenschutz-generator.de/wp-content/plugins/ts-dsg/images/dsg-seal/dsg-seal-pp-de.png"
+            alt="Rechtstext von Dr. Schwenke - f&#xFC;r weitere Informationen bitte anklicken."
+            width="250"
+            height="250"
+        /></a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -96,7 +96,7 @@ Future<_sendFeedbackToServerStatus> _sendFeedbackToServer(
   http.Response? resp;
   try {
     resp = await http.post(
-      Uri.parse("https://angerapp-api.robertstuendl.com/feedback"),
+      Uri.parse("${AppManager.apiUrl}/feedback"),
       headers: {"content-type": "application/json"},
       body: json.encode({"content": feedback}),
     );

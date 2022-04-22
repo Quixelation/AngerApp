@@ -54,7 +54,7 @@ class PageTempUnderConstruction extends StatelessWidget {
                       child: const Opacity(
                         opacity: 0.6,
                         child: Text(
-                            "Wir arbeiten noch an dieser Seite. Erwarten Sie diese Seite in einer der nächsten Versionen.",
+                            "Wir arbeiten noch an dieser Seite. Erwarten Sie diese Seite in einer der nächsten Versionen. Vielen Dank für Ihr Verständnis.",
                             style: TextStyle(fontSize: 18)),
                       ),
                     ),

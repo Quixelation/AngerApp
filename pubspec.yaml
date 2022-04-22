@@ -32,7 +32,6 @@ dependencies:
   flutter_svg: ^0.23.0+1
   url_launcher: ^6.0.12
 
-  google_fonts: ^2.1.0
   flutter_markdown: ^0.6.8
   accordion: ^2.1.1
   expandable: ^5.0.1

@@ -25,8 +25,37 @@ class AppManager {
     initVpSettings(database);
     initCurrentClass(database);
   }
-  static String directusUrl = "https://angerapp-cms.robertstuendl.com/";
-  static String apiUrl = "https://angerapp-api.robertstuendl.com/";
+  static String directusUrl = (() {
+// TODO: Dynamic Check
+    final isRobertStuendlCom = false;
+
+    if (kIsWeb) {
+      if (isRobertStuendlCom) {
+        return "https://angerapp-cms.robertstuendl.com/";
+      } else {
+        if (kDebugMode) {
+          return "https://angerapp-cms.robertstuendl.com/";
+        } else {
+          return "/cms/";
+        }
+      }
+    } else {
+      return "https://angerapp-cms.robertstuendl.com/";
+    }
+  })();
+  static String apiUrl = (() {
+// TODO: Dynamic Check
+    final isRobertStuendlCom = false;
+    if (kIsWeb) {
+      if (isRobertStuendlCom) {
+        return "https://angerapp-api.robertstuendl.com/";
+      } else {
+        return "";
+      }
+    } else {
+      return "https://angerapp-api.robertstuendl.com/";
+    }
+  })();
   static final tables = _tableNames();
   static final stores = _stores();
   static final urls = _urlManager();
@@ -79,6 +108,7 @@ class _tableNames {
   final String lessontimes = "lessontimes";
 
   final String aushaenge = "aushaenge";
+  final String schwarzesBrett = "schwarzesBrett";
 
   List<String> get allTables {
     return [
@@ -94,6 +124,7 @@ class _tableNames {
       fcmSubscriptions,
       quickinfos,
       lessontimes,
+      schwarzesBrett,
       aushaenge
     ];
   }
@@ -116,6 +147,8 @@ class _stores {
   final lessontimes =
       stringMapStoreFactory.store(AppManager.tables.lessontimes);
   final aushaenge = stringMapStoreFactory.store(AppManager.tables.aushaenge);
+  final schwarzesBrett =
+      stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
 
   List<StoreRef> get allStores {
     return [
@@ -196,7 +229,7 @@ class _urlManager {
   String get feedback {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/feedback",
-        appUrl: "https://angerapp-api.robertstuendl.com/feedback",
+        appUrl: "${AppManager.apiUrl}/feedback",
         webDebugUrl: "http://localhost:8000/feedback");
   }
 

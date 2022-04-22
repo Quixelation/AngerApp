@@ -27,33 +27,35 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
     return DefaultTabController(
         length: loading ? 1 : files!.length,
         child: Scaffold(
-          appBar: AppBar(
-            title: Text(widget.aushang.name),
-            bottom: TabBar(
-              tabs: loading
-                  ? [
-                      const Tab(
-                        text: 'Lädt Dateien...',
-                      )
-                    ]
-                  : files!
-                      .map((e) => Tab(
-                            text: e.title,
-                          ))
-                      .toList(),
+            appBar: AppBar(
+              title: Text(widget.aushang.name),
             ),
-          ),
-          body: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            children: loading
-                ? [
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  ]
-                : files!.map((e) => renderFile(e)).toList(),
-          ),
-        ));
+            body: loading
+                ? Center(child: CircularProgressIndicator.adaptive())
+                : ListView(children: [
+                    Html(data: widget.aushang.textContent),
+                    SizedBox(height: 15),
+                    Padding(
+                        child: Text("Dateien",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold)),
+                        padding: EdgeInsets.only(left: 10)),
+                    for (var file in files!)
+                      ListTile(
+                          title: Text(file.title),
+                          leading: Icon(Icons.file_present),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Scaffold(
+                                        appBar: AppBar(title: Text(file.title)),
+                                        body:
+                                            Center(child: renderFile(file)))));
+                          })
+                  ])));
   }
 
   Widget renderFile(_AushangFile file) {

@@ -98,6 +98,9 @@ class _MyAppState extends State<MyApp> {
                     backgroundColor: const Color(0xff121212),
                     brightness: Brightness.dark))
             .copyWith(
+                textTheme: Theme.of(context).textTheme.apply(
+                      fontFamily: '--apple-system',
+                    ),
                 drawerTheme:
                     const DrawerThemeData(backgroundColor: Color(0xFF232323))),
         themeMode: ThemeMode.system,

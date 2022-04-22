@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:anger_buddy/components/responsive_home_layout.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
+import 'package:anger_buddy/logic/schwarzes_brett/schwarzes_brett.dart';
 import 'package:anger_buddy/logic/version_manager/version_manager.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vp_home_widget.dart';
 import 'package:anger_buddy/main.dart';
@@ -145,11 +146,14 @@ class _PageHomeState extends State<PageHome> {
 
             //   const _ServerStatusWidget(),
             // ]),
+
+            /// -> kleine Bildschirmgröße: 1 Spalte
             if (MediaQuery.of(context).size.width < 1080)
               Flex(
                   direction: Axis.vertical,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // SchwarzesBrettHome(),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
@@ -176,6 +180,9 @@ class _PageHomeState extends State<PageHome> {
                       child: const _ServerStatusWidget(),
                     ),
                   ])
+
+            /// TODO: Add Schwarzes Brett zu mittel und groß
+            /// -> mittlere Bildschirmgröße: 2 Spalten
             else if (MediaQuery.of(context).size.width < 1600)
               Flex(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,12 +218,15 @@ class _PageHomeState extends State<PageHome> {
                             padding: EdgeInsets.all(8),
                             child: const _NewsCard(),
                           ),
+                          // SchwarzesBrettHome(),
                         ],
                         direction: Axis.vertical,
                       ),
                     ),
                   ],
                   direction: Axis.horizontal)
+
+            /// -> große Bildschirmgröße: 3 Spalten
             else
               Flex(
                   crossAxisAlignment: CrossAxisAlignment.start,

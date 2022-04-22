@@ -155,19 +155,21 @@ class _PageKlausurenState extends State<PageKlausuren> {
         NoConnectionColumn(
           showImage: false,
           footerWidgets: [
-            Center(
-              child: OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      selectedClass = null;
-                    });
-                  },
-                  child: const Text("Filter zurücksetzen")),
-            )
+            if (selectedClass != null)
+              Center(
+                child: OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedClass = null;
+                      });
+                    },
+                    child: const Text("Filter zurücksetzen")),
+              )
           ],
           title: "Keine Prüfungen",
-          subtitle:
-              "Für die Klassenstufe $selectedClass wurden keine weiteren Prüfungen eingetragen",
+          subtitle: selectedClass == null
+              ? "Es wurden keine weiteren Prüfungen gefunden"
+              : "Für die Klassenstufe $selectedClass wurden keine weiteren Prüfungen eingetragen",
         )
       ]);
     }
