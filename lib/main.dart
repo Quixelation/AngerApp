@@ -1,3 +1,5 @@
+import 'dart:html' if (kIsWeb) '';
+
 import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
@@ -99,7 +101,12 @@ class _MyAppState extends State<MyApp> {
                     brightness: Brightness.dark))
             .copyWith(
                 textTheme: Theme.of(context).textTheme.apply(
-                      fontFamily: '--apple-system',
+                      fontFamily: kIsWeb &&
+                              (window?.navigator?.userAgent
+                                      ?.contains('OS 15_') ??
+                                  false)
+                          ? '-apple-system'
+                          : null,
                     ),
                 drawerTheme:
                     const DrawerThemeData(backgroundColor: Color(0xFF232323))),
