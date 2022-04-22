@@ -98,13 +98,15 @@ class _MyAppState extends State<MyApp> {
                     backgroundColor: const Color(0xff121212),
                     brightness: Brightness.dark))
             .copyWith(
-                textTheme: Theme.of(context).textTheme.apply(
-                      fontFamily: kIsWeb ? 'Montserrat' : null,
-                    ),
+                // textTheme: Theme.of(context).textTheme.apply(
+                //       fontFamily: kIsWeb ? 'Montserrat' : null,
+                //     ),
                 drawerTheme:
                     const DrawerThemeData(backgroundColor: Color(0xFF232323))),
         themeMode: ThemeMode.system,
-        home: const _IntroductionScreenSwitcher(),
+        home: DefaultTextStyle(
+            style: TextStyle(fontFamily: "Montserrat"),
+            child: const _IntroductionScreenSwitcher()),
       ),
     );
   }
