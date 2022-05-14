@@ -43,6 +43,7 @@ var serverStatusSubject = BehaviorSubject<ServerStatus>.seeded(
     ServerStatus(status: ServerStatusState.unknown, latency: null));
 
 Future<ServerStatus> loadServerStatus() async {
+  return;
   var status = await fetchCmsServerStatus();
   serverStatusSubject.add(status);
 
@@ -50,6 +51,7 @@ Future<ServerStatus> loadServerStatus() async {
 }
 
 void startServerStatusUpdates() {
+  return;
   loadServerStatus();
   Timer.periodic(const Duration(minutes: 1), (timer) async {
     await loadServerStatus();

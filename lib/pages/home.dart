@@ -173,12 +173,12 @@ class _PageHomeState extends State<PageHome> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                       child: const _NewsCard(),
-                    ),
+                    ),/*
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                       child: const _ServerStatusWidget(),
-                    ),
+                    ),*/
                   ])
 
             /// TODO: Add Schwarzes Brett zu mittel und groß
@@ -197,10 +197,10 @@ class _PageHomeState extends State<PageHome> {
                               child: const FerienCard()),
                           Padding(
                               padding: EdgeInsets.all(8),
-                              child: const EventsThisWeek()),
+                              child: const EventsThisWeek()),/*
                           Padding(
                               padding: EdgeInsets.all(8),
-                              child: const _ServerStatusWidget()),
+                              child: const _ServerStatusWidget())*/,
                         ],
                         direction: Axis.vertical,
                       ),
@@ -265,6 +265,7 @@ class _PageHomeState extends State<PageHome> {
                         direction: Axis.vertical,
                       ),
                     ),
+                    /*
                     Flexible(
                       flex: 1,
                       child: Flex(
@@ -277,7 +278,7 @@ class _PageHomeState extends State<PageHome> {
                         ],
                         direction: Axis.vertical,
                       ),
-                    ),
+                    ),*/
                   ],
                   direction: Axis.horizontal),
             /*  ResponsiveGridList(
@@ -740,7 +741,7 @@ class _KlausurTerminCard extends StatelessWidget {
     );
   }
 }
-
+/*
 class _ServerStatusWidget extends StatefulWidget {
   const _ServerStatusWidget({Key? key}) : super(key: key);
 
@@ -868,7 +869,7 @@ class __ServerStatusWidgetState extends State<_ServerStatusWidget> {
     );
   }
 }
-
+*/
 class _QuickInfosList extends StatefulWidget {
   const _QuickInfosList({Key? key}) : super(key: key);
 
