@@ -43,7 +43,7 @@ var serverStatusSubject = BehaviorSubject<ServerStatus>.seeded(
     ServerStatus(status: ServerStatusState.unknown, latency: null));
 
 Future<ServerStatus> loadServerStatus() async {
-  return;
+  return ServerStatus(status: ServerStatusState.unknown, latency: null);
   var status = await fetchCmsServerStatus();
   serverStatusSubject.add(status);
 
