@@ -5,7 +5,7 @@ const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
   "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "splash/style.css": "52f071ff809bd0f28c32b7a9bfa34419",
-"main.dart.js": "06de1a4edb45ea882da634a878ef49b3",
+"main.dart.js": "202705a7f8e891157b4f4a7eb863194f",
 "icons/Icon-144.png": "bebe1838d992097dbb9e47e91e564646",
 "icons/Icon-192.png": "e932707108441b0383a60941b601bcdf",
 "icons/Icon-72.png": "7a63a60f22b67be169289692a90ad892",
@@ -62,8 +62,8 @@ const RESOURCES = {
 "assets/assets/undraw/undraw_download.svg": "792d0dec6628964c8499cc777560834f",
 "assets/assets/mainLogo.png": "13c9a5f9b09f2585bad7c83f990200c4",
 "assets/assets/AngerWiki.jpg": "4dda104b0d6c3324c39438ae0d873e89",
-"index.html": "c33a43b60c1927410365ba30db0dc4c3",
-"/": "c33a43b60c1927410365ba30db0dc4c3",
+"index.html": "fa5e43f2f473e6db16f66e114ad3acb3",
+"/": "fa5e43f2f473e6db16f66e114ad3acb3",
 "terms.md": "2b765a95df00e0803f85daaf4bd559e6",
 "manifest.json": "8c59b471e5d308cd8701668aefffe548"
 };
