@@ -200,7 +200,7 @@ class _PageHomeState extends State<PageHome> {
                               child: const EventsThisWeek()),/*
                           Padding(
                               padding: EdgeInsets.all(8),
-                              child: const _ServerStatusWidget())*/,
+                              child: const _ServerStatusWidget())*/
                         ],
                         direction: Axis.vertical,
                       ),
