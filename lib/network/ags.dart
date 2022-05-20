@@ -115,7 +115,7 @@ Stream<AsyncDataResponse<List<AG>>> getAgs({bool? force = false}) async* {
         ageType: AsyncDataResponseAgeType.newData,
         loadingAction: AsyncDataResponseLoadingAction.none);
   } else if (force == true ||
-      lastSync.difference(DateTime.now()) > Duration(hours: 6)) {
+      lastSync.difference(DateTime.now()) > const Duration(hours: 6)) {
     yield AsyncDataResponse(
         data: await _getAgsFromDb(),
         ageType: AsyncDataResponseAgeType.oldData,

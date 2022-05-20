@@ -2,22 +2,17 @@ import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
 import 'package:anger_buddy/logic/notifications.dart';
-import 'package:anger_buddy/logic/version_manager/version_manager.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/pages/home.dart';
-import 'package:anger_buddy/pages/schulisches_overview.dart';
 import 'package:anger_buddy/partials/drawer.dart';
 import 'package:anger_buddy/partials/introduction_screen.dart';
 import 'package:anger_buddy/utils/logger.dart';
-import 'package:anger_buddy/utils/mini_utils.dart';
-import 'package:calendar_view/calendar_view.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'firebase_options.dart';
 
 GetIt getIt = GetIt.instance;
@@ -101,12 +96,13 @@ class _MyAppState extends State<MyApp> {
                 // textTheme: Theme.of(context).textTheme.apply(
                 //       fontFamily: kIsWeb ? 'Montserrat' : null,
                 //     ),
+
                 drawerTheme:
                     const DrawerThemeData(backgroundColor: Color(0xFF232323))),
         themeMode: ThemeMode.system,
-        home: DefaultTextStyle(
+        home: const DefaultTextStyle(
             style: TextStyle(fontFamily: "Montserrat"),
-            child: const _IntroductionScreenSwitcher()),
+            child: _IntroductionScreenSwitcher()),
       ),
     );
   }

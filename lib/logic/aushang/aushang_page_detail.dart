@@ -9,7 +9,7 @@ class PageAushangDetail extends StatefulWidget {
 }
 
 class _PageAushangDetailState extends State<PageAushangDetail> {
-  List<_AushangFile>? files = null;
+  List<_AushangFile>? files;
 
   @override
   void initState() {
@@ -31,11 +31,11 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
               title: Text(widget.aushang.name),
             ),
             body: loading
-                ? Center(child: CircularProgressIndicator.adaptive())
+                ? const Center(child: CircularProgressIndicator.adaptive())
                 : ListView(children: [
                     Html(data: widget.aushang.textContent),
-                    SizedBox(height: 15),
-                    Padding(
+                    const SizedBox(height: 15),
+                    const Padding(
                         child: Text("Dateien",
                             style: TextStyle(
                                 fontSize: 14,
@@ -45,7 +45,7 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
                     for (var file in files!)
                       ListTile(
                           title: Text(file.title),
-                          leading: Icon(Icons.file_present),
+                          leading: const Icon(Icons.file_present),
                           onTap: () {
                             Navigator.push(
                                 context,

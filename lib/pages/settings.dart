@@ -7,7 +7,6 @@ import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/pages/notifications.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:flutter/material.dart';
-import "package:anger_buddy/logic/current_class/current_class.dart";
 
 class PageSettings extends StatefulWidget {
   const PageSettings({Key? key}) : super(key: key);

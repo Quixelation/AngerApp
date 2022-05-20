@@ -5,7 +5,6 @@ import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
-import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:http/http.dart' as http;
 import 'package:sembast/sembast.dart';
@@ -16,7 +15,7 @@ class Ferien {
   final DateTime start;
   final DateTime end;
   late final Duration? diff;
-  late final Ferien_Status status;
+  late final FerienStatus status;
   Ferien(
       {required this.id,
       required this.name,
@@ -25,15 +24,15 @@ class Ferien {
     if (start.isAfter(DateTime.now())) {
       // Die Ferien haben noch nicht begonnen
       diff = start.difference(DateTime.now());
-      status = Ferien_Status.future;
+      status = FerienStatus.future;
     } else if (end.isAfter(DateTime.now())) {
       // Die Ferien haben bereits begonnen und laufen
       diff = end.difference(DateTime.now());
-      status = Ferien_Status.running;
+      status = FerienStatus.running;
     } else {
       diff = null;
       // Die Ferien sind in der vergangenheit
-      status = Ferien_Status.finished;
+      status = FerienStatus.finished;
     }
   }
 
@@ -52,7 +51,7 @@ class Ferien {
   }
 }
 
-enum Ferien_Status {
+enum FerienStatus {
   future,
   running,
   finished,
@@ -179,9 +178,9 @@ Stream<AsyncDataResponse<Ferien?>> getNextFerien({bool? force}) async* {
           loadingAction: AsyncDataResponseLoadingAction.none);
     }
   } else {
-    var dbFerien;
+    Ferien? dbFerien;
     try {
-      (await _getFerienFromDb())
+      dbFerien = (await _getFerienFromDb())
           .firstWhere((element) => element.end.isAfter(DateTime.now()));
     } catch (e) {
       logger.e("Error while getting ferien from db: $e");

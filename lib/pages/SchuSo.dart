@@ -68,7 +68,7 @@ class _BulletPoint extends StatelessWidget {
   }
 }
 
-var SchuSoPage = json.encode(
+var schuSoPage = json.encode(
   {
     "min_engine_major_version": 1,
     "version": 1,

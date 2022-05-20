@@ -23,7 +23,7 @@ class PageTempUnderConstruction extends StatelessWidget {
         appBar: dev
             ? null
             : AppBar(
-                title: Text("Wir arbeiten dran..."),
+                title: const Text("Wir arbeiten dran..."),
               ),
         body: dev
             ? page

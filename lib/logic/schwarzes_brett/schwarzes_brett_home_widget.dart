@@ -28,22 +28,22 @@ class _SchwarzesBrettHomeState extends State<SchwarzesBrettHome> {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 170),
+        constraints: const BoxConstraints(maxHeight: 170),
         child: _zettelListe?.data != null
-            ? (_zettelListe!.data.length == 0
-                ? SizedBox()
+            ? (_zettelListe!.data.isEmpty
+                ? const SizedBox()
                 : Scrollbar(
                     child: ListView(
                     children: [
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       for (var zettel in _zettelListe!.data)
                         buildZettel(zettel),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                     ],
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
                   )))
-            : Center(child: CircularProgressIndicator.adaptive()));
+            : const Center(child: CircularProgressIndicator.adaptive()));
   }
 
   Widget buildZettel(SchwarzesBrettZettel zettel) {
@@ -51,7 +51,7 @@ class _SchwarzesBrettHomeState extends State<SchwarzesBrettHome> {
         child: PopupMenuButton(
       tooltip: "Zettel Optionen",
       child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 350),
+          constraints: const BoxConstraints(maxWidth: 350),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -61,15 +61,15 @@ class _SchwarzesBrettHomeState extends State<SchwarzesBrettHome> {
                     ? Text(zettel.title!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold))
-                    : SizedBox(),
+                    : const SizedBox(),
                 SizedBox(height: 6),
                 Text(zettel.text,
                     softWrap: true,
                     maxLines: 4,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 15)),
+                    style: const TextStyle(fontSize: 15)),
               ],
             ),
           )),
@@ -79,7 +79,7 @@ class _SchwarzesBrettHomeState extends State<SchwarzesBrettHome> {
             value: 1,
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                children: const [
                   Icon(Icons.read_more),
                   SizedBox(width: 10),
                   Text("Weiterlesen")
@@ -87,14 +87,15 @@ class _SchwarzesBrettHomeState extends State<SchwarzesBrettHome> {
           ),
           PopupMenuItem(
             value: 2,
-            child:
-                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Icon(
-                Icons.visibility_off,
-              ),
-              SizedBox(width: 10),
-              Text("Verstecken")
-            ]),
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.visibility_off,
+                  ),
+                  SizedBox(width: 10),
+                  Text("Verstecken")
+                ]),
           ),
         ];
       },

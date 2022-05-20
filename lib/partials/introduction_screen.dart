@@ -43,7 +43,7 @@ class _AngerAppIntroductionScreenState
         PageViewModel(
           title: "Willkommen",
           bodyWidget: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 500),
+            constraints: const BoxConstraints(maxWidth: 500),
             child: const Text(
               "Vielen Dank, dass du die App installiert hast. Hier eine kleine Einführung, bevor wir loslegen können...",
               style: TextStyle(fontSize: 17),
@@ -56,7 +56,7 @@ class _AngerAppIntroductionScreenState
         PageViewModel(
           title: "Hinweis",
           bodyWidget: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 500),
+            constraints: const BoxConstraints(maxWidth: 500),
             child: const Text(
               "Diese App ist (bis auf weiteres) keine offizielle App. Somit können wir keine Garantie für die Richtigkeit der hier angezeigten Daten bieten! (Obwohl ich mein bestes gebe)",
               style: TextStyle(fontSize: 17),
@@ -70,7 +70,7 @@ class _AngerAppIntroductionScreenState
         PageViewModel(
           title: "Entwicklungsversion",
           bodyWidget: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 500),
+            constraints: const BoxConstraints(maxWidth: 500),
             child: const Text(
               "Diese App befindet sich noch in der Entwicklungsphase. Falls Bugs oder Rechtschreibfehler auftreten sollten (auch wenn du dir nicht sicher bist), würdest ich mich sehr über einen Hinweis per WhatsApp oder per Email (angerapp@robertstuendl.com) freuen.",
               style: TextStyle(fontSize: 17),
@@ -97,7 +97,7 @@ class _AngerAppIntroductionScreenState
         PageViewModel(
           title: "Rechtliches",
           bodyWidget: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 500),
+            constraints: const BoxConstraints(maxWidth: 500),
             child: _markdownLegalData == null
                 ? const Text(
                     "Warten Sie, bis der Text geladen hat!",

@@ -1,20 +1,15 @@
 import 'dart:async';
-import 'package:anger_buddy/components/responsive_home_layout.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
-import 'package:anger_buddy/logic/schwarzes_brett/schwarzes_brett.dart';
 import 'package:anger_buddy/logic/version_manager/version_manager.dart';
-import 'package:anger_buddy/logic/vertretungsplan/vp_home_widget.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/network/ferien.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/network/news.dart';
 import 'package:anger_buddy/network/quickinfos.dart';
-import 'package:anger_buddy/network/serverstatus.dart';
 import 'package:anger_buddy/pages/news.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/pages/notifications.dart';
-import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
@@ -24,7 +19,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:intl/intl.dart';
-import 'package:responsive_grid/responsive_grid.dart';
 
 class PageHome extends StatefulWidget {
   const PageHome({Key? key}) : super(key: key);
@@ -120,7 +114,7 @@ class _PageHomeState extends State<PageHome> {
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [StretchMode.zoomBackground],
               background: Container(
-                color: Theme.of(context).colorScheme.primaryVariant,
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
               // collapseMode: CollapseMode.pin,
               title: const Text("Anger"),
@@ -152,12 +146,12 @@ class _PageHomeState extends State<PageHome> {
               Flex(
                   direction: Axis.vertical,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: const [
                     // SchwarzesBrettHome(),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: const FerienCard(),
+                      child: FerienCard(),
                     ),
                     Padding(
                       padding:
@@ -167,13 +161,13 @@ class _PageHomeState extends State<PageHome> {
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: const EventsThisWeek(),
+                      child: EventsThisWeek(),
                     ),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: const _NewsCard(),
-                    ),/*
+                      child: _NewsCard(),
+                    ), /*
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
@@ -191,13 +185,13 @@ class _PageHomeState extends State<PageHome> {
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: const [
+                          Padding(
+                              padding: EdgeInsets.all(8), child: FerienCard()),
                           Padding(
                               padding: EdgeInsets.all(8),
-                              child: const FerienCard()),
-                          Padding(
-                              padding: EdgeInsets.all(8),
-                              child: const EventsThisWeek()),/*
+                              child:
+                                  EventsThisWeek()), /*
                           Padding(
                               padding: EdgeInsets.all(8),
                               child: const _ServerStatusWidget())*/
@@ -209,14 +203,14 @@ class _PageHomeState extends State<PageHome> {
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: const [
                           Padding(
                             padding: EdgeInsets.all(8),
                             child: _PinnedKlausurenList(),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8),
-                            child: const _NewsCard(),
+                            child: _NewsCard(),
                           ),
                           // SchwarzesBrettHome(),
                         ],
@@ -235,14 +229,14 @@ class _PageHomeState extends State<PageHome> {
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: const [
                           Padding(
                             padding: EdgeInsets.all(8),
-                            child: const FerienCard(),
+                            child: FerienCard(),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8),
-                            child: const _NewsCard(),
+                            child: _NewsCard(),
                           ),
                         ],
                         direction: Axis.vertical,
@@ -252,14 +246,14 @@ class _PageHomeState extends State<PageHome> {
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: const [
                           Padding(
                             padding: EdgeInsets.all(8),
                             child: _PinnedKlausurenList(),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8),
-                            child: const EventsThisWeek(),
+                            child: EventsThisWeek(),
                           ),
                         ],
                         direction: Axis.vertical,
@@ -398,7 +392,7 @@ class _WelcomeTextState extends State<WelcomeText> {
 }
 
 class _PinnedKlausurenList extends StatefulWidget {
-  _PinnedKlausurenList({
+  const _PinnedKlausurenList({
     Key? key,
   }) : super();
 
@@ -461,7 +455,7 @@ class _FerienCardState extends State<FerienCard> {
     super.initState();
     ferienSub = getNextFerien().listen((event) {
       printInDebug(event.data?.name);
-      if (event.data?.status != Ferien_Status.finished &&
+      if (event.data?.status != FerienStatus.finished &&
           event.data?.diff != null) {
         setState(() {
           data = event;
@@ -513,16 +507,16 @@ class _FerienCardState extends State<FerienCard> {
                               Opacity(
                                 opacity: 0.87,
                                 child: Text(
-                                  "${data!.data!.status == Ferien_Status.future ? "bis " : ""}${data!.data!.name} ${data!.data!.status == Ferien_Status.running ? "übrig" : ""}",
+                                  "${data!.data!.status == FerienStatus.future ? "bis " : ""}${data!.data!.name} ${data!.data!.status == FerienStatus.running ? "übrig" : ""}",
                                   style: const TextStyle(fontSize: 15),
                                 ),
                               )
                             ]),
                       ]),
                 ),
-                if (data!.data!.status == Ferien_Status.running)
+                if (data!.data!.status == FerienStatus.running)
                   const SizedBox(height: 30),
-                if (data!.data!.status == Ferien_Status.running)
+                if (data!.data!.status == FerienStatus.running)
                   Opacity(
                     opacity: 0.87,
                     child: Column(
@@ -741,6 +735,7 @@ class _KlausurTerminCard extends StatelessWidget {
     );
   }
 }
+
 /*
 class _ServerStatusWidget extends StatefulWidget {
   const _ServerStatusWidget({Key? key}) : super(key: key);

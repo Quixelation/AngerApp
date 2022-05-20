@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-final OberstufePage = json.encode(
+final oberstufePage = json.encode(
   {
     "min_engine_major_version": 1,
     "version": 1,

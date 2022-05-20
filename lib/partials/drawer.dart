@@ -68,7 +68,7 @@ class MainDrawer extends StatelessWidget {
                     onTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => PageCurrentClass(),
+                        builder: (context) => const PageCurrentClass(),
                       );
                     },
                     child: Padding(
@@ -145,7 +145,7 @@ class MainDrawer extends StatelessWidget {
           const Divider(),
           _Category("Schule", [
             const _DrawerLink(
-              WIP: true,
+              wip: true,
               title: "Schülerrat",
               icon: Icons.groups,
               page: PageTempUnderConstruction(),
@@ -158,7 +158,7 @@ class MainDrawer extends StatelessWidget {
             const _DrawerLink(
               title: "Stundenzeiten",
               icon: Icons.access_time,
-              WIP: true,
+              wip: true,
               page: PageTempUnderConstruction(
                 page: PageLessonTimes(),
               ),
@@ -166,7 +166,7 @@ class MainDrawer extends StatelessWidget {
             _DrawerLink(
               title: "SchuSo",
               icon: Icons.person,
-              page: parsePage(SchuSoPage),
+              page: parsePage(schuSoPage),
             ),
             const _DrawerLink(
               title: "AGs",
@@ -182,11 +182,11 @@ class MainDrawer extends StatelessWidget {
           const Divider(),
           _Category("Oberstufe", [
             _DrawerLink(
-              WIP: true,
+              wip: true,
               title: "Oberstufe",
               icon: Icons.info,
               page: PageTempUnderConstruction(
-                page: parsePage(OberstufePage),
+                page: parsePage(oberstufePage),
                 footerWidgets: const [
                   Text(
                       "Hier erscheinen später Informationen zu der Oberstufe: Notensystem, Kurse, usw.")
@@ -194,7 +194,7 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
             const _DrawerLink(
-              WIP: true,
+              wip: true,
               title: "Seminarfach",
               icon: Icons.info,
               page: PageTempUnderConstruction(
@@ -204,7 +204,7 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
             const _DrawerLink(
-              WIP: true,
+              wip: true,
               title: "Abitur",
               icon: Icons.info,
               page: PageTempUnderConstruction(
@@ -323,19 +323,19 @@ class _DrawerLink extends StatelessWidget {
   final String title;
   final Widget? page;
   final IconData icon;
-  final bool WIP;
+  final bool wip;
   const _DrawerLink(
       {Key? key,
       required this.title,
       this.page,
       required this.icon,
-      this.WIP = false})
+      this.wip = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Opacity(
-      opacity: WIP ? 0.5 : 1,
+      opacity: wip ? 0.5 : 1,
       child: ListTile(
         title: Text(title),
         leading: Icon(icon),

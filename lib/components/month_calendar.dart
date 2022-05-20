@@ -26,18 +26,18 @@ class _MonthCalendarState extends State<MonthCalendar> {
                     flex: 1,
                     child: Flex(
                       direction: Axis.vertical,
-                      children: [
+                      children: const [
                         Card(
                           child: Text('Card 1'),
                         ),
                       ],
                     )),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
+                const Flexible(flex: 1, child: FlutterLogo()),
+                const Flexible(flex: 1, child: FlutterLogo()),
+                const Flexible(flex: 1, child: FlutterLogo()),
+                const Flexible(flex: 1, child: FlutterLogo()),
+                const Flexible(flex: 1, child: FlutterLogo()),
+                const Flexible(flex: 1, child: FlutterLogo()),
               ],
             )),
         Flexible(
@@ -45,22 +45,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
             child: Flex(
               mainAxisSize: MainAxisSize.max,
               direction: Axis.horizontal,
-              children: [
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-                Flexible(flex: 1, child: FlutterLogo()),
-              ],
-            )),
-        Flexible(
-            flex: 1,
-            child: Flex(
-              mainAxisSize: MainAxisSize.max,
-              direction: Axis.horizontal,
-              children: [
+              children: const [
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
@@ -75,7 +60,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
             child: Flex(
               mainAxisSize: MainAxisSize.max,
               direction: Axis.horizontal,
-              children: [
+              children: const [
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
@@ -90,7 +75,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
             child: Flex(
               mainAxisSize: MainAxisSize.max,
               direction: Axis.horizontal,
-              children: [
+              children: const [
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
@@ -105,7 +90,22 @@ class _MonthCalendarState extends State<MonthCalendar> {
             child: Flex(
               mainAxisSize: MainAxisSize.max,
               direction: Axis.horizontal,
-              children: [
+              children: const [
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+              ],
+            )),
+        Flexible(
+            flex: 1,
+            child: Flex(
+              mainAxisSize: MainAxisSize.max,
+              direction: Axis.horizontal,
+              children: const [
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),

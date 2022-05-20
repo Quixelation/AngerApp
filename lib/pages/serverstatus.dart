@@ -10,7 +10,7 @@ class PageServerStatus extends StatelessWidget {
           title: const Text('Server Status'),
         ),
         body: ListView(
-          children: [],
+          children: const [],
         ));
   }
 }

@@ -82,10 +82,6 @@ Future<List<NewsApiDataElement>> fetchNewsApi({int? page = 1}) async {
   SyncManager.setLastSync("news");
   var sorted = sortNewsData(outputList);
 
-  sorted.forEach((element) {
-    print(element.pubDate);
-  });
-
   return sorted;
 }
 

@@ -98,9 +98,7 @@ Future<bool> mailListLogin(String passcode) async {
     if (response.headers["set-cookie"] != null) {
       cookie = getCookie(_wpMailCookieName, response.headers["set-cookie"]!);
     } else if (response.body != null && response.body != "") {
-      print("BBBBBPOOODY: " + response.body);
       cookie = getCookie(_wpMailCookieName, response.body);
-      print("BBBBBPOOODYCookie: " + (cookie ?? ""));
     } else {
       return false;
     }

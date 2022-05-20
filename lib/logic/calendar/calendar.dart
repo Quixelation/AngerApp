@@ -84,7 +84,7 @@ Future<List<EventData>> _fetchAllCals() async {
       events.addAll(future);
     }
 
-    var appManager = await getIt.get<AppManager>();
+    var appManager = getIt.get<AppManager>();
 
     await appManager.db.transaction((transaction) async {
       await AppManager.stores.events.delete(transaction);
