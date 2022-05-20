@@ -129,18 +129,18 @@ class _IntroductionScreenSwitcher extends StatefulWidget {
 
 class _IntroductionScreenSwitcherState
     extends State<_IntroductionScreenSwitcher> {
-  bool? _needToShowIntroScreen;
+  bool? _needToShowIntroScreen = false;
 
   @override
   void initState() {
     super.initState();
 
-    getAlreadyHasSeenIntroductionScreen().then((value) {
-      printInDebug("Switcher Val: $value");
-      setState(() {
-        _needToShowIntroScreen = !value;
-      });
-    });
+    // getAlreadyHasSeenIntroductionScreen().then((value) {
+    //   printInDebug("Switcher Val: $value");
+    //   setState(() {
+    //     _needToShowIntroScreen = !value;
+    //   });
+    // });
   }
 
   @override
