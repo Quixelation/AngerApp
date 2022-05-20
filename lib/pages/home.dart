@@ -103,9 +103,30 @@ class _PageHomeState extends State<PageHome> {
                   onPressed: () {
                     Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (ctx) =>
-                                const PageNotificationSettings()));
+                        kIsWeb
+                            ? PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const PageNotificationSettings(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  // const begin = Offset(0.0, 1.0);
+                                  const begin = Offset.zero;
+                                  const end = Offset.zero;
+                                  const curve = Curves.ease;
+
+                                  var tween = Tween(begin: begin, end: end)
+                                      .chain(CurveTween(curve: curve));
+
+                                  return SlideTransition(
+                                    position: animation.drive(tween),
+                                    child: child,
+                                  );
+                                },
+                              )
+                            : MaterialPageRoute(
+                                builder: (context) =>
+                                    const PageNotificationSettings()));
                   },
                 ),
               ),
