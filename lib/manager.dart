@@ -30,7 +30,7 @@ class AppManager {
     final isRobertStuendlCom = false;
 
     if (kIsWeb) {
-      if (isRobertStuendlCom) {
+      if (kDebugMode) {
         return "https://angerapp-cms.robertstuendl.com/";
       } else {
         if (kDebugMode) {
@@ -40,7 +40,7 @@ class AppManager {
         }
       }
     } else {
-      return "https://angerapp-cms.robertstuendl.com/";
+      return "https://angerapp.angergymnasium.jena.de/cms/";
     }
   })();
   static String apiUrl = (() {
@@ -53,7 +53,7 @@ class AppManager {
         return "";
       }
     } else {
-      return "https://angerapp-api.robertstuendl.com/";
+      return "https://angerapp.angergymnasium.jena.de/";
     }
   })();
   static final tables = _tableNames();
