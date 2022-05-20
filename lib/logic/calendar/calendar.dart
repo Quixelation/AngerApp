@@ -77,8 +77,20 @@ class EventData {
 
 Future<List<EventData>> _fetchAllCals() async {
   try {
-    var eventFutures = await Future.wait<List<EventData>>(
-        [_fetchGcalendarData(), _fetchCmsCal()]);
+    Future<List<EventData>> createErrorSafeFutureWrapper(
+        Future<List<EventData>> Function() T) async {
+      try {
+        return await T();
+      } catch (e) {
+        logger.e("Could not load EventData from server");
+        return [];
+      }
+    }
+
+    var eventFutures = await Future.wait<List<EventData>>([
+      createErrorSafeFutureWrapper(_fetchGcalendarData),
+      createErrorSafeFutureWrapper(_fetchCmsCal)
+    ]);
     List<EventData> events = [];
     for (var future in eventFutures) {
       events.addAll(future);
