@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
 import 'firebase_options.dart';
+import "package:universal_html/html.dart";
 
 GetIt getIt = GetIt.instance;
 
@@ -76,29 +77,32 @@ class _MyAppState extends State<MyApp> {
     return FeatureDiscovery(
       child: MaterialApp(
         title: 'AngerApp',
-        theme: ThemeData.from(
-            colorScheme: ColorScheme.fromSwatch(
-                primarySwatch: mainColor.color,
-                accentColor: mainColor.accentColor,
-                primaryColorDark: mainColor.color.shade700,
-                backgroundColor:
-                    Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
-                brightness: Brightness.light)),
-        darkTheme: ThemeData.from(
-                colorScheme: ColorScheme.fromSwatch(
-                    primarySwatch: mainColor.color,
-                    accentColor: mainColor.accentColor,
-                    cardColor: const Color(0xff151515),
-                    primaryColorDark: mainColor.color.shade700,
-                    backgroundColor: const Color(0xff121212),
-                    brightness: Brightness.dark))
-            .copyWith(
-                // textTheme: Theme.of(context).textTheme.apply(
-                //       fontFamily: kIsWeb ? 'Montserrat' : null,
-                //     ),
-
-                drawerTheme:
-                    const DrawerThemeData(backgroundColor: Color(0xFF232323))),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch(
+              primarySwatch: mainColor.color,
+              accentColor: mainColor.accentColor,
+              primaryColorDark: mainColor.color.shade700,
+              backgroundColor:
+                  Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
+              brightness: Brightness.light),
+          fontFamily: kIsWeb && window.navigator.userAgent.contains('OS 15_')
+              ? '-apple-system'
+              : null,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch(
+              primarySwatch: mainColor.color,
+              accentColor: mainColor.accentColor,
+              cardColor: const Color(0xff151515),
+              primaryColorDark: mainColor.color.shade700,
+              backgroundColor: const Color(0xff121212),
+              brightness: Brightness.dark),
+          drawerTheme:
+              const DrawerThemeData(backgroundColor: Color(0xFF232323)),
+          fontFamily: kIsWeb && window.navigator.userAgent.contains('OS 15_')
+              ? '-apple-system'
+              : null,
+        ),
         themeMode: ThemeMode.system,
         home: const DefaultTextStyle(
             style: TextStyle(fontFamily: "Montserrat"),
