@@ -120,31 +120,16 @@ class _PageVertretungsplanDetailState
                       return [Container()];
                     }
                   })(),
-                  ...(() {
-                    List<Widget> output = [];
-                    for (var verboseKey in detailData!.details.verbose.keys) {
-                      output.add(BlockTitle(verboseKey));
-                      output.add(
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Text(detailData!
-                                  .details.verbose[verboseKey]!
-                                  .join(", ")),
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                    return output;
-                  })(),
                   if (detailData!.details.infos.isNotEmpty) ...[
                     const BlockTitle("Infos"),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          side: BorderSide(
+                              color: Theme.of(context).primaryColor, width: 1),
+                        ),
                         child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -175,6 +160,27 @@ class _PageVertretungsplanDetailState
                       ),
                     ),
                   ],
+                  ...(() {
+                    List<Widget> output = [];
+
+                    for (var verboseKey in detailData!.details.verbose.keys) {
+                      output.add(BlockTitle(verboseKey));
+                      output.add(
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(detailData!
+                                  .details.verbose[verboseKey]!
+                                  .join(", ")),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return output;
+                  })(),
                   const BlockTitle("Vertretung"),
                   ...detailData!.details.vertretung
                       .map(
