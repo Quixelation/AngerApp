@@ -33,11 +33,7 @@ class AppManager {
       if (kDebugMode) {
         return "https://angerapp-cms.robertstuendl.com/";
       } else {
-        if (kDebugMode) {
-          return "https://angerapp-cms.robertstuendl.com/";
-        } else {
-          return "/cms/";
-        }
+        return "/cms/";
       }
     } else {
       return "https://angerapp.angergymnasium.jena.de/cms/";
