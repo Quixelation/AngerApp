@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
 import 'firebase_options.dart';
-import "package:universal_html/html.dart";
+import "package:universal_html/html.dart" as html;
 
 GetIt getIt = GetIt.instance;
 
