@@ -103,9 +103,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'AngerApp',
         theme: lightTheme.copyWith(
-          textTheme: lightTheme.textTheme.apply(
-            fontFamily: fontFamily,
-          ),
+          textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
           primaryTextTheme: lightTheme.textTheme.apply(
             fontFamily: fontFamily,
           ),

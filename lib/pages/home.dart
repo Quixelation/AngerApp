@@ -138,7 +138,11 @@ class _PageHomeState extends State<PageHome> {
                 color: Theme.of(context).colorScheme.primaryContainer,
               ),
               // collapseMode: CollapseMode.pin,
-              title: const Text("Anger"),
+              title: Text(
+                "Anger",
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground),
+              ),
             ),
             expandedHeight: 150,
           ),
