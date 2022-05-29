@@ -67,7 +67,23 @@ class _PageAushangListState extends State<PageAushangList> {
                   subtitle:
                       "Bitte überprüfe deine Internet-Verbindung und versuche es in ein paar Minuten erneut. Sollte das Problem bestehen bleiben, dann wende dich bitte an angerapp@robertstuendl.com",
                 )
-              else ...[const SizedBox(height: 16), ...buildAushangList()]
+              else if (data!.data.isEmpty) ...[
+                const SizedBox(height: 32),
+                const Center(
+                    child: Opacity(
+                  opacity: 0.57,
+                  child: Text(
+                    "Keine Aushänge vorhanden",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                )),
+              ] else ...[
+                const SizedBox(height: 16),
+                ...buildAushangList()
+              ]
             ]),
     );
   }
