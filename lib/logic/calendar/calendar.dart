@@ -61,13 +61,15 @@ class EventData {
       : id = dbJson["id"].toString(),
         type = eventType.normal,
         dateFrom = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(dbJson["date_from"].toString())),
-        title = dbJson["title"].toString(),
-        desc = dbJson["desc"].toString(),
+                int.parse(dbJson["date_from"].toString()))
+            .toLocal(),
         dateTo = dbJson["date_to"].toString().trim() == "0"
             ? null
             : DateTime.fromMillisecondsSinceEpoch(
-                int.parse(dbJson["date_to"].toString()));
+                    int.parse(dbJson["date_to"].toString()))
+                .toUtc(),
+        title = dbJson["title"].toString(),
+        desc = dbJson["desc"].toString();
 
   @override
   String toString() {
