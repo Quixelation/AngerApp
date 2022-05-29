@@ -74,34 +74,57 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     precacheImage(const AssetImage("assets/AngerWiki.jpg"), context);
 
+    var fontFamily =
+        kIsWeb && html.window.navigator.userAgent.contains('OS 15_')
+            ? '-apple-system'
+            : null;
+
+    var lightTheme = ThemeData.from(
+      colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: mainColor.color,
+          accentColor: mainColor.accentColor,
+          primaryColorDark: mainColor.color.shade700,
+          backgroundColor:
+              Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
+          brightness: Brightness.light),
+    );
+
+    var darkTheme = ThemeData.from(
+      colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: mainColor.color,
+          accentColor: mainColor.accentColor,
+          cardColor: const Color(0xff151515),
+          primaryColorDark: mainColor.color.shade700,
+          backgroundColor: const Color(0xff121212),
+          brightness: Brightness.dark),
+    );
+
     return FeatureDiscovery(
       child: MaterialApp(
         title: 'AngerApp',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: mainColor.color,
-              accentColor: mainColor.accentColor,
-              primaryColorDark: mainColor.color.shade700,
-              backgroundColor:
-                  Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
-              brightness: Brightness.light),
-          fontFamily: kIsWeb && window.navigator.userAgent.contains('OS 15_')
-              ? '-apple-system'
-              : null,
+        theme: lightTheme.copyWith(
+          textTheme: lightTheme.textTheme.apply(
+            fontFamily: fontFamily,
+          ),
+          primaryTextTheme: lightTheme.textTheme.apply(
+            fontFamily: fontFamily,
+          ),
+          accentTextTheme: lightTheme.textTheme.apply(
+            fontFamily: fontFamily,
+          ),
         ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: mainColor.color,
-              accentColor: mainColor.accentColor,
-              cardColor: const Color(0xff151515),
-              primaryColorDark: mainColor.color.shade700,
-              backgroundColor: const Color(0xff121212),
-              brightness: Brightness.dark),
+        darkTheme: darkTheme.copyWith(
           drawerTheme:
               const DrawerThemeData(backgroundColor: Color(0xFF232323)),
-          fontFamily: kIsWeb && window.navigator.userAgent.contains('OS 15_')
-              ? '-apple-system'
-              : null,
+          textTheme: darkTheme.textTheme.apply(
+            fontFamily: fontFamily,
+          ),
+          primaryTextTheme: darkTheme.textTheme.apply(
+            fontFamily: fontFamily,
+          ),
+          accentTextTheme: darkTheme.textTheme.apply(
+            fontFamily: fontFamily,
+          ),
         ),
         themeMode: ThemeMode.system,
         home: const DefaultTextStyle(
