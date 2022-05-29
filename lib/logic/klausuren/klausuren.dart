@@ -38,6 +38,11 @@ class Klausur {
         type: eventType.klausur,
         info: {"klasse": klassenstufe, "klasse_infused": true});
   }
+
+  @override
+  String toString() {
+    return "$name ($klassenstufe.)";
+  }
 }
 
 Future<AsyncDataResponse<List<Klausur>?>> fetchKlausuren(
@@ -90,6 +95,7 @@ Future<AsyncDataResponse<List<Klausur>?>> fetchKlausuren(
         SyncManager.setLastSync("klausuren");
       }
       klausuren.sort((a, b) => a.date.compareTo(b.date));
+
       return AsyncDataResponse(
           data: klausuren, loadingAction: AsyncDataResponseLoadingAction.none);
     } else {
