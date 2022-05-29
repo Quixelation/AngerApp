@@ -21,7 +21,7 @@ class AsyncDataResponse<T> {
   final T data;
   @deprecated
   final AsyncDataResponseAgeType? ageType;
-  final AsyncDataResponseLoadingAction loadingAction;
+  AsyncDataResponseLoadingAction loadingAction;
   final bool? allowReload;
   final bool error;
 

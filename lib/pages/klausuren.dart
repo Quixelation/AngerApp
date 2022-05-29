@@ -21,7 +21,12 @@ class _PageKlausurenState extends State<PageKlausuren> {
   @override
   void initState() {
     super.initState();
+    loadKlausuren();
+  }
 
+  void loadKlausuren() {
+    klausurenResp?.loadingAction =
+        AsyncDataResponseLoadingAction.currentlyLoading;
     fetchKlausuren(null).then((value) {
       if (mounted) {
         setState(() {
@@ -75,6 +80,14 @@ class _PageKlausurenState extends State<PageKlausuren> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Klausuren'),
+          actions: [
+            IconButton(
+              enableFeedback: klausurenResp?.loadingAction !=
+                  AsyncDataResponseLoadingAction.currentlyLoading,
+              icon: const Icon(Icons.refresh),
+              onPressed: () => loadKlausuren(),
+            ),
+          ],
         ),
         body: klausurenResp == null
             ? const Center(
