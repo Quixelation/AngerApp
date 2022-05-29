@@ -24,3 +24,10 @@ doc/api/
 
 .env
 .flutter-plugins-dependencies
+
+
+/macos
+/linux
+/windows
+assets/.DS_Store
+.DS_Store
