@@ -28,7 +28,7 @@ class AppManager {
   }
   static String directusUrl = (() {
     final isRobertStuendlCom =
-        uhtml.window.location.host == "robertstuendl.com";
+        uhtml.window.location.host.endsWith("robertstuendl.com");
 
     if (kIsWeb) {
       if (kDebugMode) {
@@ -45,7 +45,7 @@ class AppManager {
   })();
   static String apiUrl = (() {
     final isRobertStuendlCom =
-        uhtml.window.location.host == "robertstuendl.com";
+        uhtml.window.location.host.endsWith("robertstuendl.com");
 
     if (kIsWeb) {
       if (kDebugMode) {
