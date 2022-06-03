@@ -35,7 +35,7 @@ class AppManager {
         return "https://angerapp-cms.robertstuendl.com/";
       } else {
         if (isRobertStuendlCom) {
-          return "https://angerapp-proxy.robertstuendl.com/";
+          return "https://angerapp-proxy.robertstuendl.com/cms/";
         }
         return "/cms/";
       }
