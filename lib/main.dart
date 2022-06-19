@@ -110,6 +110,12 @@ class _MyAppState extends State<MyApp> {
           accentTextTheme: lightTheme.textTheme.apply(
             fontFamily: fontFamily,
           ),
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{
+              TargetPlatform.macOS:
+                  FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
+            },
+          ),
         ),
         darkTheme: darkTheme.copyWith(
           drawerTheme:
@@ -122,6 +128,12 @@ class _MyAppState extends State<MyApp> {
           ),
           accentTextTheme: darkTheme.textTheme.apply(
             fontFamily: fontFamily,
+          ),
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{
+              TargetPlatform.macOS:
+                  FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
+            },
           ),
         ),
         themeMode: ThemeMode.system,
