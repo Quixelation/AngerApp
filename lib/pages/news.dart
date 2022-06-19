@@ -150,9 +150,16 @@ class _PageNewsListState extends State<PageNewsList> {
   }
 }
 
-class PageNewsDetails extends StatelessWidget {
+class PageNewsDetails extends StatefulWidget {
   final NewsApiDataElement data;
   const PageNewsDetails({Key? key, required this.data}) : super(key: key);
+
+  @override
+  State<PageNewsDetails> createState() => _PageNewsDetailsState();
+}
+
+class _PageNewsDetailsState extends State<PageNewsDetails> {
+  bool fullscreenText = false;
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +167,16 @@ class PageNewsDetails extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Nachricht"),
           actions: [
+            // if (MediaQuery.of(context).size.width > 900)
+            //   IconButton(
+            //       onPressed: () {
+            //         setState(() {
+            //           fullscreenText = !fullscreenText;
+            //         });
+            //       },
+            //       icon: Icon(fullscreenText
+            //           ? Icons.fullscreen_exit
+            //           : Icons.fullscreen)),
             IconButton(
                 icon: const Icon(Icons.feedback),
                 onPressed: () {
@@ -216,7 +233,7 @@ class PageNewsDetails extends StatelessWidget {
                 children: [
                   Opacity(
                     opacity: 0.92,
-                    child: Text(data.title!,
+                    child: Text(widget.data.title!,
                         style: const TextStyle(
                             fontSize: 26, fontWeight: FontWeight.bold)),
                   ),
@@ -225,7 +242,7 @@ class PageNewsDetails extends StatelessWidget {
                     opacity: 0.60,
                     child: Text(
                       time2string(
-                        data.pubDate,
+                        widget.data.pubDate,
                         includeWeekday: true,
                       ),
                       style: const TextStyle(fontWeight: FontWeight.bold),
@@ -233,92 +250,98 @@ class PageNewsDetails extends StatelessWidget {
                   )
                 ]),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Hero(
-              tag: "news_${data.id}",
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Html(
-                      data: data.content!,
-                      style: {
-                        "p": Style(
-                          fontSize: FontSize.larger,
-                          lineHeight: LineHeight.number(1.3),
-                          color:
-                              // 87% Opacity
-                              Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .color!
-                                  .withAlpha(222),
-                        ),
-                      },
-                      customRender: {
-                        "div": (RenderContext rcontext, Widget child) {
-                          if (rcontext.tree.elementClasses
-                              .contains("wp-block-file")) {
-                            return Center(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: OutlinedButton.icon(
-                                    onPressed: () {
-                                      var hrefChild = findChild(
-                                          rcontext.tree.element, "href");
-                                      if (hrefChild != null) {
-                                        launchURL(hrefChild.attributes["href"]!,
-                                            context);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.download),
-                                    label: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: Text(
-                                          "Download\n${rcontext.tree.element!.text}"),
-                                    )),
-                              ),
-                            );
-                          }
-                        },
-                      },
-                      tagsList: Html.tags..addAll(["bird", "flutter"]),
-                      onLinkTap: (String? url,
-                          RenderContext rcontext,
-                          Map<String, String> attributes,
-                          dom.Element? element) {
-                        printInDebug(url);
-                        printInDebug(attributes);
-                        printInDebug(element);
-                        if (url == null) {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                  title: const Text('Fehler'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text('OK'),
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
-                                    )
-                                  ],
-                                  content:
-                                      const Text('Die Url ist fehlerhaft.')));
-                        }
-                        launchURL(url!, context);
-                      },
-                      onImageTap: (String? url,
-                          RenderContext context,
-                          Map<String, String> attributes,
-                          dom.Element? element) {
-                        //open image in webview, or launch image in browser, or any other logic here
-                      }),
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 850),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Hero(
+                  tag: "news_${widget.data.id}",
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Html(
+                          data: widget.data.content!,
+                          style: {
+                            "p": Style(
+                              fontSize: FontSize.larger,
+                              lineHeight: LineHeight.number(1.3),
+                              color:
+                                  // 87% Opacity
+                                  Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color!
+                                      .withAlpha(222),
+                            ),
+                          },
+                          customRender: {
+                            "div": (RenderContext rcontext, Widget child) {
+                              if (rcontext.tree.elementClasses
+                                  .contains("wp-block-file")) {
+                                return Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: OutlinedButton.icon(
+                                        onPressed: () {
+                                          var hrefChild = findChild(
+                                              rcontext.tree.element, "href");
+                                          if (hrefChild != null) {
+                                            launchURL(
+                                                hrefChild.attributes["href"]!,
+                                                context);
+                                          }
+                                        },
+                                        icon: const Icon(Icons.download),
+                                        label: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8),
+                                          child: Text(
+                                              "Download\n${rcontext.tree.element!.text}"),
+                                        )),
+                                  ),
+                                );
+                              }
+                            },
+                          },
+                          tagsList: Html.tags..addAll(["bird", "flutter"]),
+                          onLinkTap: (String? url,
+                              RenderContext rcontext,
+                              Map<String, String> attributes,
+                              dom.Element? element) {
+                            printInDebug(url);
+                            printInDebug(attributes);
+                            printInDebug(element);
+                            if (url == null) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                      title: const Text('Fehler'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('OK'),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                        )
+                                      ],
+                                      content: const Text(
+                                          'Die Url ist fehlerhaft.')));
+                            }
+                            launchURL(url!, context);
+                          },
+                          onImageTap: (String? url,
+                              RenderContext context,
+                              Map<String, String> attributes,
+                              dom.Element? element) {
+                            //open image in webview, or launch image in browser, or any other logic here
+                          }),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+          ]),
           const SizedBox(height: 4),
           Center(
             child: TextButton.icon(
