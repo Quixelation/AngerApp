@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast.dart' as sb;
+import "package:universal_html/html.dart" as uhtml;
 
 class AppManager {
   GlobalKey<ScaffoldState> mainScaffoldState;
@@ -26,13 +27,16 @@ class AppManager {
     initCurrentClass(database);
   }
   static String directusUrl = (() {
-// TODO: Dynamic Check
-    final isRobertStuendlCom = false;
+    final isRobertStuendlCom =
+        uhtml.window.location.host.endsWith("robertstuendl.com");
 
     if (kIsWeb) {
       if (kDebugMode) {
         return "https://angerapp-cms.robertstuendl.com/";
       } else {
+        if (isRobertStuendlCom) {
+          return "https://angerapp-proxy.robertstuendl.com/cms/";
+        }
         return "/cms/";
       }
     } else {
@@ -40,11 +44,14 @@ class AppManager {
     }
   })();
   static String apiUrl = (() {
-// TODO: Dynamic Check
-    final isRobertStuendlCom = false;
+    final isRobertStuendlCom =
+        uhtml.window.location.host.endsWith("robertstuendl.com");
+
     if (kIsWeb) {
-      if (isRobertStuendlCom) {
+      if (kDebugMode) {
         return "https://angerapp-api.robertstuendl.com/";
+      } else if (isRobertStuendlCom) {
+        return "https://angerapp-proxy.robertstuendl.com/";
       } else {
         return "";
       }
