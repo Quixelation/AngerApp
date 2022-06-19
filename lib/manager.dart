@@ -48,10 +48,8 @@ class AppManager {
         uhtml.window.location.host.endsWith("robertstuendl.com");
 
     if (kIsWeb) {
-      if (kDebugMode) {
+      if (kDebugMode || isRobertStuendlCom) {
         return "https://angerapp-api.robertstuendl.com/";
-      } else if (isRobertStuendlCom) {
-        return "https://angerapp-proxy.robertstuendl.com/";
       } else {
         return "";
       }
@@ -231,8 +229,9 @@ class _urlManager {
 
   String get feedback {
     return _urlSwitcher(
-        webUrl: "${AppManager.apiUrl}/feedback",
-        appUrl: "${AppManager.apiUrl}/feedback",
+        //appUrl needs to always be angergym server
+        webUrl: "https://angerapp.angergymnasium.jena.de/feedback",
+        appUrl: "https://angerapp.angergymnasium.jena.de/feedback",
         webDebugUrl: "http://localhost:8000/feedback");
   }
 
