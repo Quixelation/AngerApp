@@ -42,11 +42,13 @@ Future<void> initApp() async {
   toggleSubscribtionToTopic("all", true);
   enforceDefaultFcmSubscriptions();
   await Future.wait([initColorSubject(), loadAushangCreds()]);
+  print("AngerApp init finished");
 }
 
 void main() async {
   await initApp();
   runApp(const RestartWidget(child: MyApp()));
+  print("Running AngerApp");
 }
 
 class MyApp extends StatefulWidget {
