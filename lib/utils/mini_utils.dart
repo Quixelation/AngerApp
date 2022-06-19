@@ -33,3 +33,20 @@ int daysBetween(DateTime from, DateTime to) {
   to = DateTime(to.year, to.month, to.day);
   return (to.difference(from).inHours / 24).round();
 }
+
+String intToMonth(int monthNr) {
+  return [
+    "Januar",
+    "Februar",
+    "März",
+    "April",
+    "Mai",
+    "Juni",
+    "Juli",
+    "August",
+    "September",
+    "Oktober",
+    "November",
+    "Dezember"
+  ][monthNr - 1];
+}
