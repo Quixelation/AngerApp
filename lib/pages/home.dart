@@ -359,8 +359,8 @@ class _WelcomeTextState extends State<WelcomeText> {
   @override
   void initState() {
     super.initState();
-    checkForNewVersion(context: context, showAltertDialog: true)
-        .then((value) => setState(() => newVersion = value));
+    // checkForNewVersion(context: context, showAltertDialog: true)
+    //     .then((value) => setState(() => newVersion = value));
   }
 
   @override
