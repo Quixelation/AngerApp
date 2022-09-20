@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/feedback/feedback.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/network/news.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
+import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
@@ -21,18 +25,44 @@ class PageNewsList extends StatefulWidget {
 class _PageNewsListState extends State<PageNewsList> {
   AsyncDataResponse<List<NewsApiDataElement>>? data;
 
+  SyncManager? lastSync = null;
+  StreamSubscription? lastSyncSub;
+
   void loadNews({bool? force}) {
-    getNews(force: force).listen((event) {
+    Services.news.subject.listen((event) async {
       setState(() {
         data = event;
       });
     });
+    Services.news.getData(force: true);
   }
 
   @override
   initState() {
     super.initState();
     loadNews();
+    SyncManager.getLastSync("news").then((value) {
+      lastSync = value;
+    });
+    lastSyncSub = SyncManager.syncSubject.listen((value) async {
+      logger.d(value);
+      if (!mounted) {
+        lastSyncSub?.cancel();
+        return;
+      }
+      if (value["id"] == "news") {
+        setState(() {
+          lastSync?.syncDate =
+              DateTime.fromMillisecondsSinceEpoch(value["timestamp"]);
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    lastSyncSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -57,15 +87,10 @@ class _PageNewsListState extends State<PageNewsList> {
               ? ListView(
                   children: [
                     const SizedBox(height: 10),
-                    FutureBuilder<SyncManager?>(
-                        builder: (context, snap) {
-                          if (snap.data?.never == false) {
-                            return LastSync(snap.data!.syncDate);
-                          } else {
-                            return Container();
-                          }
-                        },
-                        future: SyncManager.getLastSync("news")),
+                    if (lastSync?.never == false)
+                      LastSync(lastSync!.syncDate)
+                    else
+                      Container(),
                     const SizedBox(height: 10),
                     if (MediaQuery.of(context).size.width > 600)
                       //Split all elemnents in 2 columns with alternating content
@@ -250,98 +275,92 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
                   )
                 ]),
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 850),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Hero(
-                  tag: "news_${widget.data.id}",
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Html(
-                          data: widget.data.content!,
-                          style: {
-                            "p": Style(
-                              fontSize: FontSize.larger,
-                              lineHeight: LineHeight.number(1.3),
-                              color:
-                                  // 87% Opacity
-                                  Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .color!
-                                      .withAlpha(222),
-                            ),
-                          },
-                          customRender: {
-                            "div": (RenderContext rcontext, Widget child) {
-                              if (rcontext.tree.elementClasses
-                                  .contains("wp-block-file")) {
-                                return Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: OutlinedButton.icon(
-                                        onPressed: () {
-                                          var hrefChild = findChild(
-                                              rcontext.tree.element, "href");
-                                          if (hrefChild != null) {
-                                            launchURL(
-                                                hrefChild.attributes["href"]!,
-                                                context);
-                                          }
-                                        },
-                                        icon: const Icon(Icons.download),
-                                        label: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8),
-                                          child: Text(
-                                              "Download\n${rcontext.tree.element!.text}"),
-                                        )),
-                                  ),
-                                );
-                              }
-                            },
-                          },
-                          tagsList: Html.tags..addAll(["bird", "flutter"]),
-                          onLinkTap: (String? url,
-                              RenderContext rcontext,
-                              Map<String, String> attributes,
-                              dom.Element? element) {
-                            printInDebug(url);
-                            printInDebug(attributes);
-                            printInDebug(element);
-                            if (url == null) {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                      title: const Text('Fehler'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text('OK'),
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                        )
-                                      ],
-                                      content: const Text(
-                                          'Die Url ist fehlerhaft.')));
-                            }
-                            launchURL(url!, context);
-                          },
-                          onImageTap: (String? url,
-                              RenderContext context,
-                              Map<String, String> attributes,
-                              dom.Element? element) {
-                            //open image in webview, or launch image in browser, or any other logic here
-                          }),
-                    ),
-                  ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Hero(
+              tag: "news_${widget.data.id}",
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Html(
+                      data: widget.data.content!,
+                      style: {
+                        "p": Style(
+                          fontSize: FontSize.larger,
+                          lineHeight: LineHeight.number(1.3),
+                          color:
+                              // 87% Opacity
+                              Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .color!
+                                  .withAlpha(222),
+                        ),
+                      },
+                      customRender: {
+                        "div": (RenderContext rcontext, Widget child) {
+                          if (rcontext.tree.elementClasses
+                              .contains("wp-block-file")) {
+                            return Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: OutlinedButton.icon(
+                                    onPressed: () {
+                                      var hrefChild = findChild(
+                                          rcontext.tree.element, "href");
+                                      if (hrefChild != null) {
+                                        launchURL(hrefChild.attributes["href"]!,
+                                            context);
+                                      }
+                                    },
+                                    icon: const Icon(Icons.download),
+                                    label: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: Text(
+                                          "Download\n${rcontext.tree.element!.text}"),
+                                    )),
+                              ),
+                            );
+                          }
+                        },
+                      },
+                      tagsList: Html.tags..addAll(["bird", "flutter"]),
+                      onLinkTap: (String? url,
+                          RenderContext rcontext,
+                          Map<String, String> attributes,
+                          dom.Element? element) {
+                        printInDebug(url);
+                        printInDebug(attributes);
+                        printInDebug(element);
+                        if (url == null) {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                  title: const Text('Fehler'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('OK'),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                    )
+                                  ],
+                                  content:
+                                      const Text('Die Url ist fehlerhaft.')));
+                        }
+                        launchURL(url!, context);
+                      },
+                      onImageTap: (String? url,
+                          RenderContext context,
+                          Map<String, String> attributes,
+                          dom.Element? element) {
+                        //open image in webview, or launch image in browser, or any other logic here
+                      }),
                 ),
               ),
             ),
-          ]),
+          ),
           const SizedBox(height: 4),
           Center(
             child: TextButton.icon(

@@ -8,10 +8,11 @@ import 'package:logger_flutter_viewer/logger_flutter_viewer.dart';
 var logger = Logger(
   filter: _CustomLogFilter(),
   printer: PrettyPrinter(
-    printTime: true,
-    colors: true,
-    printEmojis: true,
-  ),
+      printTime: false,
+      methodCount: 0,
+      colors: true,
+      printEmojis: true,
+      noBoxingByDefault: true),
   output: ScreenOutput(),
 );
 

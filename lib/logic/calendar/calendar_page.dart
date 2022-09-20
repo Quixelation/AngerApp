@@ -7,19 +7,39 @@ class PageCalendar extends StatefulWidget {
   _PageCalendarState createState() => _PageCalendarState();
 }
 
+enum _filterOptions { showAll, showCurrentClass, showSpecific }
+
 class _PageCalendarState extends State<PageCalendar>
     with TickerProviderStateMixin {
+  // Calendar Data
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   final CalendarFormat _calendarFormat = CalendarFormat.month;
-  AsyncDataResponse<List<EventData>?>? eventData;
-  List<EventData>? klausurEventData;
   late AnimationController _animationController;
+
+  // Kalender
+  AsyncDataResponse<List<EventData>?>? eventData;
+  StreamSubscription? calendarSub;
+
+  // Klausuren
+  List<EventData>? klausurEventData;
+  StreamSubscription? klausurSub;
+
+  //Ferien
   StreamSubscription? ferienSub;
-  EventData? ferienEvent;
+  List<EventData>? ferienEvents;
 
   /// if loading AsyncDataResponse is in progress
-  bool loadingADR = true;
+  /// this implementation is janky - please replace
+  int loadingADR = 0;
+
+  // Filter
+  int? currentClass = Services.currentClass.subject.value;
+
+  /// # !!! not implemented !!!
+  _filterOptions filterOption = Services.currentClass.subject.value != null
+      ? _filterOptions.showCurrentClass
+      : _filterOptions.showAll;
 
   @override
   void initState() {
@@ -29,52 +49,62 @@ class _PageCalendarState extends State<PageCalendar>
       duration: const Duration(milliseconds: 400),
     );
     _animationController.forward(from: 0.0);
-    getCalendarEventData().listen((value) {
+    calendarSub = Services.calendar.subject.listen((value) {
+      logger.v("[CalendarPage] Subscription(Calendar) recieved data");
+      if (!mounted) {
+        calendarSub?.cancel();
+        return;
+      }
       setState(() {
         eventData = value;
-        loadingADR = false;
+        loadingADR++;
       });
     });
+    Services.calendar.getData();
     _loadKlausuren();
     _loadFerienEvent();
   }
 
   void _reload() {
     setState(() {
-      loadingADR = true;
+      loadingADR = 0;
     });
-    getCalendarEventData(force: true).listen((value) {
-      setState(() {
-        eventData = value;
-        loadingADR = false;
-      });
-    });
+    Services.calendar.getData(force: true);
+    Services.ferien.getData(force: true);
+    Services.klausuren.getData(force: true);
   }
 
   @override
   void dispose() {
     super.dispose();
     ferienSub?.cancel();
+    klausurSub?.cancel();
+    calendarSub?.cancel();
   }
 
   void _loadKlausuren() async {
-    var klausuren = await getKlausuren();
-    List<EventData> klausurEvents = [];
-    for (var klausur in klausuren) {
-      klausurEvents.add(klausur.toEventData());
-    }
-    setState(() {
-      printInDebug("Setting Klausuren");
-      klausurEventData = klausurEvents;
+    klausurSub = Services.klausuren.subject.listen((event) {
+      logger.v("[CalendarPage] Subscription(Klausuren) recieved data");
+      if (mounted && !event.error) {
+        setState(() {
+          logger.v("[CalendarPage] Setting Klausuren");
+          klausurEventData = event.data.map((e) => e.toEventData()).toList();
+          loadingADR++;
+        });
+      } else {
+        klausurSub?.cancel();
+      }
     });
   }
 
   void _loadFerienEvent() async {
-    ferienSub = getNextFerien().listen((event) {
+    ferienSub = Services.ferien.subject.listen((event) {
+      logger.v("[CalendarPage] Subscription(Ferien) recieved data");
       if (mounted && event.data != null && !event.error) {
         setState(() {
-          printInDebug("Setting Klausuren");
-          ferienEvent = event.data!.toEvent();
+          logger.v("[CalendarPage] Setting Ferien");
+          ferienEvents = event.data!.map((e) => e.toEvent()).toList();
+          loadingADR++;
         });
       } else {
         ferienSub?.cancel();
@@ -106,7 +136,7 @@ class _PageCalendarState extends State<PageCalendar>
     List<EventData> eventList = [
       ...(eventData?.data ?? []),
       ...(klausurEventData ?? []),
-      if (ferienEvent != null) ferienEvent!
+      ...(ferienEvents ?? []),
     ];
     if (MediaQuery.of(context).size.width > 600) {
       AppManager.calController.events
@@ -127,7 +157,7 @@ class _PageCalendarState extends State<PageCalendar>
         appBar: AppBar(
             actions: [
               IconButton(
-                  onPressed: loadingADR
+                  onPressed: loadingADR < 3
                       ? null
                       : () {
                           _reload();
@@ -141,7 +171,7 @@ class _PageCalendarState extends State<PageCalendar>
                     (_focusedDay.year.toString()))),
         body: Stack(
           children: [
-            eventData?.data != null || loadingADR
+            eventData?.data != null || loadingADR < 3
                 ? Flex(
                     direction: MediaQuery.of(context).size.width > 600
                         ? Axis.horizontal
@@ -174,9 +204,14 @@ class _PageCalendarState extends State<PageCalendar>
             if (!(eventData != null &&
                     eventData!.loadingAction !=
                         AsyncDataResponseLoadingAction.currentlyLoading) ||
-                loadingADR)
-              const Positioned(
-                  child: LinearProgressIndicator(), left: 0, right: 0, top: 0)
+                loadingADR < 3)
+              Positioned(
+                  child: LinearProgressIndicator(
+                    value: loadingADR / 3,
+                  ),
+                  left: 0,
+                  right: 0,
+                  top: 0)
           ],
         ));
   }
@@ -210,8 +245,8 @@ class _PageCalendarState extends State<PageCalendar>
             double eventCircleSize = 11;
 
             if (isKlausur &&
-                (currentClass.value != null
-                    ? (event.info?["klasse"] ?? 0) == currentClass.value
+                (currentClass != null
+                    ? (event.info?["klasse"] ?? 0) == currentClass
                     : true)) {
               return Icon(
                 Icons.warning,
@@ -222,6 +257,15 @@ class _PageCalendarState extends State<PageCalendar>
               return Icon(
                 Icons.beach_access,
                 color: Colors.yellow.shade800,
+                size: eventCircleSize,
+              );
+            } else if (currentClass != null &&
+                ((event.klassen.isNotEmpty &&
+                        !event.klassen.contains(currentClass)) ||
+                    isKlausur)) {
+              return Icon(
+                Icons.circle,
+                color: Colors.grey,
                 size: eventCircleSize,
               );
             } else {

@@ -87,7 +87,7 @@ class _PageVertretungsplanDetailState
                   ...(() {
                     var suggestions = detailData!.details.vertretung
                         .where((element) {
-                          var classSSS = currentClass.value;
+                          var classSSS = Services.currentClass.subject.value;
                           if (classSSS == null) {
                             return false;
                           } else {

@@ -12,10 +12,11 @@ class _PageAushangListState extends State<PageAushangList> {
   StreamSubscription? _aushangeStream;
   StreamSubscription? _aushangCredsStream;
 
-  _AushangCreds? aushangCreds;
+  /*_AushangCreds*/ String? aushangCreds;
 
   void _loadData() {
-    _aushangeStream = getAushaenge().listen((event) {
+    Services.aushang.getData();
+    _aushangeStream = Services.aushang.subject.listen((event) {
       if (!mounted) {
         _aushangeStream?.cancel();
         return;
@@ -29,15 +30,13 @@ class _PageAushangListState extends State<PageAushangList> {
   @override
   void initState() {
     super.initState();
-
-    _aushangCredsStream = _aushangCreds.listen((value) {
+    _loadData();
+    _aushangCredsStream = Credentials.vertretungsplan.subject.listen((value) {
       if (!mounted) {
         _aushangCredsStream?.cancel();
         return;
       }
-      if (value.loaded) {
-        _loadData();
-      }
+
       setState(() {
         aushangCreds = value;
       });
@@ -52,7 +51,8 @@ class _PageAushangListState extends State<PageAushangList> {
 
   @override
   Widget build(BuildContext context) {
-    final needToLogin = !(aushangCreds?.loaded ?? false);
+    final needToLogin = aushangCreds == null;
+    logger.d(data);
     return Scaffold(
       appBar: AppBar(title: const Text("Aushänge")),
       body: (data == null || needToLogin)
@@ -92,8 +92,11 @@ class _PageAushangListState extends State<PageAushangList> {
     return data!.data.map((e) {
       return ListTile(
         title: Text(e.name),
-        subtitle: Text(
-            "Zuletzt geändert: ${time2string(e.dateUpdated, includeTime: true, includeWeekday: true)}"),
+        subtitle: e.dateUpdated.millisecondsSinceEpoch == 0
+            ? Text(
+                "Erstellt: ${time2string(e.dateCreated, includeTime: true, includeWeekday: true)}")
+            : Text(
+                "Zuletzt geändert: ${time2string(e.dateUpdated, includeTime: true, includeWeekday: true)}"),
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -106,11 +109,11 @@ class _PageAushangListState extends State<PageAushangList> {
 }
 
 String _generateDirectusDownloadUrl(String directusFileUid) {
-  return "${AppManager.directusUrl}/assets/$directusFileUid?access_token=${_aushangCreds.value?.token ?? ""}";
+  return "${AppManager.directusUrl}/assets/$directusFileUid?access_token=${Credentials.vertretungsplan.subject.value ?? ""}";
 }
 
 class _LoggedInAs extends StatefulWidget {
-  _AushangCreds creds;
+  /*_AushangCreds*/ String creds;
   _LoggedInAs(this.creds, {Key? key}) : super(key: key);
 
   @override
@@ -144,7 +147,7 @@ class __LoggedInAsState extends State<_LoggedInAs> {
                 ),
                 Opacity(
                   opacity: 0.87,
-                  child: Text(widget.creds.token ?? "Kein Login",
+                  child: Text(widget.creds ?? "Kein Login",
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 20)),
                 ),

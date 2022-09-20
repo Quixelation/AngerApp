@@ -397,7 +397,9 @@ class __LoggedInAsState extends State<_LoggedInAs> {
               ),
               Opacity(
                 opacity: 0.87,
-                child: Text(_vpCreds.valueWrapper?.value.creds ?? "Kein Login",
+                child: Text(
+                    Credentials.vertretungsplan.subject.valueWrapper?.value ??
+                        "Kein Login",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 20)),
               ),
@@ -405,7 +407,7 @@ class __LoggedInAsState extends State<_LoggedInAs> {
             const Spacer(),
             IconButton(
                 onPressed: () {
-                  _vpLogout();
+                  Credentials.vertretungsplan.removeCredentials();
                 },
                 icon: const Icon(Icons.logout)),
           ],

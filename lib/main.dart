@@ -1,3 +1,4 @@
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
@@ -9,8 +10,10 @@ import 'package:anger_buddy/partials/introduction_screen.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
 import 'firebase_options.dart';
@@ -19,7 +22,7 @@ import "package:universal_html/html.dart" as html;
 GetIt getIt = GetIt.instance;
 
 Future<void> initApp() async {
-  print("AngerApp starting");
+  logger.v("[AngerApp} Starting...");
   WidgetsFlutterBinding.ensureInitialized();
 
   List<Object> allFutures = [];
@@ -41,25 +44,53 @@ Future<void> initApp() async {
 
   toggleSubscribtionToTopic("all", true);
   enforceDefaultFcmSubscriptions();
-  await Future.wait([initColorSubject(), loadAushangCreds()]);
-  print("AngerApp init finished");
+  await Future.wait([initColorSubject(), initializeAllCredentialManagers()]);
+  logger.v("[AngerApp] Initialized");
 }
 
 void main() async {
   await initApp();
-  runApp(const RestartWidget(child: MyApp()));
-  print("Running AngerApp");
+  runApp(const RestartWidget(child: AngerApp()));
+  logger.v("[AngerApp] Running");
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class AngerApp extends StatefulWidget {
+  const AngerApp({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<AngerApp> createState() => _AngerAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _AngerAppState extends State<AngerApp> {
   var mainColor = colorSubject.valueWrapper!.value;
+
+// It is assumed that all messages contain a data field with the key 'type'
+  Future<void> setupInteractedMessage() async {
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    print("Message landed");
+    logger.i(message.from);
+    logger.i(message.messageType);
+    logger.i(message.senderId);
+    logger.i(message.category);
+    logger.i(message.threadId);
+    logger.i(message.data);
+  }
 
   @override
   void initState() {
@@ -69,6 +100,9 @@ class _MyAppState extends State<MyApp> {
         mainColor = value;
       });
     });
+    // Run code required to handle interacted messages in an async function
+    // as initState() must not be async
+    setupInteractedMessage();
   }
 
   // This widget is the root of your application.
@@ -109,9 +143,11 @@ class _MyAppState extends State<MyApp> {
           primaryTextTheme: lightTheme.textTheme.apply(
             fontFamily: fontFamily,
           ),
+          tabBarTheme: TabBarTheme(labelColor: Colors.white),
           accentTextTheme: lightTheme.textTheme.apply(
             fontFamily: fontFamily,
           ),
+          useMaterial3: false,
           pageTransitionsTheme: const PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{
               TargetPlatform.macOS:
@@ -120,6 +156,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         darkTheme: darkTheme.copyWith(
+          useMaterial3: false,
           drawerTheme:
               const DrawerThemeData(backgroundColor: Color(0xFF232323)),
           textTheme: darkTheme.textTheme.apply(

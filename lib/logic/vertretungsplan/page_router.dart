@@ -8,23 +8,20 @@ class PageVp extends StatefulWidget {
 }
 
 class _PageVpState extends State<PageVp> {
-  _VpCreds? creds;
+  bool? credsAvailable;
   StreamSubscription? sub;
 
   @override
   void initState() {
     super.initState();
     printInDebug("INIT CREDSVP");
-    sub = _vpCreds.listen((creds) {
+    sub = Credentials.vertretungsplan.subject.listen((creds) {
       printInDebug("Creds $creds");
       if (mounted) {
-        if (creds.loadedCreds) {
-          setState(() {
-            this.creds = creds;
-          });
-        } else {
-          _vpLoadCreds();
-        }
+        setState(() {
+          this.credsAvailable =
+              Credentials.vertretungsplan.credentialsAvailable;
+        });
       } else {
         sub?.cancel();
       }
@@ -39,9 +36,9 @@ class _PageVpState extends State<PageVp> {
 
   @override
   Widget build(BuildContext context) {
-    return creds == null
+    return credsAvailable == null
         ? const _PageLoadingCreds()
-        : (creds!.providedCreds
+        : (credsAvailable == true
             ? const _PageVertretungsplanListe()
             : Scaffold(
                 appBar: AppBar(

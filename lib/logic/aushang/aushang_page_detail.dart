@@ -15,6 +15,7 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
   void initState() {
     super.initState();
     _loadFiles(widget.aushang).then((value) {
+      print("Loaded Files");
       setState(() {
         files = value;
       });
@@ -33,12 +34,16 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
             body: loading
                 ? const Center(child: CircularProgressIndicator.adaptive())
                 : ListView(children: [
-                    Html(data: widget.aushang.textContent),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child:
+                          Card(child: Html(data: widget.aushang.textContent)),
+                    ),
                     const SizedBox(height: 15),
                     const Padding(
                         child: Text("Dateien",
                             style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 16,
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold)),
                         padding: EdgeInsets.only(left: 10)),
@@ -54,7 +59,12 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
                                         appBar: AppBar(title: Text(file.title)),
                                         body:
                                             Center(child: renderFile(file)))));
-                          })
+                          }),
+                    if (files!.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: const Text("Keine Dateien"),
+                      )
                   ])));
   }
 

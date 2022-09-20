@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
@@ -16,7 +19,7 @@ class _PageKlausurenState extends State<PageKlausuren> {
   AsyncDataResponse<List<Klausur>?>? klausurenResp;
 
   /// Die Klassenstufe, nach der die UI gefiltert wird
-  int? selectedClass = currentClass.valueWrapper?.value;
+  int? selectedClass = Services.currentClass.subject.valueWrapper?.value;
 
   @override
   void initState() {
@@ -27,7 +30,7 @@ class _PageKlausurenState extends State<PageKlausuren> {
   void loadKlausuren() {
     klausurenResp?.loadingAction =
         AsyncDataResponseLoadingAction.currentlyLoading;
-    fetchKlausuren(null).then((value) {
+    Services.klausuren.getData().then((value) {
       if (mounted) {
         setState(() {
           klausurenResp = value;
