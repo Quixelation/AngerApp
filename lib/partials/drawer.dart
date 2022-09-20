@@ -1,3 +1,4 @@
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
@@ -6,7 +7,7 @@ import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/page_engine/page_engine.dart';
-import 'package:anger_buddy/pages/SchuSo.dart';
+import 'package:anger_buddy/pages/SchuSo.pageengine.dart';
 import 'package:anger_buddy/pages/about.dart';
 import 'package:anger_buddy/pages/ags.dart';
 import 'package:anger_buddy/pages/chor_orchester.dart';
@@ -15,8 +16,9 @@ import 'package:anger_buddy/pages/klausuren.dart';
 import 'package:anger_buddy/pages/kontakt.dart';
 import 'package:anger_buddy/pages/lesson_time.dart';
 import 'package:anger_buddy/pages/news.dart';
-import 'package:anger_buddy/pages/oberstufe.dart';
+import 'package:anger_buddy/pages/oberstufe.pageengine.dart';
 import 'package:anger_buddy/pages/settings.dart';
+import 'package:anger_buddy/pages/stundenzeiten.pageengine.dart';
 import 'package:anger_buddy/pages/under_construction.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:anger_buddy/utils/url.dart';
@@ -87,7 +89,7 @@ class MainDrawer extends StatelessWidget {
                 ),
               );
             },
-            stream: currentClass,
+            stream: Services.currentClass.subject,
           ),
           StreamBuilder(
             builder: (context, snapshot) {
@@ -122,7 +124,7 @@ class MainDrawer extends StatelessWidget {
               page: PageCalendar(),
             ),
             _DrawerLink(
-              title: "Klausuren",
+              title: "Prüfungen",
               icon: Icons.label_important,
               page: PageKlausuren(),
             ),
@@ -155,29 +157,30 @@ class MainDrawer extends StatelessWidget {
               icon: Icons.mail_outline,
               page: PageMailKontakt(),
             ),
-            const _DrawerLink(
+            _DrawerLink(
               title: "Stundenzeiten",
               icon: Icons.access_time,
-              wip: true,
-              page: PageTempUnderConstruction(
-                page: PageLessonTimes(),
-              ),
+              page: parsePage(() => stundenzeitenPage),
             ),
             _DrawerLink(
               title: "SchuSo",
               icon: Icons.person,
-              page: parsePage(schuSoPage),
+              page: parsePage(() {
+                return schuSoPage;
+              }),
             ),
             const _DrawerLink(
               title: "AGs",
               icon: Icons.widgets,
-              page: PageAgs(),
+              page: PageTempUnderConstruction(
+                page: PageAgs(),
+              ),
             ),
-            const _DrawerLink(
-              title: "Chor/Orchester",
-              icon: Icons.piano,
-              page: PageChorOrchester(),
-            ),
+            // const _DrawerLink(
+            //   title: "Chor/Orchester",
+            //   icon: Icons.piano,
+            //   page: PageChorOrchester(),
+            // ),
           ]),
           const Divider(),
           _Category("Oberstufe", [
@@ -186,7 +189,9 @@ class MainDrawer extends StatelessWidget {
               title: "Oberstufe",
               icon: Icons.info,
               page: PageTempUnderConstruction(
-                page: parsePage(oberstufePage),
+                page: parsePage(() {
+                  return oberstufePage;
+                }),
                 footerWidgets: const [
                   Text(
                       "Hier erscheinen später Informationen zu der Oberstufe: Notensystem, Kurse, usw.")
@@ -234,27 +239,40 @@ class MainDrawer extends StatelessWidget {
                 icon: Icons.camera_indoor),
           ]),
           const Divider(),
-          const _Category("App", [
-            _DrawerExternalLink(
-                title: "Android App",
-                url: "https://angerapp.robertstuendl.com",
-                icon: Icons.get_app),
-            _DrawerLink(
-              title: "Einstellungen",
-              icon: Icons.settings,
-              page: PageSettings(),
-            ),
-            _DrawerLink(
-              title: "Über",
-              icon: Icons.info_outline,
-              page: PageAbout(),
-            ),
-            _DrawerLink(
-              title: "Feedback / Problem",
-              icon: Icons.feedback,
-              page: PageFeedback(),
-            ),
-          ]),
+          _Category(
+              "App",
+              [
+                kIsWeb
+                    ? const _DrawerExternalLink(
+                        title: "Android App",
+                        url:
+                            "https://play.google.com/store/apps/details?id=com.robertstuendl.angergymapp&referrer=utm_source%3DAngerApp%26utm_medium%3DDrawer%26utm_campaign%3DAndroidApp_link",
+                        icon: Icons.get_app)
+                    : Container(),
+                const _DrawerLink(
+                  title: "Einstellungen",
+                  icon: Icons.settings,
+                  page: PageSettings(),
+                ),
+                const _DrawerLink(
+                  title: "Über",
+                  icon: Icons.info_outline,
+                  page: PageAbout(),
+                ),
+                const _DrawerLink(
+                  title: "Feedback / Problem",
+                  icon: Icons.feedback,
+                  page: PageFeedback(),
+                ),
+                const _DrawerExternalLink(
+                    title: "Nutzung/Datenschutz",
+                    url: "https://angergymapp.robertstuendl.com/terms.html",
+                    icon: Icons.shield_outlined),
+                const _DrawerExternalLink(
+                    title: "Code (GitHub)",
+                    url: "https://github.com/Quixelation/AngerApp",
+                    icon: Icons.code),
+              ].where((element) => element != null).toList()),
         ],
       ),
     );

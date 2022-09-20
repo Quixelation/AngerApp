@@ -2,6 +2,9 @@ library vertretungsplan;
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/logic/credentials_manager.dart';
+import 'package:anger_buddy/logic/data_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
@@ -40,7 +43,8 @@ class _VpListResponse {
 
 Future<AsyncDataResponse<_VpListResponse>> fetchVertretungsListApiData() async {
   try {
-    String client = _vpCreds.valueWrapper?.value.creds ?? "";
+    String client =
+        Credentials.vertretungsplan.subject.valueWrapper?.value ?? "";
     printInDebug("VP using CLient: $client");
     var url =
         Uri.parse('${AppManager.urls.vplist}?request=list&client=$client');

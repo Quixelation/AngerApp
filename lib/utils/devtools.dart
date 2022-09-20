@@ -1,3 +1,4 @@
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/notifications.dart';
@@ -37,7 +38,7 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                fetchAllAushaenge();
+                Services.aushang.fetchFromServer();
               },
               child: const Text("Aushänge Laden")),
           ElevatedButton(
@@ -119,7 +120,7 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                vpUnloadCreds__DEVELOPER_ONLY();
+                Credentials.vertretungsplan.credentialsAvailable = false;
               },
               child: const Text("Unload VP Creds")),
           const SizedBox(

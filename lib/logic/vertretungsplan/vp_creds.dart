@@ -1,52 +1,50 @@
 part of vertretungsplan;
 
-class _VpCreds {
-  final bool providedCreds;
-  final String creds;
-  final bool loadedCreds;
-  _VpCreds(
-    this.providedCreds,
-    this.creds, {
-    required this.loadedCreds,
-  });
+class VpCreds implements CredentialsManager<String> {
   @override
-  String toString() => '_VpCreds(providedCreds: $providedCreds, creds: $creds)';
-}
+  BehaviorSubject<String?> subject = BehaviorSubject();
 
-BehaviorSubject<_VpCreds> _vpCreds =
-    BehaviorSubject.seeded(_VpCreds(false, "", loadedCreds: false));
-
-_vpSaveCreds(String creds) async {
-  var db = getIt.get<AppManager>().db;
-
-  AppManager.stores.data.record("vpcreds").put(db, {
-    "key": "vpcreds",
-    "value": creds,
-  });
-
-  _vpCreds.add(_VpCreds(true, creds, loadedCreds: true));
-}
-
-_vpLogout() {
-  var db = getIt.get<AppManager>().db;
-
-  AppManager.stores.data.record("vpcreds").delete(db);
-
-  _vpCreds.add(_VpCreds(false, "", loadedCreds: true));
-}
-
-void _vpLoadCreds() async {
-  var db = getIt.get<AppManager>().db;
-
-  var creds = await AppManager.stores.data.record("vpcreds").get(db);
-
-  if (creds == null) {
-    _vpCreds.add(_VpCreds(false, "", loadedCreds: true));
-  } else {
-    _vpCreds.add(_VpCreds(true, creds["value"].toString(), loadedCreds: true));
+  @override
+  init() async {
+    await fetchFromDatabase();
   }
-}
 
-void vpUnloadCreds__DEVELOPER_ONLY() {
-  _vpCreds.add(_VpCreds(false, "", loadedCreds: false));
+  @override
+  bool credentialsAvailable = false;
+
+  @override
+  setCredentials(creds, {bool withDatabaseEntry = true}) async {
+    if (withDatabaseEntry) {
+      var db = getIt.get<AppManager>().db;
+
+      AppManager.stores.data.record("vpcreds").put(db, {
+        "key": "vpcreds",
+        "value": creds,
+      });
+    }
+
+    subject.add(creds);
+    credentialsAvailable = true;
+  }
+
+  @override
+  Future<void> removeCredentials({bool withDatabaseEntry = true}) async {
+    if (withDatabaseEntry) {}
+
+    subject.add(null);
+    credentialsAvailable = false;
+  }
+
+  @override
+  fetchFromDatabase() async {
+    var db = getIt.get<AppManager>().db;
+    var creds = await AppManager.stores.data.record("vpcreds").get(db);
+    var credString = creds?["value"].toString();
+    if (creds == null) {
+      removeCredentials(withDatabaseEntry: false);
+    } else {
+      setCredentials(credString!, withDatabaseEntry: false);
+    }
+    return credString;
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
 import 'package:anger_buddy/logic/feedback/feedback.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
@@ -15,6 +16,7 @@ class AppManager {
   GlobalKey<ScaffoldState> mainScaffoldState;
   late final BehaviorSubject<bool> devtools;
   late final sb.Database db;
+
   AppManager({required this.mainScaffoldState, required sb.Database database}) {
     startServerStatusUpdates();
     db = database;
@@ -24,7 +26,7 @@ class AppManager {
       devtools.add(value);
     });
     initVpSettings(database);
-    initCurrentClass(database);
+    CurrentClassManager.init(database);
   }
   static String directusUrl = (() {
     final isRobertStuendlCom =

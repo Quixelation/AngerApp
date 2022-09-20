@@ -8,7 +8,7 @@ class PageCurrentClass extends StatefulWidget {
 }
 
 class _PageCurrentClassState extends State<PageCurrentClass> {
-  int? selectedClass = currentClass.value;
+  int? selectedClass = Services.currentClass.subject.value;
 
   Widget selectClassBtn(int classS) {
     return Expanded(
@@ -20,7 +20,7 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
                 setState(() {
                   selectedClass = null;
                 });
-                setCurrentClass(null);
+                Services.currentClass.setCurrentClass(null);
                 Navigator.of(context).pop();
               },
               child: Text("$classS."))
@@ -29,7 +29,7 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
                 setState(() {
                   selectedClass = classS;
                 });
-                setCurrentClass(classS);
+                Services.currentClass.setCurrentClass(classS);
                 Navigator.of(context).pop();
               },
               child: Text("$classS.",
@@ -58,6 +58,37 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
           selectClassBtn(12),
         ],
       ),
+      const SizedBox(
+        height: 32,
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 24,
+        ),
+        child: OutlinedButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => parsePage(() => _infoPage)));
+          },
+          child: Opacity(
+            child: Text("Was wird angepasst?",
+                style: TextStyle(color: Colors.black)),
+            opacity: 0.50,
+          ),
+        ),
+      ),
+      SizedBox(height: 8),
+      Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 24,
+          ),
+          child: Text(
+            "Die eingestellte Klasse wird ausschließlich lokal auf diesem Gerät gespeichert und niemals zu unseren Servern gesendet.",
+            style: TextStyle(
+                color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
+          ))
     ]);
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter/material.dart';
@@ -178,19 +179,20 @@ AppBar _SimplePageHeader(String title) {
 //#endregion
 
 // #region PageScaffold
-PageEngineScaffold parsePage(String jsonString) {
-  final Map<String, dynamic> json = jsonDecode(jsonString);
+Widget parsePage(String Function() getJsonString) {
   // final minEngineMajorVersion = json['min_engine_major_version'] as int;
   // final int version = json['version'];
   // final String id = json['id'];
-  final pageData = json['data'] as Map<String, dynamic>;
-  return PageEngineScaffold(
-    // id: id,
-    pageData: pageData,
+  // final pageData = json['data'] as Map<String, dynamic>;
+  return RestartPageEngine(
+    child: PageEngineScaffold(
+      // id: id,
+      pageData: jsonDecode(getJsonString())["data"],
+    ),
   );
 }
 
-class PageEngineScaffold extends StatelessWidget {
+class PageEngineScaffold extends StatefulWidget {
   // final int minEngineMajorVersion;
   // final int version;
   // final String id;
@@ -204,10 +206,54 @@ class PageEngineScaffold extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<PageEngineScaffold> createState() => _PageEngineScaffoldState();
+}
+
+class _PageEngineScaffoldState extends State<PageEngineScaffold> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _buildPageHeader(context, pageData['header']),
-        body: _buildPageBody(context, pageData["body"]));
+        appBar: /* _buildPageHeader(context, pageData['header'])*/ AppBar(
+          title: Text(widget.pageData["header"]["title"]),
+        ),
+        body: _buildPageBody(context, widget.pageData["body"]));
   }
 }
+
+class RestartPageEngine extends StatefulWidget {
+  const RestartPageEngine({Key? key, required this.child}) : super(key: key);
+
+  final Widget child;
+
+  static void restartApp(BuildContext context) {
+    var ancestor = context.findAncestorStateOfType<_RestartPageEngineState>();
+    if (ancestor == null) {
+      logger.e("no ancestor for restart");
+    } else {
+      ancestor.restartApp();
+    }
+  }
+
+  @override
+  _RestartPageEngineState createState() => _RestartPageEngineState();
+}
+
+class _RestartPageEngineState extends State<RestartPageEngine> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(
+      key: key,
+      child: widget.child,
+    );
+  }
+}
+
 // #endregion PageScaffold

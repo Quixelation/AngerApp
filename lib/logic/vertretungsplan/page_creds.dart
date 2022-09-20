@@ -41,7 +41,8 @@ class _PageVpCredsState extends State<_PageVpCreds> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    _vpSaveCreds(passwordController.text.trim());
+                    Credentials.vertretungsplan
+                        .setCredentials(passwordController.text.trim());
                   }
                 },
                 child: const Text("Verifizieren"),

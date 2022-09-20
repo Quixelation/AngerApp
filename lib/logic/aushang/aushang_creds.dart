@@ -1,37 +1,11 @@
 part of aushang;
 
-class _AushangCreds {
-  bool loaded;
-  String? token;
-  _AushangCreds({required this.loaded, required this.token});
-}
-
-final _aushangCreds = BehaviorSubject<_AushangCreds>.seeded(
-  _AushangCreds(loaded: false, token: null),
-);
-
-Future<bool> loadAushangCreds() async {
-  final db = getIt.get<AppManager>().db;
-  final credValue = await AppManager.stores.data.record("aushangcreds").get(db);
-  if (credValue != null && credValue["value"] != null) {
-    _aushangCreds
-        .add(_AushangCreds(loaded: true, token: credValue["value"].toString()));
-    return true;
-  } else {
-    return false;
-  }
-}
-
-void setAushangCreds(String token) {
-  final db = getIt.get<AppManager>().db;
-  AppManager.stores.data.record("aushangcreds").put(db, {"value": token});
-  _aushangCreds.add(_AushangCreds(loaded: true, token: token));
+void setAushangCreds(String token) async {
+  await Credentials.vertretungsplan.setCredentials(token);
 }
 
 void clearAushangCreds() {
-  final db = getIt.get<AppManager>().db;
-  AppManager.stores.data.record("aushangcreds").delete(db);
-  _aushangCreds.add(_AushangCreds(loaded: false, token: null));
+  Credentials.vertretungsplan.removeCredentials();
 }
 
 class _PageAushangCreds extends StatefulWidget {
@@ -82,7 +56,8 @@ class __PageAushangCredsState extends State<_PageAushangCreds> {
                 decoration: InputDecoration(
                     errorText: errorFormText,
                     labelText: "Kennwort",
-                    helperText: "",
+                    helperText:
+                        "Das gleiche Kennwort wie auf Newspoint (Vertretungsplan)",
                     icon: const Icon(Icons.password)),
               ),
               const SizedBox(

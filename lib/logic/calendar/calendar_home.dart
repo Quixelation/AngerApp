@@ -12,28 +12,34 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
   AsyncDataResponse<List<EventData>?>? data;
   List<EventData>? klausurEventData;
   StreamSubscription? calEventSub;
+  StreamSubscription? klausurStreamSub;
 
   StreamSubscription? ferienStreamSub;
-  EventData? ferienEvent;
+  List<EventData>? ferienEvents;
 
   StreamSubscription? currentClassStreamSub;
 
   void _loadKlausurData() async {
-    var klausuren = await getKlausuren();
-    List<EventData> klausurEvents = [];
-    for (var klausur in klausuren) {
-      klausurEvents.add(klausur.toEventData());
-    }
-    setState(() {
-      klausurEventData = klausurEvents;
+    klausurStreamSub = Services.klausuren.subject.listen((klausuren) {
+      if (!mounted) {
+        klausurStreamSub?.cancel();
+        return;
+      }
+      List<EventData> klausurEvents = [];
+      for (var klausur in klausuren.data) {
+        klausurEvents.add(klausur.toEventData());
+      }
+      setState(() {
+        klausurEventData = klausurEvents;
+      });
     });
   }
 
   void _loadFerien() {
-    ferienStreamSub = getNextFerien().listen((event) {
+    ferienStreamSub = Services.ferien.subject.listen((event) {
       if (mounted && event.data != null && !event.error) {
         setState(() {
-          ferienEvent = event.data!.toEvent();
+          ferienEvents = event.data.map((e) => e.toEvent()).toList();
         });
       } else {
         ferienStreamSub?.cancel();
@@ -46,7 +52,7 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
     super.initState();
     _loadKlausurData();
     _loadFerien();
-    calEventSub = getCalendarEventData().listen((event) {
+    calEventSub = Services.calendar.subject.listen((event) {
       if (mounted) {
         setState(() {
           data = event;
@@ -108,12 +114,14 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
     var forToday = [
       ...(data?.data ?? []),
       ...(klausurEventData ?? []),
-      if (ferienEvent != null) ferienEvent!
-    ].where((elem) => (((weekNumber(elem.dateFrom) ==
-            (weekNumber(DateTime.now().add(Duration(days: 7 * _week)))) &&
-        DateTime.now().add(Duration(days: 7 * _week)).year ==
-            elem.dateFrom.year))))
-      ..toList().sort((a, b) => a.dateFrom.compareTo(b.dateFrom));
+      ...(ferienEvents ?? []),
+    ]
+        .where((elem) => (((weekNumber(elem.dateFrom) ==
+                (weekNumber(DateTime.now().add(Duration(days: 7 * _week)))) &&
+            DateTime.now().add(Duration(days: 7 * _week)).year ==
+                elem.dateFrom.year))))
+        .toList();
+    forToday.sort((a, b) => a.dateFrom.compareTo(b.dateFrom));
 
     return Flex(
       children: [
@@ -189,28 +197,29 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
                       ),
                     ),
                   )
-                else if (data!.error == true)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    child: Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        "Es gab einen Fehler",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  )
-                else if (data!.data == null)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    child: Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        "Komischerweise keine Daten",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  )
+                //TODO: Error handling
+                // else if (data!.error == true)
+                //   const Padding(
+                //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                //     child: Opacity(
+                //       opacity: 0.6,
+                //       child: Text(
+                //         "Es gab einen Fehler",
+                //         style: TextStyle(fontSize: 16),
+                //       ),
+                //     ),
+                //   )
+                // else if (data!.data == null)
+                //   const Padding(
+                //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                //     child: Opacity(
+                //       opacity: 0.6,
+                //       child: Text(
+                //         "Komischerweise keine Daten",
+                //         style: TextStyle(fontSize: 16),
+                //       ),
+                //     ),
+                //   )
                 else if (forToday.isNotEmpty)
                   ...forToday.map((elem) => _EventsThisWeekEvent(elem)).toList()
                 else
@@ -265,8 +274,10 @@ class _EventsThisWeekEvent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (event.type == eventType.klausur &&
-                  (currentClass.value != null && event.info?["klasse"] != null
-                      ? (event.info?["klasse"] ?? 0) == currentClass.value
+                  (Services.currentClass.subject.value != null &&
+                          event.info?["klasse"] != null
+                      ? (event.info?["klasse"] ?? 0) ==
+                          Services.currentClass.subject.value
                       : true)) ...[
                 specialChip(context, Icons.warning),
                 const SizedBox(width: 7),

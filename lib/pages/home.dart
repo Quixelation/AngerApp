@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:math';
+import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/version_manager/version_manager.dart';
+import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/network/ferien.dart';
@@ -10,6 +14,7 @@ import 'package:anger_buddy/network/quickinfos.dart';
 import 'package:anger_buddy/pages/news.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/pages/notifications.dart';
+import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
@@ -46,6 +51,13 @@ class _PageHomeState extends State<PageHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+          label: const Text("Vertretungsplan"),
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const PageVp()));
+          },
+          icon: const Icon(Icons.switch_account_rounded)),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -177,6 +189,11 @@ class _PageHomeState extends State<PageHome> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                       child: FerienCard(),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: AushangHomepageWidget(),
                     ),
                     Padding(
                       padding:
@@ -417,9 +434,7 @@ class _WelcomeTextState extends State<WelcomeText> {
 }
 
 class _PinnedKlausurenList extends StatefulWidget {
-  const _PinnedKlausurenList({
-    Key? key,
-  }) : super();
+  const _PinnedKlausurenList() : super();
 
   @override
   State<_PinnedKlausurenList> createState() => _PinnedKlausurenListState();
@@ -478,12 +493,17 @@ class _FerienCardState extends State<FerienCard> {
   @override
   void initState() {
     super.initState();
-    ferienSub = getNextFerien().listen((event) {
-      printInDebug(event.data?.name);
-      if (event.data?.status != FerienStatus.finished &&
-          event.data?.diff != null) {
+    ferienSub = Services.ferien.subject.listen((event) {
+      var firstEvent = event.data?.first;
+      printInDebug(firstEvent?.name);
+      if (firstEvent?.status != FerienStatus.finished &&
+          firstEvent?.diff != null) {
         setState(() {
-          data = event;
+          data = AsyncDataResponse(
+              data: firstEvent,
+              loadingAction: event.loadingAction,
+              error: event.error,
+              allowReload: event.allowReload);
         });
       } else {
         setState(() {
@@ -495,6 +515,9 @@ class _FerienCardState extends State<FerienCard> {
 
   @override
   Widget build(BuildContext context) {
+    var diffSeconds = data?.data?.diff?.inSeconds;
+    var diffDays = diffSeconds != null ? diffSeconds / 60 / 60 / 24 : 0;
+    var diffWholeDays = diffDays.ceil();
     return data?.data != null
         ? Card(
             child: Stack(children: [
@@ -516,7 +539,7 @@ class _FerienCardState extends State<FerienCard> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 8.0),
-                          child: Text(data!.data!.diff?.inDays.toString() ?? "",
+                          child: Text(diffWholeDays.toString() ?? "",
                               style: const TextStyle(
                                   fontSize: 28, fontWeight: FontWeight.w700)),
                         ),
@@ -524,8 +547,7 @@ class _FerienCardState extends State<FerienCard> {
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  "Tag${data!.data!.diff!.inDays == 1 ? "" : "e"}",
+                              Text("Tag${diffWholeDays == 1 ? "" : "e"}",
                                   style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold)),
@@ -600,7 +622,7 @@ class __NewsCardState extends State<_NewsCard> {
   void initState() {
     super.initState();
 
-    getNews().listen((val) {
+    Services.news.subject.listen((val) {
       setState(() {
         newsData = val;
       });
@@ -903,10 +925,8 @@ class __QuickInfosListState extends State<_QuickInfosList> {
   @override
   void initState() {
     super.initState();
-    printInDebug("quickinfos initState");
+    logger.v("[QuickInfosHomepage] InitState");
     fetchQuickInfos().listen((value) {
-      printInDebug("quickinfos iniSTate value recieved");
-
       setState(() {
         _quickInfos = value;
       });
