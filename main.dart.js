@@ -57914,7 +57914,7 @@ return"/cms/"},
 $S:12}
 A.akm.prototype={
 $0(){var s=B.c.dd(window.location.host,"robertstuendl.com")
-if(s)return"https://angerapp-api.robertstuendl.com/"
+if(s)return"https://angerapp-proxy.robertstuendl.com/"
 else return""},
 $S:12}
 A.b1f.prototype={}
