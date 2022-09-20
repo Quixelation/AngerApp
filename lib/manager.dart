@@ -51,7 +51,7 @@ class AppManager {
 
     if (kIsWeb) {
       if (kDebugMode || isRobertStuendlCom) {
-        return "https://angerapp-api.robertstuendl.com/";
+        return "https://angerapp-proxy.robertstuendl.com/";
       } else {
         return "";
       }
