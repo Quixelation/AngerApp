@@ -100,10 +100,6 @@ DateTime convertCalApiDate(String date) {
 }
 
 class CalendarManager extends DataManager<EventData> {
-  CalendarManager() {
-    getData();
-  }
-
   @override
   final subject = BehaviorSubject();
 

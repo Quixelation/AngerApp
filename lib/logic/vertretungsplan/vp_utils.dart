@@ -11,11 +11,20 @@ DateTime _extractChangedDate(String string) {
 VertretungsplanDetails _convertXmlVp(String xml) {
   var document = parse(xml);
   // Dont try an easier solution with querySelectorAll! It will probably not work. idk why
-  var tables = document.getElementsByClassName("table").toList();
-  tables.removeWhere((element) => element.parent!.localName != "body");
+  var titles = document.querySelectorAll("h2").toList();
+  titles.removeWhere((element) => element.parent!.localName != "body");
+  logger.d(titles);
+  var targetedTitle = titles.firstWhere((element) => element.text == "Geänderte Unterrichtsstunden");
+  logger.d(targetedTitle);
+  var targetedTable = targetedTitle.nextElementSibling;
+  logger.d(targetedTable);
+
+  if (targetedTable == null || !targetedTable.classes.contains("table")) {
+    throw ErrorDescription("Konnte keine Tabelle finden");
+  }
 
   /// Die im HTML vorhanden TableRows
-  var vpTableRows = tables[0].querySelectorAll("tr");
+  var vpTableRows = targetedTable.querySelectorAll("tr");
 
   Map<String, List<VertretungsplanEntry>> vpEntries = {};
 
@@ -33,21 +42,13 @@ VertretungsplanDetails _convertXmlVp(String xml) {
     if (row.children[0].text == "Klasse/Kurs") continue;
 
     var entry = VertretungsplanEntry(
-      stunde: _VertretungsplanValue(
-          content: row.children[1].text,
-          changed: row.children[1].classes.contains("changed")),
-      fach: _VertretungsplanValue(
-          content: row.children[2].text,
-          changed: row.children[2].classes.contains("changed")),
-      lehrer: _VertretungsplanValue(
-          content: row.children[3].text,
-          changed: row.children[3].classes.contains("changed")),
-      raum: _VertretungsplanValue(
-          content: row.children[4].text,
-          changed: row.children[4].classes.contains("changed")),
-      info: _VertretungsplanValue(
-          content: row.children[5].text,
-          changed: row.children[5].classes.contains("changed")),
+      stunde:
+          _VertretungsplanValue(content: row.children[1].text, changed: row.children[1].classes.contains("changed")),
+      fach: _VertretungsplanValue(content: row.children[2].text, changed: row.children[2].classes.contains("changed")),
+      lehrer:
+          _VertretungsplanValue(content: row.children[3].text, changed: row.children[3].classes.contains("changed")),
+      raum: _VertretungsplanValue(content: row.children[4].text, changed: row.children[4].classes.contains("changed")),
+      info: _VertretungsplanValue(content: row.children[5].text, changed: row.children[5].classes.contains("changed")),
     );
 
     tableRows.add(VertretungsplanRow.fromEntry(entry, row.children[0].text));
@@ -68,17 +69,10 @@ VertretungsplanDetails _convertXmlVp(String xml) {
   return VertretungsplanDetails(
       vertretung: klassen,
       verbose: verbose,
-      date: _extractTitleDate(
-          document.querySelector("h1")?.text ?? "Nichts, 1. Januar 2000"),
-      lastChanged: _extractLastChangedDate(
-          document.querySelector("p")?.text ?? "Nichts, 1. Januar 2000"),
+      date: _extractTitleDate(document.querySelector("h1")?.text ?? "Nichts, 1. Januar 2000"),
+      lastChanged: _extractLastChangedDate(document.querySelector("p")?.text ?? "Nichts, 1. Januar 2000"),
       //TODO: Really extract the infos from the page, not just fake it
-      infos: document
-              .querySelector("table.infos")
-              ?.querySelectorAll("td")
-              .map((e) => e.text)
-              .toList() ??
-          [],
+      infos: document.querySelector("table.infos")?.querySelectorAll("td").map((e) => e.text).toList() ?? [],
       html: xml,
       tableRows: tableRows);
 }
@@ -118,8 +112,7 @@ DateTime _extractTitleDate(String string) {
 }
 
 DateTime _extractLastChangedDate(String string) {
-  return DateFormat("d.M.yyyy, H:mm")
-      .parse(string.replaceAll("Stand: ", "").trim());
+  return DateFormat("d.M.yyyy, H:mm").parse(string.replaceAll("Stand: ", "").trim());
 }
 
 // Extract DateTime from last part of VpCaption (e.g. "Schüler Vertretungsplan_XML 25.11.2021")
@@ -134,9 +127,7 @@ Future<bool> checkIfVpIsNew(String uniqueId, DateTime newChangedDate) async {
 
   bool vpIsNew = true;
 
-  if (dbEntry != null &&
-      (int.parse(dbEntry["changed"].toString())) ==
-          newChangedDate.millisecondsSinceEpoch) {
+  if (dbEntry != null && (int.parse(dbEntry["changed"].toString())) == newChangedDate.millisecondsSinceEpoch) {
     vpIsNew = false;
   }
 

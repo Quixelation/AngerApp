@@ -6,16 +6,22 @@ import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/network/ferien.dart';
 import 'package:anger_buddy/network/news.dart';
 
-class Services {
+class _ServicesManager {
   /* -- Funktions-Seiten -- */
-  static final news = NewsManager();
-  static final aushang = AushangManager();
-  static final calendar = CalendarManager();
-  static final ferien = FerienManager();
-  static final klausuren = KlausurenManager();
+  final news = NewsManager();
+  final aushang = AushangManager();
+  final calendar = CalendarManager();
+  final ferien = FerienManager();
+  final klausuren = KlausurenManager();
   /* -- ENDE: Funktions-Seiten -- */
-  static final currentClass = CurrentClassManager();
+  final currentClass = CurrentClassManager();
+
+  Future<void> init() async {
+    await Future.wait([news.init(), aushang.init(), calendar.init(), ferien.init(), klausuren.init()]);
+  }
 }
+
+final Services = _ServicesManager();
 
 class _Credentials {
   late VpCreds vertretungsplan;

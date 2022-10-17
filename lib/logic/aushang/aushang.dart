@@ -139,17 +139,6 @@ class AushangManager extends DataManager<Aushang> {
   @override
   String get syncManagerKey => "aushang";
 
-  AushangManager() {
-    getData().then((value) {
-      if (value.error) {
-        throw ErrorAndStackTrace(
-            "Error while init AushangManager", StackTrace.current);
-      }
-
-      logger.v("[Aushang] Initialized");
-    });
-  }
-
   @override
   fetchFromServer() async {
     var result = await http

@@ -9,6 +9,7 @@ import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/pages/settings.dart';
+import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
@@ -98,8 +99,7 @@ Future<AsyncDataResponse<_VpListResponse>> fetchVertretungsListApiData() async {
 Future<VpDetailsFetchResponse> fetchVertretungsplanDetails(
     VertretungsPlanItem vp) async {
   printInDebug("Fetching details for ${vp.uniqueName}");
-  var response = await http.get(
-      Uri.parse(AppManager.urls.vpdetail(vp.contentUrl.toString())),
+  var response = await http.get(Uri.parse(AppManager.urls.vpdetail(vp.contentUrl.toString())),
       headers: {
         "encoding": "utf-8",
       });
@@ -112,7 +112,16 @@ Future<VpDetailsFetchResponse> fetchVertretungsplanDetails(
 
   await saveVpToDb(data: body, vpItem: vp);
 
-  return VpDetailsFetchResponse(details: _convertXmlVp(body));
+  bool errorWhileConverting = true;
+  VertretungsplanDetails? converted;
+  try{
+    converted = _convertXmlVp(body);
+    errorWhileConverting = false;
+  }catch(err){
+    logger.e(err);
+  }
+
+  return VpDetailsFetchResponse(details: converted, html: body, error: errorWhileConverting);
 }
 
 Future<void> saveVpToDb(

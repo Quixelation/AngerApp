@@ -41,21 +41,21 @@ class MainDrawer extends StatelessWidget {
         addAutomaticKeepAlives: true,
         controller: _scrollController,
         children: [
-          Stack(
-            children: const [
-              _ImageBanner(),
-              Positioned(
-                child: Text(
-                  "AngerApp",
-                  style: TextStyle(
-                      fontSize: 40,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700),
-                ),
-                bottom: 0010,
-                left: 20,
-              )
-            ],
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 202.6),
+            child: Stack(
+              children: const [
+                _ImageBanner(),
+                Positioned(
+                  child: Text(
+                    "AngerApp",
+                    style: TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
+                  bottom: 0010,
+                  left: 20,
+                )
+              ],
+            ),
           ),
           StreamBuilder(
             builder: (context, snapshot) {
@@ -77,13 +77,10 @@ class MainDrawer extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: ListTile(
                           title: Text(
-                            snapshot.hasData
-                                ? "Klasse ${snapshot.data}"
-                                : "Klasse einstellen",
+                            snapshot.hasData ? "Klasse ${snapshot.data}" : "Klasse einstellen",
                           ),
                           trailing: Icon(Icons.adaptive.arrow_forward),
-                          subtitle: const Text(
-                              "Die App passt sich deiner Klassenstufe an."),
+                          subtitle: const Text("Die App passt sich deiner Klassenstufe an."),
                         )),
                   ),
                 ),
@@ -171,6 +168,7 @@ class MainDrawer extends StatelessWidget {
             ),
             const _DrawerLink(
               title: "AGs",
+              wip: true,
               icon: Icons.widgets,
               page: PageTempUnderConstruction(
                 page: PageAgs(),
@@ -193,8 +191,7 @@ class MainDrawer extends StatelessWidget {
                   return oberstufePage;
                 }),
                 footerWidgets: const [
-                  Text(
-                      "Hier erscheinen später Informationen zu der Oberstufe: Notensystem, Kurse, usw.")
+                  Text("Hier erscheinen später Informationen zu der Oberstufe: Notensystem, Kurse, usw.")
                 ],
               ),
             ),
@@ -203,9 +200,7 @@ class MainDrawer extends StatelessWidget {
               title: "Seminarfach",
               icon: Icons.info,
               page: PageTempUnderConstruction(
-                footerWidgets: [
-                  Text("Hier erscheinen später Informationen zum Seminarfach")
-                ],
+                footerWidgets: [Text("Hier erscheinen später Informationen zum Seminarfach")],
               ),
             ),
             const _DrawerLink(
@@ -213,26 +208,18 @@ class MainDrawer extends StatelessWidget {
               title: "Abitur",
               icon: Icons.info,
               page: PageTempUnderConstruction(
-                footerWidgets: [
-                  Text("Hier erscheinen später Informationen zum Abitur")
-                ],
+                footerWidgets: [Text("Hier erscheinen später Informationen zum Abitur")],
               ),
             ),
           ]),
           const Divider(),
           const _Category("Links", [
-            _DrawerExternalLink(
-                title: "Moodle",
-                url: "https://moodle.jsp.jena.de",
-                icon: Icons.auto_stories),
+            _DrawerExternalLink(title: "Moodle", url: "https://moodle.jsp.jena.de", icon: Icons.auto_stories),
             _DrawerExternalLink(
                 title: "Noten",
                 url: "https://homeinfopoint.de/angergymjena/default.php",
                 icon: Icons.format_list_numbered),
-            _DrawerExternalLink(
-                title: "Jenaer Schulportal",
-                url: "https://jsp.jena.de/",
-                icon: Icons.cloud),
+            _DrawerExternalLink(title: "Jenaer Schulportal", url: "https://jsp.jena.de/", icon: Icons.cloud),
             _DrawerExternalLink(
                 title: "Big Blue Button",
                 url: "https://uk.applikations-server.de/b/uwe-rpw-64k",
@@ -269,9 +256,7 @@ class MainDrawer extends StatelessWidget {
                     url: "https://angergymapp.robertstuendl.com/terms.html",
                     icon: Icons.shield_outlined),
                 const _DrawerExternalLink(
-                    title: "Code (GitHub)",
-                    url: "https://github.com/Quixelation/AngerApp",
-                    icon: Icons.code),
+                    title: "Code (GitHub)", url: "https://github.com/Quixelation/AngerApp", icon: Icons.code),
               ].where((element) => element != null).toList()),
         ],
       ),
@@ -293,11 +278,7 @@ class _Category extends StatelessWidget {
               child: _CategoryHeader(title: header, open: false)),
           expanded:*/
         Column(
-      children: [
-        /*ExpandableButton(child:*/ _CategoryHeader(
-            title: header, open: true) /*)*/,
-        ...links
-      ],
+      children: [/*ExpandableButton(child:*/ _CategoryHeader(title: header, open: true) /*)*/, ...links],
     )
         /*,),
       ),
@@ -309,8 +290,7 @@ class _Category extends StatelessWidget {
 class _CategoryHeader extends StatelessWidget {
   final String title;
   final bool open;
-  const _CategoryHeader({Key? key, required this.title, this.open = true})
-      : super(key: key);
+  const _CategoryHeader({Key? key, required this.title, this.open = true}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -342,13 +322,7 @@ class _DrawerLink extends StatelessWidget {
   final Widget? page;
   final IconData icon;
   final bool wip;
-  const _DrawerLink(
-      {Key? key,
-      required this.title,
-      this.page,
-      required this.icon,
-      this.wip = false})
-      : super(key: key);
+  const _DrawerLink({Key? key, required this.title, this.page, required this.icon, this.wip = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -383,9 +357,7 @@ class _DrawerExternalLink extends StatelessWidget {
   final String url;
   final IconData icon;
 
-  const _DrawerExternalLink(
-      {Key? key, required this.title, required this.url, required this.icon})
-      : super(key: key);
+  const _DrawerExternalLink({Key? key, required this.title, required this.url, required this.icon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -408,8 +380,7 @@ class _ImageBanner extends StatefulWidget {
   __ImageBannerState createState() => __ImageBannerState();
 }
 
-class __ImageBannerState extends State<_ImageBanner>
-    with AutomaticKeepAliveClientMixin<_ImageBanner> {
+class __ImageBannerState extends State<_ImageBanner> with AutomaticKeepAliveClientMixin<_ImageBanner> {
   ImageProvider logo = const AssetImage("assets/AngerWiki.jpg");
 
   @override
@@ -421,13 +392,10 @@ class __ImageBannerState extends State<_ImageBanner>
     return kIsWeb
         ? Container()
         : ImageFiltered(
-            imageFilter: ImageFilter.blur(
-                sigmaX: 1.25, sigmaY: 1.25, tileMode: TileMode.mirror),
+            imageFilter: ImageFilter.blur(sigmaX: 1.25, sigmaY: 1.25, tileMode: TileMode.mirror),
             child: ColorFiltered(
               key: UniqueKey(),
-              colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.primary.withAlpha(240),
-                  BlendMode.multiply),
+              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary.withAlpha(240), BlendMode.multiply),
               child: Image(
                 image: logo,
                 fit: BoxFit.fitWidth,

@@ -44,7 +44,8 @@ Future<void> initApp() async {
 
   toggleSubscribtionToTopic("all", true);
   enforceDefaultFcmSubscriptions();
-  await Future.wait([initColorSubject(), initializeAllCredentialManagers()]);
+  await Future.wait(
+      [initColorSubject(), initializeAllCredentialManagers(), Services.init()]);
   logger.v("[AngerApp] Initialized");
 }
 

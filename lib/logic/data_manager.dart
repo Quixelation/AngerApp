@@ -7,6 +7,8 @@ import 'package:rxdart/subjects.dart';
 abstract class DataManager<E> {
   abstract final String syncManagerKey;
 
+  abstract final BehaviorSubject<AsyncDataResponse<List<E>>> subject;
+
   /// Nach wie vielen Minuten Daten als "alt" angesehen werden sollen (default: 5)
   int syncManagerTTL = 5;
   Future<List<E>> fetchFromServer();
@@ -39,14 +41,21 @@ abstract class DataManager<E> {
     return dataResponse;
   }
 
+  Future<bool> needsSync({SyncManager? lastSync}) async {
+    if (lastSync == null) {
+      lastSync = await SyncManager.getLastSync(syncManagerKey);
+    }
+
+    return lastSync.never ||
+        lastSync.difference(DateTime.now()).inMinutes > syncManagerTTL;
+  }
+
   @nonVirtual
   Future<AsyncDataResponse<List<E>>> getData({bool force = false}) async {
     var lastSync = await SyncManager.getLastSync(syncManagerKey);
 
     // Falls zuvor noch nie Daten vom Server geholt wurden oder diese zu alt sind
-    if (lastSync.never ||
-        lastSync.difference(DateTime.now()).inMinutes > syncManagerTTL ||
-        force) {
+    if (await needsSync(lastSync: lastSync) || force) {
       try {
         return _getData__Server();
       } catch (e) {
@@ -77,5 +86,15 @@ abstract class DataManager<E> {
     }
   }
 
-  abstract final BehaviorSubject<AsyncDataResponse<List<E>>> subject;
+  Future<void> init() async {
+    try {
+      await _getData__Database();
+    } catch (err) {}
+    try {
+      // Only fetch from Server if the data really needs an update
+      if (await needsSync()) {
+        _getData__Server();
+      }
+    } catch (err) {}
+  }
 }

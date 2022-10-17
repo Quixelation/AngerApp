@@ -109,12 +109,6 @@ Future<List<Klausur>?> getPinnedKlausuren() async {
 var pinnedKlausurSubject = BehaviorSubject();
 
 class KlausurenManager extends DataManager<Klausur> {
-  KlausurenManager() {
-    getData().catchError(() {
-      error = true;
-    });
-  }
-
   bool error = false;
 
   @override

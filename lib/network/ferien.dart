@@ -64,10 +64,6 @@ class FerienManager extends DataManager<Ferien> {
 
   final subject = BehaviorSubject();
 
-  FerienManager() {
-    getData();
-  }
-
   @override
   fetchFromDatabase() async {
     var db = getIt.get<AppManager>().db;

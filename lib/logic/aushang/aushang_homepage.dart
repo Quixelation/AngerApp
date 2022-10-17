@@ -23,7 +23,9 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return (aushaenge != null && aushaenge?.error == false)
+    return (aushaenge != null &&
+            aushaenge?.error == false &&
+            (aushaenge?.data.length ?? 0) != 0)
         ? ConstrainedBox(
             constraints: BoxConstraints(maxHeight: 130),
             child: ListView(
@@ -119,7 +121,7 @@ class __AushangHomepageCardState extends State<_AushangHomepageCard> {
                   ),
                   flex: 1,
                 ),
-                //TODO Implement this
+                //TODO Implement this (read state)
                 // SizedBox(width: 8),
                 // Flexible(
                 //   child: Column(

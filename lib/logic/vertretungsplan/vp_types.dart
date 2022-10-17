@@ -246,8 +246,10 @@ class VertretungsPlanItem {
 }
 
 class VpDetailsFetchResponse {
-  final VertretungsplanDetails details;
-  VpDetailsFetchResponse({required this.details});
+  final VertretungsplanDetails? details;
+  final String? html;
+  final bool error;
+  VpDetailsFetchResponse({required this.details, required this.error, this.html});
 }
 
 enum saveToDbStatus {

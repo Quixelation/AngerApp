@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:anger_buddy/angerapp.dart';
@@ -28,8 +29,7 @@ class _PageKlausurenState extends State<PageKlausuren> {
   }
 
   void loadKlausuren() {
-    klausurenResp?.loadingAction =
-        AsyncDataResponseLoadingAction.currentlyLoading;
+    klausurenResp?.loadingAction = AsyncDataResponseLoadingAction.currentlyLoading;
     Services.klausuren.getData().then((value) {
       if (mounted) {
         setState(() {
@@ -40,8 +40,7 @@ class _PageKlausurenState extends State<PageKlausuren> {
   }
 
   Widget selectClassBtn(int classS) {
-    bool? hasKlausuren =
-        klausurenResp?.data?.any((elem) => elem.klassenstufe == classS);
+    bool? hasKlausuren = klausurenResp?.data?.any((elem) => elem.klassenstufe == classS);
 
     return Expanded(
         child: Padding(
@@ -61,18 +60,14 @@ class _PageKlausurenState extends State<PageKlausuren> {
                       selectedClass = classS;
                     });
                   },
-                  child: Text("$classS.",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary)))
+                  child: Text("$classS.", style: TextStyle(color: Theme.of(context).colorScheme.secondary)))
               : TextButton(
                   onPressed: () {
                     setState(() {
                       selectedClass = classS;
                     });
                   },
-                  child: Text("$classS.",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary))),
+                  child: Text("$classS.", style: TextStyle(color: Theme.of(context).colorScheme.secondary))),
     ));
   }
 
@@ -85,8 +80,7 @@ class _PageKlausurenState extends State<PageKlausuren> {
           title: const Text('Klausuren'),
           actions: [
             IconButton(
-              enableFeedback: klausurenResp?.loadingAction !=
-                  AsyncDataResponseLoadingAction.currentlyLoading,
+              enableFeedback: klausurenResp?.loadingAction != AsyncDataResponseLoadingAction.currentlyLoading,
               icon: const Icon(Icons.refresh),
               onPressed: () => loadKlausuren(),
             ),
@@ -113,8 +107,7 @@ class _PageKlausurenState extends State<PageKlausuren> {
                       ...(MediaQuery.of(context).size.width > 600
                           ? [
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Row(
                                   children: [
                                     selectClassBtn(5),
@@ -156,12 +149,12 @@ class _PageKlausurenState extends State<PageKlausuren> {
 
   List<Widget> buildKlausurList(List<Klausur> data) {
     List<Widget> klausurList = [];
+    data.sort((a, b) {
+      return a.date.compareTo(b.date);
+    });
     for (var klausur in data) {
       if ((selectedClass == klausur.klassenstufe) || selectedClass == null) {
-        klausurList.addAll([
-          const Divider(),
-          _KlausurContainer(klausur, selectedClass == null)
-        ]);
+        klausurList.addAll([const Divider(), _KlausurContainer(klausur, selectedClass == null)]);
       }
     }
     if (klausurList.isEmpty) {
@@ -196,8 +189,7 @@ class _PageKlausurenState extends State<PageKlausuren> {
 class _KlausurContainer extends StatelessWidget {
   final Klausur klausur;
   final bool showClass;
-  const _KlausurContainer(this.klausur, this.showClass, {Key? key})
-      : super(key: key);
+  const _KlausurContainer(this.klausur, this.showClass, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -215,23 +207,15 @@ class _KlausurContainer extends StatelessWidget {
                   child: RichText(
                     text: TextSpan(
                         style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                            color: Theme.of(context).colorScheme.onSurface),
+                            fontWeight: FontWeight.bold, fontSize: 17, color: Theme.of(context).colorScheme.onSurface),
                         children: [
                           TextSpan(
-                              text: klausur.name,
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface)),
+                              text: klausur.name, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                           if (showClass)
                             TextSpan(
                                 text: " (${klausur.klassenstufe}. Klasse)",
                                 style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withAlpha(170),
+                                    color: Theme.of(context).colorScheme.onSurface.withAlpha(170),
                                     fontWeight: FontWeight.normal))
                         ]),
                   ),
@@ -240,10 +224,7 @@ class _KlausurContainer extends StatelessWidget {
                 Opacity(
                   opacity: 0.60,
                   child: Text(
-                    time2string(klausur.date,
-                        includeTime: false,
-                        includeWeekday: false,
-                        useStringMonth: true),
+                    time2string(klausur.date, includeTime: false, includeWeekday: false, useStringMonth: true),
                     style: const TextStyle(fontSize: 15),
                   ),
                 ),
@@ -271,16 +252,13 @@ class _KlausurContainer extends StatelessWidget {
 
 class _KlausurPinnedStatusIconButton extends StatefulWidget {
   final Klausur klausur;
-  const _KlausurPinnedStatusIconButton(this.klausur, {Key? key})
-      : super(key: key);
+  const _KlausurPinnedStatusIconButton(this.klausur, {Key? key}) : super(key: key);
 
   @override
-  __KlausurPinnedStatusIconButtonState createState() =>
-      __KlausurPinnedStatusIconButtonState();
+  __KlausurPinnedStatusIconButtonState createState() => __KlausurPinnedStatusIconButtonState();
 }
 
-class __KlausurPinnedStatusIconButtonState
-    extends State<_KlausurPinnedStatusIconButton> {
+class __KlausurPinnedStatusIconButtonState extends State<_KlausurPinnedStatusIconButton> {
   bool? pinned;
 
   updatePinnedState() {
@@ -291,52 +269,72 @@ class __KlausurPinnedStatusIconButtonState
     });
   }
 
+  bool userCanPin = false;
+
+  StreamSubscription? currentClassSubscription;
+
   @override
   initState() {
     super.initState();
     updatePinnedState();
+
+    currentClassSubscription = Services.currentClass.subject.listen((value) {
+      if (!mounted) {
+        currentClassSubscription?.cancel();
+        return;
+      }
+      setState(() {
+        userCanPin = value == null;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    currentClassSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: 0.87,
-      child: IconButton(
-        tooltip: "An Startseite anheften",
-        onPressed: pinned == null
-            ? null
-            : () async {
-                try {
-                  if (pinned == true) {
-                    await unpinKlausur(widget.klausur);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Von der App-Startseite entfernt"),
-                      duration: Duration(seconds: 2),
-                    ));
-                  } else if (pinned == false) {
-                    await pinKlausur(widget.klausur);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Zur App-Startseite hinzugefügt"),
-                      duration: Duration(seconds: 2),
-                    ));
-                  }
-                  pinnedKlausurSubject.add(UniqueKey());
+    return userCanPin
+        ? Opacity(
+            opacity: 0.87,
+            child: IconButton(
+              tooltip: "An Startseite anheften",
+              onPressed: pinned == null
+                  ? null
+                  : () async {
+                      try {
+                        if (pinned == true) {
+                          await unpinKlausur(widget.klausur);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text("Von der App-Startseite entfernt"),
+                            duration: Duration(seconds: 2),
+                          ));
+                        } else if (pinned == false) {
+                          await pinKlausur(widget.klausur);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text("Zur App-Startseite hinzugefügt"),
+                            duration: Duration(seconds: 2),
+                          ));
+                        }
+                        pinnedKlausurSubject.add(UniqueKey());
 
-                  updatePinnedState();
-                } catch (err) {}
-              },
-        icon: pinned == null
-            ? const Opacity(
-                opacity: 0.5,
-                child: Icon(
-                  Icons.check_box_outline_blank_outlined,
-                  color: Colors.grey,
-                ),
-              )
-            : (pinned == true
-                ? const Icon(Icons.check_box_outlined)
-                : const Icon(Icons.add_box_outlined)),
-      ),
-    );
+                        updatePinnedState();
+                      } catch (err) {}
+                    },
+              icon: pinned == null
+                  ? const Opacity(
+                      opacity: 0.5,
+                      child: Icon(
+                        Icons.check_box_outline_blank_outlined,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : (pinned == true ? const Icon(Icons.check_box_outlined) : const Icon(Icons.add_box_outlined)),
+            ),
+          )
+        : Container();
   }
 }
