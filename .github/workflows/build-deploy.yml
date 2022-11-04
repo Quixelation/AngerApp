@@ -10,33 +10,32 @@ on:
       - main
 
 jobs:
-  build-android:
-    name: Build APK
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Flutter
-        uses: subosito/flutter-action@v1
-        with:
-          flutter-version: "2.10.3"
-
-      - name: Get dependencies
-        run: flutter pub get
-
-        # - name: Test project
-        #   run: flutter test
-
-      - name: Build release project
-        run: flutter build apk
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: Android App
-          path: ./build/app/outputs/flutter-apk/app-release.apk
+#  build-android:
+#    name: Build APK
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Install Flutter
+#        uses: subosito/flutter-action@v1
+#        with:
+#          flutter-version: "2.10.3"
+#
+#      - name: Get dependencies
+#        run: flutter pub get
+#
+#        # - name: Test project
+#        #   run: flutter test
+#
+#      - name: Build release project
+#        run: flutter build apk
+#
+#      - name: Upload APK
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: Android App
+#          path: ./build/app/outputs/flutter-apk/app-release.apk
 
   # build-bundle:
   #   name: Build Android Bundle
