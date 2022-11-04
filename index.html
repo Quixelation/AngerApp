@@ -15,6 +15,14 @@
     the `--base-href` argument provided to `flutter build`.
   -->
     <base href="/" />
+    <script src="/js/pdf.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "/js/pdf.worker.min.js";
+      // pdfRenderOptions = {
+      //   cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.12.313/cmaps/',
+      //   cMapPacked: true,
+      // }
+    </script>
     <link
       rel="stylesheet"
       href="/pure-min.css"
@@ -318,7 +326,7 @@
         }
         console.log(`Using ${window.flutterWebRenderer} renderer`);
 
-        var serviceWorkerVersion = '1956876753';
+        var serviceWorkerVersion = '1526042481';
         var scriptLoaded = false;
         function loadMainDartJs() {
           if (scriptLoaded) {
