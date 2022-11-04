@@ -37,8 +37,7 @@ class __PageAushangCredsState extends State<_PageAushangCreds> {
           width: 300,
           child: Form(
             key: _formKey,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -56,8 +55,7 @@ class __PageAushangCredsState extends State<_PageAushangCreds> {
                 decoration: InputDecoration(
                     errorText: errorFormText,
                     labelText: "Kennwort",
-                    helperText:
-                        "Das gleiche Kennwort wie auf Newspoint (Vertretungsplan)",
+                    helperText: "Das gleiche Kennwort wie auf Newspoint (Vertretungsplan)",
                     icon: const Icon(Icons.password)),
               ),
               const SizedBox(
@@ -74,8 +72,7 @@ class __PageAushangCredsState extends State<_PageAushangCreds> {
                         setState(() {
                           loading = true;
                         });
-                        final valied =
-                            await testFetchAushaenge(tokenController!.text);
+                        final valied = await testFetchAushaenge(tokenController!.text);
                         if (valied) {
                           setAushangCreds(tokenController!.text);
                         } else {
@@ -90,10 +87,7 @@ class __PageAushangCredsState extends State<_PageAushangCreds> {
                     },
                     child: const Text("Verifizieren"),
                   ),
-                  if (loading) ...[
-                    SizedBox(width: 8),
-                    const CircularProgressIndicator.adaptive()
-                  ]
+                  if (loading) ...[const SizedBox(width: 8), const CircularProgressIndicator.adaptive()]
                 ],
               ),
             ]),
@@ -106,11 +100,9 @@ class __PageAushangCredsState extends State<_PageAushangCreds> {
 
 Future<bool> testFetchAushaenge(String token) async {
   try {
-    final result = await http.get(
-        Uri.parse("${AppManager.directusUrl}/items/aushang?limit=0"),
-        headers: {
-          "Authorization": "Bearer " + token,
-        });
+    final result = await http.get(Uri.parse("${AppManager.directusUrl}/items/aushang?limit=0"), headers: {
+      "Authorization": "Bearer " + token,
+    });
     return result.statusCode == 200;
   } catch (e) {
     logger.e(e);

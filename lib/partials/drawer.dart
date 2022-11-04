@@ -42,7 +42,7 @@ class MainDrawer extends StatelessWidget {
         controller: _scrollController,
         children: [
           ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 202.6),
+            constraints: BoxConstraints(maxHeight: kIsWeb ? double.infinity : 202.6),
             child: Stack(
               children: const [
                 _ImageBanner(),
@@ -62,9 +62,13 @@ class MainDrawer extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
+                  elevation: snapshot.hasData ? 1 : 2.5,
+                  shadowColor: snapshot.hasData ? null : Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(color: Colors.grey[700]!),
+                    side: BorderSide(
+                        color: snapshot.hasData ? Colors.grey[700]! : Theme.of(context).colorScheme.primary,
+                        width: snapshot.hasData ? 1 : 2.5),
                   ),
                   child: InkWell(
                     onTap: () {

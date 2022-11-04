@@ -39,13 +39,11 @@ Future<void> initApp() async {
 
   var db = allFutures[0] as Database;
 
-  getIt.registerSingleton<AppManager>(
-      AppManager(mainScaffoldState: GlobalKey(), database: db));
+  getIt.registerSingleton<AppManager>(AppManager(mainScaffoldState: GlobalKey(), database: db));
 
   toggleSubscribtionToTopic("all", true);
   enforceDefaultFcmSubscriptions();
-  await Future.wait(
-      [initColorSubject(), initializeAllCredentialManagers(), Services.init()]);
+  await Future.wait([initColorSubject(), initializeAllCredentialManagers(), Services.init()]);
   logger.v("[AngerApp] Initialized");
 }
 
@@ -69,8 +67,7 @@ class _AngerAppState extends State<AngerApp> {
   Future<void> setupInteractedMessage() async {
     // Get any messages which caused the application to open from
     // a terminated state.
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
@@ -111,18 +108,14 @@ class _AngerAppState extends State<AngerApp> {
   Widget build(BuildContext context) {
     precacheImage(const AssetImage("assets/AngerWiki.jpg"), context);
 
-    var fontFamily =
-        kIsWeb && html.window.navigator.userAgent.contains('OS 15_')
-            ? '-apple-system'
-            : null;
+    var fontFamily = kIsWeb && html.window.navigator.userAgent.contains('OS 15_') ? '-apple-system' : null;
 
     var lightTheme = ThemeData.from(
       colorScheme: ColorScheme.fromSwatch(
           primarySwatch: mainColor.color,
           accentColor: mainColor.accentColor,
           primaryColorDark: mainColor.color.shade700,
-          backgroundColor:
-              Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
+          backgroundColor: Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
           brightness: Brightness.light),
     );
 
@@ -144,42 +137,31 @@ class _AngerAppState extends State<AngerApp> {
           primaryTextTheme: lightTheme.textTheme.apply(
             fontFamily: fontFamily,
           ),
-          tabBarTheme: TabBarTheme(labelColor: Colors.white),
-          accentTextTheme: lightTheme.textTheme.apply(
-            fontFamily: fontFamily,
-          ),
+          tabBarTheme: const TabBarTheme(labelColor: Colors.white),
           useMaterial3: false,
           pageTransitionsTheme: const PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{
-              TargetPlatform.macOS:
-                  FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
+              TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
             },
           ),
         ),
         darkTheme: darkTheme.copyWith(
           useMaterial3: false,
-          drawerTheme:
-              const DrawerThemeData(backgroundColor: Color(0xFF232323)),
+          drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF232323)),
           textTheme: darkTheme.textTheme.apply(
             fontFamily: fontFamily,
           ),
           primaryTextTheme: darkTheme.textTheme.apply(
             fontFamily: fontFamily,
           ),
-          accentTextTheme: darkTheme.textTheme.apply(
-            fontFamily: fontFamily,
-          ),
           pageTransitionsTheme: const PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{
-              TargetPlatform.macOS:
-                  FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
+              TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
             },
           ),
         ),
         themeMode: ThemeMode.system,
-        home: const DefaultTextStyle(
-            style: TextStyle(fontFamily: "Montserrat"),
-            child: _IntroductionScreenSwitcher()),
+        home: const DefaultTextStyle(style: TextStyle(fontFamily: "Montserrat"), child: _IntroductionScreenSwitcher()),
       ),
     );
   }
@@ -196,12 +178,10 @@ class _IntroductionScreenSwitcher extends StatefulWidget {
   const _IntroductionScreenSwitcher({Key? key}) : super(key: key);
 
   @override
-  _IntroductionScreenSwitcherState createState() =>
-      _IntroductionScreenSwitcherState();
+  _IntroductionScreenSwitcherState createState() => _IntroductionScreenSwitcherState();
 }
 
-class _IntroductionScreenSwitcherState
-    extends State<_IntroductionScreenSwitcher> {
+class _IntroductionScreenSwitcherState extends State<_IntroductionScreenSwitcher> {
   bool? _needToShowIntroScreen = false;
 
   @override
@@ -251,12 +231,9 @@ class _HomeNavigator extends StatelessWidget {
       child: Navigator(
           key: homeNavigatorKey,
           initialRoute: "/",
-          onUnknownRoute: (settings) =>
-              MaterialPageRoute(builder: (ctx) => const PageHome()),
+          onUnknownRoute: (settings) => MaterialPageRoute(builder: (ctx) => const PageHome()),
           onGenerateRoute: (settings) =>
-              {
-                "/": MaterialPageRoute(builder: (ctx) => (const PageHome()))
-              }[settings.name] ??
+              {"/": MaterialPageRoute(builder: (ctx) => (const PageHome()))}[settings.name] ??
               MaterialPageRoute(builder: (ctx) => const PageHome())),
     );
   }
@@ -282,9 +259,7 @@ class MyHomePageState extends State<MyHomePage> {
               ],
             )
           : const _HomeNavigator(),
-      drawer: kIsWeb && MediaQuery.of(context).size.width > 900
-          ? null
-          : MainDrawer(),
+      drawer: kIsWeb && MediaQuery.of(context).size.width > 900 ? null : MainDrawer(),
 
       //bottomNavigationBar: BottomNavigationBar(
       //  currentIndex: selectedPage,

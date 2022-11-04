@@ -38,13 +38,14 @@ class _PageHomeState extends State<PageHome> {
     super.initState();
 
     Timer(const Duration(seconds: 2), () {
-      FeatureDiscovery.discoverFeatures(
-        context,
-        const <String>{
-          // Feature ids for every feature that you want to showcase in order.
-          'menu_button', "noti_settings_button"
-        },
-      );
+      if (mounted)
+        FeatureDiscovery.discoverFeatures(
+          context,
+          const <String>{
+            // Feature ids for every feature that you want to showcase in order.
+            'menu_button', "noti_settings_button"
+          },
+        );
     });
   }
 

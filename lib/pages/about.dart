@@ -29,23 +29,16 @@ class PageAbout extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Angergym-App",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30)),
+                      const Text("Angergym-App", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
                       FutureBuilder<PackageInfo>(
                           builder: (context, snapshot) {
                             if (snapshot.hasData && snapshot.data != null) {
                               return Text("version ${snapshot.data!.version}",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: Colors.grey));
+                                  style:
+                                      const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Colors.grey));
                             } else {
                               return const Text("Lädt Version...",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: Colors.grey));
+                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Colors.grey));
                             }
                           },
                           future: PackageInfo.fromPlatform())
@@ -57,10 +50,18 @@ class PageAbout extends StatelessWidget {
           ),
           const Divider(),
           const Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.only(top: 16, bottom: 4, left: 16, right: 26),
             child: Text(
               "Ein Projekt von Robert Steffen Stündl",
               style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 4, bottom: 16, left: 16, right: 26),
+            child: Text(
+              "Vielen Dank an das Medienzentrum Jena (Hosting)",
+              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
               textAlign: TextAlign.center,
             ),
           ),
@@ -69,8 +70,7 @@ class PageAbout extends StatelessWidget {
               title: const Text("Das Team"),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (ctx) => const _PageTeam()));
+                Navigator.push(context, MaterialPageRoute(builder: (ctx) => const _PageTeam()));
               }),
           ListTile(
               title: const Text("Lizensen"),
@@ -80,8 +80,7 @@ class PageAbout extends StatelessWidget {
                 showLicensePage(
                     context: context,
                     applicationVersion: packageInfo.version,
-                    applicationLegalese:
-                        "Programmiert von Robert Steffen Stündl",
+                    applicationLegalese: "Programmiert von Robert Steffen Stündl",
                     applicationIcon: Image.asset(
                       "assets/mainLogo.png",
                       height: 75,
@@ -104,8 +103,7 @@ class _PageTeam extends StatelessWidget {
         SizedBox(height: 16),
         Padding(
           padding: EdgeInsets.all(16.0),
-          child: Text("Das sind wir",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          child: Text("Das sind wir", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         ),
         SizedBox(height: 4),
         ListTile(
@@ -129,8 +127,7 @@ class _PageTeam extends StatelessWidget {
         SizedBox(height: 8),
         Padding(
           padding: EdgeInsets.all(16.0),
-          child: Text("Vielen Dank an",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          child: Text("Vielen Dank an", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         ),
         SizedBox(height: 4),
         ListTile(

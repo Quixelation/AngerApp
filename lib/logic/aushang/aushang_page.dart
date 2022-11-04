@@ -52,13 +52,11 @@ class _PageAushangListState extends State<PageAushangList> {
   @override
   Widget build(BuildContext context) {
     final needToLogin = aushangCreds == null;
-    logger.d(data);
+
     return Scaffold(
       appBar: AppBar(title: const Text("Aushänge")),
       body: (data == null || needToLogin)
-          ? (needToLogin == true
-              ? const _PageAushangCreds()
-              : const Center(child: CircularProgressIndicator()))
+          ? (needToLogin == true ? const _PageAushangCreds() : const Center(child: CircularProgressIndicator()))
           : ListView(children: [
               _LoggedInAs(aushangCreds!),
               if (data!.error == true)
@@ -91,12 +89,13 @@ class _PageAushangListState extends State<PageAushangList> {
   List<Widget> buildAushangList() {
     return data!.data.map((e) {
       return ListTile(
-        title: Text(e.name),
+        title: Text(
+          (e.klassenstufen.isNotEmpty ? "[${e.klassenstufen.join(", ")}] " : "") + e.name,
+          style: TextStyle(fontWeight: e.read == ReadStatusBasic.read ? FontWeight.normal : FontWeight.bold),
+        ),
         subtitle: e.dateUpdated.millisecondsSinceEpoch == 0
-            ? Text(
-                "Erstellt: ${time2string(e.dateCreated, includeTime: true, includeWeekday: true)}")
-            : Text(
-                "Zuletzt geändert: ${time2string(e.dateUpdated, includeTime: true, includeWeekday: true)}"),
+            ? Text("Erstellt: ${time2string(e.dateCreated, includeTime: true, includeWeekday: true)}")
+            : Text("Zuletzt geändert: ${time2string(e.dateUpdated, includeTime: true, includeWeekday: true)}"),
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -130,7 +129,7 @@ class __LoggedInAsState extends State<_LoggedInAs> {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              SizedBox(height: 64),
+              const SizedBox(height: 64),
               const Opacity(
                 opacity: 0.87,
                 child: Icon(
@@ -141,15 +140,12 @@ class __LoggedInAsState extends State<_LoggedInAs> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Opacity(
                   opacity: 0.6,
-                  child: Text("Eingeloggt als:",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  child: Text("Eingeloggt als:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
                 Opacity(
                   opacity: 0.87,
                   child: Text(widget.creds ?? "Kein Login",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20)),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                 ),
               ]),
               const Spacer(),

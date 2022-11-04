@@ -121,7 +121,6 @@ class NewsManager extends DataManager<NewsApiDataElement> {
           category: dbQueryRes["category"].toString(),
           creator: dbQueryRes["creator"].toString()));
     }
-    logger.d(dbQuery);
 
     return sortNewsData(finalList);
   }

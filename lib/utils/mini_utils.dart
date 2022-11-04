@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -49,4 +51,30 @@ String intToMonth(int monthNr) {
     "November",
     "Dezember"
   ][monthNr - 1];
+}
+
+enum ReadStatusBasic { read, notRead }
+
+Future<T> retryManager<T>(
+    {required Future<T> Function() function,
+    int maxRetries = 5,
+    Duration delay = const Duration(milliseconds: 500)}) async {
+  bool taskCompleted = false;
+  int tryNo = 0;
+
+  while (!taskCompleted && tryNo < maxRetries) {
+    try {
+      var result = await function();
+      logger.v("[RetryManager] Function Exec successful after ${tryNo + 1} tries");
+      return result;
+    } catch (err) {
+      final completer = Completer();
+      Timer(delay, () => completer.complete());
+      await completer.future;
+      logger.w(
+          "[RetryManager] Function Exec (#${tryNo + 1}) failed (${(maxRetries - tryNo) - 1} retries remaining with a delay of $delay)");
+    }
+    tryNo++;
+  }
+  throw ErrorDescription("Failed after $maxRetries retires");
 }

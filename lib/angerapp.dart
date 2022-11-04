@@ -5,6 +5,8 @@ import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/network/ferien.dart';
 import 'package:anger_buddy/network/news.dart';
+import 'package:anger_buddy/utils/logger.dart';
+import 'package:flutter/foundation.dart';
 
 class _ServicesManager {
   /* -- Funktions-Seiten -- */

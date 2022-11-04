@@ -34,6 +34,7 @@ class AppManager {
 
     if (kIsWeb) {
       if (kDebugMode) {
+        return "https://angerapp-proxy.robertstuendl.com/cms/";
         return "https://angerapp-cms.robertstuendl.com/";
       } else {
         if (isRobertStuendlCom) {
@@ -110,6 +111,7 @@ class _tableNames {
   final String lessontimes = "lessontimes";
 
   final String aushaenge = "aushaenge";
+  final String aushaengeLastRead = "aushaengeLastRead";
   final String schwarzesBrett = "schwarzesBrett";
 
   List<String> get allTables {
@@ -146,6 +148,7 @@ class _stores {
   final quickinfos = stringMapStoreFactory.store(AppManager.tables.quickinfos);
   final lessontimes = stringMapStoreFactory.store(AppManager.tables.lessontimes);
   final aushaenge = stringMapStoreFactory.store(AppManager.tables.aushaenge);
+  final aushaengeLastRead = stringMapStoreFactory.store(AppManager.tables.aushaengeLastRead);
   final schwarzesBrett = stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
 
   List<StoreRef> get allStores {
@@ -162,7 +165,8 @@ class _stores {
       fcmSubscriptions,
       quickinfos,
       lessontimes,
-      aushaenge
+      aushaenge,
+      aushaengeLastRead
     ];
   }
 }
@@ -189,35 +193,35 @@ class _urlManager {
         webUrl: "${AppManager.apiUrl}/webproxy/cal",
         appUrl:
             "https://calendar.google.com/calendar/ical/6ahlh7g35b4qk7afp96j51iee0%40group.calendar.google.com/public/basic.ics",
-        webDebugUrl: "http://localhost:8000/webproxy/cal");
+        webDebugUrl: "${AppManager.apiUrl}/webproxy/cal");
   }
 
   String get news {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/news",
         appUrl: "https://angergymnasium.jena.de/feed",
-        webDebugUrl: "http://localhost:8000/webproxy/news");
+        webDebugUrl: "${AppManager.apiUrl}/webproxy/news");
   }
 
   String get vplist {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/vplist",
         appUrl: "https://newspointweb.de/mobile/appdata.ashx",
-        webDebugUrl: "http://localhost:8000/webproxy/vplist");
+        webDebugUrl: "${AppManager.apiUrl}/webproxy/vplist");
   }
 
   String get mailkontakt {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/mailkontakt",
         appUrl: "https://angergymnasium.jena.de/kontaktliste-lehrpersonal/",
-        webDebugUrl: "http://localhost:8000/webproxy/mailkontakt");
+        webDebugUrl: "${AppManager.apiUrl}/webproxy/mailkontakt");
   }
 
   String get wplogin {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/wplogin",
         appUrl: "https://angergymnasium.jena.de/wp-login.php?action=postpass",
-        webDebugUrl: "http://localhost:8000/webproxy/wplogin");
+        webDebugUrl: "${AppManager.apiUrl}/webproxy/wplogin");
   }
 
   String get feedback {
@@ -225,14 +229,14 @@ class _urlManager {
         //appUrl needs to always be angergym server
         webUrl: "https://angerapp.angergymnasium.jena.de/feedback",
         appUrl: "https://angerapp.angergymnasium.jena.de/feedback",
-        webDebugUrl: "http://localhost:8000/feedback");
+        webDebugUrl: "${AppManager.apiUrl}/feedback");
   }
 
   String get downloads {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/downloads",
         appUrl: "https://angergymnasium.jena.de/?task=wpdm_tree",
-        webDebugUrl: "http://localhost:8000/webproxy/downloads");
+        webDebugUrl: "${AppManager.apiUrl}/webproxy/downloads");
   }
 
   String vpdetail(String url) {
@@ -242,6 +246,6 @@ class _urlManager {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString",
         appUrl: url,
-        webDebugUrl: "http://localhost:8000/webproxy/vpdetail$queryString");
+        webDebugUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString");
   }
 }
