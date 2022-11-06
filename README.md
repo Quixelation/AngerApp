@@ -21,7 +21,7 @@ Die App für Schüler*innen am Angergymnasium Jena.
 
 Android|IOS|Web
 ---|---|---
-Coming Soon | Web-App benutzen | [Web-App (keine Installation erforderlich)](https://angergymapp.robertstuendl.com) 
+[https://play.google.com/store/apps/details?id=com.robertstuendl.angergymapp](https://play.google.com/store/apps/details?id=com.robertstuendl.angergymapp) | Web-App benutzen | [Web-App (keine Installation erforderlich)](https://angergymapp.robertstuendl.com) 
 
     
 ## Screenshots
