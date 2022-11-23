@@ -33,13 +33,9 @@ class MailListResponse {
 }
 
 Future<MailListResponse> fetchMailList() async {
-  var dbCookies = await AppManager.stores.data
-      .record("wp-mail-cookie")
-      .get(getIt.get<AppManager>().db);
+  var dbCookies = await AppManager.stores.data.record("wp-mail-cookie").get(getIt.get<AppManager>().db);
 
-  Map<String, String> cookies = {
-    _wpMailCookieName: dbCookies?["value"].toString() ?? ""
-  };
+  Map<String, String> cookies = {_wpMailCookieName: dbCookies?["value"].toString() ?? ""};
 
   var url = Uri.parse(AppManager.urls.mailkontakt);
 
@@ -51,8 +47,7 @@ Future<MailListResponse> fetchMailList() async {
   }
 
   printInDebug(cookies);
-  var response = await http
-      .get(url, headers: {cookieHeaderName: stringifyCookies(cookies)});
+  var response = await http.get(url, headers: {cookieHeaderName: stringifyCookies(cookies)});
 
   if (response.statusCode == 200) {
     var document = parse(response.body);
@@ -77,16 +72,14 @@ Future<MailListResponse> fetchMailList() async {
         }
       }
 
-      return MailListResponse(
-          status: mailListResponseStatus.success, mailList: mailList);
+      return MailListResponse(status: mailListResponseStatus.success, mailList: mailList);
     }
   } else {
     return MailListResponse(status: mailListResponseStatus.failure);
   }
 }
 
-String stringifyCookies(Map<String, String> cookies) =>
-    cookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
+String stringifyCookies(Map<String, String> cookies) => cookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
 
 Future<bool> mailListLogin(String passcode) async {
   var url = Uri.parse(AppManager.urls.wplogin);
@@ -104,9 +97,9 @@ Future<bool> mailListLogin(String passcode) async {
     }
     if (cookie != null) {
       logger.i("COOKIE: ${cookie}");
-      await AppManager.stores.data.record("wp-mail-cookie").put(
-          getIt.get<AppManager>().db,
-          {"key": "wp-mail-cookie", "value": cookie});
+      await AppManager.stores.data
+          .record("wp-mail-cookie")
+          .put(getIt.get<AppManager>().db, {"key": "wp-mail-cookie", "value": cookie});
     } else {
       return false;
     }

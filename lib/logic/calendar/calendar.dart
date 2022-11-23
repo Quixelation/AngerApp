@@ -35,6 +35,7 @@ class EventData {
   late final String id;
   late final DateTime dateFrom;
   late final DateTime? dateTo;
+  late final bool allDay;
   late final String title;
   late final String desc;
   late final eventType? type;
@@ -42,6 +43,12 @@ class EventData {
 
   /// Information from Services which implement `toEventData` to convert to this format with little to none data-loss
   Map<dynamic, dynamic>? info;
+
+  bool get isMultiDay {
+    if (dateTo == null) return false;
+    return !(dateFrom.day == dateTo!.day && dateFrom.month == dateTo!.month && dateFrom.year == dateTo!.year);
+  }
+
   EventData(
       {required this.id,
       required this.dateFrom,
@@ -49,36 +56,33 @@ class EventData {
       required this.title,
       required this.desc,
       this.type = null,
+      required this.allDay,
       this.klassen = const [],
       this.info = const {}});
 
   EventData.fromIcalJson(Map<String, dynamic> icalJson)
       : id = icalJson["uid"],
-        dateFrom =
-            DateTime.tryParse(icalJson["dtstart"]?.dt ?? "")?.toLocal() ??
-                DateTime.now(),
+        dateFrom = DateTime.tryParse(icalJson["dtstart"]?.dt ?? "")?.toLocal() ?? DateTime.now(),
         dateTo = DateTime.tryParse(icalJson["dtend"]?.dt ?? "")?.toUtc(),
         title = icalJson["summary"],
         desc = icalJson["description"] ?? "",
         type = eventType.normal,
+        allDay = false,
         klassen = [];
 
   EventData.fromDbJson(Map<String, dynamic> dbJson) {
     id = dbJson["id"].toString();
     type = eventType.normal;
     // logger.d("[Calendar] Date-fromDbJSON: ${dbJson['date_from']} // ${dbJson['date_to']}");
-    dateFrom = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(dbJson["date_from"].toString()))
-        .toLocal();
+    dateFrom = DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["date_from"].toString())).toLocal();
     // logger.d("[Calendar] DateTo-fromDbJSON-parsed: ${dateFrom}");
     dateTo = dbJson["date_to"].toString().trim() == "0"
         ? null
-        : DateTime.fromMillisecondsSinceEpoch(
-                int.parse(dbJson["date_to"].toString()))
-            .toLocal();
+        : DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["date_to"].toString())).toLocal();
     // logger.d("[Calendar] DateFrom-fromDbJSON-parsed: ${dateTo}");
     title = dbJson["title"].toString();
     desc = dbJson["desc"].toString();
+    allDay = dbJson["allDay"].toString() == "true";
     klassen = [];
   }
 
@@ -116,7 +120,12 @@ class CalendarManager extends DataManager<EventData> {
 
     for (var i = 0; i < queryRes.length; i++) {
       final currentRes = queryRes[i];
-      events.add(EventData.fromDbJson(currentRes.value));
+      try {
+        events.add(EventData.fromDbJson(currentRes.value));
+      } catch (err) {
+        logger.e(err);
+        logger.e(currentRes);
+      }
     }
 
     return events;
@@ -128,14 +137,13 @@ class CalendarManager extends DataManager<EventData> {
     await appManager.db.transaction((transaction) async {
       await AppManager.stores.events.delete(transaction);
       for (var currentEvent in events) {
-        await AppManager.stores.events
-            .record(currentEvent.id)
-            .put(transaction, {
+        await AppManager.stores.events.record(currentEvent.id).put(transaction, {
           "id": currentEvent.id,
           "date_from": currentEvent.dateFrom.millisecondsSinceEpoch,
           "date_to": currentEvent.dateTo?.millisecondsSinceEpoch ?? 0,
           "title": currentEvent.title,
           "desc": currentEvent.desc,
+          "allDay": currentEvent.allDay
         });
       }
     });
@@ -147,22 +155,18 @@ class CalendarManager extends DataManager<EventData> {
   @override
   fetchFromServer() async {
     try {
-      Future<List<EventData>> createErrorSafeFutureWrapper(
-          Future<List<EventData>> Function() T) async {
+      Future<List<EventData>> createErrorSafeFutureWrapper(Future<List<EventData>> Function() T) async {
         try {
           return await T();
         } catch (e) {
-          logger.e(
-              "[Calendar] Could not load EventData from server\n$e\n${(e as Error).stackTrace}");
+          logger.e("[Calendar] Could not load EventData from server\n$e\n${(e as Error).stackTrace}");
 
           return [];
         }
       }
 
-      var eventFutures = await Future.wait<List<EventData>>([
-        createErrorSafeFutureWrapper(_fetchGcalendarData),
-        createErrorSafeFutureWrapper(_fetchCmsCal)
-      ]);
+      var eventFutures = await Future.wait<List<EventData>>(
+          [createErrorSafeFutureWrapper(_fetchGcalendarData), createErrorSafeFutureWrapper(_fetchCmsCal)]);
       List<EventData> events = [];
       for (var future in eventFutures) {
         events.addAll(future);
@@ -191,8 +195,7 @@ class CalendarManager extends DataManager<EventData> {
   }
 
   Future<List<EventData>> _fetchCmsCal() async {
-    var resp =
-        await http.get(Uri.parse("${AppManager.directusUrl}/items/kalender"));
+    var resp = await http.get(Uri.parse("${AppManager.directusUrl}/items/kalender"));
     if (resp.statusCode != 200) {
       logger.e("Error fetching calendar: Non 200 response");
       throw "Error fetching calendar: Non 200 response";
@@ -206,17 +209,12 @@ class CalendarManager extends DataManager<EventData> {
     List<EventData> eventList = [];
     for (var item in data) {
       eventList.add(EventData(
+          allDay: item["allday"],
           id: item["id"],
           dateFrom: DateTime.parse(item["date_start"]),
           title: item["titel"],
-          dateTo: item["date_end"] != null
-              ? DateTime.parse(item["date_end"])
-              : null,
-          klassen: item["klassen"] != null
-              ? (item["klassen"] as List<dynamic>)
-                  .map((e) => int.parse(e))
-                  .toList()
-              : [],
+          dateTo: item["date_end"] != null ? DateTime.parse(item["date_end"]) : null,
+          klassen: item["klassen"] != null ? (item["klassen"] as List<dynamic>).map((e) => int.parse(e)).toList() : [],
           //TODO: ADD desc to CMS
           desc: ""));
     }

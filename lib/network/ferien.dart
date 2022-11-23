@@ -17,11 +17,7 @@ class Ferien {
   final DateTime end;
   late final Duration? diff;
   late final FerienStatus status;
-  Ferien(
-      {required this.id,
-      required this.name,
-      required this.start,
-      required this.end}) {
+  Ferien({required this.id, required this.name, required this.start, required this.end}) {
     if (start.isAfter(DateTime.now())) {
       // Die Ferien haben noch nicht begonnen
       diff = start.difference(DateTime.now());
@@ -42,13 +38,7 @@ class Ferien {
   }
 
   EventData toEvent() {
-    return EventData(
-        id: id,
-        dateFrom: start,
-        dateTo: end,
-        title: name,
-        type: eventType.ferien,
-        desc: "");
+    return EventData(allDay: true, id: id, dateFrom: start, dateTo: end, title: name, type: eventType.ferien, desc: "");
   }
 }
 
@@ -68,9 +58,8 @@ class FerienManager extends DataManager<Ferien> {
   fetchFromDatabase() async {
     var db = getIt.get<AppManager>().db;
 
-    var ferien = await AppManager.stores.ferien
-        .query(finder: Finder(sortOrders: [SortOrder('begin', true)]))
-        .getSnapshots(db);
+    var ferien =
+        await AppManager.stores.ferien.query(finder: Finder(sortOrders: [SortOrder('begin', true)])).getSnapshots(db);
 
     List<Ferien> ferienList = [];
     if (ferien.isNotEmpty) {
@@ -78,15 +67,12 @@ class FerienManager extends DataManager<Ferien> {
         ferienList.add(Ferien(
           id: ferienTermin['id'].toString(),
           name: ferienTermin['name'].toString(),
-          start: DateTime.fromMillisecondsSinceEpoch(
-              int.parse(ferienTermin['begin'].toString())),
-          end: DateTime.fromMillisecondsSinceEpoch(
-              int.parse(ferienTermin['end'].toString())),
+          start: DateTime.fromMillisecondsSinceEpoch(int.parse(ferienTermin['begin'].toString())),
+          end: DateTime.fromMillisecondsSinceEpoch(int.parse(ferienTermin['end'].toString())),
         ));
       }
 
-      ferienList.sort((a, b) =>
-          (a.start.millisecondsSinceEpoch - b.start.millisecondsSinceEpoch));
+      ferienList.sort((a, b) => (a.start.millisecondsSinceEpoch - b.start.millisecondsSinceEpoch));
 
       return ferienList;
     } else {
@@ -117,9 +103,7 @@ class FerienManager extends DataManager<Ferien> {
             ferienItemList.add(ferienItem);
             // Save into DB
 
-            await AppManager.stores.ferien
-                .record(ferienItem.id)
-                .put(transaction, {
+            await AppManager.stores.ferien.record(ferienItem.id).put(transaction, {
               "id": ferienItem.id,
               "name": ferienItem.name,
               "begin": ferienItem.start.millisecondsSinceEpoch,
@@ -130,8 +114,7 @@ class FerienManager extends DataManager<Ferien> {
 
         // Set Last Sync to now
         SyncManager.setLastSync("ferien");
-        ferienItemList.sort((a, b) =>
-            (a.start.millisecondsSinceEpoch - b.start.millisecondsSinceEpoch));
+        ferienItemList.sort((a, b) => (a.start.millisecondsSinceEpoch - b.start.millisecondsSinceEpoch));
 
         return ferienItemList;
       } else {

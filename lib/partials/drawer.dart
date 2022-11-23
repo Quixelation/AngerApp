@@ -1,8 +1,16 @@
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
+import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
 import 'package:anger_buddy/logic/feedback/feedback.dart';
+import 'package:anger_buddy/logic/files/files.dart';
+import 'package:anger_buddy/logic/jsp/jsp_passthrough_page.dart';
+import 'package:anger_buddy/logic/login_overview/login_overview.dart';
+import 'package:anger_buddy/logic/mail/mail.dart';
+import 'package:anger_buddy/logic/matrix/matrix_page.dart';
+import 'package:anger_buddy/logic/opensense/opensense.dart';
+import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -10,11 +18,9 @@ import 'package:anger_buddy/page_engine/page_engine.dart';
 import 'package:anger_buddy/pages/SchuSo.pageengine.dart';
 import 'package:anger_buddy/pages/about.dart';
 import 'package:anger_buddy/pages/ags.dart';
-import 'package:anger_buddy/pages/chor_orchester.dart';
 import 'package:anger_buddy/pages/downloads.dart';
 import 'package:anger_buddy/pages/klausuren.dart';
 import 'package:anger_buddy/pages/kontakt.dart';
-import 'package:anger_buddy/pages/lesson_time.dart';
 import 'package:anger_buddy/pages/news.dart';
 import 'package:anger_buddy/pages/oberstufe.pageengine.dart';
 import 'package:anger_buddy/pages/settings.dart';
@@ -42,7 +48,7 @@ class MainDrawer extends StatelessWidget {
         controller: _scrollController,
         children: [
           ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: kIsWeb ? double.infinity : 202.6),
+            constraints: const BoxConstraints(maxHeight: kIsWeb ? double.infinity : 202.6),
             child: Stack(
               children: const [
                 _ImageBanner(),
@@ -106,6 +112,20 @@ class MainDrawer extends StatelessWidget {
             },
             stream: getIt.get<AppManager>().devtools,
           ),
+          StreamBuilder(
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data == true) {
+                return const _DrawerLink(
+                  title: "Mail",
+                  icon: Icons.mail,
+                  page: JspMailMainPage(),
+                );
+              } else {
+                return Container();
+              }
+            },
+            stream: getIt.get<AppManager>().devtools,
+          ),
           if (showHomeLink) ...[
             const SizedBox(height: 25),
             const _DrawerLink(
@@ -116,56 +136,98 @@ class MainDrawer extends StatelessWidget {
           const _Category("Aktuelles", [
             _DrawerLink(
               title: "Nachrichten",
-              icon: Icons.article,
+              icon: Icons.article_outlined,
               page: PageNewsList(),
             ),
             _DrawerLink(
               title: "Kalender",
-              icon: Icons.calendar_today,
+              icon: Icons.calendar_today_outlined,
               page: PageCalendar(),
             ),
             _DrawerLink(
-              title: "Prüfungen",
-              icon: Icons.label_important,
-              page: PageKlausuren(),
+              title: "Wochen-Ansicht",
+              subtitle: "(Experimentell)",
+              icon: Icons.view_week_outlined,
+              page: WeekView(),
             ),
             _DrawerLink(
               title: "Vertretungsplan",
-              icon: Icons.switch_account_rounded,
+              icon: Icons.switch_account_outlined,
               page: PageVp(),
             ),
             _DrawerLink(
-              title: "Downloads",
-              icon: Icons.download,
-              page: PageDownloads(),
-            ),
-            _DrawerLink(
               title: "Aushänge",
-              icon: Icons.file_copy,
+              icon: Icons.file_copy_outlined,
               page: PageAushangList(),
             ),
           ]),
           const Divider(),
-          _Category("Schule", [
+          const _Category("Schule", [
+            _DrawerLink(
+              title: "Prüfungen",
+              icon: Icons.label_important_outline,
+              page: PageKlausuren(),
+            ),
+            _DrawerLink(
+              title: "Lehrer-Mails",
+              icon: Icons.mail_outline,
+              page: PageMailKontakt(),
+            ),
+            _DrawerLink(
+              title: "Downloads",
+              icon: Icons.download_outlined,
+              page: PageDownloads(),
+            ),
+            _DrawerLink(
+              title: "openSense",
+              icon: Icons.sensors_outlined,
+              page: OpenSensePage(),
+            )
+          ]),
+          const Divider(),
+          _Category("Jenaer-Schulportal", [
+            const _DrawerLink(
+              title: "Dateien / Cloud",
+              icon: Icons.folder_outlined,
+              page: JspPassthroughPage(child: FileExplorer("/")),
+            ),
+            _DrawerLink(
+              title: "Messenger",
+              icon: Icons.messenger_outline,
+              page: PageTempUnderConstruction(
+                  page: MatrixExampleChat(
+                client: Services.matrix.client!,
+              )),
+              wip: true,
+            ),
+            const _DrawerLink(title: "Links", icon: Icons.link, page: UniventionLinksPage()),
+            const _DrawerExternalLink(title: "Mail", url: "https://jsp.jena.de/appsuite/", icon: Icons.mail_outline),
+            const _DrawerExternalLink(
+              title: "Hilfe",
+              icon: Icons.help_outline,
+              url: "https://faq.jsp.jena.de/",
+            ),
+            const _DrawerExternalLink(
+                title: "WLAN Einrichtung", icon: Icons.wifi_outlined, url: "https://faq.jsp.jena.de/faq/wlan/jsp"),
+            const _DrawerExternalLink(title: "JSP-Startseite", url: "https://jsp.jena.de/", icon: Icons.home_outlined),
+          ]),
+          const Divider(),
+          _Category("Informationen", [
             const _DrawerLink(
               wip: true,
               title: "Schülerrat",
               icon: Icons.groups,
               page: PageTempUnderConstruction(),
             ),
-            const _DrawerLink(
-              title: "Lehrer-Mails",
-              icon: Icons.mail_outline,
-              page: PageMailKontakt(),
-            ),
+
             _DrawerLink(
               title: "Stundenzeiten",
-              icon: Icons.access_time,
+              icon: Icons.access_time_outlined,
               page: parsePage(() => stundenzeitenPage),
             ),
             _DrawerLink(
               title: "SchuSo",
-              icon: Icons.person,
+              icon: Icons.person_outline,
               page: parsePage(() {
                 return schuSoPage;
               }),
@@ -173,7 +235,7 @@ class MainDrawer extends StatelessWidget {
             const _DrawerLink(
               title: "AGs",
               wip: true,
-              icon: Icons.widgets,
+              icon: Icons.widgets_outlined,
               page: PageTempUnderConstruction(
                 page: PageAgs(),
               ),
@@ -189,7 +251,7 @@ class MainDrawer extends StatelessWidget {
             _DrawerLink(
               wip: true,
               title: "Oberstufe",
-              icon: Icons.info,
+              icon: Icons.info_outline,
               page: PageTempUnderConstruction(
                 page: parsePage(() {
                   return oberstufePage;
@@ -202,7 +264,7 @@ class MainDrawer extends StatelessWidget {
             const _DrawerLink(
               wip: true,
               title: "Seminarfach",
-              icon: Icons.info,
+              icon: Icons.info_outline,
               page: PageTempUnderConstruction(
                 footerWidgets: [Text("Hier erscheinen später Informationen zum Seminarfach")],
               ),
@@ -210,7 +272,7 @@ class MainDrawer extends StatelessWidget {
             const _DrawerLink(
               wip: true,
               title: "Abitur",
-              icon: Icons.info,
+              icon: Icons.info_outline,
               page: PageTempUnderConstruction(
                 footerWidgets: [Text("Hier erscheinen später Informationen zum Abitur")],
               ),
@@ -218,16 +280,11 @@ class MainDrawer extends StatelessWidget {
           ]),
           const Divider(),
           const _Category("Links", [
-            _DrawerExternalLink(title: "Moodle", url: "https://moodle.jsp.jena.de", icon: Icons.auto_stories),
+            _DrawerExternalLink(title: "Moodle", url: "https://moodle.jsp.jena.de", icon: Icons.auto_stories_outlined),
             _DrawerExternalLink(
                 title: "Noten",
                 url: "https://homeinfopoint.de/angergymjena/default.php",
                 icon: Icons.format_list_numbered),
-            _DrawerExternalLink(title: "Jenaer Schulportal", url: "https://jsp.jena.de/", icon: Icons.cloud),
-            _DrawerExternalLink(
-                title: "Big Blue Button",
-                url: "https://uk.applikations-server.de/b/uwe-rpw-64k",
-                icon: Icons.camera_indoor),
           ]),
           const Divider(),
           _Category(
@@ -238,12 +295,17 @@ class MainDrawer extends StatelessWidget {
                         title: "Android App",
                         url:
                             "https://play.google.com/store/apps/details?id=com.robertstuendl.angergymapp&referrer=utm_source%3DAngerApp%26utm_medium%3DDrawer%26utm_campaign%3DAndroidApp_link",
-                        icon: Icons.get_app)
+                        icon: Icons.get_app_outlined)
                     : Container(),
                 const _DrawerLink(
                   title: "Einstellungen",
-                  icon: Icons.settings,
+                  icon: Icons.settings_outlined,
                   page: PageSettings(),
+                ),
+                const _DrawerLink(
+                  title: "Logins",
+                  icon: Icons.key_outlined,
+                  page: LoginOverviewPage(),
                 ),
                 const _DrawerLink(
                   title: "Über",
@@ -252,7 +314,7 @@ class MainDrawer extends StatelessWidget {
                 ),
                 const _DrawerLink(
                   title: "Feedback / Problem",
-                  icon: Icons.feedback,
+                  icon: Icons.feedback_outlined,
                   page: PageFeedback(),
                 ),
                 const _DrawerExternalLink(
@@ -324,9 +386,11 @@ class _CategoryHeader extends StatelessWidget {
 class _DrawerLink extends StatelessWidget {
   final String title;
   final Widget? page;
-  final IconData icon;
+  final IconData? icon;
   final bool wip;
-  const _DrawerLink({Key? key, required this.title, this.page, required this.icon, this.wip = false}) : super(key: key);
+  final String? subtitle;
+  const _DrawerLink({Key? key, required this.title, this.subtitle, this.page, required this.icon, this.wip = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -334,6 +398,8 @@ class _DrawerLink extends StatelessWidget {
       opacity: wip ? 0.5 : 1,
       child: ListTile(
         title: Text(title),
+        subtitle: subtitle != null ? Text(subtitle!) : null,
+
         leading: Icon(icon),
         onTap: () {
           _navigate(page, context);

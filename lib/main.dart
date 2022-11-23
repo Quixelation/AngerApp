@@ -43,7 +43,9 @@ Future<void> initApp() async {
 
   toggleSubscribtionToTopic("all", true);
   enforceDefaultFcmSubscriptions();
-  await Future.wait([initColorSubject(), initializeAllCredentialManagers(), Services.init()]);
+  await Future.wait([initColorSubject(), initializeAllCredentialManagers()]);
+  // Services und Credentials müssen getrennt, weil Services aus Credentials beruhen
+  await Services.init();
   logger.v("[AngerApp] Initialized");
 }
 
@@ -61,7 +63,7 @@ class AngerApp extends StatefulWidget {
 }
 
 class _AngerAppState extends State<AngerApp> {
-  var mainColor = colorSubject.valueWrapper!.value;
+  var mainColor;
 
 // It is assumed that all messages contain a data field with the key 'type'
   Future<void> setupInteractedMessage() async {
@@ -93,6 +95,8 @@ class _AngerAppState extends State<AngerApp> {
   @override
   void initState() {
     super.initState();
+    mainColor = colorSubject.valueWrapper!.value;
+    logger.d("[ColorManager] ${mainColor}");
     colorSubject.listen((value) {
       setState(() {
         mainColor = value;

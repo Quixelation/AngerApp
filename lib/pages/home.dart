@@ -11,6 +11,7 @@ import 'package:anger_buddy/network/ferien.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/network/news.dart';
 import 'package:anger_buddy/network/quickinfos.dart';
+import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/pages/news.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/pages/notifications.dart';
@@ -184,6 +185,10 @@ class _PageHomeState extends State<PageHome> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                   child: _NewsCard(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: OpenSenseOverviewWidget(),
                 ), /*
                     Padding(
                       padding:
@@ -227,6 +232,10 @@ class _PageHomeState extends State<PageHome> {
                           Padding(
                             padding: EdgeInsets.all(8),
                             child: _NewsCard(),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: OpenSenseOverviewWidget(),
                           ),
                           // SchwarzesBrettHome(),
                         ],
@@ -389,6 +398,10 @@ class _WelcomeTextState extends State<WelcomeText> {
                         style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
                     const TextSpan(text: "."),
                   ])),
+          ),
+          Opacity(
+            opacity: 0.87,
+            child: SenseboxOutdoorTempTextHomepage(),
           )
         ],
       ),
@@ -412,8 +425,11 @@ class _PinnedKlausurenListState extends State<_PinnedKlausurenList> {
       temp?.sort((a, b) {
         return a.date.compareTo(b.date);
       });
+
+      final now = DateTime.now();
+
       setState(() {
-        pinnedKlausuren = temp;
+        pinnedKlausuren = temp?.where((element) => element.date.isAfter(now)).toList();
         showingPinned = true;
       });
     });
@@ -429,8 +445,10 @@ class _PinnedKlausurenListState extends State<_PinnedKlausurenList> {
     temp.sort((a, b) {
       return a.date.compareTo(b.date);
     });
+    final now = DateTime.now();
+
     setState(() {
-      pinnedKlausuren = temp;
+      pinnedKlausuren = temp?.where((element) => element.date.isAfter(now)).toList();
       showingPinned = false;
     });
   }
