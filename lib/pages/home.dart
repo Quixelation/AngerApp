@@ -39,7 +39,7 @@ class _PageHomeState extends State<PageHome> {
     super.initState();
 
     Timer(const Duration(seconds: 2), () {
-      if (mounted)
+      if (mounted) {
         FeatureDiscovery.discoverFeatures(
           context,
           const <String>{
@@ -47,6 +47,7 @@ class _PageHomeState extends State<PageHome> {
             'menu_button', "noti_settings_button"
           },
         );
+      }
     });
   }
 
@@ -173,6 +174,10 @@ class _PageHomeState extends State<PageHome> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                   child: AushangHomepageWidget(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: VpWidget(),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),

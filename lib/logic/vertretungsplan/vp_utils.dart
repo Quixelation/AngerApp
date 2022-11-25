@@ -122,8 +122,8 @@ DateTime _extractCaptionDate(String string) {
   return DateFormat("d.M.yyyy").parse(dateStringArr);
 }
 
-Future<bool> checkIfVpIsNew(String uniqueId, DateTime newChangedDate) async {
-  var dbEntry = await getDbVpEntry(uniqueId);
+Future<bool> checkIfUniqueIdIsNew(String uniqueId, DateTime newChangedDate) async {
+  var dbEntry = await Services.vp.downloads.getDbVpEntry(uniqueId);
 
   bool vpIsNew = true;
 

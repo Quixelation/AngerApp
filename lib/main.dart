@@ -51,18 +51,18 @@ Future<void> initApp() async {
 
 void main() async {
   await initApp();
-  runApp(const RestartWidget(child: AngerApp()));
+  runApp(const RestartWidget(child: MainApp()));
   logger.v("[AngerApp] Running");
 }
 
-class AngerApp extends StatefulWidget {
-  const AngerApp({Key? key}) : super(key: key);
+class MainApp extends StatefulWidget {
+  const MainApp({Key? key}) : super(key: key);
 
   @override
-  State<AngerApp> createState() => _AngerAppState();
+  State<MainApp> createState() => _MainAppState();
 }
 
-class _AngerAppState extends State<AngerApp> {
+class _MainAppState extends State<MainApp> {
   var mainColor;
 
 // It is assumed that all messages contain a data field with the key 'type'

@@ -26,7 +26,6 @@ class AppManager {
       devtools.add(value);
     });
 
-    initVpSettings(database);
     CurrentClassManager.init(database);
   }
   static String directusUrl = (() {

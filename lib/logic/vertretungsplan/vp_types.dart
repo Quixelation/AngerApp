@@ -72,15 +72,16 @@ class VertretungsplanDownloadItem extends VertretungsPlanItem {
           downloaded: true,
           // isNew: false
         );
+  VertretungsplanDetails getDetails() {
+    return _convertXmlVp(data);
+  }
 
   VertretungsplanDownloadItem.fromDbJson(Map<String, dynamic> dbJson)
       : super(
           caption: dbJson["caption"].toString(),
           contentUrl: Uri.parse(dbJson["contentUrl"].toString()),
-          date: DateTime.fromMillisecondsSinceEpoch(
-              int.parse(dbJson["date"].toString())),
-          changedDate: DateTime.fromMillisecondsSinceEpoch(
-              int.parse(dbJson["changed"].toString())),
+          date: DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["date"].toString())),
+          changedDate: DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["changed"].toString())),
           type: VertretungsPlanType.xml,
           uniqueId: dbJson["uniqueId"].toString(),
           uniqueName: dbJson["uniqueName"].toString(),
@@ -88,10 +89,8 @@ class VertretungsplanDownloadItem extends VertretungsPlanItem {
           // isNew: false,
         ) {
     data = dbJson["data"].toString();
-    saveDate = DateTime.fromMillisecondsSinceEpoch(
-        int.parse(dbJson["saveDate"].toString()));
-    saveCondition =
-        _VpDbSaveCondition.fromDbString(dbJson["saveCondition"].toString());
+    saveDate = DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["saveDate"].toString()));
+    saveCondition = _VpDbSaveCondition.fromDbString(dbJson["saveCondition"].toString());
   }
 }
 
@@ -113,11 +112,7 @@ class VertretungsplanEntry {
   final _VertretungsplanValue info;
 
   VertretungsplanEntry(
-      {required this.stunde,
-      required this.fach,
-      required this.lehrer,
-      required this.raum,
-      required this.info});
+      {required this.stunde, required this.fach, required this.lehrer, required this.raum, required this.info});
 
   @override
   String toString() {
@@ -149,16 +144,10 @@ class VertretungsplanRow extends VertretungsplanEntry {
     required _VertretungsplanValue raum,
     required _VertretungsplanValue info,
     required _VertretungsplanValue fach,
-  }) : super(
-            stunde: stunde, lehrer: lehrer, raum: raum, info: info, fach: fach);
+  }) : super(stunde: stunde, lehrer: lehrer, raum: raum, info: info, fach: fach);
 
   VertretungsplanRow.fromEntry(VertretungsplanEntry entry, this.klasse)
-      : super(
-            stunde: entry.stunde,
-            lehrer: entry.lehrer,
-            raum: entry.raum,
-            info: entry.info,
-            fach: entry.fach);
+      : super(stunde: entry.stunde, lehrer: entry.lehrer, raum: entry.raum, info: entry.info, fach: entry.fach);
 }
 
 class VertretungsplanDetails {

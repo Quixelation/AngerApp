@@ -4,24 +4,22 @@ class _PageVertretungsplanListe extends StatefulWidget {
   const _PageVertretungsplanListe({Key? key}) : super(key: key);
 
   @override
-  _PageVertretungsplanListeState createState() =>
-      _PageVertretungsplanListeState();
+  _PageVertretungsplanListeState createState() => _PageVertretungsplanListeState();
 }
 
 class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
-  AsyncDataResponse<_VpListResponse>? _vertretungsplanListe;
+  List<VertretungsPlanItem>? _vertretungsplanListe;
+  AsyncDataResponse<_VpListResponse>? _vertretungsplanResponseData;
   late final StreamSubscription<dynamic>? sub;
   Map<String, bool> _isNew = {};
 
-  Future<void> _checkIfNew(AsyncDataResponse<_VpListResponse>? value) async {
-    value ??= _vertretungsplanListe!;
+  Future<void> _checkIfNew(List<VertretungsPlanItem>? value) async {
+    value ??= (_vertretungsplanListe ?? []);
 
     Map<String, bool> isNewTemp = {};
 
-    if (!value.data.result || value.data.data == null) return;
-    for (var val in value.data.data!) {
-      isNewTemp[val.uniqueId] =
-          await checkIfVpIsNew(val.uniqueId, val.changedDate);
+    for (var val in value) {
+      isNewTemp[val.uniqueId] = await checkIfUniqueIdIsNew(val.uniqueId, val.changedDate);
     }
     setState(() {
       _isNew = isNewTemp;
@@ -29,11 +27,16 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
   }
 
   Future<void> _loadData() async {
-    var vpListApiData = await fetchVertretungsListApiData();
+    Services.vp.vpList.listen((value) async {
+      await _checkIfNew(value);
+      setState(() {
+        _vertretungsplanListe = value;
+      });
+    });
 
-    await _checkIfNew(vpListApiData);
+    var responseData = await Services.vp.fetchListApi();
     setState(() {
-      _vertretungsplanListe = vpListApiData;
+      _vertretungsplanResponseData = responseData;
     });
 
     return;
@@ -84,7 +87,7 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
                     child: _LoggedInAs(),
                   ),
                   ...(_vertretungsplanListe != null
-                      ? _vertretungsplanListe!.error == true
+                      ? _vertretungsplanResponseData?.error == true
                           ? [
                               const NoConnectionColumn(
                                 footerWidgets: [
@@ -94,50 +97,42 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
                                 ],
                               ),
                             ]
-                          : (_vertretungsplanListe!.data.result == true
-                              ? _vertretungsplanListe!.data.data!
+                          : ((_vertretungsplanListe?.isNotEmpty ?? false) &&
+                                  ((_vertretungsplanResponseData?.data.result ?? true) == true)
+                              ? _vertretungsplanListe!
                                   .map((value) => ListTile(
                                       leading: Column(
                                           mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             _isNew[value.uniqueId] ?? true
-                                                ? const Icon(Icons.new_releases,
-                                                    color: Colors.red)
+                                                ? const Icon(Icons.new_releases, color: Colors.red)
                                                 : const Icon(
                                                     Icons.download_done,
                                                   )
                                           ]),
-                                      title: Text(time2string(value.date,
-                                          includeWeekday: true,
-                                          useStringMonth: false)),
+                                      title: Text(time2string(value.date, includeWeekday: true, useStringMonth: false)),
                                       subtitle: Text(
                                           "Zuletzt geändert: ${time2string(value.changedDate, includeTime: true)}"),
-                                      trailing: const Icon(
-                                          Icons.keyboard_arrow_right),
+                                      trailing: const Icon(Icons.keyboard_arrow_right),
                                       onTap: () {
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    _PageVertretungsplanDetail(
-                                                        value))).then(
-                                            (value) => _checkIfNew(null));
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => _PageVertretungsplanDetail(value)))
+                                            .then((value) => _checkIfNew(null));
                                       }))
                                   .toList()
                               : [
                                   NoConnectionColumn(
                                       showImage: true,
                                       title: "Keine Daten",
-                                      subtitle: _vertretungsplanListe!
-                                              .data.msg ??
-                                          "Bitte die Login-Daten überprüfen")
+                                      subtitle:
+                                          _vertretungsplanResponseData!.data.msg ?? "Bitte die Login-Daten überprüfen")
                                 ])
                       : [
                           const SizedBox(height: 32),
-                          const Center(
-                              child: CircularProgressIndicator.adaptive()),
+                          const Center(child: CircularProgressIndicator.adaptive()),
                           const SizedBox(height: 32),
                           const Center(child: _ToDownloadsBtn())
                         ])
@@ -160,8 +155,7 @@ class _ToDownloadsBtn extends StatelessWidget {
     return OutlinedButton(
       style: ButtonStyle(
           visualDensity: VisualDensity.standard,
-          padding: MaterialStateProperty.all(
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12))),
+          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 16, vertical: 12))),
       child: const Text("Zu den Downloads"),
       onPressed: () {
         DefaultTabController.of(context)?.animateTo(1);
@@ -181,11 +175,7 @@ class BlockTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.only(left: 12, top: 32, bottom: 4),
-        child: Text(title,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey)));
+        child: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey)));
   }
 }
 
@@ -196,12 +186,11 @@ class _TabDownloadedVps extends StatefulWidget {
   __TabDownloadedVpsState createState() => __TabDownloadedVpsState();
 }
 
-class __TabDownloadedVpsState extends State<_TabDownloadedVps>
-    with AutomaticKeepAliveClientMixin<_TabDownloadedVps> {
+class __TabDownloadedVpsState extends State<_TabDownloadedVps> with AutomaticKeepAliveClientMixin<_TabDownloadedVps> {
   List<VertretungsplanDownloadItem>? _items;
   late final StreamSubscription<dynamic> sub;
   void _getDownloaded() {
-    getAllDownloadedVp().then((value) => setState(() {
+    AngerApp.vp.downloads.getAll().then((value) => setState(() {
           _items = value;
         }));
   }
@@ -242,8 +231,7 @@ class __TabDownloadedVpsState extends State<_TabDownloadedVps>
                 height: 200,
               ),
               const SizedBox(height: 48),
-              const Text("Downloads",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const Text("Downloads", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 300),
@@ -256,40 +244,30 @@ class __TabDownloadedVpsState extends State<_TabDownloadedVps>
               const SizedBox(height: 32),
               OutlinedButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => const SettingsPageVertretung()));
+                    Navigator.push(context, MaterialPageRoute(builder: (ctx) => const SettingsPageVertretung()));
                   },
                   child: const Text("Einstellungen ändern"))
             ],
           )
         else ...[
           ListTile(
-              title: vpSettings.valueWrapper?.value.autoSave == true
+              title: AngerApp.vp.settings.subject.value?.autoSave == true
                   ? Text(
                       "Download-Zeitraum: ${(() {
-                        switch (
-                            vpSettings.valueWrapper?.value.saveDuration ?? 0) {
+                        switch (AngerApp.vp.settings.subject.value?.saveDuration ?? 0) {
                           case 0:
                             return "Solange auf Server";
                           case 1:
                             return "1 Tag";
                           default:
-                            return "${vpSettings.valueWrapper?.value.saveDuration ?? '{FEHLER}'} Tage";
+                            return "${AngerApp.vp.settings.subject.value?.saveDuration ?? '{FEHLER}'} Tage";
                         }
                       })()}",
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     )
-                  : const Text("Automatisches Speichern deaktiviert",
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-              onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const SettingsPageVertretung()))
-                  },
+                  : const Text("Automatisches Speichern deaktiviert", style: TextStyle(fontWeight: FontWeight.bold)),
+              onTap: () =>
+                  {Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPageVertretung()))},
               trailing: const Icon(
                 Icons.keyboard_arrow_right,
               )),
@@ -297,17 +275,12 @@ class __TabDownloadedVpsState extends State<_TabDownloadedVps>
           const SizedBox(height: 32),
           for (VertretungsplanDownloadItem downloadedVp in _items ?? [])
             ListTile(
-              title: Text(time2string(downloadedVp.date,
-                  includeWeekday: true, useStringMonth: false)),
-              subtitle: Text(
-                  "Zuletzt geändert: ${time2string(downloadedVp.changedDate, includeTime: true)}"),
+              title: Text(time2string(downloadedVp.date, includeWeekday: true, useStringMonth: false)),
+              subtitle: Text("Zuletzt geändert: ${time2string(downloadedVp.changedDate, includeTime: true)}"),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () => {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            _PageVertretungsplanDetail(downloadedVp)))
+                    context, MaterialPageRoute(builder: (context) => _PageVertretungsplanDetail(downloadedVp)))
               },
               onLongPress: () => {
                 showDialog(
@@ -333,7 +306,7 @@ class __TabDownloadedVpsState extends State<_TabDownloadedVps>
                                   child: ElevatedButton(
                                     child: const Text("Löschen"),
                                     onPressed: () {
-                                      _removeVpFromDb(downloadedVp.uniqueId);
+                                      AngerApp.vp.downloads.removeFromDb(downloadedVp.uniqueId);
                                       Navigator.pop(ctx);
                                     },
                                   ),
@@ -391,17 +364,12 @@ class __LoggedInAsState extends State<_LoggedInAs> {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Opacity(
                 opacity: 0.6,
-                child: Text("Eingeloggt als:",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                child: Text("Eingeloggt als:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
               Opacity(
                 opacity: 0.87,
-                child: Text(
-                    Credentials.vertretungsplan.subject.valueWrapper?.value ??
-                        "Kein Login",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 20)),
+                child: Text(Credentials.vertretungsplan.subject.valueWrapper?.value ?? "Kein Login",
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               ),
             ]),
             const Spacer(),

@@ -22,14 +22,14 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
     }
 
     if (widget.vpItem.downloaded) {
-      var value = getDownloadedVpDetails(widget.vpItem);
+      var value = (widget.vpItem as VertretungsplanDownloadItem).getDetails();
 
       setState(() {
         // To comply with the type system and their async brother
         detailData = VpDetailsFetchResponse(details: value, error: false);
       });
     } else {
-      fetchVertretungsplanDetails(widget.vpItem).then((value) {
+      AngerApp.vp.fetchDetailsApi(widget.vpItem).then((value) {
         printInDebug(value);
         setState(() {
           detailData = value;
@@ -44,7 +44,7 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      initialIndex: vpSettings.value?.viewType.index ?? 0,
+      initialIndex: AngerApp.vp.settings.subject.value?.viewType.index ?? 0,
       child: Scaffold(
         appBar: AppBar(
           actions: [
@@ -312,13 +312,13 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
                     opacity: 0.87,
                     child: Text(
                       (() {
-                        switch (vpSettings.valueWrapper?.value.saveDuration ?? 0) {
+                        switch (AngerApp.vp.settings.subject.value?.saveDuration ?? 0) {
                           case 0:
                             return "Solange auf Server";
                           case 1:
                             return "1 Tag";
                           default:
-                            return "${vpSettings.valueWrapper?.value.saveDuration ?? '{FEHLER}'} Tage";
+                            return "${AngerApp.vp.settings.subject.value?.saveDuration ?? '{FEHLER}'} Tage";
                         }
                       })(),
                       style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
