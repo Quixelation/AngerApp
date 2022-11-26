@@ -9,7 +9,9 @@ class PageAushangList extends StatefulWidget {
 
 class _PageAushangListState extends State<PageAushangList> {
   AsyncDataResponse<List<Aushang>>? data;
+  List<Aushang>? vpData;
   StreamSubscription? _aushangeStream;
+  StreamSubscription? _vpAushangeStream;
   StreamSubscription? _aushangCredsStream;
 
   /*_AushangCreds*/ String? aushangCreds;
@@ -23,6 +25,15 @@ class _PageAushangListState extends State<PageAushangList> {
       }
       setState(() {
         data = event;
+      });
+    });
+    _vpAushangeStream = Services.aushang.vpAushangSubject.listen((event) {
+      if (!mounted) {
+        _aushangeStream?.cancel();
+        return;
+      }
+      setState(() {
+        vpData = event.map((e) => e.toAushang()).toList();
       });
     });
   }
@@ -52,6 +63,7 @@ class _PageAushangListState extends State<PageAushangList> {
   @override
   Widget build(BuildContext context) {
     final needToLogin = aushangCreds == null;
+    final List<Aushang> finalList = [...data?.data.toList() ?? [], ...vpData ?? []];
 
     return Scaffold(
       appBar: AppBar(title: const Text("Aushänge")),
@@ -65,7 +77,7 @@ class _PageAushangListState extends State<PageAushangList> {
                   subtitle:
                       "Bitte überprüfe deine Internet-Verbindung und versuche es in ein paar Minuten erneut. Sollte das Problem bestehen bleiben, dann wende dich bitte an angerapp@robertstuendl.com",
                 )
-              else if (data!.data.isEmpty) ...[
+              else if (finalList.isEmpty) ...[
                 const SizedBox(height: 32),
                 const Center(
                     child: Opacity(
@@ -80,14 +92,14 @@ class _PageAushangListState extends State<PageAushangList> {
                 )),
               ] else ...[
                 const SizedBox(height: 16),
-                ...buildAushangList()
+                ...buildAushangList(finalList)
               ]
             ]),
     );
   }
 
-  List<Widget> buildAushangList() {
-    return data!.data.map((e) {
+  List<Widget> buildAushangList(List<Aushang> listData) {
+    return listData.map((e) {
       return ListTile(
         title: Text(
           (e.klassenstufen.isNotEmpty ? "[${e.klassenstufen.join(", ")}] " : "") + e.name,

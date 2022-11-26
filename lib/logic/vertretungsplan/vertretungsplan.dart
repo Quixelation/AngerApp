@@ -3,8 +3,8 @@ library vertretungsplan;
 import 'dart:async';
 import 'dart:convert';
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
-import 'package:anger_buddy/logic/data_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
@@ -23,7 +23,6 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import "package:sembast/sembast.dart";
 import "package:sembast/sembast.dart" as sb;
-import "package:anger_buddy/logic/current_class/current_class.dart";
 
 part 'package:anger_buddy/logic/vertretungsplan/vp_types.dart';
 part 'package:anger_buddy/logic/vertretungsplan/vp_utils.dart';
@@ -87,7 +86,7 @@ class VertretungsplanManager {
   Future<AsyncDataResponse<_VpListResponse>> fetchListApi() async {
     try {
       String client = Credentials.vertretungsplan.subject.valueWrapper?.value ?? "";
-      printInDebug("VP using CLient: $client");
+      logger.v("VP fetching Api using CLient: $client");
       var url = Uri.parse('${AppManager.urls.vplist}?request=list&client=$client');
       var response = await http.get(url, headers: {
         "encoding": "utf-8",
@@ -104,19 +103,31 @@ class VertretungsplanManager {
 
         List<VertretungsPlanItem> items = [];
 
-        for (var jsonObj in objects) {
-          if (jsonObj["uniqueName"] != "S_Vertretungsplan_XML") continue;
+        List<VpAushang> nonVpObjects = [];
 
-          items.add(VertretungsPlanItem.fromDbJson(
-            jsonObj,
-            // isNew: await checkIfVpIsNew(jsonObj["uniqueId"],
-            //     _extractChangedDate(jsonObj["changed"].toString()) )
-          ));
+        for (var jsonObj in objects) {
+          if (jsonObj["uniqueName"] != "S_Vertretungsplan_XML") {
+            var lastChanged = _extractChangedDate(jsonObj["changed"]);
+            nonVpObjects.add(VpAushang(
+                name: jsonObj["caption"],
+                contentUrl: jsonObj["contentUrl"],
+                lastChanged: _extractChangedDate(jsonObj["changed"]),
+                isTicker: jsonObj["type"] == "ticker",
+                read: await getAushangReadStatusFromDatabase(jsonObj["uniqueId"], lastChanged),
+                uniqueId: jsonObj["uniqueId"]));
+          } else {
+            items.add(VertretungsPlanItem.fromDbJson(
+              jsonObj,
+              // isNew: await checkIfVpIsNew(jsonObj["uniqueId"],
+              //     _extractChangedDate(jsonObj["changed"].toString()) )
+            ));
+          }
         }
         downloads.doGarbageCollection(items.map((e) => e.uniqueId).toList());
-        if (items != null && items.isNotEmpty) {
+        if (items.isNotEmpty) {
           vpList.add(items);
         }
+        AngerApp.aushang.vpAushangSubject.add(nonVpObjects);
         return AsyncDataResponse(
             data: _VpListResponse(data: items, result: true),
             loadingAction: AsyncDataResponseLoadingAction.none,
@@ -130,6 +141,7 @@ class VertretungsplanManager {
             error: false);
       }
     } catch (err) {
+      logger.e("[VP] Failed to fetch ListApi", err, StackTrace.current);
       return AsyncDataResponse(
           data: _VpListResponse(result: false),
           loadingAction: AsyncDataResponseLoadingAction.none,

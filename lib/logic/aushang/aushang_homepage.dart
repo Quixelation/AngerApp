@@ -9,6 +9,9 @@ class AushangHomepageWidget extends StatefulWidget {
 
 class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
   AsyncDataResponse<List<Aushang>>? aushaenge;
+  List<VpAushang> vpAushaenge = [];
+  StreamSubscription? aushangSub;
+  StreamSubscription? vpAushangSub;
 
   int? currentClass;
 
@@ -24,21 +27,47 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
   void initState() {
     super.initState();
     initCurrentClass();
-    Services.aushang.subject.listen((event) {
+    aushangSub = Services.aushang.subject.listen((event) {
+      if (!mounted) {
+        aushangSub?.cancel();
+        return;
+      }
+
       logger.d("[AushangHomepage] Subect-Event --> Data-Length: ${event.data.length}");
 
       setState(() {
         aushaenge = event;
       });
     });
+    vpAushangSub = Services.aushang.vpAushangSubject.listen((event) {
+      if (!mounted) {
+        vpAushangSub?.cancel();
+        return;
+      }
+
+      logger.d("[AushangHomepage] SubectVP-Event --> Data-Length: ${event.length}");
+
+      setState(() {
+        vpAushaenge = event;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    aushangSub?.cancel();
+
+    super.dispose();
   }
 
   /// Nimmt eine Liste an Aushänge und filtert diese,
   /// je nachdem ob und welche Klassenstufe gerade
   /// durch den Benutzer eingestellt ist
   List<Aushang> filterForClass(List<Aushang> aushaenge) {
-    logger.d("KLasse $currentClass");
-    var filteredList = aushaenge.where((element) {
+    logger.d("Klasse $currentClass");
+    var filteredList = [...aushaenge, ...vpAushaenge.map((e) => e.toAushang())];
+
+    filteredList = filteredList.where((element) {
       if (element.fixed &&
           (currentClass == null || (currentClass != null && element.klassenstufen.contains(currentClass)))) {
         return true;
@@ -70,6 +99,15 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
 
       //Fixierte nach hinten
       return aFixed - bFixed;
+    });
+    filteredList.sort((a, b) {
+      if (currentClass == null) return 0;
+
+      var aRead = (a.read == ReadStatusBasic.read ? 1 : 0);
+      var bRead = (b.read == ReadStatusBasic.read ? 1 : 0);
+
+      //ungelesene nach vorne
+      return bRead - aRead;
     });
 
     return filteredList;

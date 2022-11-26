@@ -37,6 +37,10 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
     var responseData = await Services.vp.fetchListApi();
     setState(() {
       _vertretungsplanResponseData = responseData;
+      if (responseData.error == true) {
+        //So that the error is shown
+        _vertretungsplanListe = [];
+      }
     });
 
     return;

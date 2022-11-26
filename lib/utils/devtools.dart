@@ -70,6 +70,12 @@ class PageDevTools extends StatelessWidget {
               child: Text("JustCallJspMatrix::Rooms")),
           SizedBox(height: 8),
           ElevatedButton(
+              onPressed: () async {
+                await DEVONLYdeleteAushangReadStateForAllAushange();
+              },
+              child: Text("Aushänge DELETE READ")),
+          SizedBox(height: 8),
+          ElevatedButton(
               onPressed: () {
                 var week = WeekViewCalendar(events: [
                   EventData(
