@@ -3,7 +3,6 @@ import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
-import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
@@ -145,14 +144,6 @@ class PageDevTools extends StatelessWidget {
                 toggleSeenIntroductionScreen(false);
               },
               child: const Text("IntroScreen Seen false")),
-          const SizedBox(
-            height: 25,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                FeatureDiscovery.clearPreferences(context, {"menu_button", "noti_settings_button"});
-              },
-              child: const Text("Clear FeatureDiscovery")),
           const SizedBox(
             height: 25,
           ),

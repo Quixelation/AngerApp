@@ -20,7 +20,6 @@ import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -37,18 +36,6 @@ class _PageHomeState extends State<PageHome> {
   @override
   void initState() {
     super.initState();
-
-    Timer(const Duration(seconds: 2), () {
-      if (mounted) {
-        FeatureDiscovery.discoverFeatures(
-          context,
-          const <String>{
-            // Feature ids for every feature that you want to showcase in order.
-            'menu_button', "noti_settings_button"
-          },
-        );
-      }
-    });
   }
 
   @override
@@ -57,7 +44,8 @@ class _PageHomeState extends State<PageHome> {
       floatingActionButton: FloatingActionButton.extended(
           label: const Text("Vertretungsplan"),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const PageVp()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const PageVp()));
           },
           icon: const Icon(Icons.switch_account_rounded)),
       body: CustomScrollView(
@@ -65,68 +53,49 @@ class _PageHomeState extends State<PageHome> {
           SliverAppBar(
             leading: kIsWeb && MediaQuery.of(context).size.width > 900
                 ? null
-                : DescribedFeatureOverlay(
-                    backgroundDismissible: true,
-                    allowShowingDuplicate: true,
-                    featureId: 'menu_button', // Unique id that identifies this overlay.
-                    tapTarget: const Icon(Icons.menu, size: 26), // The widget that will be displayed as the tap target.
-                    title: const Text('Das Menu'),
-                    onDismiss: () async => false,
-
-                    description: const Text('Hier findest du alle möglichen Funktionen, die die App zu bieten hat'),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    targetColor: Colors.red,
-                    textColor: Colors.white,
-
-                    child: IconButton(
-                      iconSize: 26,
-                      icon: const Icon(Icons.menu),
-                      onPressed: () {
-                        getIt.get<AppManager>().mainScaffoldState.currentState!.openDrawer();
-                      },
-                    ),
+                : IconButton(
+                    iconSize: 26,
+                    icon: const Icon(Icons.menu),
+                    onPressed: () {
+                      getIt
+                          .get<AppManager>()
+                          .mainScaffoldState
+                          .currentState!
+                          .openDrawer();
+                    },
                   ),
             actions: [
-              DescribedFeatureOverlay(
-                backgroundDismissible: true,
-                allowShowingDuplicate: true,
-                onDismiss: () async => false,
-                featureId: 'noti_settings_button', // Unique id that identifies this overlay.
-                tapTarget:
-                    const Icon(Icons.notifications, size: 26), // The widget that will be displayed as the tap target.
-                title: const Text('Benachrichtigungen'),
-                description: const Text('Hier kannst du einstellen, welche Benachrichtigungen du erhalten möchtest'),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                targetColor: Colors.red,
-                textColor: Colors.white,
+              IconButton(
+                iconSize: 26,
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      kIsWeb
+                          ? PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      const PageNotificationSettings(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                // const begin = Offset(0.0, 1.0);
+                                const begin = Offset.zero;
+                                const end = Offset.zero;
+                                const curve = Curves.ease;
 
-                child: IconButton(
-                  iconSize: 26,
-                  icon: const Icon(Icons.notifications),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        kIsWeb
-                            ? PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) =>
-                                    const PageNotificationSettings(),
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  // const begin = Offset(0.0, 1.0);
-                                  const begin = Offset.zero;
-                                  const end = Offset.zero;
-                                  const curve = Curves.ease;
+                                var tween = Tween(begin: begin, end: end)
+                                    .chain(CurveTween(curve: curve));
 
-                                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-                                  return SlideTransition(
-                                    position: animation.drive(tween),
-                                    child: child,
-                                  );
-                                },
-                              )
-                            : MaterialPageRoute(builder: (context) => const PageNotificationSettings()));
-                  },
-                ),
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
+                            )
+                          : MaterialPageRoute(
+                              builder: (context) =>
+                                  const PageNotificationSettings()));
+                },
               ),
             ],
             pinned: true,
@@ -138,7 +107,8 @@ class _PageHomeState extends State<PageHome> {
               // collapseMode: CollapseMode.pin,
               title: Text(
                 "Anger",
-                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground),
               ),
             ),
             expandedHeight: 150,
@@ -165,42 +135,52 @@ class _PageHomeState extends State<PageHome> {
 
             /// -> kleine Bildschirmgröße: 1 Spalte
             if (MediaQuery.of(context).size.width < 1080)
-              Flex(direction: Axis.vertical, crossAxisAlignment: CrossAxisAlignment.start, children: const [
-                // SchwarzesBrettHome(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                  child: FerienCard(),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                  child: AushangHomepageWidget(),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                  child: VpWidget(),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                  child: _PinnedKlausurenList(),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                  child: EventsThisWeek(),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                  child: _NewsCard(),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                  child: OpenSenseOverviewWidget(),
-                ), /*
+              Flex(
+                  direction: Axis.vertical,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    // SchwarzesBrettHome(),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: FerienCard(),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: AushangHomepageWidget(),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: VpWidget(),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: _PinnedKlausurenList(),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: EventsThisWeek(),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: _NewsCard(),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: OpenSenseOverviewWidget(),
+                    ), /*
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                       child: const _ServerStatusWidget(),
                     ),*/
-              ])
+                  ])
 
             /// TODO: Add Schwarzes Brett zu mittel und groß
             /// -> mittlere Bildschirmgröße: 2 Spalten
@@ -213,7 +193,8 @@ class _PageHomeState extends State<PageHome> {
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
-                          Padding(padding: EdgeInsets.all(8), child: FerienCard()),
+                          Padding(
+                              padding: EdgeInsets.all(8), child: FerienCard()),
                           Padding(
                               padding: EdgeInsets.all(8),
                               child:
@@ -377,32 +358,43 @@ class _WelcomeTextState extends State<WelcomeText> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Willkommen", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600)),
+          const Text("Willkommen",
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600)),
           const SizedBox(height: 5),
           Opacity(
             opacity: 0.87,
             child: newVersion
                 ? const Text("Neue Version der App verfügbar")
                 : RichText(
-                    text: TextSpan(style: DefaultTextStyle.of(context).style, children: [
-                    const TextSpan(text: "Heute ist "),
-                    TextSpan(
-                        text: intToDayString(DateTime.now().weekday),
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
-                    const TextSpan(text: ", der "),
-                    TextSpan(
-                        text: DateTime.now().day.toString(),
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
-                    const TextSpan(text: ". "),
-                    TextSpan(
-                        text: intToMonthString(DateTime.now().month),
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
-                    const TextSpan(text: " "),
-                    TextSpan(
-                        text: DateTime.now().year.toString(),
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
-                    const TextSpan(text: "."),
-                  ])),
+                    text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: [
+                        const TextSpan(text: "Heute ist "),
+                        TextSpan(
+                            text: intToDayString(DateTime.now().weekday),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold)),
+                        const TextSpan(text: ", der "),
+                        TextSpan(
+                            text: DateTime.now().day.toString(),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold)),
+                        const TextSpan(text: ". "),
+                        TextSpan(
+                            text: intToMonthString(DateTime.now().month),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold)),
+                        const TextSpan(text: " "),
+                        TextSpan(
+                            text: DateTime.now().year.toString(),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold)),
+                        const TextSpan(text: "."),
+                      ])),
           ),
           Opacity(
             opacity: 0.87,
@@ -434,7 +426,8 @@ class _PinnedKlausurenListState extends State<_PinnedKlausurenList> {
       final now = DateTime.now();
 
       setState(() {
-        pinnedKlausuren = temp?.where((element) => element.date.isAfter(now)).toList();
+        pinnedKlausuren =
+            temp?.where((element) => element.date.isAfter(now)).toList();
         showingPinned = true;
       });
     });
@@ -453,7 +446,8 @@ class _PinnedKlausurenListState extends State<_PinnedKlausurenList> {
     final now = DateTime.now();
 
     setState(() {
-      pinnedKlausuren = temp?.where((element) => element.date.isAfter(now)).toList();
+      pinnedKlausuren =
+          temp?.where((element) => element.date.isAfter(now)).toList();
       showingPinned = false;
     });
   }
@@ -475,7 +469,8 @@ class _PinnedKlausurenListState extends State<_PinnedKlausurenList> {
       } else {
         loadKlausuren(value);
         pinnedSub?.cancel();
-        klausurenSub = Services.klausuren.subject.listen((klausurenValue) => loadKlausuren(value));
+        klausurenSub = Services.klausuren.subject
+            .listen((klausurenValue) => loadKlausuren(value));
       }
     });
   }
@@ -500,7 +495,8 @@ class _PinnedKlausurenListState extends State<_PinnedKlausurenList> {
               addAutomaticKeepAlives: true,
               children: [
                 for (Klausur klausur in pinnedKlausuren ?? [])
-                  _KlausurTerminCard(klausur, cb: () => loadPinned(), showMenu: showingPinned),
+                  _KlausurTerminCard(klausur,
+                      cb: () => loadPinned(), showMenu: showingPinned),
               ],
             ),
           )
@@ -527,10 +523,14 @@ class _FerienCardState extends State<FerienCard> {
     ferienSub = Services.ferien.subject.listen((event) {
       var firstEvent = event.data?.first;
       printInDebug(firstEvent?.name);
-      if (firstEvent?.status != FerienStatus.finished && firstEvent?.diff != null) {
+      if (firstEvent?.status != FerienStatus.finished &&
+          firstEvent?.diff != null) {
         setState(() {
           data = AsyncDataResponse(
-              data: firstEvent, loadingAction: event.loadingAction, error: event.error, allowReload: event.allowReload);
+              data: firstEvent,
+              loadingAction: event.loadingAction,
+              error: event.error,
+              allowReload: event.allowReload);
         });
       } else {
         setState(() {
@@ -548,7 +548,8 @@ class _FerienCardState extends State<FerienCard> {
     return data?.data != null
         ? Card(
             child: Stack(children: [
-            if (data!.loadingAction == AsyncDataResponseLoadingAction.currentlyLoading)
+            if (data!.loadingAction ==
+                AsyncDataResponseLoadingAction.currentlyLoading)
               const Positioned(
                 child: LinearProgressIndicator(),
                 top: 0,
@@ -560,27 +561,35 @@ class _FerienCardState extends State<FerienCard> {
               child: Column(children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Text(diffWholeDays.toString() ?? "",
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700)),
-                    ),
-                    const SizedBox(width: 4),
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text("Tag${diffWholeDays == 1 ? "" : "e"}",
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      Opacity(
-                        opacity: 0.87,
-                        child: Text(
-                          "${data!.data!.status == FerienStatus.future ? "bis " : ""}${data!.data!.name} ${data!.data!.status == FerienStatus.running ? "übrig" : ""}",
-                          style: const TextStyle(fontSize: 15),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(diffWholeDays.toString() ?? "",
+                              style: const TextStyle(
+                                  fontSize: 28, fontWeight: FontWeight.w700)),
                         ),
-                      )
-                    ]),
-                  ]),
+                        const SizedBox(width: 4),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Tag${diffWholeDays == 1 ? "" : "e"}",
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              Opacity(
+                                opacity: 0.87,
+                                child: Text(
+                                  "${data!.data!.status == FerienStatus.future ? "bis " : ""}${data!.data!.name} ${data!.data!.status == FerienStatus.running ? "übrig" : ""}",
+                                  style: const TextStyle(fontSize: 15),
+                                ),
+                              )
+                            ]),
+                      ]),
                 ),
-                if (data!.data!.status == FerienStatus.running) const SizedBox(height: 30),
+                if (data!.data!.status == FerienStatus.running)
+                  const SizedBox(height: 30),
                 if (data!.data!.status == FerienStatus.running)
                   Opacity(
                     opacity: 0.87,
@@ -606,8 +615,14 @@ class _FerienCardState extends State<FerienCard> {
                         ),
                         const SizedBox(height: 2),
                         LinearProgressIndicator(
-                          value: (data!.data!.start.difference(DateTime.now()).inDays.abs()) /
-                              data!.data!.end.difference(data!.data!.start).inDays.abs(),
+                          value: (data!.data!.start
+                                  .difference(DateTime.now())
+                                  .inDays
+                                  .abs()) /
+                              data!.data!.end
+                                  .difference(data!.data!.start)
+                                  .inDays
+                                  .abs(),
                           minHeight: 10,
                         ),
                       ],
@@ -645,11 +660,17 @@ class __NewsCardState extends State<_NewsCard> {
   Widget build(BuildContext context) {
     if (newsData != null) {
       return Card(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 5),
-          child: Text((newsData!.error == true || newsData!.data.isEmpty) ? "Nachrichten" : newsData!.data[0].title!,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+          padding:
+              const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 5),
+          child: Text(
+              (newsData!.error == true || newsData!.data.isEmpty)
+                  ? "Nachrichten"
+                  : newsData!.data[0].title!,
+              style:
+                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
         ),
         const Divider(),
         if (newsData!.error == true || newsData!.data.isEmpty) ...[
@@ -662,7 +683,8 @@ class __NewsCardState extends State<_NewsCard> {
           Opacity(
             opacity: 0.87,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
               child: Text(
                 newsData!.data[0].desc!,
                 style: const TextStyle(height: 1.25, fontSize: 15),
@@ -676,14 +698,20 @@ class __NewsCardState extends State<_NewsCard> {
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => PageNewsDetails(data: newsData!.data[0])));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                PageNewsDetails(data: newsData!.data[0])));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Zum Artikel", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                      Text("Zum Artikel",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary)),
                       const SizedBox(width: 4),
-                      Icon(Icons.arrow_right_alt, color: Theme.of(context).colorScheme.secondary)
+                      Icon(Icons.arrow_right_alt,
+                          color: Theme.of(context).colorScheme.secondary)
                     ],
                   ),
                 ),
@@ -692,8 +720,10 @@ class __NewsCardState extends State<_NewsCard> {
         (newsData!.error == true || newsData!.data.isEmpty)
             ? Container()
             : Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 16, top: 10),
-                child: Text(DateFormat("dd.MM.yyyy").format(newsData!.data[0].pubDate),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, bottom: 16, top: 10),
+                child: Text(
+                    DateFormat("dd.MM.yyyy").format(newsData!.data[0].pubDate),
                     style: const TextStyle(color: Colors.grey)),
               )
       ]));
@@ -708,7 +738,9 @@ class _KlausurTerminCard extends StatelessWidget {
   final void Function() cb;
   final bool showMenu;
 
-  const _KlausurTerminCard(this.klausur, {required this.cb, required this.showMenu, Key? key}) : super(key: key);
+  const _KlausurTerminCard(this.klausur,
+      {required this.cb, required this.showMenu, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -718,19 +750,23 @@ class _KlausurTerminCard extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20.0).add(const EdgeInsets.only(right: 30)),
+            padding: const EdgeInsets.all(20.0)
+                .add(const EdgeInsets.only(right: 30)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Opacity(
                   opacity: 0.87,
-                  child: Text(daysDiff.toString(), style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700)),
+                  child: Text(daysDiff.toString(),
+                      style: const TextStyle(
+                          fontSize: 28, fontWeight: FontWeight.w700)),
                 ),
                 Opacity(
                   opacity: 0.87,
                   child: Text(daysDiff == 1 ? "Tag" : "Tage",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
                 Opacity(opacity: 0.60, child: Text(klausur.name))
               ],
@@ -937,7 +973,8 @@ class __QuickInfosListState extends State<_QuickInfosList> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: _quickInfos!.data.map((e) => _QuickInfo(e)).toList())
           : Container(),
-      if (_quickInfos?.loadingAction == AsyncDataResponseLoadingAction.currentlyLoading)
+      if (_quickInfos?.loadingAction ==
+          AsyncDataResponseLoadingAction.currentlyLoading)
         const Positioned(
           child: LinearProgressIndicator(),
           top: 0,
@@ -1006,13 +1043,16 @@ class _QuickInfo extends StatelessWidget {
                 children: [
                   ((quickInfo.title?.trim() == "") || (quickInfo.title == null))
                       ? Container()
-                      : Text(quickInfo.title!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      : Text(quickInfo.title!,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
                   MarkdownBody(
                     data: quickInfo.content,
                     onTapLink: (String text, String? href, String title) {
                       linkOnTapHandler(context, text, href, title);
                     },
-                    styleSheet: MarkdownStyleSheet(p: const TextStyle(fontSize: 15)),
+                    styleSheet:
+                        MarkdownStyleSheet(p: const TextStyle(fontSize: 15)),
                   ),
                 ],
               ),
@@ -1031,11 +1071,14 @@ class _QuickInfo extends StatelessWidget {
   ) async {
     showDialog<Widget>(
       context: context,
-      builder: (BuildContext context) => _createDialog(context, text, href, title),
+      builder: (BuildContext context) =>
+          _createDialog(context, text, href, title),
     );
   }
 
-  Widget _createDialog(BuildContext context, String text, String? href, String title) => AlertDialog(
+  Widget _createDialog(
+          BuildContext context, String text, String? href, String title) =>
+      AlertDialog(
         title: const Text('Link öffnen?'),
         content: SingleChildScrollView(
           child: ListBody(
@@ -1055,7 +1098,9 @@ class _QuickInfo extends StatelessWidget {
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Abbrechen', style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+            child: Text('Abbrechen',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary)),
           ),
           ElevatedButton(
               onPressed: () {
