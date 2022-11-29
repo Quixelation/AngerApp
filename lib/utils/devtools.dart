@@ -12,7 +12,6 @@ import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/partials/introduction_screen.dart';
 import 'package:anger_buddy/utils/logger.dart';
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:logger_flutter_viewer/logger_flutter_viewer.dart';
@@ -47,27 +46,6 @@ class PageDevTools extends StatelessWidget {
                 // logger.d(Services.mail.imapClient);
               },
               child: Text("Test if Mail init")),
-          ElevatedButton(
-              onPressed: () async {
-                await JspMatrix().init();
-              },
-              child: Text("JustCallJspMatrix&init")),
-          ElevatedButton(
-              onPressed: () async {
-                var matric = JspMatrix();
-                await matric.init();
-                logger.d(matric.client!.accountData);
-              },
-              child: Text("JustCallJspMatrix::AccountData")),
-          ElevatedButton(
-              onPressed: () async {
-                var matric = JspMatrix();
-                await matric.init();
-                var rooms = await matric.client!.getJoinedRooms();
-                logger.d("[Matrix] joined Rooms");
-                logger.d(rooms);
-              },
-              child: Text("JustCallJspMatrix::Rooms")),
           SizedBox(height: 8),
           ElevatedButton(
               onPressed: () async {
