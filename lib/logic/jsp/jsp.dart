@@ -1,7 +1,5 @@
 library jsp;
 
-import 'dart:ffi';
-
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
 import 'package:anger_buddy/logic/files/files.dart';
