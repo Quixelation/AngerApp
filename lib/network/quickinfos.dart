@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
+import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import "package:http/http.dart" as http;
 import 'package:sembast/sembast.dart';
@@ -19,11 +20,7 @@ class QuickInfo {
   final QuickInfoType type;
   final String? title;
   final String content;
-  QuickInfo(
-      {required this.id,
-      required this.type,
-      required this.title,
-      required this.content});
+  QuickInfo({required this.id, required this.type, required this.title, required this.content});
   QuickInfo.fromCmsJson(Map<String, dynamic> json)
       : id = json["id"],
         type = (() {
@@ -59,8 +56,7 @@ Stream<AsyncDataResponse<List<QuickInfo>>> fetchQuickInfos() async* {
   bool errOccurred = false;
   http.Response? response;
   try {
-    response =
-        await http.get(Uri.parse("${AppManager.directusUrl}items/quickinfos"));
+    response = await http.get(Uri.parse("${AppManager.directusUrl}items/quickinfos"));
   } catch (e) {
     errOccurred = true;
   }
@@ -69,9 +65,7 @@ Stream<AsyncDataResponse<List<QuickInfo>>> fetchQuickInfos() async* {
     var data = response!.body;
     var json = jsonDecode(data);
     // var quickInfos = json["data"] as List;
-    var quickInfos = (json["data"] as List)
-        .map((quickInfo) => QuickInfo.fromCmsJson(quickInfo))
-        .toList();
+    var quickInfos = (json["data"] as List).map((quickInfo) => QuickInfo.fromCmsJson(quickInfo)).toList();
     yield AsyncDataResponse(
       data: quickInfos,
       loadingAction: AsyncDataResponseLoadingAction.none,
@@ -79,20 +73,14 @@ Stream<AsyncDataResponse<List<QuickInfo>>> fetchQuickInfos() async* {
     db.transaction((transaction) async {
       await AppManager.stores.quickinfos.delete(transaction);
       for (var quickInfo in quickInfos) {
-        await AppManager.stores.quickinfos
-            .record(quickInfo.id)
-            .put(transaction, {
-          "id": quickInfo.id,
-          "type": quickInfo.type.name,
-          "title": quickInfo.title,
-          "content": quickInfo.content
-        });
+        await AppManager.stores.quickinfos.record(quickInfo.id).put(transaction,
+            {"id": quickInfo.id, "type": quickInfo.type.name, "title": quickInfo.title, "content": quickInfo.content});
       }
     });
 
     SyncManager.setLastSync("quickinfos");
   } else {
-    throw AsyncDataResponse(
-        data: dbResp, loadingAction: AsyncDataResponseLoadingAction.none);
+    logger.v("[QuickInfos] returning dbEntry bc of http error");
+    yield AsyncDataResponse(data: dbResp, loadingAction: AsyncDataResponseLoadingAction.none);
   }
 }

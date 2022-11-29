@@ -11,6 +11,7 @@ import 'package:anger_buddy/network/ferien.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/network/news.dart';
 import 'package:anger_buddy/network/quickinfos.dart';
+import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/pages/news.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/pages/notifications.dart';
@@ -19,7 +20,6 @@ import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -36,17 +36,6 @@ class _PageHomeState extends State<PageHome> {
   @override
   void initState() {
     super.initState();
-
-    Timer(const Duration(seconds: 2), () {
-      if (mounted)
-        FeatureDiscovery.discoverFeatures(
-          context,
-          const <String>{
-            // Feature ids for every feature that you want to showcase in order.
-            'menu_button', "noti_settings_button"
-          },
-        );
-    });
   }
 
   @override
@@ -63,68 +52,39 @@ class _PageHomeState extends State<PageHome> {
           SliverAppBar(
             leading: kIsWeb && MediaQuery.of(context).size.width > 900
                 ? null
-                : DescribedFeatureOverlay(
-                    backgroundDismissible: true,
-                    allowShowingDuplicate: true,
-                    featureId: 'menu_button', // Unique id that identifies this overlay.
-                    tapTarget: const Icon(Icons.menu, size: 26), // The widget that will be displayed as the tap target.
-                    title: const Text('Das Menu'),
-                    onDismiss: () async => false,
-
-                    description: const Text('Hier findest du alle möglichen Funktionen, die die App zu bieten hat'),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    targetColor: Colors.red,
-                    textColor: Colors.white,
-
-                    child: IconButton(
-                      iconSize: 26,
-                      icon: const Icon(Icons.menu),
-                      onPressed: () {
-                        getIt.get<AppManager>().mainScaffoldState.currentState!.openDrawer();
-                      },
-                    ),
+                : IconButton(
+                    iconSize: 26,
+                    icon: const Icon(Icons.menu),
+                    onPressed: () {
+                      getIt.get<AppManager>().mainScaffoldState.currentState!.openDrawer();
+                    },
                   ),
             actions: [
-              DescribedFeatureOverlay(
-                backgroundDismissible: true,
-                allowShowingDuplicate: true,
-                onDismiss: () async => false,
-                featureId: 'noti_settings_button', // Unique id that identifies this overlay.
-                tapTarget:
-                    const Icon(Icons.notifications, size: 26), // The widget that will be displayed as the tap target.
-                title: const Text('Benachrichtigungen'),
-                description: const Text('Hier kannst du einstellen, welche Benachrichtigungen du erhalten möchtest'),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                targetColor: Colors.red,
-                textColor: Colors.white,
+              IconButton(
+                iconSize: 26,
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      kIsWeb
+                          ? PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) => const PageNotificationSettings(),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                // const begin = Offset(0.0, 1.0);
+                                const begin = Offset.zero;
+                                const end = Offset.zero;
+                                const curve = Curves.ease;
 
-                child: IconButton(
-                  iconSize: 26,
-                  icon: const Icon(Icons.notifications),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        kIsWeb
-                            ? PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) =>
-                                    const PageNotificationSettings(),
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  // const begin = Offset(0.0, 1.0);
-                                  const begin = Offset.zero;
-                                  const end = Offset.zero;
-                                  const curve = Curves.ease;
+                                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
-                                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-                                  return SlideTransition(
-                                    position: animation.drive(tween),
-                                    child: child,
-                                  );
-                                },
-                              )
-                            : MaterialPageRoute(builder: (context) => const PageNotificationSettings()));
-                  },
-                ),
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
+                            )
+                          : MaterialPageRoute(builder: (context) => const PageNotificationSettings()));
+                },
               ),
             ],
             pinned: true,
@@ -184,6 +144,10 @@ class _PageHomeState extends State<PageHome> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                   child: _NewsCard(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: OpenSenseOverviewWidget(),
                 ), /*
                     Padding(
                       padding:
@@ -227,6 +191,10 @@ class _PageHomeState extends State<PageHome> {
                           Padding(
                             padding: EdgeInsets.all(8),
                             child: _NewsCard(),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: OpenSenseOverviewWidget(),
                           ),
                           // SchwarzesBrettHome(),
                         ],
@@ -389,6 +357,10 @@ class _WelcomeTextState extends State<WelcomeText> {
                         style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
                     const TextSpan(text: "."),
                   ])),
+          ),
+          Opacity(
+            opacity: 0.87,
+            child: SenseboxOutdoorTempTextHomepage(),
           )
         ],
       ),
@@ -412,8 +384,11 @@ class _PinnedKlausurenListState extends State<_PinnedKlausurenList> {
       temp?.sort((a, b) {
         return a.date.compareTo(b.date);
       });
+
+      final now = DateTime.now();
+
       setState(() {
-        pinnedKlausuren = temp;
+        pinnedKlausuren = temp?.where((element) => element.date.isAfter(now)).toList();
         showingPinned = true;
       });
     });
@@ -429,8 +404,10 @@ class _PinnedKlausurenListState extends State<_PinnedKlausurenList> {
     temp.sort((a, b) {
       return a.date.compareTo(b.date);
     });
+    final now = DateTime.now();
+
     setState(() {
-      pinnedKlausuren = temp;
+      pinnedKlausuren = temp?.where((element) => element.date.isAfter(now)).toList();
       showingPinned = false;
     });
   }

@@ -16,8 +16,7 @@ class PageSettings extends StatefulWidget {
 }
 
 class _PageSettingsState extends State<PageSettings> {
-  bool _devToolsSwitch =
-      getIt.get<AppManager>().devtools.valueWrapper?.value ?? false;
+  bool _devToolsSwitch = getIt.get<AppManager>().devtools.valueWrapper?.value ?? false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,30 +29,21 @@ class _PageSettingsState extends State<PageSettings> {
           title: const Text("Farben"),
           trailing: const Icon(Icons.keyboard_arrow_right),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (ctx) => const PageColorManagerSettings()));
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
           },
         ),
         ListTile(
           title: const Text("Vertretungsplan"),
           trailing: const Icon(Icons.keyboard_arrow_right),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (ctx) => const SettingsPageVertretung()));
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const SettingsPageVertretung()));
           },
         ),
         ListTile(
           title: const Text("Benachrichtigungen"),
           trailing: const Icon(Icons.keyboard_arrow_right),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (ctx) => const PageNotificationSettings()));
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageNotificationSettings()));
           },
         ),
         // ListTile(
@@ -65,7 +55,7 @@ class _PageSettingsState extends State<PageSettings> {
         //   },
         // ),
         const Divider(),
-        SwitchListTile(
+        SwitchListTile.adaptive(
             value: _devToolsSwitch,
             onChanged: (act) {
               toogleDevtools(act);

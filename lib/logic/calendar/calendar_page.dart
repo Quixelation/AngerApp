@@ -165,11 +165,10 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
           children: [
             eventData?.data != null || loadingADR < 3
                 ? Flex(
-                    direction: MediaQuery.of(context).size.width > 600
+                    direction: /*MediaQuery.of(context).size.width > 600
                         ? Axis.horizontal
-                        : MediaQuery.of(context).orientation == Orientation.portrait
-                            ? Axis.vertical
-                            : Axis.horizontal,
+                        : */
+                        MediaQuery.of(context).orientation == Orientation.portrait ? Axis.vertical : Axis.horizontal,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 10),

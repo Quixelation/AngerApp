@@ -15,39 +15,30 @@ abstract class DataManager<E> {
   Future<List<E>> fetchFromDatabase();
 
   Future<AsyncDataResponse<List<E>>> _getData__Server() async {
-    logger.v("[DataManager] Fetching ${syncManagerKey} from Server");
-    try {
-      var serverData = await fetchFromServer();
+    logger.v("[DataManager] Fetching $syncManagerKey from Server");
 
-      final dataResponse = AsyncDataResponse(
-          data: serverData, loadingAction: AsyncDataResponseLoadingAction.none);
+    var serverData = await fetchFromServer();
 
-      subject.add(dataResponse);
-      return dataResponse;
-    } catch (e) {
-      logger.e(e);
-      //TODO: What went wrong? --> inform user
-      rethrow;
-    }
+    final dataResponse = AsyncDataResponse(data: serverData, loadingAction: AsyncDataResponseLoadingAction.none);
+
+    subject.add(dataResponse);
+    return dataResponse;
   }
 
   Future<AsyncDataResponse<List<E>>> _getData__Database() async {
+    logger.v("[DataManager::$syncManagerKey] loading from Database");
     var databaseData = await fetchFromDatabase();
 
-    final dataResponse = AsyncDataResponse(
-        data: databaseData, loadingAction: AsyncDataResponseLoadingAction.none);
+    final dataResponse = AsyncDataResponse(data: databaseData, loadingAction: AsyncDataResponseLoadingAction.none);
 
     subject.add(dataResponse);
     return dataResponse;
   }
 
   Future<bool> needsSync({SyncManager? lastSync}) async {
-    if (lastSync == null) {
-      lastSync = await SyncManager.getLastSync(syncManagerKey);
-    }
+    lastSync ??= await SyncManager.getLastSync(syncManagerKey);
 
-    return lastSync.never ||
-        lastSync.difference(DateTime.now()).inMinutes > syncManagerTTL;
+    return lastSync.never || lastSync.difference(DateTime.now()).inMinutes > syncManagerTTL;
   }
 
   @nonVirtual
@@ -57,16 +48,17 @@ abstract class DataManager<E> {
     // Falls zuvor noch nie Daten vom Server geholt wurden oder diese zu alt sind
     if (await needsSync(lastSync: lastSync) || force) {
       try {
-        return _getData__Server();
+        return await _getData__Server();
       } catch (e) {
-        logger.w(e);
-        logger.w((e as Error).stackTrace);
+        logger.v("[DataManager] Daten konnten nicht vom Server geladen werden. Versuche Datenbank");
         try {
           if (force) {
+            logger.v("[DataManager] Datenbank-Versuch unterbrochen wegen force==true");
             rethrow;
           }
-          return _getData__Database();
+          return await _getData__Database();
         } catch (e) {
+          logger.e("[DataManager] Datenbank-Versuch versuc fehlgeschlagen!");
           logger.e(e);
           logger.e((e as Error).stackTrace);
           //TODO: What went wrong? --> inform user
@@ -74,9 +66,9 @@ abstract class DataManager<E> {
         }
       }
     } else {
-      logger.v("[DataManager] Fetching ${syncManagerKey} from Database");
+      logger.v("[DataManager] Fetching $syncManagerKey from Database");
       try {
-        return _getData__Database();
+        return await _getData__Database();
       } catch (e) {
         logger.e(e);
         logger.e((e as Error).stackTrace);
@@ -87,6 +79,7 @@ abstract class DataManager<E> {
   }
 
   Future<void> init() async {
+    logger.v("[DataManager::$syncManagerKey] init");
     try {
       await _getData__Database();
     } catch (err) {}
@@ -97,4 +90,13 @@ abstract class DataManager<E> {
       }
     } catch (err) {}
   }
+}
+
+class ErrorableData<T> {
+  final bool error;
+  final T data;
+  ErrorableData({
+    required this.data,
+    required this.error,
+  });
 }

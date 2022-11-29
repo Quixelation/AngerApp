@@ -54,7 +54,7 @@ android {
       
         applicationId "com.robertstuendl.angergymapp"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true

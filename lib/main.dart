@@ -8,7 +8,6 @@ import 'package:anger_buddy/pages/home.dart';
 import 'package:anger_buddy/partials/drawer.dart';
 import 'package:anger_buddy/partials/introduction_screen.dart';
 import 'package:anger_buddy/utils/logger.dart';
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -43,7 +42,9 @@ Future<void> initApp() async {
 
   toggleSubscribtionToTopic("all", true);
   enforceDefaultFcmSubscriptions();
-  await Future.wait([initColorSubject(), initializeAllCredentialManagers(), Services.init()]);
+  await Future.wait([initColorSubject(), initializeAllCredentialManagers()]);
+  // Services und Credentials müssen getrennt, weil Services aus Credentials beruhen
+  await Services.init();
   logger.v("[AngerApp] Initialized");
 }
 
@@ -61,7 +62,7 @@ class AngerApp extends StatefulWidget {
 }
 
 class _AngerAppState extends State<AngerApp> {
-  var mainColor = colorSubject.valueWrapper!.value;
+  var mainColor;
 
 // It is assumed that all messages contain a data field with the key 'type'
   Future<void> setupInteractedMessage() async {
@@ -93,6 +94,8 @@ class _AngerAppState extends State<AngerApp> {
   @override
   void initState() {
     super.initState();
+    mainColor = colorSubject.valueWrapper!.value;
+    logger.d("[ColorManager] ${mainColor}");
     colorSubject.listen((value) {
       setState(() {
         mainColor = value;
@@ -129,40 +132,38 @@ class _AngerAppState extends State<AngerApp> {
           brightness: Brightness.dark),
     );
 
-    return FeatureDiscovery(
-      child: MaterialApp(
-        title: 'AngerApp',
-        theme: lightTheme.copyWith(
-          textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
-          primaryTextTheme: lightTheme.textTheme.apply(
-            fontFamily: fontFamily,
-          ),
-          tabBarTheme: const TabBarTheme(labelColor: Colors.white),
-          useMaterial3: false,
-          pageTransitionsTheme: const PageTransitionsTheme(
-            builders: <TargetPlatform, PageTransitionsBuilder>{
-              TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
-            },
-          ),
+    return MaterialApp(
+      title: 'AngerApp',
+      theme: lightTheme.copyWith(
+        textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
+        primaryTextTheme: lightTheme.textTheme.apply(
+          fontFamily: fontFamily,
         ),
-        darkTheme: darkTheme.copyWith(
-          useMaterial3: false,
-          drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF232323)),
-          textTheme: darkTheme.textTheme.apply(
-            fontFamily: fontFamily,
-          ),
-          primaryTextTheme: darkTheme.textTheme.apply(
-            fontFamily: fontFamily,
-          ),
-          pageTransitionsTheme: const PageTransitionsTheme(
-            builders: <TargetPlatform, PageTransitionsBuilder>{
-              TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
-            },
-          ),
+        tabBarTheme: const TabBarTheme(labelColor: Colors.white),
+        useMaterial3: false,
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
+          },
         ),
-        themeMode: ThemeMode.system,
-        home: const DefaultTextStyle(style: TextStyle(fontFamily: "Montserrat"), child: _IntroductionScreenSwitcher()),
       ),
+      darkTheme: darkTheme.copyWith(
+        useMaterial3: false,
+        drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF232323)),
+        textTheme: darkTheme.textTheme.apply(
+          fontFamily: fontFamily,
+        ),
+        primaryTextTheme: darkTheme.textTheme.apply(
+          fontFamily: fontFamily,
+        ),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
+          },
+        ),
+      ),
+      themeMode: ThemeMode.system,
+      home: const DefaultTextStyle(style: TextStyle(fontFamily: "Montserrat"), child: _IntroductionScreenSwitcher()),
     );
   }
 }

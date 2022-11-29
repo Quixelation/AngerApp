@@ -10,11 +10,13 @@ class PageCurrentClass extends StatefulWidget {
 class _PageCurrentClassState extends State<PageCurrentClass> {
   int? selectedClass = Services.currentClass.subject.value;
 
-  Widget selectClassBtn(int classS) {
+  Widget selectClassBtn(int? classS) {
+    var text = classS != null ? "$classS." : "Keine Klasse";
     return Expanded(
         child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: (classS == selectedClass)
+      // abc is used so that "null" isn't shown as selected
+      child: ((classS ?? "abc") == selectedClass)
           ? ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -23,7 +25,7 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
                 Services.currentClass.setCurrentClass(null);
                 Navigator.of(context).pop();
               },
-              child: Text("$classS."))
+              child: Text(text))
           : TextButton(
               onPressed: () {
                 setState(() {
@@ -32,7 +34,7 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
                 Services.currentClass.setCurrentClass(classS);
                 Navigator.of(context).pop();
               },
-              child: Text("$classS.", style: TextStyle(color: Theme.of(context).colorScheme.secondary))),
+              child: Text(text, style: TextStyle(color: Theme.of(context).colorScheme.secondary))),
     ));
   }
 
@@ -47,13 +49,19 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
           selectClassBtn(8),
         ],
       ),
-      const SizedBox(height: 8),
+      const SizedBox(height: 4),
       Row(
         children: [
           selectClassBtn(9),
           selectClassBtn(10),
           selectClassBtn(11),
           selectClassBtn(12),
+        ],
+      ),
+      const SizedBox(height: 4),
+      Row(
+        children: [
+          selectClassBtn(null),
         ],
       ),
       const SizedBox(

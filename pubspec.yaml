@@ -5,7 +5,7 @@ description: A new Flutter project.
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 2022.10.22+6
+version: 2022.11.20+13
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
@@ -22,16 +22,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   get_it: ^7.2.0
   xml: ^5.3.1
-
   sqflite: ^2.0.0+4
   intl: ^0.17.0
-
   table_calendar: ^3.0.3
   html: ^0.15.0
   tree_view: ^0.0.6
   flutter_svg: ^0.23.0+1
   url_launcher: ^6.0.12
-
   flutter_markdown: ^0.6.8
   accordion: ^2.1.1
   expandable: ^5.0.1
@@ -60,6 +57,26 @@ dependencies:
   master_detail_scaffold: ^2.0.0
   path_provider: ^2.0.9
   universal_html: ^2.0.8
+  webdav_client: ^1.1.7
+  nextcloud:
+    git:
+      url: https://github.com/provokateurin/nextcloud-neon
+      path: packages/nextcloud
+  skeletons: ^0.0.3
+  flutter_secure_storage: ^6.0.0
+  matrix: ^0.15.0
+  hive: ^2.2.3
+  flutter_openssl_crypto: ^0.1.0
+  flutter_olm: ^1.2.0
+  fl_chart: ^0.55.2
+  file_picker: ^5.2.2
+  enough_mail: ^2.1.1
+  # charts_painter: ^3.0.0
+  # flutter_echarts: ^2.3.0
+  # graphic: ^0.6.2
+
+dependency_overrides:
+  xml: "^6.1.0"
 
 dev_dependencies:
   flutter_test:

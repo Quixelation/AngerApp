@@ -1,3 +1,5 @@
+import 'package:anger_buddy/logic/data_manager.dart';
+
 enum AsyncDataResponseAgeType {
   /// e.g. from Database
   oldData,
@@ -17,12 +19,14 @@ enum AsyncDataResponseLoadingAction {
   askToFetch
 }
 
-class AsyncDataResponse<T> {
+class AsyncDataResponse<T> implements ErrorableData<T> {
+  @override
   final T data;
   @deprecated
   final AsyncDataResponseAgeType? ageType;
   AsyncDataResponseLoadingAction loadingAction;
   final bool? allowReload;
+  @override
   final bool error;
 
   AsyncDataResponse(

@@ -2,6 +2,7 @@ library colormanager;
 
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
+import 'package:anger_buddy/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import "package:sembast/sembast.dart";
@@ -16,21 +17,18 @@ Future<void> initColorSubject() async {
   var dbResp = await AppManager.stores.data.record("maincolor").get(db);
 
   if (dbResp == null || dbResp["value"] == null) {
+    logger.i("[ColorManager] Db Color is empty");
     colorSubject.add(_AngerAppColor.colors[16]);
   } else {
-    colorSubject
-        .add(_AngerAppColor.colors[int.parse(dbResp["value"].toString())]);
+    colorSubject.add(_AngerAppColor.colors[int.parse(dbResp["value"].toString())]);
   }
 }
 
 Future<void> setMainColor(_AngerAppColor color) async {
   colorSubject.add(color);
   var db = getIt.get<AppManager>().db;
-
-  AppManager.stores.events.record("maincolor").put(db, {
-    "key": "maincolor",
-    "value": _AngerAppColor.colors.indexOf(color).toString()
-  });
+  var dbEntry = {"key": "maincolor", "value": _AngerAppColor.colors.indexOf(color).toString()};
+  await AppManager.stores.data.record("maincolor").put(db, dbEntry);
 
   return;
 }
@@ -40,6 +38,9 @@ class _AngerAppColor {
   final MaterialAccentColor accentColor;
 
   _AngerAppColor(this.color, this.accentColor);
+  String toString() {
+    return "AngerAppColor(color: $color, accentColor: $accentColor)";
+  }
 
   static List<_AngerAppColor> colors = [
     _AngerAppColor(Colors.deepPurple, Colors.deepPurpleAccent),
