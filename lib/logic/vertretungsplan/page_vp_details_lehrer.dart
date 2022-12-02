@@ -114,7 +114,7 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
                                           e.raum.changed ? Colors.red : null),
                                 ),
                               ]);
-                            } else if (int.tryParse(e.raum.content) != null) {
+                            } else if ((int.tryParse(e.raum.content)) != null) {
                               return TextSpan(children: [
                                 const TextSpan(text: " in Raum "),
                                 TextSpan(
@@ -149,8 +149,12 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
   List<Widget> generateVpCardList(int dataIndex, BuildContext context) {
     var sortedList = data.values.toList()[dataIndex];
     sortedList.sort((a, b) =>
-        (int.tryParse(a.stunde.content) ?? 0) -
-        (int.tryParse(b.stunde.content) ?? 0));
+        ((int.tryParse(a.stunde.content) ??
+                int.tryParse(a.stunde.content.substring(0, 1))) ??
+            0) -
+        ((int.tryParse(b.stunde.content) ??
+                int.tryParse(b.stunde.content.substring(0, 1))) ??
+            0));
 
     List<Widget> list = [];
     for (var i = 0; i < (data.values.toList()[dataIndex].length * 2); i++) {
