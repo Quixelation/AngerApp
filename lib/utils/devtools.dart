@@ -9,6 +9,7 @@ import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
+import 'package:anger_buddy/partials/bottom_appbar.dart';
 import 'package:anger_buddy/partials/introduction_screen.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -28,6 +29,7 @@ class PageDevTools extends StatelessWidget {
         ),
         body: Scaffold(
             body: ListView(children: [
+          MainBottomAppBar(),
           ElevatedButton(
               onPressed: () async {
                 await Services.portalLinks.fetchFromServer();
