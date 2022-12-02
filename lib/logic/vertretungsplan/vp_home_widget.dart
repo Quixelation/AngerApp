@@ -68,9 +68,11 @@ class _VpWidgetState extends State<VpWidget> {
 
   @override
   Widget build(BuildContext context) {
-    bool showCard = (_vertretungsplanListe?.isNotEmpty ?? false) &&
-        ((widget.overrideResponseData?.data.result ?? true) == true) &&
-        widget.overrideResponseData?.error != true;
+    bool showCard = ((_vertretungsplanListe?.isNotEmpty ?? false) &&
+            ((widget.overrideResponseData?.data.result ?? true) == true) &&
+            widget.overrideResponseData?.error != true) &&
+        (Services.vp.settings.subject.value?.loadListOnStart ??
+            Services.vp.settings.defaultSettings.loadListOnStart);
 
     return showCard == false
         ? Container()
