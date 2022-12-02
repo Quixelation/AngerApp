@@ -110,20 +110,20 @@ Weitere Angebote sind:
 Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
             """
           },
-          {
-            "type": "text",
-            "data": """
-**Wo ich zu finden bin...**\n
-Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
-            """
-          },
-          {
-            "type": "text",
-            "data": """
-**Wo ich zu finden bin...**\n
-Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
-            """
-          },
+//           {
+//             "type": "text",
+//             "data": """
+// **Wo ich zu finden bin...**\n
+// Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
+//             """
+//           },
+//           {
+//             "type": "text",
+//             "data": """
+// **Wo ich zu finden bin...**\n
+// Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
+//             """
+//           },
         ],
       },
     },
