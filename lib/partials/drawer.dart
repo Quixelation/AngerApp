@@ -46,8 +46,8 @@ class MainDrawer extends StatelessWidget {
         addAutomaticKeepAlives: true,
         controller: _scrollController,
         children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: kIsWeb ? double.infinity : 202.6),
+          SizedBox(
+            height: kIsWeb ? 0 : 202.6,
             child: Stack(
               children: const [
                 _ImageBanner(),

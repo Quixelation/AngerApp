@@ -29,6 +29,7 @@ part 'aushang_page.dart';
 part "aushang_page_detail.dart";
 part 'aushang_creds.dart';
 part "aushang_homepage.dart";
+part "vpAushang.dart";
 
 String _createAuthHeader() {
   if (Credentials.vertretungsplan.credentialsAvailable) {
@@ -88,6 +89,8 @@ class Aushang {
   }
 
   Future<void> setReadState(ReadStatusBasic state) async {
+    final isVp = status == "vp";
+
     final db = getIt.get<AppManager>().db;
     if (state == ReadStatusBasic.read) {
       await AppManager.stores.aushaengeLastRead.record(id).put(db, {"datetime": DateTime.now().millisecondsSinceEpoch});
@@ -98,16 +101,35 @@ class Aushang {
       throw ErrorDescription("ReadState $state not implemented");
     }
     read = state;
-    var tempAushangValue = Services.aushang.subject.valueWrapper?.value;
 
-    if (tempAushangValue == null) throw ErrorDescription("aushangSubject is emtpy somehow...");
+    if (isVp) {
+      // get the subject
+      var subject = AngerApp.aushang.vpAushangSubject;
+      // load Data from Subject
+      var tempAushangValue = subject.value;
+      // check that it's not empty
+      if (tempAushangValue == null) throw ErrorDescription("aushangSubject is emtpy somehow...");
 
-    var newList = tempAushangValue.data.where((element) => element.id != id).toList();
-    newList.add(this);
+      // get the index of the value to edit
+      var elemIndex = tempAushangValue.indexWhere((element) => element.uniqueId == id);
+      // edit the value
+      tempAushangValue[elemIndex].read = state;
 
-    var newData = AsyncDataResponse(data: newList, loadingAction: AsyncDataResponseLoadingAction.none);
+      // re-add to fire an event
+      Services.aushang.vpAushangSubject.add(tempAushangValue);
+    } else {
+      var subject = AngerApp.aushang.subject;
+      var tempAushangValue = subject.value;
 
-    Services.aushang.subject.add(newData);
+      if (tempAushangValue == null) throw ErrorDescription("aushangSubject is emtpy somehow...");
+
+      var newList = tempAushangValue.data.where((element) => element.id != id).toList();
+      newList.add(this);
+
+      var newData = AsyncDataResponse(data: newList, loadingAction: AsyncDataResponseLoadingAction.none);
+
+      Services.aushang.subject.add(newData);
+    }
   }
 
   @override
@@ -190,9 +212,21 @@ Future<ReadStatusBasic> getAushangReadStatusFromDatabase(String aushangId, DateT
   }
 }
 
+Future<void> DEVONLYdeleteAushangReadStateForAllAushange() async {
+  try {
+    final db = getIt.get<AppManager>().db;
+    final entryExists = await AppManager.stores.aushaengeLastRead.delete(db);
+  } catch (err) {
+    logger.e(err);
+  }
+}
+
 class AushangManager extends DataManager<Aushang> {
   @override
+
+  ///# Only update/add with `updateSubject()`
   final subject = BehaviorSubject();
+  BehaviorSubject<List<VpAushang>> vpAushangSubject = BehaviorSubject<List<VpAushang>>();
 
   @override
   String get syncManagerKey => "aushang";

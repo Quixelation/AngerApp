@@ -47,6 +47,12 @@ class PageDevTools extends StatelessWidget {
               child: Text("Test if Mail init")),
           SizedBox(height: 8),
           ElevatedButton(
+              onPressed: () async {
+                await DEVONLYdeleteAushangReadStateForAllAushange();
+              },
+              child: Text("Aushänge DELETE READ")),
+          SizedBox(height: 8),
+          ElevatedButton(
               onPressed: () {
                 var week = WeekViewCalendar(events: [
                   EventData(
@@ -102,7 +108,9 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                AppManager.stores.data.record("wp-mail-cookie").delete(getIt.get<AppManager>().db);
+                AppManager.stores.data
+                    .record("wp-mail-cookie")
+                    .delete(getIt.get<AppManager>().db);
               },
               child: const Text("Mail Kontakt Login löschen")),
           const SizedBox(
@@ -143,7 +151,8 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                enforceDefaultFcmSubscriptions(enforceEvenWhenValueAlreadySet: true);
+                enforceDefaultFcmSubscriptions(
+                    enforceEvenWhenValueAlreadySet: true);
               },
               child: const Text("Enforce Default Notification Subscriptions")),
           const SizedBox(
@@ -186,5 +195,7 @@ Future<bool> getDevToolsActiveFromDB(sb.Database db) async {
 Future<void> toogleDevtools(bool state) async {
   getIt.get<AppManager>().devtools.add(state);
   var db = getIt.get<AppManager>().db;
-  await AppManager.stores.data.record("devtoolsactive").put(db, {"value": state ? "TRUE" : "FALSE"});
+  await AppManager.stores.data
+      .record("devtoolsactive")
+      .put(db, {"value": state ? "TRUE" : "FALSE"});
 }

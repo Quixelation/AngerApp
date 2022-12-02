@@ -17,6 +17,7 @@ class _ServicesManager {
   /* -- Funktions-Seiten -- */
   final news = NewsManager();
   final aushang = AushangManager();
+  final vp = VertretungsplanManager();
   final calendar = CalendarManager();
   final ferien = FerienManager();
   final klausuren = KlausurenManager();
@@ -35,13 +36,18 @@ class _ServicesManager {
       calendar.init(),
       ferien.init(),
       klausuren.init(),
+      vp.init(),
+
       // matrix.init(),
+
       // mail.init(),
     ]);
   }
 }
 
 final Services = _ServicesManager();
+// little alias, bc intellisense is pain with "Services"
+final AngerApp = Services;
 
 class _Credentials {
   late VpCreds vertretungsplan;
