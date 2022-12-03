@@ -5,7 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f7a6f55-2c00-4ffd-8a34-aa7b7ab0e5a4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/angerapp.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/angerapp.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/logic/login_overview/login_overview.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/logic/login_overview/login_overview.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/logic/matrix/matrix.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/logic/matrix/matrix.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/logic/matrix/matrix_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/logic/matrix/matrix_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/network/news.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/network/news.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/home.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/partials/drawer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/partials/drawer.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils/devtools.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/devtools.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils/timediff_2_string.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/timediff_2_string.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,6 +1,7 @@
 library login_overview;
 
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/network/mailkontaktlist.dart';
 import 'package:flutter/material.dart';
 
@@ -33,6 +34,11 @@ class _LoginOverviewPageState extends State<LoginOverviewPage> {
           title: const Text("JSP"),
           subtitle: const Text("Jenaer Schulportal (Dateien-Cloud, Mails, ...)"),
           leading: Icon(Credentials.jsp.credentialsAvailable ? Icons.check : Icons.close),
+        ),
+        ListTile(
+          title: const Text("Messenger (Matrix)"),
+          subtitle: const Text("(mit den Anmeldedaten von \"JSP\" verbunden)"),
+          leading: Icon(Services.matrix.client.isLogged() ? Icons.check : Icons.close),
         ),
         FutureBuilder<MailListResponse>(
           builder: (context, snapshot) {
