@@ -141,7 +141,6 @@ class NewsManager extends DataManager<NewsApiDataElement> {
             "link": newsItem.link.toString(),
             "category": newsItem.category
           });
-          logger.d(createt);
         }
       } catch (e) {
         logger.e(e);
