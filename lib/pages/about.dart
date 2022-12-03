@@ -27,7 +27,7 @@ class PageAbout extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Motion(
-                    glare: GlareConfiguration(),
+                    glare: GlareConfiguration(color: Colors.transparent),
                     shadow: ShadowConfiguration(color: Colors.transparent),
                     child: Image.asset(
                       "assets/mainLogo.png",
