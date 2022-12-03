@@ -178,6 +178,7 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
 
   @override
   Widget build(BuildContext context) {
+    var lowerCased = data.keys.map((e) => e.toLowerCase());
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
@@ -190,9 +191,8 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
                     itemCount: data.length,
                     itemBuilder: (context, index) {
                       if (searchController.text.trim() != "" &&
-                          !data.keys
-                              .toList()[index]
-                              .contains(searchController.text.trim())) {
+                          !lowerCased.toList()[index].contains(
+                              searchController.text.trim().toLowerCase())) {
                         return Container();
                       }
                       return ExpandableNotifier(
