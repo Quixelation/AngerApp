@@ -39,7 +39,6 @@ class _ServicesManager {
       ferien.init(),
       klausuren.init(),
       vp.init(),
-
       matrix.init(),
 
       // mail.init(),
