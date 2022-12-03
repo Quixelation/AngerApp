@@ -8,7 +8,6 @@ import 'package:anger_buddy/logic/files/files.dart';
 import 'package:anger_buddy/logic/jsp/jsp_passthrough_page.dart';
 import 'package:anger_buddy/logic/login_overview/login_overview.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
-import 'package:anger_buddy/logic/matrix/matrix_page.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
@@ -47,8 +46,8 @@ class MainDrawer extends StatelessWidget {
         addAutomaticKeepAlives: true,
         controller: _scrollController,
         children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: kIsWeb ? double.infinity : 202.6),
+          SizedBox(
+            height: kIsWeb ? 0 : 202.6,
             child: Stack(
               children: const [
                 _ImageBanner(),
@@ -194,10 +193,7 @@ class MainDrawer extends StatelessWidget {
             _DrawerLink(
               title: "Messenger",
               icon: Icons.messenger_outline,
-              page: PageTempUnderConstruction(
-                  page: MatrixExampleChat(
-                client: Services.matrix.client!,
-              )),
+              page: PageTempUnderConstruction(),
               wip: true,
             ),
             const _DrawerLink(title: "Links", icon: Icons.link, page: UniventionLinksPage()),

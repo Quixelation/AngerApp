@@ -9,7 +9,8 @@ class PageCalendar extends StatefulWidget {
 
 enum _filterOptions { showAll, showCurrentClass, showSpecific }
 
-class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMixin {
+class _PageCalendarState extends State<PageCalendar>
+    with TickerProviderStateMixin {
   // Calendar Data
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
@@ -36,8 +37,9 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
   int? currentClass = Services.currentClass.subject.value;
 
   /// # !!! not implemented !!!
-  _filterOptions filterOption =
-      Services.currentClass.subject.value != null ? _filterOptions.showCurrentClass : _filterOptions.showAll;
+  _filterOptions filterOption = Services.currentClass.subject.value != null
+      ? _filterOptions.showCurrentClass
+      : _filterOptions.showAll;
 
   @override
   void initState() {
@@ -118,8 +120,11 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
       if (isSameDay(currentEvent.dateFrom, day) ||
           (currentEvent.dateTo == null
               ? false
-              : (day.isAfter(currentEvent.dateFrom) && day.isBefore(currentEvent.dateTo!))) ||
-          (currentEvent.dateTo == null ? false : isSameDay(currentEvent.dateTo, day))) {
+              : (day.isAfter(currentEvent.dateFrom) &&
+                  day.isBefore(currentEvent.dateTo!))) ||
+          (currentEvent.dateTo == null
+              ? false
+              : isSameDay(currentEvent.dateTo, day))) {
         eventList.add(currentEvent);
       }
     }
@@ -134,7 +139,8 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
       ...(ferienEvents ?? []),
     ];
     if (MediaQuery.of(context).size.width > 600) {
-      AppManager.calController.events.forEach((e) => AppManager.calController.remove(e));
+      AppManager.calController.events
+          .forEach((e) => AppManager.calController.remove(e));
       AppManager.calController.addAll(eventList
           .map((e) => CalendarEventData(
               title: e.title,
@@ -160,14 +166,18 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
             ],
             title: MediaQuery.of(context).size.width > 600
                 ? null
-                : Text(intToMonthString(_focusedDay.month) + ", " + (_focusedDay.year.toString()))),
+                : Text(intToMonthString(_focusedDay.month) +
+                    ", " +
+                    (_focusedDay.year.toString()))),
         body: Stack(
           children: [
             eventData?.data != null || loadingADR < 3
                 ? Flex(
-                    direction: MediaQuery.of(context).size.width > 600
+                    direction: /*MediaQuery.of(context).size.width > 600
                         ? Axis.horizontal
-                        : MediaQuery.of(context).orientation == Orientation.portrait
+                        : */
+                        MediaQuery.of(context).orientation ==
+                                Orientation.portrait
                             ? Axis.vertical
                             : Axis.horizontal,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -182,14 +192,19 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [..._getEventsForDay(_selectedDay, eventList).map((e) => _eventCard(e))],
+                            children: [
+                              ..._getEventsForDay(_selectedDay, eventList)
+                                  .map((e) => _eventCard(e))
+                            ],
                           ),
                         ),
                       ))
                     ],
                   )
                 : const NoConnectionColumn(),
-            if (!(eventData != null && eventData!.loadingAction != AsyncDataResponseLoadingAction.currentlyLoading) ||
+            if (!(eventData != null &&
+                    eventData!.loadingAction !=
+                        AsyncDataResponseLoadingAction.currentlyLoading) ||
                 loadingADR < 3)
               Positioned(
                   child: LinearProgressIndicator(
@@ -230,7 +245,10 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
 
             double eventCircleSize = 11;
 
-            if (isKlausur && (currentClass != null ? (event.info?["klasse"] ?? 0) == currentClass : true)) {
+            if (isKlausur &&
+                (currentClass != null
+                    ? (event.info?["klasse"] ?? 0) == currentClass
+                    : true)) {
               return Icon(
                 Icons.warning,
                 color: Colors.redAccent,
@@ -243,7 +261,9 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
                 size: eventCircleSize,
               );
             } else if (currentClass != null &&
-                ((event.klassen.isNotEmpty && !event.klassen.contains(currentClass)) || isKlausur)) {
+                ((event.klassen.isNotEmpty &&
+                        !event.klassen.contains(currentClass)) ||
+                    isKlausur)) {
               return Icon(
                 Icons.circle,
                 color: Colors.grey,
@@ -312,7 +332,9 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
                   child: Center(
                     child: Text(
                       '${date.day}',
-                      style: const TextStyle().copyWith(fontSize: 16.0, color: Theme.of(context).colorScheme.primary),
+                      style: const TextStyle().copyWith(
+                          fontSize: 16.0,
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ),
@@ -339,7 +361,9 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
               child: Center(
                 child: Text(
                   '${date.day}',
-                  style: const TextStyle().copyWith(fontSize: 16.0, color: Theme.of(context).colorScheme.primary),
+                  style: const TextStyle().copyWith(
+                      fontSize: 16.0,
+                      color: Theme.of(context).colorScheme.primary),
                 ),
               ),
             );
@@ -353,12 +377,17 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
         eventLoader: (day) => _getEventsForDay(day, eventList),
         sixWeekMonthsEnforced: true,
         calendarStyle: CalendarStyle(
-            outsideTextStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
-            weekendTextStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+            outsideTextStyle: TextStyle(
+                color:
+                    Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
+            weekendTextStyle: TextStyle(
+                color:
+                    Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
             //@deprecated
             markerDecoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.secondary,
-                border: Border.all(color: Theme.of(context).scaffoldBackgroundColor, width: 2),
+                border: Border.all(
+                    color: Theme.of(context).scaffoldBackgroundColor, width: 2),
                 borderRadius: const BorderRadius.all(Radius.circular(99)))),
         calendarFormat: _calendarFormat,
         startingDayOfWeek: StartingDayOfWeek.monday,
@@ -390,7 +419,7 @@ class _PageCalendarState extends State<PageCalendar> with TickerProviderStateMix
               return "--";
           }
         }),
-        headerStyle: HeaderStyle(titleTextFormatter: (date, _) {
+        headerStyle: tcal.HeaderStyle(titleTextFormatter: (date, _) {
           return [
                 "Januar",
                 "Februar",
@@ -441,7 +470,8 @@ class _eventCard extends StatelessWidget {
                     opacity: 0.87,
                     child: Text(
                       e.title,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                       softWrap: true,
                     ),
                   ),

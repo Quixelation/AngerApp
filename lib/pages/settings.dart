@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
@@ -77,17 +78,17 @@ class SettingsPageVertretung extends StatefulWidget {
 }
 
 class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
-  VpSettings? _vpSettings = vpSettings.valueWrapper?.value;
+  VpSettings? _vpSettings = Services.vp.settings.subject.valueWrapper?.value;
   StreamSubscription<VpSettings>? sub;
-  int _sliderValue = vpSettings.valueWrapper?.value.saveDuration ?? 2;
+  int _sliderValue = Services.vp.settings.subject.valueWrapper?.value.saveDuration ?? 2;
 
-  vpViewTypes? vpViewType = vpSettings.valueWrapper?.value.viewType;
+  vpViewTypes? vpViewType = Services.vp.settings.subject.valueWrapper?.value.viewType;
 
   @override
   void initState() {
     super.initState();
 
-    sub = vpSettings.listen((value) {
+    sub = Services.vp.settings.subject.listen((value) {
       if (!mounted) {
         sub?.cancel();
       }
@@ -112,12 +113,21 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
       ),
       body: ListView(children: [
         SwitchListTile.adaptive(
+            value: _vpSettings?.loadListOnStart ?? Services.vp.settings.defaultSettings.loadListOnStart,
+            title: const Text("Vertretungspläne beim Start der App laden (auch benötigt für Aushänge)"),
+            onChanged: _vpSettings == null
+                ? null
+                : (newVal) {
+                    Services.vp.settings.setLoadListOnStart(newVal);
+                  }),
+        const Divider(),
+        SwitchListTile.adaptive(
             value: _vpSettings?.autoSave ?? true,
             title: const Text("Vertretungsplan automatisch speichern"),
             onChanged: _vpSettings == null
                 ? null
                 : (newVal) {
-                    setVpAutoSavePrefs(newVal);
+                    Services.vp.settings.setAutoSave(newVal);
                   }),
         const Divider(),
         ListTile(
@@ -150,7 +160,7 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
           onChangeEnd: _vpSettings == null
               ? null
               : (val) {
-                  setVpSaveDurationPrefs(val.toInt());
+                  Services.vp.settings.setSaveDuration(val.toInt());
                 },
         ),
         const Divider(),
@@ -172,7 +182,7 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
                 vpViewType = val;
               });
               if (val != null) {
-                setVpViewTypePrefs(val.index);
+                Services.vp.settings.setViewType(val.index);
               }
             }),
         RadioListTile(
@@ -188,7 +198,7 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
                 vpViewType = val;
               });
               if (val != null) {
-                setVpViewTypePrefs(val.index);
+                Services.vp.settings.setViewType(val.index);
               }
             })
       ]),

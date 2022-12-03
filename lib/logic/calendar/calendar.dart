@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sembast/sembast.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:table_calendar/table_calendar.dart' as tcal;
 
 part "calendar_page.dart";
 part "calendar_home.dart";
@@ -46,7 +47,9 @@ class EventData {
 
   bool get isMultiDay {
     if (dateTo == null) return false;
-    return !(dateFrom.day == dateTo!.day && dateFrom.month == dateTo!.month && dateFrom.year == dateTo!.year);
+    return !(dateFrom.day == dateTo!.day &&
+        dateFrom.month == dateTo!.month &&
+        dateFrom.year == dateTo!.year);
   }
 
   EventData(
@@ -62,7 +65,9 @@ class EventData {
 
   EventData.fromIcalJson(Map<String, dynamic> icalJson)
       : id = icalJson["uid"],
-        dateFrom = DateTime.tryParse(icalJson["dtstart"]?.dt ?? "")?.toLocal() ?? DateTime.now(),
+        dateFrom =
+            DateTime.tryParse(icalJson["dtstart"]?.dt ?? "")?.toLocal() ??
+                DateTime.now(),
         dateTo = DateTime.tryParse(icalJson["dtend"]?.dt ?? "")?.toUtc(),
         title = icalJson["summary"],
         desc = icalJson["description"] ?? "",
@@ -74,11 +79,15 @@ class EventData {
     id = dbJson["id"].toString();
     type = eventType.normal;
     // logger.d("[Calendar] Date-fromDbJSON: ${dbJson['date_from']} // ${dbJson['date_to']}");
-    dateFrom = DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["date_from"].toString())).toLocal();
+    dateFrom = DateTime.fromMillisecondsSinceEpoch(
+            int.parse(dbJson["date_from"].toString()))
+        .toLocal();
     // logger.d("[Calendar] DateTo-fromDbJSON-parsed: ${dateFrom}");
     dateTo = dbJson["date_to"].toString().trim() == "0"
         ? null
-        : DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["date_to"].toString())).toLocal();
+        : DateTime.fromMillisecondsSinceEpoch(
+                int.parse(dbJson["date_to"].toString()))
+            .toLocal();
     // logger.d("[Calendar] DateFrom-fromDbJSON-parsed: ${dateTo}");
     title = dbJson["title"].toString();
     desc = dbJson["desc"].toString();
@@ -137,7 +146,9 @@ class CalendarManager extends DataManager<EventData> {
     await appManager.db.transaction((transaction) async {
       await AppManager.stores.events.delete(transaction);
       for (var currentEvent in events) {
-        await AppManager.stores.events.record(currentEvent.id).put(transaction, {
+        await AppManager.stores.events
+            .record(currentEvent.id)
+            .put(transaction, {
           "id": currentEvent.id,
           "date_from": currentEvent.dateFrom.millisecondsSinceEpoch,
           "date_to": currentEvent.dateTo?.millisecondsSinceEpoch ?? 0,
@@ -155,18 +166,22 @@ class CalendarManager extends DataManager<EventData> {
   @override
   fetchFromServer() async {
     try {
-      Future<List<EventData>> createErrorSafeFutureWrapper(Future<List<EventData>> Function() T) async {
+      Future<List<EventData>> createErrorSafeFutureWrapper(
+          Future<List<EventData>> Function() T) async {
         try {
           return await T();
         } catch (e) {
-          logger.e("[Calendar] Could not load EventData from server\n$e\n${(e as Error).stackTrace}");
+          logger.e(
+              "[Calendar] Could not load EventData from server\n$e\n${(e as Error).stackTrace}");
 
           return [];
         }
       }
 
-      var eventFutures = await Future.wait<List<EventData>>(
-          [createErrorSafeFutureWrapper(_fetchGcalendarData), createErrorSafeFutureWrapper(_fetchCmsCal)]);
+      var eventFutures = await Future.wait<List<EventData>>([
+        createErrorSafeFutureWrapper(_fetchGcalendarData),
+        createErrorSafeFutureWrapper(_fetchCmsCal)
+      ]);
       List<EventData> events = [];
       for (var future in eventFutures) {
         events.addAll(future);
@@ -195,7 +210,8 @@ class CalendarManager extends DataManager<EventData> {
   }
 
   Future<List<EventData>> _fetchCmsCal() async {
-    var resp = await http.get(Uri.parse("${AppManager.directusUrl}/items/kalender"));
+    var resp =
+        await http.get(Uri.parse("${AppManager.directusUrl}/items/kalender"));
     if (resp.statusCode != 200) {
       logger.e("Error fetching calendar: Non 200 response");
       throw "Error fetching calendar: Non 200 response";
@@ -213,8 +229,14 @@ class CalendarManager extends DataManager<EventData> {
           id: item["id"],
           dateFrom: DateTime.parse(item["date_start"]),
           title: item["titel"],
-          dateTo: item["date_end"] != null ? DateTime.parse(item["date_end"]) : null,
-          klassen: item["klassen"] != null ? (item["klassen"] as List<dynamic>).map((e) => int.parse(e)).toList() : [],
+          dateTo: item["date_end"] != null
+              ? DateTime.parse(item["date_end"])
+              : null,
+          klassen: item["klassen"] != null
+              ? (item["klassen"] as List<dynamic>)
+                  .map((e) => int.parse(e))
+                  .toList()
+              : [],
           //TODO: ADD desc to CMS
           desc: ""));
     }

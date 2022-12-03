@@ -3,16 +3,15 @@ import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
-import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
+import 'package:anger_buddy/partials/bottom_appbar.dart';
 import 'package:anger_buddy/partials/introduction_screen.dart';
 import 'package:anger_buddy/utils/logger.dart';
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:logger_flutter_viewer/logger_flutter_viewer.dart';
@@ -30,6 +29,7 @@ class PageDevTools extends StatelessWidget {
         ),
         body: Scaffold(
             body: ListView(children: [
+          MainBottomAppBar(),
           ElevatedButton(
               onPressed: () async {
                 await Services.portalLinks.fetchFromServer();
@@ -47,27 +47,12 @@ class PageDevTools extends StatelessWidget {
                 // logger.d(Services.mail.imapClient);
               },
               child: Text("Test if Mail init")),
+          SizedBox(height: 8),
           ElevatedButton(
               onPressed: () async {
-                await JspMatrix().init();
+                await DEVONLYdeleteAushangReadStateForAllAushange();
               },
-              child: Text("JustCallJspMatrix&init")),
-          ElevatedButton(
-              onPressed: () async {
-                var matric = JspMatrix();
-                await matric.init();
-                logger.d(matric.client!.accountData);
-              },
-              child: Text("JustCallJspMatrix::AccountData")),
-          ElevatedButton(
-              onPressed: () async {
-                var matric = JspMatrix();
-                await matric.init();
-                var rooms = await matric.client!.getJoinedRooms();
-                logger.d("[Matrix] joined Rooms");
-                logger.d(rooms);
-              },
-              child: Text("JustCallJspMatrix::Rooms")),
+              child: Text("Aushänge DELETE READ")),
           SizedBox(height: 8),
           ElevatedButton(
               onPressed: () {
@@ -125,7 +110,9 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                AppManager.stores.data.record("wp-mail-cookie").delete(getIt.get<AppManager>().db);
+                AppManager.stores.data
+                    .record("wp-mail-cookie")
+                    .delete(getIt.get<AppManager>().db);
               },
               child: const Text("Mail Kontakt Login löschen")),
           const SizedBox(
@@ -166,15 +153,8 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                FeatureDiscovery.clearPreferences(context, {"menu_button", "noti_settings_button"});
-              },
-              child: const Text("Clear FeatureDiscovery")),
-          const SizedBox(
-            height: 25,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                enforceDefaultFcmSubscriptions(enforceEvenWhenValueAlreadySet: true);
+                enforceDefaultFcmSubscriptions(
+                    enforceEvenWhenValueAlreadySet: true);
               },
               child: const Text("Enforce Default Notification Subscriptions")),
           const SizedBox(
@@ -217,5 +197,7 @@ Future<bool> getDevToolsActiveFromDB(sb.Database db) async {
 Future<void> toogleDevtools(bool state) async {
   getIt.get<AppManager>().devtools.add(state);
   var db = getIt.get<AppManager>().db;
-  await AppManager.stores.data.record("devtoolsactive").put(db, {"value": state ? "TRUE" : "FALSE"});
+  await AppManager.stores.data
+      .record("devtoolsactive")
+      .put(db, {"value": state ? "TRUE" : "FALSE"});
 }

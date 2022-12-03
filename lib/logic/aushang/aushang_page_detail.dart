@@ -17,7 +17,7 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
     widget.aushang.setReadState(ReadStatusBasic.read);
 
     _loadFiles(widget.aushang).then((value) {
-      print("Loaded Files");
+      logger.v("Loaded Files");
       setState(() {
         files = value;
       });
@@ -38,51 +38,74 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
                 : ListView(children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Card(child: Html(data: widget.aushang.textContent)),
+                      child: Card(
+                          child: Padding(
+                        padding: const EdgeInsets.only(top: 4, bottom: 16, right: 12, left: 12),
+                        child: widget.aushang.status == "vp"
+                            ? FutureBuilder<http.Response>(
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return const Text(
+                                      "Es gab einen Fehler",
+                                      style: TextStyle(fontSize: 16),
+                                    );
+                                  } else if (!snapshot.hasData) {
+                                    return const Center(child: CircularProgressIndicator.adaptive());
+                                  } else {
+                                    return Html(data: snapshot.data?.body ?? "<h1>Keine Daten</1>");
+                                  }
+                                },
+                                future: http.get(Uri.parse(AppManager.urls.vpdetail(widget.aushang.textContent))),
+                              )
+                            : Html(data: widget.aushang.textContent),
+                      )),
                     ),
                     const SizedBox(height: 15),
-                    const Padding(
-                        child: Text("Dateien",
-                            style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold)),
-                        padding: EdgeInsets.only(left: 10)),
-                    for (var file in files!)
-                      ListTile(
-                          title: Text(file.title),
-                          leading: const Icon(Icons.file_present),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Scaffold(
-                                        appBar: AppBar(title: Text(file.title)),
-                                        body: Center(child: renderFile(file)))));
-                          }),
-                    if (files!.isEmpty)
+                    if (widget.aushang.status != "vp")
+                      const Padding(
+                          child: Text("Dateien",
+                              style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold)),
+                          padding: EdgeInsets.only(left: 10)),
+                    if (widget.aushang.status != "vp")
+                      for (var file in files!)
+                        ListTile(
+                            title: Text(file.title),
+                            leading: const Icon(Icons.file_present),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Scaffold(
+                                          appBar: AppBar(title: Text(file.title)),
+                                          body: Center(child: renderFile(file)))));
+                            }),
+                    if (files!.isEmpty && widget.aushang.status != "vp")
                       const Padding(
                         padding: EdgeInsets.all(10.0),
                         child: Opacity(opacity: 0.5, child: Text("Keine Dateien")),
                       ),
-                    const SizedBox(height: 32),
-                    Opacity(
-                      opacity: 0.67,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                "Erstellt: ${time2string(widget.aushang.dateCreated, includeTime: true, includeWeekday: true)}"),
-                            const SizedBox(height: 4),
-                            Text(
-                                "Geändert:  ${widget.aushang.dateUpdated.millisecondsSinceEpoch == 0 ? "---" : time2string(widget.aushang.dateUpdated, includeTime: true, includeWeekday: true)}"),
-                            const SizedBox(height: 4),
-                            Text("Klassen:  ${widget.aushang.klassenstufen.join(", ")}"),
-                            const SizedBox(height: 4),
-                            Text("Angepinnt:  ${widget.aushang.fixed ? "Ja" : "Nein"}"),
-                          ],
+                    if (widget.aushang.status != "vp") const SizedBox(height: 32),
+                    if (widget.aushang.status != "vp")
+                      Opacity(
+                        opacity: 0.67,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  "Erstellt: ${time2string(widget.aushang.dateCreated, includeTime: true, includeWeekday: true)}"),
+                              const SizedBox(height: 4),
+                              Text(
+                                  "Geändert:  ${widget.aushang.dateUpdated.millisecondsSinceEpoch == 0 ? "---" : time2string(widget.aushang.dateUpdated, includeTime: true, includeWeekday: true)}"),
+                              const SizedBox(height: 4),
+                              Text("Klassen:  ${widget.aushang.klassenstufen.join(", ")}"),
+                              const SizedBox(height: 4),
+                              Text("Angepinnt:  ${widget.aushang.fixed ? "Ja" : "Nein"}"),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
                     const SizedBox(height: 16),
                     TextButton(
                         onPressed: () {

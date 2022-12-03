@@ -5,7 +5,6 @@ import 'package:anger_buddy/logic/files/files.dart';
 import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
-import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/network/ferien.dart';
@@ -18,11 +17,12 @@ class _ServicesManager {
   /* -- Funktions-Seiten -- */
   final news = NewsManager();
   final aushang = AushangManager();
+  final vp = VertretungsplanManager();
   final calendar = CalendarManager();
   final ferien = FerienManager();
   final klausuren = KlausurenManager();
   final files = JspFilesClient();
-  final matrix = JspMatrix();
+  // final matrix = JspMatrix();
   // final mail = JspMail();
   final openSense = OpenSense();
   /* -- ENDE: Funktions-Seiten -- */
@@ -36,13 +36,18 @@ class _ServicesManager {
       calendar.init(),
       ferien.init(),
       klausuren.init(),
-      matrix.init(),
+      vp.init(),
+
+      // matrix.init(),
+
       // mail.init(),
     ]);
   }
 }
 
 final Services = _ServicesManager();
+// little alias, bc intellisense is pain with "Services"
+final AngerApp = Services;
 
 class _Credentials {
   late VpCreds vertretungsplan;

@@ -1,7 +1,5 @@
 library jsp;
 
-import 'dart:ffi';
-
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
 import 'package:anger_buddy/logic/files/files.dart';
@@ -14,9 +12,11 @@ import "package:rxdart/subjects.dart";
 const secureStorageUsernameKey = "jsp_username";
 const secureStoragePasswordKey = "jsp_password";
 
-Future<bool> loginToJsp({required String username, required String password}) async {
+Future<bool> loginToJsp(
+    {required String username, required String password}) async {
   try {
-    await JspFilesClient(manualUsername: username, manualPassword: password).getWebDavFiles("/");
+    await JspFilesClient(manualUsername: username, manualPassword: password)
+        .getWebDavFiles("/");
   } catch (e) {
     logger.e("WebDav failed to check login");
     return false;
@@ -58,8 +58,10 @@ class JspCredsManager implements CredentialsManager<JspCreds> {
   @override
   setCredentials(creds, {bool withDatabaseEntry = true}) async {
     if (withDatabaseEntry) {
-      await secureStorage.write(key: secureStorageUsernameKey, value: creds.username);
-      await secureStorage.write(key: secureStoragePasswordKey, value: creds.password);
+      await secureStorage.write(
+          key: secureStorageUsernameKey, value: creds.username);
+      await secureStorage.write(
+          key: secureStoragePasswordKey, value: creds.password);
     }
 
     subject.add(creds);
@@ -78,16 +80,23 @@ class JspCredsManager implements CredentialsManager<JspCreds> {
 
   @override
   fetchFromDatabase() async {
-    var username = await secureStorage.read(key: secureStorageUsernameKey);
-    var password = await secureStorage.read(key: secureStoragePasswordKey);
+    try {
+      var username = await secureStorage.read(key: secureStorageUsernameKey);
+      var password = await secureStorage.read(key: secureStoragePasswordKey);
 
-    if (username == null || username.trim() == "" || password == null || password.trim() == "") {
-      removeCredentials(withDatabaseEntry: false);
-      return null;
-    } else {
-      var creds = JspCreds(username, password);
-      setCredentials(creds, withDatabaseEntry: false);
-      return creds;
+      if (username == null ||
+          username.trim() == "" ||
+          password == null ||
+          password.trim() == "") {
+        removeCredentials(withDatabaseEntry: false);
+        return null;
+      } else {
+        var creds = JspCreds(username, password);
+        setCredentials(creds, withDatabaseEntry: false);
+        return creds;
+      }
+    } catch (err) {
+      logger.e(err);
     }
   }
 }

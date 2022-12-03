@@ -6,78 +6,77 @@ class VpSettings {
   final bool autoSave;
   final int saveDuration;
   final vpViewTypes viewType;
+  final bool loadListOnStart;
   VpSettings(
-      {required this.autoSave,
-      required this.saveDuration,
-      required this.viewType});
+      {required this.autoSave, required this.saveDuration, required this.viewType, required this.loadListOnStart});
 
-  VpSettings copyWith(
-      {bool? autoSave, int? saveDuration, vpViewTypes? viewType}) {
+  VpSettings copyWith({bool? autoSave, int? saveDuration, vpViewTypes? viewType, bool? loadListOnStart}) {
     return VpSettings(
       autoSave: autoSave ?? this.autoSave,
       saveDuration: saveDuration ?? this.saveDuration,
       viewType: viewType ?? this.viewType,
+      loadListOnStart: loadListOnStart ?? this.loadListOnStart,
     );
   }
 }
 
-BehaviorSubject<VpSettings> vpSettings = BehaviorSubject<VpSettings>();
+class _VpSettingsManager {
+  BehaviorSubject<VpSettings> subject = BehaviorSubject<VpSettings>();
 
-Future<void> initVpSettings(sb.Database db) async {
-  final autoSavePrefsDb =
-      await AppManager.stores.data.record("vpSettings_autoSave").get(db);
-  final saveDurationPrefsDb =
-      await AppManager.stores.data.record("vpSettings_saveDuration").get(db);
-  final viewTypePrefsDb =
-      await AppManager.stores.data.record("vpSettings_viewType").get(db);
+  final defaultSettings = _defaultVpSettings;
 
-  final autoSavePrefs =
-      autoSavePrefsDb != null ? autoSavePrefsDb["value"] == "TRUE" : true;
-  final saveDurationPrefs = saveDurationPrefsDb != null
-      ? int.parse(saveDurationPrefsDb["value"].toString())
-      : 0;
+  Future<void> init() async {
+    final db = getIt.get<AppManager>().db;
+    final autoSavePrefsDb = await AppManager.stores.data.record("vpSettings_autoSave").get(db);
+    final saveDurationPrefsDb = await AppManager.stores.data.record("vpSettings_saveDuration").get(db);
+    final viewTypePrefsDb = await AppManager.stores.data.record("vpSettings_viewType").get(db);
+    final loadListOnStartDb = await AppManager.stores.data.record("vpSettings_loadListOnStart").get(db);
 
-  final viewTypePrefs = vpViewTypes
-      .values[int.parse(viewTypePrefsDb?["value"]?.toString() ?? "0")];
+    final autoSavePrefs = autoSavePrefsDb != null ? autoSavePrefsDb["value"] == "TRUE" : true;
+    final saveDurationPrefs = saveDurationPrefsDb != null ? int.parse(saveDurationPrefsDb["value"].toString()) : 0;
+    final viewTypePrefs = vpViewTypes.values[int.parse(viewTypePrefsDb?["value"]?.toString() ?? "0")];
+    final loadListOnStart = loadListOnStartDb != null ? loadListOnStartDb["value"] == "TRUE" : true;
 
-  vpSettings.add(VpSettings(
-      autoSave: autoSavePrefs,
-      saveDuration: saveDurationPrefs,
-      viewType: viewTypePrefs));
+    subject.add(VpSettings(
+        autoSave: autoSavePrefs,
+        saveDuration: saveDurationPrefs,
+        viewType: viewTypePrefs,
+        loadListOnStart: loadListOnStart));
+  }
+
+  Future<void> setAutoSave(bool value) async {
+    final db = getIt.get<AppManager>().db;
+
+    AppManager.stores.data.record("vpSettings_autoSave").put(db, {"value": value ? "TRUE" : "FALSE"});
+
+    subject.add(subject.value?.copyWith(autoSave: value) ?? _defaultVpSettings.copyWith(autoSave: value));
+  }
+
+  Future<void> setLoadListOnStart(bool value) async {
+    final db = getIt.get<AppManager>().db;
+
+    AppManager.stores.data.record("vpSettings_loadListOnStart").put(db, {"value": value ? "TRUE" : "FALSE"});
+
+    subject.add(subject.value?.copyWith(loadListOnStart: value) ?? _defaultVpSettings.copyWith(loadListOnStart: value));
+  }
+
+  Future<void> setSaveDuration(int value) async {
+    final db = getIt.get<AppManager>().db;
+
+    AppManager.stores.data.record("vpSettings_saveDuration").put(db, {"value": value.toString()});
+
+    subject.add(subject.value?.copyWith(saveDuration: value) ?? _defaultVpSettings.copyWith(saveDuration: value));
+  }
+
+  Future<void> setViewType(int value) async {
+    final db = getIt.get<AppManager>().db;
+
+    AppManager.stores.data.record("vpSettings_viewType").put(db, {"value": value.toString()});
+    final viewTypePrefs = vpViewTypes.values[int.parse(value.toString())];
+    subject
+        .add(subject.value?.copyWith(viewType: viewTypePrefs) ?? _defaultVpSettings.copyWith(viewType: viewTypePrefs));
+  }
 }
 
-Future<void> setVpAutoSavePrefs(bool value) async {
-  final db = getIt.get<AppManager>().db;
-
-  AppManager.stores.data
-      .record("vpSettings_autoSave")
-      .put(db, {"value": value ? "TRUE" : "FALSE"});
-
-  vpSettings.add(vpSettings.value?.copyWith(autoSave: value) ??
-      VpSettings(
-          autoSave: value, saveDuration: 0, viewType: vpViewTypes.combined));
-}
-
-Future<void> setVpSaveDurationPrefs(int value) async {
-  final db = getIt.get<AppManager>().db;
-
-  AppManager.stores.data
-      .record("vpSettings_saveDuration")
-      .put(db, {"value": value.toString()});
-
-  vpSettings.add(vpSettings.value?.copyWith(saveDuration: value) ??
-      VpSettings(
-          autoSave: true, saveDuration: value, viewType: vpViewTypes.combined));
-}
-
-Future<void> setVpViewTypePrefs(int value) async {
-  final db = getIt.get<AppManager>().db;
-
-  AppManager.stores.data
-      .record("vpSettings_saveDuration")
-      .put(db, {"value": value.toString()});
-  final viewTypePrefs = vpViewTypes.values[int.parse(value.toString())];
-  vpSettings.add(vpSettings.value?.copyWith(viewType: viewTypePrefs) ??
-      VpSettings(
-          autoSave: true, saveDuration: value, viewType: vpViewTypes.combined));
-}
+final _defaultVpSettings =
+    VpSettings(autoSave: true, saveDuration: 0, viewType: vpViewTypes.combined, loadListOnStart: true);
