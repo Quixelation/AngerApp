@@ -20,7 +20,8 @@ class _MatrixHomepageQuicklookState extends State<MatrixHomepageQuicklook> {
     final client = Services.matrix.client;
     setState(() {
       unreadRooms = client.rooms
-          .where((element) => element.notificationCount > 0)
+          .where((element) =>
+              element.notificationCount > 0 || element.isUnreadOrInvited)
           .toList();
     });
     client.onEvent.stream.listen((event) {
@@ -30,7 +31,8 @@ class _MatrixHomepageQuicklookState extends State<MatrixHomepageQuicklook> {
       }
       setState(() {
         unreadRooms = client.rooms
-            .where((element) => element.notificationCount > 0)
+            .where((element) =>
+                element.notificationCount > 0 || element.isUnreadOrInvited)
             .toList();
       });
     });

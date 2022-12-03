@@ -2,18 +2,21 @@ library matrix;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-
+import "package:dismissible_page/dismissible_page.dart";
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/secure_storage/secure_storage.dart';
+import "package:flutter_slidable/flutter_slidable.dart";
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
 import 'package:flutter_polls/flutter_polls.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:hive/hive.dart';
 import 'package:matrix/encryption/encryption.dart';
 import 'package:matrix/encryption/key_verification_manager.dart';
@@ -42,6 +45,7 @@ part "matrix_sas_dialog.dart";
 part "matrix_homepage_quicklook.dart";
 part "matrix_page.dart";
 part "matrix_room_info.dart";
+part "matrix_create_chat.dart";
 
 DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 

@@ -53,10 +53,8 @@ class _RoomListPageState extends State<RoomListPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          client.createGroupChat(
-              groupName: DateTime.now().toIso8601String(),
-              visibility: matrix.Visibility.private,
-              invite: []);
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => _MatrixCreatePage()));
         },
       ),
       body: StreamBuilder(
@@ -64,58 +62,91 @@ class _RoomListPageState extends State<RoomListPage> {
           builder: (context, _) {
             return ListView.builder(
               itemCount: client.rooms.length,
-              itemBuilder: (context, i) => ListTile(
-                leading: CircleAvatar(
-                  foregroundImage: client.rooms[i].avatar == null
-                      ? null
-                      : NetworkImage(client.rooms[i].avatar!
-                          .getThumbnail(
-                            client,
-                            width: 56,
-                            height: 56,
-                          )
-                          .toString()),
-                ),
-                onLongPress: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextButton.icon(
-                              onPressed: () {
-                                client.rooms[i].markUnread(true);
-                              },
-                              icon: Icon(Icons.mark_chat_unread_outlined),
-                              label: Text("als ungelesen markieren"))
-                        ],
-                      );
-                    },
-                  );
-                },
-                title: Row(
+              itemBuilder: (context, i) => Slidable(
+                key: UniqueKey(),
+                enabled: true,
+                closeOnScroll: true,
+                startActionPane: ActionPane(
+                  motion: DrawerMotion(),
+
+                  // All actions are defined in the children parameter.
                   children: [
-                    Expanded(child: Text(client.rooms[i].displayname)),
-                    if (client.rooms[i].notificationCount > 0 ||
-                        client.rooms[i].isUnread)
-                      Material(
-                          borderRadius: BorderRadius.circular(99),
-                          color: Colors.red,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Text(client.rooms[i].notificationCount > 0
-                                ? client.rooms[i].notificationCount.toString()
-                                : "  "),
-                          ))
+                    // A SlidableAction can have an icon and/or a label.
+                    SlidableAction(
+                      onPressed: (context) {
+                        //TODO: Confirmation through user
+                        client.rooms[i].leave();
+                      },
+                      backgroundColor: Color(0xFFFE4A49),
+                      foregroundColor: Colors.white,
+                      icon: Icons.exit_to_app,
+                      label: 'Verlassen',
+                    ),
+                    SlidableAction(
+                      onPressed: (context) {
+                        client.rooms[i].markUnread(true);
+                      },
+                      autoClose: true,
+                      backgroundColor: Color(0xFF21B7CA),
+                      foregroundColor: Colors.white,
+                      icon: Icons.share,
+                      label: 'Ungelesen',
+                    ),
                   ],
                 ),
-                subtitle: Text(
-                  client.rooms[i].lastEvent?.body ?? "NO",
-                  maxLines: 1,
+                child: ListTile(
+                  leading: CircleAvatar(
+                    foregroundImage: client.rooms[i].avatar == null
+                        ? null
+                        : NetworkImage(client.rooms[i].avatar!
+                            .getThumbnail(
+                              client,
+                              width: 56,
+                              height: 56,
+                            )
+                            .toString()),
+                  ),
+                  onLongPress: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextButton.icon(
+                                onPressed: () {
+                                  client.rooms[i].markUnread(true);
+                                },
+                                icon: Icon(Icons.mark_chat_unread_outlined),
+                                label: Text("als ungelesen markieren"))
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  title: Row(
+                    children: [
+                      Expanded(child: Text(client.rooms[i].displayname)),
+                      if (client.rooms[i].notificationCount > 0 ||
+                          client.rooms[i].isUnread)
+                        Material(
+                            borderRadius: BorderRadius.circular(99),
+                            color: Colors.red,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text(client.rooms[i].notificationCount > 0
+                                  ? client.rooms[i].notificationCount.toString()
+                                  : "  "),
+                            ))
+                    ],
+                  ),
+                  subtitle: Text(
+                    client.rooms[i].lastEvent?.body ?? "NO",
+                    maxLines: 1,
+                  ),
+                  onTap: () => _join(client.rooms[i], context),
                 ),
-                onTap: () => _join(client.rooms[i], context),
               ),
             );
           }),
@@ -152,6 +183,9 @@ class _RoomPageState extends State<RoomPage> {
     }, onUpdate: () {
       // print('On update');
     });
+
+    widget.room.markUnread(false);
+
     super.initState();
   }
 
@@ -227,6 +261,8 @@ class _RoomPageState extends State<RoomPage> {
                 children: [
                   Expanded(
                       child: TextField(
+                    maxLines: 8,
+                    minLines: 1,
                     controller: _sendController,
                     decoration: const InputDecoration(
                       hintText: 'Nachricht senden',
@@ -279,172 +315,155 @@ class _MatrixMessage extends StatelessWidget {
 
     room.postReceipt(displayEvent.eventId);
 
-    return GestureDetector(
-      onLongPress: () {
-        showModalBottomSheet(
-            context: context,
-            builder: (context) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            var encoder = new JsonEncoder.withIndent("     ");
-                            var text = encoder.convert(displayEvent.toJson());
-                            return Material(
-                              child: SingleChildScrollView(child: Text(text)),
-                            );
-                          },
-                        );
-                      },
-                      icon: Icon(Icons.safety_check),
-                      label: Text("Debug"))
-                ],
-              );
-            });
-      },
-      child: ScaleTransition(
-        scale: animation,
-        child: Opacity(
-          opacity: event.status.isSent ? 1 : 0.5,
-          child: ChatBubble(
-            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            backGroundColor: isSender
-                ? Theme.of(context).colorScheme.secondaryContainer
-                : Theme.of(context).colorScheme.surface,
-            shadowColor: isSender
-                ? Theme.of(context).colorScheme.secondary
-                : Theme.of(context).colorScheme.shadow,
-            alignment: isSender ? Alignment.topRight : Alignment.topLeft,
-            clipper: ChatBubbleClipper4(
-                type: isSender
-                    ? BubbleType.sendBubble
-                    : BubbleType.receiverBubble),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (!isSender) ...[
-                  Text(
-                    /*event.type +
+    if (displayEvent.type == "m.room.message" ||
+        displayEvent.type == "org.matrix.msc3381.poll.start") {
+      return GestureDetector(
+        onLongPress: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextButton.icon(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              var encoder = new JsonEncoder.withIndent("     ");
+                              var text = encoder.convert(displayEvent.toJson());
+                              return Material(
+                                  child:
+                                      SingleChildScrollView(child: Text(text)));
+                            },
+                          );
+                        },
+                        icon: Icon(Icons.safety_check),
+                        label: Text("Debug"))
+                  ],
+                );
+              });
+        },
+        child: ScaleTransition(
+          scale: animation,
+          child: Opacity(
+            opacity: event.status.isSent ? 1 : 0.5,
+            child: ChatBubble(
+                margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                backGroundColor: isSender
+                    ? Theme.of(context).colorScheme.secondaryContainer
+                    : Theme.of(context).colorScheme.surface,
+                shadowColor: isSender
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.shadow,
+                alignment: isSender ? Alignment.topRight : Alignment.topLeft,
+                clipper: ChatBubbleClipper4(
+                    type: isSender
+                        ? BubbleType.sendBubble
+                        : BubbleType.receiverBubble),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (!isSender) ...[
+                      Text(
+                        /*event.type +
                                   " " +
                                   displayEvent.messageType +
                                   " " + */
-                    (displayEvent.sender.displayName ?? event.senderId),
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: textColor),
-                  ),
-                  SizedBox(height: 4),
-                ],
-                // Builder(
-                //   builder: (context) {
-                //     if (displayEvent.content["m.relates_to"]
-                //             ?["m.in_reply_to"] !=
-                //         null) {
-                //       return _ChatBubbleReplyRenderer(event, timeline);
-                //     } else {
-                //       return Container();
-                //     }
-                //   },
-                // ),
-                Builder(
-                  builder: (context) {
-                    if (displayEvent.type == "m.room.message") {
-                      if (displayEvent.messageType == "m.text") {
-                        return Text(
-                          displayEvent.body,
-                          style: TextStyle(color: textColor),
-                        );
-                      }
-                      //TODO: m.notice
-                      else if (displayEvent.messageType == "m.image") {
-                        return ChatBubbleImageRenderer(event);
-                      } else {
-                        return Text("Unbekannter Nachrichten-Typ");
-                      }
-                    } else if (displayEvent.type == "m.room.encrypted") {
-                      return Text("encrypted");
-                    }
+                        (displayEvent.sender.displayName ?? event.senderId),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, color: textColor),
+                      ),
+                      SizedBox(height: 4),
+                    ],
+                    // Builder(
+                    //   builder: (context) {
+                    //     if (displayEvent.content["m.relates_to"]
+                    //             ?["m.in_reply_to"] !=
+                    //         null) {
+                    //       return _ChatBubbleReplyRenderer(event, timeline);
+                    //     } else {
+                    //       return Container();
+                    //     }
+                    //   },
+                    // ),
+                    Builder(
+                      builder: (context) {
+                        if (displayEvent.type == "m.room.message") {
+                          if (displayEvent.messageType == "m.text") {
+                            return Text(
+                              displayEvent.body,
+                              style: TextStyle(color: textColor),
+                            );
+                          }
+                          //TODO: m.notice
+                          else if (displayEvent.messageType == "m.image") {
+                            return ChatBubbleImageRenderer(event);
+                          } else if (displayEvent.messageType == "m.file") {
+                            return ChatBubbleFileRenderer(
+                                event, timeline, room);
+                          } else {
+                            return Text("Unbekannter Nachrichten-Typ");
+                          }
+                        } else if (displayEvent.type == "m.room.encrypted") {
+                          return Text("encrypted");
+                        }
 
-                    if (displayEvent.type == "org.matrix.msc3381.poll.start") {
-                      return _ChatBubblePollRenderer(event, timeline, room);
-                    } else {
-                      return Text(displayEvent.type);
-                    }
-                  },
-                ),
-                SizedBox(height: 4),
-                IntrinsicWidth(
-                  child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            time2string(event.originServerTs, onlyTime: true),
-                            style: TextStyle(
-                                fontSize: 10, color: textColor.withAlpha(200)),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ]),
-                ),
-                if (events.isNotEmpty)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: events
-                        .where((element) => element.type == "m.reaction")
-                        .map((e) {
-                      logger.d(e.toJson());
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: Chip(
-                          label: Text("1"),
-                          avatar: Text(
-                            e.content["m.relates_to"]["key"],
-                            style: TextStyle(color: textColor),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  )
-              ],
-            ),
-
-            //  ListTile(
-            //   onTap: () {},
-            //   leading: CircleAvatar(
-            //     foregroundImage: event.sender.avatarUrl == null
-            //         ? null
-            //         : NetworkImage(event.sender.avatarUrl!
-            //             .getThumbnail(
-            //               room.client,
-            //               width: 56,
-            //               height: 56,
-            //             )
-            //             .toString()),
-            //   ),
-            //   title: Row(
-            //     children: [
-            //       Expanded(
-            //         child: Text(event.sender.calcDisplayname()),
-            //       ),
-            //       Text(
-            //         event.originServerTs.toIso8601String(),
-            //         style: const TextStyle(fontSize: 10),
-            //       ),
-            //     ],
-            //   ),
-            //   subtitle: Text(event.getDisplayEvent(timeline).body),
-            // ),
+                        if (displayEvent.type ==
+                            "org.matrix.msc3381.poll.start") {
+                          return _ChatBubblePollRenderer(event, timeline, room);
+                        } else {
+                          return /*Text(displayEvent.type)*/ Container();
+                        }
+                      },
+                    ),
+                    SizedBox(height: 4),
+                    IntrinsicWidth(
+                      child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                time2string(event.originServerTs,
+                                    onlyTime: true),
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: textColor.withAlpha(200)),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ]),
+                    ),
+                    if (events.isNotEmpty)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: events
+                            .where((element) => element.type == "m.reaction")
+                            .map((e) {
+                          logger.d(e.toJson());
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: Chip(
+                              label: Text("1"),
+                              avatar: Text(
+                                e.content["m.relates_to"]["key"],
+                                style: TextStyle(color: textColor),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      )
+                  ],
+                )),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 }
 
@@ -473,10 +492,53 @@ class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
             ),
           );
         } else {
-          return Image.memory(snapshot.data!.bytes);
+          return GestureDetector(
+              onTap: () {
+                showImageViewer(
+                    context, Image.memory(snapshot.data!.bytes).image,
+                    doubleTapZoomable: true,
+                    swipeDismissible: true,
+                    immersive: false);
+                // context.pushTransparentRoute(_DismissableImage(
+                //     snapshot.data!.bytes, widget.event.eventId));
+              },
+              child: Hero(
+                  tag: widget.event.eventId,
+                  child: Image.memory(snapshot.data!.bytes)));
         }
       },
       future: widget.event.downloadAndDecryptAttachment(),
+    );
+  }
+}
+
+class _DismissableImage extends StatelessWidget {
+  _DismissableImage(this.bytes, this.id);
+
+  final Uint8List bytes;
+  final String id;
+
+  @override
+  Widget build(BuildContext context) {
+    return DismissiblePage(
+      onDismissed: () {
+        Navigator.of(context).pop();
+      },
+      // Note that scrollable widget inside DismissiblePage might limit the functionality
+      // If scroll direction matches DismissiblePage direction
+      direction: DismissiblePageDismissDirection.multi,
+      isFullScreen: false,
+      child: Hero(
+        tag: id,
+        child: InteractiveViewer(
+            onInteractionEnd: (details) {},
+            maxScale: 10,
+            minScale: 0.5,
+            child: Image.memory(
+              bytes,
+              fit: BoxFit.contain,
+            )),
+      ),
     );
   }
 }
@@ -625,6 +687,33 @@ class _ChatBubblePollRenderer extends StatelessWidget {
     );
   }
 }
+
+class ChatBubbleFileRenderer extends StatefulWidget {
+  const ChatBubbleFileRenderer(this.event, this.timeline, this.room, {Key? key})
+      : super(key: key);
+
+  final Event event;
+  final Timeline timeline;
+  final Room room;
+
+  @override
+  State<ChatBubbleFileRenderer> createState() => _ChatBubbleFileRendererState();
+}
+
+class _ChatBubbleFileRendererState extends State<ChatBubbleFileRenderer> {
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+        onPressed: () {},
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [Icon(Icons.download), Text(widget.event.body)],
+        ));
+  }
+}
+
 
 
 
