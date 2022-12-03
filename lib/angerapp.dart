@@ -5,6 +5,7 @@ import 'package:anger_buddy/logic/files/files.dart';
 import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
+import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/network/ferien.dart';
@@ -22,12 +23,13 @@ class _ServicesManager {
   final ferien = FerienManager();
   final klausuren = KlausurenManager();
   final files = JspFilesClient();
-  // final matrix = JspMatrix();
+  final matrix = JspMatrix();
   // final mail = JspMail();
   final openSense = OpenSense();
   /* -- ENDE: Funktions-Seiten -- */
   final currentClass = CurrentClassManager();
   final portalLinks = UniventionLinks();
+  final credentials = Credentials;
 
   Future<void> init() async {
     await Future.wait([
@@ -38,7 +40,7 @@ class _ServicesManager {
       klausuren.init(),
       vp.init(),
 
-      // matrix.init(),
+      matrix.init(),
 
       // mail.init(),
     ]);
