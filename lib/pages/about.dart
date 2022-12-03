@@ -1,6 +1,5 @@
 import 'package:anger_buddy/network/serverstatus.dart';
 import 'package:flutter/material.dart';
-import 'package:motion/motion.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class PageAbout extends StatelessWidget {
@@ -8,11 +7,6 @@ class PageAbout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// Initialize the plugin.
-    Motion.instance.initialize();
-
-    /// Globally set the sensors sampling rate to 60 frames per second.
-    Motion.instance.setUpdateInterval(60.fps);
     fetchCmsServerStatus();
     return Scaffold(
         appBar: AppBar(
@@ -26,13 +20,9 @@ class PageAbout extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Motion(
-                    glare: GlareConfiguration(color: Colors.transparent),
-                    shadow: ShadowConfiguration(color: Colors.transparent),
-                    child: Image.asset(
-                      "assets/mainLogo.png",
-                      height: 100,
-                    ),
+                  Image.asset(
+                    "assets/mainLogo.png",
+                    height: 100,
                   ),
                   const SizedBox(height: 24),
                   Column(
