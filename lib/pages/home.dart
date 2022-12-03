@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
+import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/version_manager/version_manager.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
@@ -148,12 +149,17 @@ class _PageHomeState extends State<PageHome> {
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: AushangHomepageWidget(),
+                      child: MatrixHomepageQuicklook(),
                     ),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                       child: VpWidget(),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                      child: AushangHomepageWidget(),
                     ),
                     Padding(
                       padding:
