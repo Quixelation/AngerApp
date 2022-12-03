@@ -3,6 +3,7 @@ import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
+import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
@@ -51,6 +52,37 @@ class PageDevTools extends StatelessWidget {
           ElevatedButton(
               onPressed: () async {
                 await DEVONLYdeleteAushangReadStateForAllAushange();
+              },
+              child: Text("[Aushang] Delete Read State")),
+          ElevatedButton(
+              onPressed: () async {
+                await Services.matrix.client.init();
+              },
+              child: Text("[Matrix] client init")),
+          ElevatedButton(
+              onPressed: () async {
+                await Services.matrix.login();
+              },
+              child: Text("[Matrix] login")),
+          ElevatedButton(
+              onPressed: () async {
+                await JspMatrix().init();
+              },
+              child: Text("JustCallJspMatrix&init")),
+          ElevatedButton(
+              onPressed: () async {
+                var matric = JspMatrix();
+                await matric.init();
+                logger.d(matric.client!.accountData);
+              },
+              child: Text("JustCallJspMatrix::AccountData")),
+          ElevatedButton(
+              onPressed: () async {
+                var matric = JspMatrix();
+                await matric.init();
+                var rooms = await matric.client!.getJoinedRooms();
+                logger.d("[Matrix] joined Rooms");
+                logger.d(rooms);
               },
               child: Text("Aushänge DELETE READ")),
           SizedBox(height: 8),
