@@ -1,6 +1,7 @@
 String time2string(DateTime dateTime,
     {bool includeWeekday = false,
     bool useStringMonth = true,
+    bool onlyTime = false,
     bool includeTime = false}) {
   String day = "<TAG>";
   switch (dateTime.weekday) {
@@ -82,12 +83,16 @@ String time2string(DateTime dateTime,
   String weekDayString = includeWeekday ? "$day, " : "";
 
   var timeString = "";
-  if (includeTime) {
+  if (includeTime || onlyTime) {
     timeString =
         " ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}";
   }
 
-  return "$weekDayString$date.$month$year$timeString";
+  if (onlyTime) {
+    return timeString.trim();
+  } else {
+    return "$weekDayString$date.$month$year$timeString";
+  }
 }
 
 String intToMonthString(int month) {
