@@ -45,6 +45,8 @@ class AppManager {
       return "https://angerapp.angergymnasium.jena.de/cms/";
     }
   })();
+  static String moodleApi =
+      "https://moodle.jsp.jena.de/webservice/rest/server.php";
   static String apiUrl = (() {
     final isRobertStuendlCom = uhtml.window.location.host.endsWith("robertstuendl.com");
 
