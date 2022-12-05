@@ -6,6 +6,7 @@ import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
+import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/network/ferien.dart';
@@ -30,6 +31,7 @@ class _ServicesManager {
   final currentClass = CurrentClassManager();
   final portalLinks = UniventionLinks();
   final credentials = Credentials;
+  final moodle = Moodle();
 
   Future<void> init() async {
     await Future.wait([
