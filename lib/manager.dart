@@ -48,6 +48,7 @@ class AppManager {
   })();
   static String moodleApi =
       "https://moodle.jsp.jena.de/webservice/rest/server.php";
+  static String moodleSiteUrl = "https://moodle.jsp.jena.de/";
   static String apiUrl = (() {
     final isRobertStuendlCom =
         uhtml.window.location.host.endsWith("robertstuendl.com");
