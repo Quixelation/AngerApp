@@ -10,6 +10,42 @@ class MoodleLoginPage extends StatefulWidget {
 class _MoodleLoginPageState extends State<MoodleLoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _loading = false;
+
+  void login() async {
+    setState(() {
+      _loading = true;
+    });
+    await AngerApp.moodle.login
+        .login(
+            username: _usernameController.text.trim(),
+            password: _passwordController.text.trim())
+        .catchError((err) {
+      logger.e(err, null, StackTrace.current);
+    });
+    setState(() {
+      _loading = false;
+    });
+
+    if (AngerApp.moodle.login.creds.credentialsAvailable) {
+      Navigator.pop(context);
+    } else {
+      showDialog(
+          context: context,
+          builder: (context2) => AlertDialog(
+                title: Text("Es gab einen Fehler"),
+                content: Text(
+                    "Der Login ist fehlgeschlagen. Bitte überprüfe deine Internetverbindung und deine Login-Daten"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context2).pop();
+                      },
+                      child: Text("Ok"))
+                ],
+              ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,24 +57,29 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
           child: ListView(
             padding: EdgeInsets.all(16),
             children: [
-              Text(
-                "Schulmoodle Jena",
-                style: TextStyle(fontSize: 16),
+              Opacity(
+                opacity: 0.87,
+                child: Text(
+                  "Schulmoodle Jena",
+                  style: TextStyle(fontSize: 16),
+                ),
               ),
               Text(
                 "Login",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
               SizedBox(height: 16),
               _MoodleLoginInfoField(),
               SizedBox(height: 16),
               TextFormField(
+                enabled: !_loading,
                 controller: _usernameController,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(), labelText: "Benutzername"),
               ),
               SizedBox(height: 8),
               TextFormField(
+                enabled: !_loading,
                 controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
@@ -46,9 +87,13 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
               ),
               SizedBox(height: 16),
               ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: _loading
+                      ? null
+                      : () {
+                          login();
+                        },
                   icon: Icon(Icons.login),
-                  label: Text("Einloggen"))
+                  label: Text(_loading ? "Bitte warten" : "Einloggen"))
             ],
           ),
         ));
@@ -61,9 +106,13 @@ class _MoodleLoginInfoField extends StatelessWidget {
   Widget tile({
     required bool saving,
     required String title,
+    String? subtitle,
   }) {
     return ListTile(
+      dense: true,
+      visualDensity: VisualDensity.compact,
       title: Text(title),
+      subtitle: subtitle != null ? Text(subtitle) : null,
       leading: Icon(
         saving ? Icons.check : Icons.close,
         color: saving ? Colors.green : Colors.red,
@@ -75,26 +124,62 @@ class _MoodleLoginInfoField extends StatelessWidget {
   //TODO: Welche Daten wir zu diesen Servern senden (nur für login)
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text("Was wir speichern"),
-            tile(saving: false, title: "Dein Benutzername"),
-            tile(saving: false, title: "Dein Passwort"),
-            tile(
-                saving: true,
-                title: "Den von Moodle zufällig generierten Token"),
-            tile(saving: true, title: "Die von Moodle generierte Benutzer-ID"),
-            SizedBox(height: 4),
-            Text("Du kannst dich jederzeit ausloggen und diese Daten löschen")
-          ],
-        ),
-      ),
-    );
+    return ExpandableNotifier(
+        child: ScrollOnExpand(
+            child: Card(
+      child: Expandable(
+          collapsed: ExpandableButton(
+            child: ListTile(
+              dense: true,
+              leading: Icon(Icons.policy),
+              title: Text("Infos: Datenspeicherung"),
+              trailing: Icon(Icons.keyboard_arrow_right),
+            ),
+          ),
+          expanded: Padding(
+            padding: const EdgeInsets.only(bottom: 12.0, right: 0, left: 0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ExpandableButton(
+                  child: ListTile(
+                      dense: true,
+                      trailing: Icon(Icons.keyboard_arrow_down),
+                      title: Text(
+                        "Was wir speichern",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      )),
+                ),
+                tile(saving: false, title: "Dein Benutzername"),
+                tile(saving: false, title: "Dein Passwort"),
+                tile(saving: false, title: "Cookies"),
+                tile(
+                    saving: true,
+                    title: "Den von Moodle zufällig generierten Token",
+                    subtitle:
+                        "(Der Token wird für die zukünfigte Authentifizierung mit dem Moodle-Server benötigt)"),
+                tile(
+                    saving: true,
+                    title: "Die von Moodle generierte Benutzer-ID",
+                    subtitle:
+                        "(Sagt Moodle, welcher Benutzer du bist, da das Moodle mit dem oben genannten Token leider nicht auch gleich noch mit speichert)"),
+                SizedBox(height: 8),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Opacity(
+                    opacity: 0.92,
+                    child: Text(
+                      "Du kannst dich jederzeit ausloggen und diese Daten löschen",
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )),
+    )));
   }
 }

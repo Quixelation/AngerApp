@@ -6,6 +6,8 @@ import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
+import 'package:anger_buddy/utils/logger.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
 import 'package:rxdart/subjects.dart';
@@ -44,13 +46,18 @@ class _MoodleLogin {
       throw ErrorDescription("Fehler beim Anmelden");
     }
 
-    creds.setCredentials(_MoodleCreds(token: token, userId: siteInfo.userid));
+    await creds
+        .setCredentials(_MoodleCreds(token: token, userId: siteInfo.userid));
+    return;
   }
 
   Future<String> _fetchToken(
       {required String username, required String password}) async {
-    var response = await http.get(Uri.parse(AppManager.moodleApi +
-        "?username=$username&password=$password&service=moodle_mobile_app"));
+    final uri = Uri.parse(AppManager.moodleSiteUrl +
+        "login/token.php" +
+        "?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}&service=moodle_mobile_app");
+    logger.d(uri);
+    var response = await http.get(uri);
 
     if (response.statusCode != 200) throw Error();
 
@@ -67,14 +74,20 @@ class _MoodleLogin {
       throw ErrorDescription("Status ain't 200");
     }
 
-    var json = jsonDecode(response.body);
+    Map<String, dynamic> json;
+    try {
+      json = jsonDecode(response.body);
+    } catch (err) {
+      logger.e("JSON Decode failed on siteInfo");
+      rethrow;
+    }
 
     var fullname = json["fullname"];
     var firstname = json["firstname"];
     var lastname = json["lastname"];
     var username = json["username"];
     var sitename = json["sitename"];
-    var userid = int.parse(json["userid"]);
+    var userid = json["userid"];
     var userpictureurl = json["userpictureurl"];
     var release = json["release"];
     var version = json["version"];

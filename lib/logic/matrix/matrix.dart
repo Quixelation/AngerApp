@@ -2,6 +2,7 @@ library matrix;
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:anger_buddy/logic/moodle/moodle.dart';
 import "package:dismissible_page/dismissible_page.dart";
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/secure_storage/secure_storage.dart';

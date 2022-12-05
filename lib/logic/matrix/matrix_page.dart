@@ -17,6 +17,72 @@ class MatrixPage extends StatelessWidget {
   }
 }
 
+class MoodlePromoCard extends StatelessWidget {
+  const MoodlePromoCard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(4),
+      child: Card(
+          child: InkWell(
+        onTap: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => MoodleLoginPage()));
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          child: IntrinsicWidth(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    "assets/MoodleTools.png",
+                    height: 25,
+                  ),
+                  SizedBox(width: 12),
+                  Flexible(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Flexible(
+                          child: Opacity(
+                        opacity: 0.87,
+                        child: Text(
+                          "Moodle-Integration",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                      )),
+                      Flexible(
+                        child: Opacity(
+                          opacity: 0.67,
+                          child: Text(
+                            "Verbinde jetzt dein Schulmoodle-Jena Account und deine Moodle Nachrichten erscheinen direkt hier in der Liste",
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+                  SizedBox(width: 4),
+                  Opacity(
+                      opacity: 0.87,
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                      ))
+                ]),
+          ),
+        ),
+      )),
+    );
+  }
+}
+
 class RoomListPage extends StatefulWidget {
   const RoomListPage({Key? key}) : super(key: key);
 
@@ -61,94 +127,103 @@ class _RoomListPageState extends State<RoomListPage> {
           stream: client.onSync.stream,
           builder: (context, _) {
             return ListView.builder(
-              itemCount: client.rooms.length,
-              itemBuilder: (context, i) => Slidable(
-                key: UniqueKey(),
-                enabled: true,
-                closeOnScroll: true,
-                startActionPane: ActionPane(
-                  motion: DrawerMotion(),
+                itemCount: client.rooms.length + 1,
+                itemBuilder: (context, i) {
+                  if (i == 0)
+                    return MoodlePromoCard();
+                  else {
+                    i = i - 1;
+                    return Slidable(
+                      key: UniqueKey(),
+                      enabled: true,
+                      closeOnScroll: true,
+                      startActionPane: ActionPane(
+                        motion: DrawerMotion(),
 
-                  // All actions are defined in the children parameter.
-                  children: [
-                    // A SlidableAction can have an icon and/or a label.
-                    SlidableAction(
-                      onPressed: (context) {
-                        //TODO: Confirmation through user
-                        client.rooms[i].leave();
-                      },
-                      backgroundColor: Color(0xFFFE4A49),
-                      foregroundColor: Colors.white,
-                      icon: Icons.exit_to_app,
-                      label: 'Verlassen',
-                    ),
-                    SlidableAction(
-                      onPressed: (context) {
-                        client.rooms[i].markUnread(true);
-                      },
-                      autoClose: true,
-                      backgroundColor: Color(0xFF21B7CA),
-                      foregroundColor: Colors.white,
-                      icon: Icons.share,
-                      label: 'Ungelesen',
-                    ),
-                  ],
-                ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    foregroundImage: client.rooms[i].avatar == null
-                        ? null
-                        : NetworkImage(client.rooms[i].avatar!
-                            .getThumbnail(
-                              client,
-                              width: 56,
-                              height: 56,
-                            )
-                            .toString()),
-                  ),
-                  onLongPress: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        // All actions are defined in the children parameter.
+                        children: [
+                          // A SlidableAction can have an icon and/or a label.
+                          SlidableAction(
+                            onPressed: (context) {
+                              //TODO: Confirmation through user
+                              client.rooms[i].leave();
+                            },
+                            backgroundColor: Color(0xFFFE4A49),
+                            foregroundColor: Colors.white,
+                            icon: Icons.exit_to_app,
+                            label: 'Verlassen',
+                          ),
+                          SlidableAction(
+                            onPressed: (context) {
+                              client.rooms[i].markUnread(true);
+                            },
+                            autoClose: true,
+                            backgroundColor: Color(0xFF21B7CA),
+                            foregroundColor: Colors.white,
+                            icon: Icons.share,
+                            label: 'Ungelesen',
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          foregroundImage: client.rooms[i].avatar == null
+                              ? null
+                              : NetworkImage(client.rooms[i].avatar!
+                                  .getThumbnail(
+                                    client,
+                                    width: 56,
+                                    height: 56,
+                                  )
+                                  .toString()),
+                        ),
+                        onLongPress: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextButton.icon(
+                                      onPressed: () {
+                                        client.rooms[i].markUnread(true);
+                                      },
+                                      icon:
+                                          Icon(Icons.mark_chat_unread_outlined),
+                                      label: Text("als ungelesen markieren"))
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        title: Row(
                           children: [
-                            TextButton.icon(
-                                onPressed: () {
-                                  client.rooms[i].markUnread(true);
-                                },
-                                icon: Icon(Icons.mark_chat_unread_outlined),
-                                label: Text("als ungelesen markieren"))
+                            Expanded(child: Text(client.rooms[i].displayname)),
+                            if (client.rooms[i].notificationCount > 0 ||
+                                client.rooms[i].isUnread)
+                              Material(
+                                  borderRadius: BorderRadius.circular(99),
+                                  color: Colors.red,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Text(
+                                        client.rooms[i].notificationCount > 0
+                                            ? client.rooms[i].notificationCount
+                                                .toString()
+                                            : "  "),
+                                  ))
                           ],
-                        );
-                      },
+                        ),
+                        subtitle: Text(
+                          client.rooms[i].lastEvent?.body ?? "NO",
+                          maxLines: 1,
+                        ),
+                        onTap: () => _join(client.rooms[i], context),
+                      ),
                     );
-                  },
-                  title: Row(
-                    children: [
-                      Expanded(child: Text(client.rooms[i].displayname)),
-                      if (client.rooms[i].notificationCount > 0 ||
-                          client.rooms[i].isUnread)
-                        Material(
-                            borderRadius: BorderRadius.circular(99),
-                            color: Colors.red,
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Text(client.rooms[i].notificationCount > 0
-                                  ? client.rooms[i].notificationCount.toString()
-                                  : "  "),
-                            ))
-                    ],
-                  ),
-                  subtitle: Text(
-                    client.rooms[i].lastEvent?.body ?? "NO",
-                    maxLines: 1,
-                  ),
-                  onTap: () => _join(client.rooms[i], context),
-                ),
-              ),
-            );
+                  }
+                });
           }),
     );
   }
