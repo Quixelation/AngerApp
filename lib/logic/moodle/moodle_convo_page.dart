@@ -27,15 +27,11 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
         return;
       }
       setState(() {
-        messages = value
-            .firstWhere((element) => element.id == widget.conversation.id)
-            .messages;
+        messages = value.firstWhere((element) => element.id == widget.conversation.id).messages;
       });
     });
 
-    AngerApp.moodle.messaging
-        .getConversationById(widget.conversation.id)
-        .then((value) {
+    AngerApp.moodle.messaging.getConversationById(widget.conversation.id).then((value) {
       setState(() {
         messages = value.messages;
       });
@@ -52,8 +48,7 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text(((widget.conversation.name == null ||
-                    widget.conversation.name?.trim() == "")
+            title: Text(((widget.conversation.name == null || widget.conversation.name?.trim() == "")
                 ? widget.conversation.members.first.fullname
                 : widget.conversation.name!))),
         body: messages == null
@@ -69,35 +64,18 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                       itemBuilder: (context, index) {
                         final currentMessage = messages![index];
                         final isSender = currentMessage.userIdFrom == userId;
-                        final Color textColor = isSender
-                            ? Theme.of(context).colorScheme.onSecondaryContainer
-                            : Theme.of(context).colorScheme.onSurface;
-                        final showSender =
-                            widget.conversation.members.length != 1;
+                        final Color textColor =
+                            isSender ? Theme.of(context).colorScheme.onSecondaryContainer : Theme.of(context).colorScheme.onSurface;
+                        final showSender = widget.conversation.members.length != 1;
 
                         return ChatBubble(
-                            margin: EdgeInsets.only(
-                                left: isSender ? 48 : 8,
-                                right: isSender ? 8 : 48,
-                                top: 8,
-                                bottom: 8),
-                            backGroundColor: isSender
-                                ? Theme.of(context)
-                                    .colorScheme
-                                    .secondaryContainer
-                                    .withOpacity(0.87)
-                                : Theme.of(context).colorScheme.surface,
+                            margin: EdgeInsets.only(left: isSender ? 48 : 8, right: isSender ? 8 : 48, top: 8, bottom: 8),
+                            backGroundColor:
+                                isSender ? Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.87) : Theme.of(context).colorScheme.surface,
                             elevation: 1,
-                            shadowColor: isSender
-                                ? Theme.of(context).colorScheme.secondary
-                                : Theme.of(context).colorScheme.shadow,
-                            alignment: isSender
-                                ? Alignment.topRight
-                                : Alignment.topLeft,
-                            clipper: ChatBubbleClipper4(
-                                type: isSender
-                                    ? BubbleType.sendBubble
-                                    : BubbleType.receiverBubble),
+                            shadowColor: isSender ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.shadow,
+                            alignment: isSender ? Alignment.topRight : Alignment.topLeft,
+                            clipper: ChatBubbleClipper4(type: isSender ? BubbleType.sendBubble : BubbleType.receiverBubble),
                             child: Padding(
                               padding: const EdgeInsets.all(4),
                               child: Column(
@@ -106,46 +84,28 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                                 children: [
                                   if (!isSender && showSender) ...[
                                     Text(
-                                      widget.conversation.members
-                                          .firstWhere((element) =>
-                                              element.id ==
-                                              currentMessage.userIdFrom)
-                                          .fullname,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: textColor),
+                                      widget.conversation.members.firstWhere((element) => element.id == currentMessage.userIdFrom).fullname,
+                                      style: TextStyle(fontWeight: FontWeight.w500, color: textColor),
                                     ),
                                     SizedBox(height: 4),
                                   ],
                                   Html(
                                     data: currentMessage.text,
                                     style: {
-                                      '#': Style(
-                                          padding: EdgeInsets.all(0),
-                                          margin: EdgeInsets.all(0),
-                                          color: textColor),
+                                      '#': Style(padding: EdgeInsets.all(0), margin: EdgeInsets.all(0), color: textColor),
                                     },
                                   ),
                                   SizedBox(height: 4),
                                   IntrinsicWidth(
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              time2string(
-                                                  currentMessage.timeCreated,
-                                                  onlyTime: true),
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  color:
-                                                      textColor.withAlpha(200)),
-                                              textAlign: TextAlign.right,
-                                            ),
-                                          ),
-                                        ]),
+                                    child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [
+                                      Expanded(
+                                        child: Text(
+                                          time2string(currentMessage.timeCreated, onlyTime: true),
+                                          style: TextStyle(fontSize: 10, color: textColor.withAlpha(200)),
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                    ]),
                                   ),
                                 ],
                               ),
@@ -171,11 +131,9 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                           IconButton(
                             icon: const Icon(Icons.send_outlined),
                             onPressed: () async {
+                              if (_sendController.text.trim() == "") return;
                               var msg = await AngerApp.moodle.messaging
-                                  .sendInstantMessage(
-                                      userId:
-                                          widget.conversation.members.first.id,
-                                      text: _sendController.text.trim());
+                                  .sendInstantMessage(userId: widget.conversation.members.first.id, text: _sendController.text.trim());
                               _sendController.clear();
                             },
                           ),

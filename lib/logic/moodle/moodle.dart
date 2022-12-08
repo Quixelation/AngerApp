@@ -18,23 +18,28 @@ import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
 import 'package:flutter_html/flutter_html.dart';
 import "package:http/http.dart" as http;
+import 'package:motion/motion.dart';
 import 'package:rxdart/subjects.dart';
 import "package:sembast/sembast.dart";
+import "package:anger_buddy/extensions.dart";
 
 part "moodle_types.dart";
 part "moodle_login_page.dart";
 part "moodle_http.dart";
 part "moodle_creds.dart";
 part "moodle_convo_page.dart";
+part "moodle_contacts.dart";
 
 class Moodle {
   late final _MoodleLogin login;
   late final _MoodleMessaging messaging;
+  late final _MoodleContacts contacts;
 
   Moodle() {
     var _login = _MoodleLogin();
     login = _login;
     messaging = _MoodleMessaging(login: login);
+    contacts = _MoodleContacts(login: login);
   }
 }
 
@@ -46,8 +51,7 @@ class _MoodleLogin {
     creds.removeCredentials();
   }
 
-  Future<void> login(
-      {required String username, required String password}) async {
+  Future<void> login({required String username, required String password}) async {
     try {
       final token = await _fetchToken(username: username, password: password);
       final siteInfo = await _fetchSiteInfo(token);
@@ -56,8 +60,7 @@ class _MoodleLogin {
         throw ErrorDescription("Fehler beim Anmelden");
       }
 
-      await creds
-          .setCredentials(_MoodleCreds(token: token, userId: siteInfo.userid));
+      await creds.setCredentials(_MoodleCreds(token: token, userId: siteInfo.userid));
       return;
     } catch (err) {
       logger.e(err);
@@ -66,14 +69,9 @@ class _MoodleLogin {
     }
   }
 
-  Future<String> _fetchToken(
-      {required String username, required String password}) async {
+  Future<String> _fetchToken({required String username, required String password}) async {
     var response = await _moodleRequest(
-        parameters: {
-          "username": username,
-          "password": password,
-          "service": "moodle_mobile_app"
-        },
+        parameters: {"username": username, "password": password, "service": "moodle_mobile_app"},
         includeToken: false,
         includeUserId: false,
         customPath: "login/token.php");
@@ -89,8 +87,8 @@ class _MoodleLogin {
   }
 
   Future<_MoodleSiteInfo> _fetchSiteInfo(String token) async {
-    var response = await http.post(Uri.parse(AppManager.moodleApi +
-        "?wstoken=$token&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json"));
+    var response =
+        await http.post(Uri.parse(AppManager.moodleApi + "?wstoken=$token&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json"));
 
     if (response.statusCode != 200) {
       throw ErrorDescription("Status ain't 200");
@@ -138,81 +136,100 @@ class _MoodleMessaging {
   final subject = BehaviorSubject<List<MoodleConversation>>();
 
   Widget buildListTile(BuildContext context, MoodleConversation convo) {
-    return ListTile(
-        onTap: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => MoodleConvoPage(convo)));
-        },
-        trailing: convo.unreadCount != null && convo.unreadCount != 0
-            ? Badge(
-                padding: EdgeInsets.all(6),
-                badgeColor: Theme.of(context).colorScheme.primary,
-                badgeContent: Text(
-                  convo.unreadCount.toString(),
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                ),
-              )
-            : null,
-        title: Text(
-          convo.members.first.fullname,
-          style: TextStyle(
-              fontWeight:
-                  convo.unreadCount != null && (convo.unreadCount ?? 0) > 0
-                      ? FontWeight.w600
-                      : FontWeight.normal),
-        ),
-        subtitle: Opacity(
-          opacity: 0.67,
-          child: Html(
-            data: convo.messages.first.text,
-            style: {
-              '#': Style(
-                fontWeight:
-                    convo.unreadCount != null && (convo.unreadCount ?? 0) > 0
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                padding: EdgeInsets.all(0),
-                margin: EdgeInsets.all(0),
-                maxLines: 2,
-                textOverflow: TextOverflow.ellipsis,
-              ),
-            },
-          ),
-        ),
-        leading: Stack(children: [
-          CircleAvatar(
-            backgroundImage: convo.members.first.profileimageurl == null
-                ? null
-                : NetworkImage(convo.members.first.profileimageurl),
-          ),
-          Positioned(
-            child: Image.asset("assets/MoodleTools.png", width: 20),
-            bottom: 0,
-            right: 0,
-          ),
-        ]));
+    return DefaultMessageListTile(
+      avatar: buildAvatar(convo.members.first.profileimageurl),
+      datetime: convo.messages.isEmpty ? null : convo.messages.first.timeCreated,
+      hasUnread: convo.unreadCount != null && convo.unreadCount != 0,
+      unreadCount: convo.unreadCount != null ? convo.unreadCount! : 0,
+      messageText: convo.messages.isEmpty ? "" : convo.messages.first.text,
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoodleConvoPage(convo)));
+      },
+      sender: convo.members.first.fullname,
+    );
+    // ListTile(
+    //     onTap: () {
+    //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoodleConvoPage(convo)));
+    //     },
+    //     trailing: convo.unreadCount != null && convo.unreadCount != 0
+    //         ? Badge(
+    //             padding: EdgeInsets.all(6),
+    //             badgeColor: Theme.of(context).colorScheme.primary,
+    //             badgeContent: Text(
+    //               convo.unreadCount.toString(),
+    //               style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+    //             ),
+    //           )
+    //         : null,
+    //     title: Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //       children: [
+    //         Text(
+    //           convo.members.first.fullname,
+    //           style: TextStyle(fontWeight: convo.unreadCount != null && (convo.unreadCount ?? 0) > 0 ? FontWeight.w600 : FontWeight.w400),
+    //         ),
+    //         Opacity(
+    //           opacity: 0.57,
+    //           child: Text(
+    //             convo.messages.first.timeCreated.millisecondsSinceEpoch > DateTime.now().at0.subtract(Duration(seconds: 1)).millisecondsSinceEpoch
+    //                 ? time2string(convo.messages.first.timeCreated, onlyTime: true)
+    //                 : (DateTime.now().at0.difference(convo.messages.first.timeCreated).inDays <= 6
+    //                     ? time2string(convo.messages.first.timeCreated, includeTime: false, onlyWeekday: true)
+    //                     : time2string(
+    //                         convo.messages.first.timeCreated,
+    //                         includeTime: false,
+    //                         useStringMonth: false,
+    //                       )),
+    //             style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+    //           ),
+    //         )
+    //       ],
+    //     ),
+    //     subtitle: Opacity(
+    //       opacity: 0.67,
+    //       child: Html(
+    //         data: convo.messages.first.text,
+    //         style: {
+    //           '#': Style(
+    //             fontWeight: convo.unreadCount != null && (convo.unreadCount ?? 0) > 0 ? FontWeight.bold : FontWeight.normal,
+    //             padding: EdgeInsets.all(0),
+    //             margin: EdgeInsets.all(0),
+    //             maxLines: 2,
+    //             textOverflow: TextOverflow.ellipsis,
+    //           ),
+    //         },
+    //       ),
+    //     ),
+    //     leading: );
+  }
+
+  Widget buildAvatar(String? imgUrl) {
+    return Stack(children: [
+      CircleAvatar(
+        backgroundImage: imgUrl == null ? null : NetworkImage(imgUrl),
+      ),
+      Positioned(
+        child: Image.asset("assets/MoodleTools.png", width: 20),
+        bottom: 0,
+        right: 0,
+      ),
+    ]);
   }
 
   Future<List<MoodleConversation>> getAllConversations() async {
-    var response = await _moodleRequest<List<Map<String, dynamic>>>(
-        function: "core_message_get_conversations");
+    var response = await _moodleRequest<List<Map<String, dynamic>>>(function: "core_message_get_conversations");
 
     if (response.hasError) {
       logger.e(response.error);
-      throw ErrorDescription(
-          response.error!.message ?? response.error!.error ?? "");
+      throw ErrorDescription(response.error!.message ?? response.error!.error ?? "");
     }
 
-    logger.v("[MoodleConvo]" +
-        (response.data!["conversations"]?.length?.toString() ?? "00"));
+    logger.v("[MoodleConvo]" + (response.data!["conversations"]?.length?.toString() ?? "00"));
 
     try {
-      var convosList = List<Map<String, dynamic>>.from(
-          response.data!["conversations"] ?? []);
+      var convosList = List<Map<String, dynamic>>.from(response.data!["conversations"] ?? []);
 
-      final list =
-          convosList.map((e) => MoodleConversation.fromApi(e)).toList();
+      final list = convosList.map((e) => MoodleConversation.fromApi(e)).toList();
 
       //var copy = subject.valueWrapper?.value ?? [];
 
@@ -228,11 +245,7 @@ class _MoodleMessaging {
   Future<MoodleConversation> getConversationById(int conversationId) async {
     var response = await _moodleRequest(
         function: "core_message_get_conversation",
-        parameters: {
-          "includecontactrequests": "0",
-          "includeprivacyinfo": "0",
-          "conversationid": conversationId.toString()
-        });
+        parameters: {"includecontactrequests": "0", "includeprivacyinfo": "0", "conversationid": conversationId.toString()});
 
     if (response.hasError) {
       throw ErrorDescription(response.error!.message ?? "");
@@ -253,13 +266,10 @@ class _MoodleMessaging {
     required int userId,
     required String text,
   }) async {
-    var response = await _moodleRequest(
-        includeUserId: false,
-        function: "core_message_send_instant_messages",
-        parameters: {
-          "messages[0][touserid]": userId.toString(),
-          "messages[0][text]": text,
-        });
+    var response = await _moodleRequest(includeUserId: false, function: "core_message_send_instant_messages", parameters: {
+      "messages[0][touserid]": userId.toString(),
+      "messages[0][text]": text,
+    });
 
     if (response.hasError) {
       throw ErrorDescription(response.error!.message ?? "");
@@ -270,22 +280,17 @@ class _MoodleMessaging {
     final sentMsg = MoodleMessage(
         id: data["msgid"],
         text: data["text"],
-        timeCreated:
-            DateTime.fromMillisecondsSinceEpoch(data["timecreated"] * 1000),
+        timeCreated: DateTime.fromMillisecondsSinceEpoch(data["timecreated"] * 1000),
         userIdFrom: data["useridfrom"]);
 
     var copy = subject.valueWrapper?.value ?? [];
-    copy
-        .firstWhere((element) => element.id == data["conversationid"])
-        .messages
-        .insert(0, sentMsg);
+    copy.firstWhere((element) => element.id == data["conversationid"]).messages.insert(0, sentMsg);
     subject.add(copy);
 
     return sentMsg;
   }
 
-  Future<List<_MoodleConversationMember>> searchUsers(
-      String searchQuery) async {
+  Future<List<_MoodleMember>> searchUsers(String searchQuery) async {
     final token = _login.creds.subject.valueWrapper!.value!.token;
     final userId = _login.creds.subject.valueWrapper!.value!.userId;
 
@@ -304,12 +309,10 @@ class _MoodleMessaging {
 
     var json = jsonDecode(response.body);
 
-    List<_MoodleConversationMember> peopleList = [];
+    List<_MoodleMember> peopleList = [];
 
-    peopleList.addAll((json["contacts"] as List<Map<String, dynamic>>)
-        .map(_MoodleConversationMember.fromApi));
-    peopleList.addAll((json["noncontacts"] as List<Map<String, dynamic>>)
-        .map(_MoodleConversationMember.fromApi));
+    peopleList.addAll((json["contacts"] as List<Map<String, dynamic>>).map(_MoodleMember.fromApi));
+    peopleList.addAll((json["noncontacts"] as List<Map<String, dynamic>>).map(_MoodleMember.fromApi));
 
     return peopleList;
   }

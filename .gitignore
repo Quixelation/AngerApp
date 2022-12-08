@@ -31,3 +31,5 @@ doc/api/
 /windows
 assets/.DS_Store
 .DS_Store
+
+/.VSCodeCounter

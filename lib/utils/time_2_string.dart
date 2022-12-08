@@ -1,8 +1,10 @@
-String time2string(DateTime dateTime,
-    {bool includeWeekday = false,
-    bool useStringMonth = true,
-    bool onlyTime = false,
-    bool includeTime = false}) {
+String time2string(DateTime dateTime, {bool includeWeekday = false, bool useStringMonth = true, bool onlyTime = false, bool onlyWeekday = false, bool includeTime = false}) {
+  if (onlyWeekday) {
+    assert(onlyTime == false);
+  } else if (onlyTime) {
+    assert(onlyWeekday == false);
+  }
+
   String day = "<TAG>";
   switch (dateTime.weekday) {
     case DateTime.monday:
@@ -28,6 +30,9 @@ String time2string(DateTime dateTime,
       break;
   }
 
+  if (onlyWeekday) {
+    return day;
+  }
   int date = dateTime.day;
 
   String month = "<MONAT>";
@@ -84,8 +89,7 @@ String time2string(DateTime dateTime,
 
   var timeString = "";
   if (includeTime || onlyTime) {
-    timeString =
-        " ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}";
+    timeString = " ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}";
   }
 
   if (onlyTime) {
@@ -96,30 +100,9 @@ String time2string(DateTime dateTime,
 }
 
 String intToMonthString(int month) {
-  return [
-    "Januar",
-    "Februar",
-    "März",
-    "April",
-    "Mai",
-    "Juni",
-    "Juli",
-    "August",
-    "September",
-    "Oktober",
-    "November",
-    "Dezember"
-  ][month - 1];
+  return ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"][month - 1];
 }
 
 String intToDayString(int day) {
-  return [
-    "Montag",
-    "Dienstag",
-    "Mittwoch",
-    "Donnerstag",
-    "Freitag",
-    "Samstag",
-    "Sonntag"
-  ][day - 1];
+  return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"][day - 1];
 }

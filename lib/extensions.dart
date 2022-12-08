@@ -7,3 +7,19 @@ extension MapWithIndex<E> on List {
     return mapList;
   }
 }
+
+extension DateExt on DateTime {
+  DateTime get at0 {
+    return DateTime(year, month, day, 0, 0, 0, 0, 0);
+  }
+
+  bool isSameOrAfterDateAt0(DateTime date2) {
+    var datified = date2.at0;
+    return isAtSameMomentAs(datified) || isAfter(datified);
+  }
+
+  bool isSameOrBeforeDateAt0(DateTime date2) {
+    var datified = date2.at0;
+    return isAtSameMomentAs(datified) || isBefore(datified);
+  }
+}

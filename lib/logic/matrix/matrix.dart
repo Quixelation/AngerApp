@@ -2,6 +2,7 @@ library matrix;
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
 import "package:dismissible_page/dismissible_page.dart";
 import 'package:anger_buddy/angerapp.dart';
@@ -78,8 +79,7 @@ class JspMatrix {
     });
 
     client.onEvent.stream.listen((matrix.EventUpdate eventUpdate) {
-      logger
-          .w("New event update !  ${eventUpdate.type}::${eventUpdate.content}");
+      logger.w("New event update !  ${eventUpdate.type}::${eventUpdate.content}");
     });
 
     // client!.onRoomUpdate.stream.listen((matrix.RoomsUpdate eventUpdate) {
@@ -93,8 +93,7 @@ class JspMatrix {
       logger.w("UIArequest");
     });
 
-    client.onKeyVerificationRequest.stream
-        .listen(_handleKeyVerificationRequest);
+    client.onKeyVerificationRequest.stream.listen(_handleKeyVerificationRequest);
   }
 
   _handleKeyVerificationRequest(KeyVerification event) async {
@@ -118,16 +117,9 @@ class JspMatrix {
       logger.wtf("SHowing Dialog");
       logger.d(event.state);
       if (event.state == KeyVerificationState.askSas) {
-        showDialog(
-            context: getIt.get<AppManager>().mainScaffoldState.currentContext!,
-            builder: (context) => MatrixSasDialog(event));
+        showDialog(context: getIt.get<AppManager>().mainScaffoldState.currentContext!, builder: (context) => MatrixSasDialog(event));
       } else if (event.isDone) {
-        logger.d("is Done " +
-            (client.deviceID ?? "") +
-            "  " +
-            (client.accessToken ?? "") +
-            " " +
-            (client.identityKey));
+        logger.d("is Done " + (client.deviceID ?? "") + "  " + (client.accessToken ?? "") + " " + (client.identityKey));
       }
     };
   }
@@ -137,12 +129,10 @@ class JspMatrix {
 
     await client.login(
       matrix.LoginType.mLoginPassword,
-      identifier: matrix.AuthenticationUserIdentifier(
-          user: Credentials.jsp.subject.valueWrapper?.value?.username ?? ""),
+      identifier: matrix.AuthenticationUserIdentifier(user: Credentials.jsp.subject.valueWrapper?.value?.username ?? ""),
       initialDeviceDisplayName: "AngerApp",
       //TODO: Remove in prod!!
-      password:
-          (Credentials.jsp.subject.valueWrapper?.value?.password ?? "") + "abc",
+      password: (Credentials.jsp.subject.valueWrapper?.value?.password ?? "") + "abc",
     );
 
     logger.w((client.deviceID ?? "") + "  " + (client.accessToken ?? ""));
@@ -152,5 +142,172 @@ class JspMatrix {
     logger.v("[Matrix] init");
     await olm.init();
     await client.init();
+  }
+
+  Widget buildAvatar(BuildContext context, Uri? imgUrl) {
+    return Stack(children: [
+      CircleAvatar(
+        backgroundColor: Colors.grey.shade400.withAlpha(200),
+        child: imgUrl == null
+            ? Icon(
+                Icons.person,
+                size: 32,
+                color: Colors.white,
+              )
+            : null,
+        backgroundImage: imgUrl == null
+            ? null
+            : NetworkImage(imgUrl
+                .getThumbnail(
+                  client,
+                  width: 56,
+                  height: 56,
+                )
+                .toString()),
+      ),
+      Positioned(
+        child: Text(
+          "JSP",
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11, color: Theme.of(context).colorScheme.tertiary),
+        ),
+        bottom: 0,
+        right: 0,
+      ),
+    ]);
+  }
+
+  Widget buildListTile(BuildContext context, Room room) {
+    return Slidable(
+        key: UniqueKey(),
+        enabled: true,
+        closeOnScroll: true,
+        startActionPane: ActionPane(
+          motion: DrawerMotion(),
+
+          // All actions are defined in the children parameter.
+          children: [
+            // A SlidableAction can have an icon and/or a label.
+            SlidableAction(
+              onPressed: (context) {
+                //TODO: Confirmation through user
+                room.leave();
+              },
+              backgroundColor: Color(0xFFFE4A49),
+              foregroundColor: Colors.white,
+              icon: Icons.exit_to_app,
+              label: 'Verlassen',
+            ),
+            SlidableAction(
+              onPressed: (context) {
+                room.markUnread(true);
+              },
+              autoClose: true,
+              backgroundColor: Color(0xFF21B7CA),
+              foregroundColor: Colors.white,
+              icon: Icons.share,
+              label: 'Ungelesen',
+            ),
+          ],
+        ),
+        child: DefaultMessageListTile(
+          avatar: buildAvatar(context, room.avatar),
+          datetime: room.lastEvent!.originServerTs,
+          messageText: room.lastEvent!.body,
+          hasUnread: room.isUnreadOrInvited,
+          unreadCount: room.notificationCount,
+          onTap: () async {
+            //TODO
+            if (room.membership != Membership.join) {
+              await room.join();
+            }
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => RoomPage(room: room),
+              ),
+            );
+          },
+          sender: room.displayname,
+        ));
+
+    /*
+ListTile(
+        leading: Stack(children: [
+          CircleAvatar(
+            backgroundColor: Colors.grey.shade400.withAlpha(200),
+            child: room.avatar == null
+                ? Icon(
+                    Icons.person,
+                    size: 32,
+                    color: Colors.white,
+                  )
+                : null,
+            backgroundImage: room.avatar == null
+                ? null
+                : NetworkImage(room.avatar!
+                    .getThumbnail(
+                      client,
+                      width: 56,
+                      height: 56,
+                    )
+                    .toString()),
+          ),
+          Positioned(
+            child: Text(
+              "JSP",
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11, color: Theme.of(context).colorScheme.tertiary),
+            ),
+            bottom: 0,
+            right: 0,
+          ),
+        ]),
+        onLongPress: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextButton.icon(
+                      onPressed: () {
+                        room.markUnread(true);
+                      },
+                      icon: Icon(Icons.mark_chat_unread_outlined),
+                      label: Text("als ungelesen markieren"))
+                ],
+              );
+            },
+          );
+        },
+        title: Row(
+          children: [
+            Expanded(child: Text(room.displayname)),
+            if (room.notificationCount > 0 || room.isUnread)
+              Material(
+                  borderRadius: BorderRadius.circular(99),
+                  color: Colors.red,
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Text(room.notificationCount > 0 ? room.notificationCount.toString() : "  "),
+                  ))
+          ],
+        ),
+        subtitle: Text(
+          room.lastEvent?.body ?? "NO",
+          maxLines: 1,
+        ),
+        onTap: () async {
+          //TODO
+          if (room.membership != Membership.join) {
+            await room.join();
+          }
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => RoomPage(room: room),
+            ),
+          );
+        },
+      ),
+    */
   }
 }
