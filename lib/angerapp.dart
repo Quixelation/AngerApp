@@ -40,7 +40,7 @@ class _ServicesManager {
       klausuren.init(),
       vp.init(),
       matrix.init(),
-
+      moodle.login.creds.init()
       // mail.init(),
     ]);
   }

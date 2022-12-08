@@ -1,14 +1,22 @@
 library moodle;
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
+import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
+import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:badges/badges.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_bubble/bubble_type.dart';
+import 'package:flutter_chat_bubble/chat_bubble.dart';
+import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
+import 'package:flutter_html/flutter_html.dart';
 import "package:http/http.dart" as http;
 import 'package:rxdart/subjects.dart';
 import "package:sembast/sembast.dart";
@@ -17,6 +25,7 @@ part "moodle_types.dart";
 part "moodle_login_page.dart";
 part "moodle_http.dart";
 part "moodle_creds.dart";
+part "moodle_convo_page.dart";
 
 class Moodle {
   late final _MoodleLogin login;
@@ -34,36 +43,49 @@ class _MoodleLogin {
 
   ///TODO
   void logout() {
-    throw UnimplementedError();
+    creds.removeCredentials();
   }
 
   Future<void> login(
       {required String username, required String password}) async {
-    final token = await _fetchToken(username: username, password: password);
-    final siteInfo = await _fetchSiteInfo(token);
+    try {
+      final token = await _fetchToken(username: username, password: password);
+      final siteInfo = await _fetchSiteInfo(token);
 
-    if (token == null || siteInfo.userid == null) {
-      throw ErrorDescription("Fehler beim Anmelden");
+      if (token == null || siteInfo.userid == null) {
+        throw ErrorDescription("Fehler beim Anmelden");
+      }
+
+      await creds
+          .setCredentials(_MoodleCreds(token: token, userId: siteInfo.userid));
+      return;
+    } catch (err) {
+      logger.e(err);
+      debugPrintStack(stackTrace: (err as Error).stackTrace);
+      rethrow;
     }
-
-    await creds
-        .setCredentials(_MoodleCreds(token: token, userId: siteInfo.userid));
-    return;
   }
 
   Future<String> _fetchToken(
       {required String username, required String password}) async {
-    final uri = Uri.parse(AppManager.moodleSiteUrl +
-        "login/token.php" +
-        "?username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}&service=moodle_mobile_app");
-    logger.d(uri);
-    var response = await http.get(uri);
+    var response = await _moodleRequest(
+        parameters: {
+          "username": username,
+          "password": password,
+          "service": "moodle_mobile_app"
+        },
+        includeToken: false,
+        includeUserId: false,
+        customPath: "login/token.php");
 
-    if (response.statusCode != 200) throw Error();
+    if (response.hasError) {
+      logger.e(response.error);
+      throw ErrorDescription(response.error!.message ?? "");
+    }
 
-    var json = jsonDecode(response.body);
+    logger.v(response.data);
 
-    return (json["token"]);
+    return response.data!["token"];
   }
 
   Future<_MoodleSiteInfo> _fetchSiteInfo(String token) async {
@@ -113,33 +135,97 @@ class _MoodleMessaging {
     _login = login;
   }
 
-  Future<List<_MoodleConversation>> getAllConversations() async {
-    if (!_login.creds.credentialsAvailable) {
-      throw ErrorDescription("no creds");
-    }
+  final subject = BehaviorSubject<List<MoodleConversation>>();
 
-    final token = _login.creds.subject.valueWrapper!.value!.token;
-    final userId = _login.creds.subject.valueWrapper!.value!.userId;
-
-    var response = await http.get(Uri.parse(AppManager.moodleApi +
-        "?wstoken=${token}&wsfunction=core_message_get_conversations&moodlewsrestformat=json&userid=${userId}"));
-
-    if (response.statusCode != 200) {
-      throw ErrorDescription("Status ain't 200");
-    }
-
-    var json = jsonDecode(response.body);
-
-    if (json["conversations"] == null) {
-      throw ErrorDescription("No Convo");
-    }
-
-    return (json["conversations"] as List<Map<String, dynamic>>)
-        .map(_MoodleConversation.fromApi)
-        .toList();
+  Widget buildListTile(BuildContext context, MoodleConversation convo) {
+    return ListTile(
+        onTap: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => MoodleConvoPage(convo)));
+        },
+        trailing: convo.unreadCount != null && convo.unreadCount != 0
+            ? Badge(
+                padding: EdgeInsets.all(6),
+                badgeColor: Theme.of(context).colorScheme.primary,
+                badgeContent: Text(
+                  convo.unreadCount.toString(),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+              )
+            : null,
+        title: Text(
+          convo.members.first.fullname,
+          style: TextStyle(
+              fontWeight:
+                  convo.unreadCount != null && (convo.unreadCount ?? 0) > 0
+                      ? FontWeight.w600
+                      : FontWeight.normal),
+        ),
+        subtitle: Opacity(
+          opacity: 0.67,
+          child: Html(
+            data: convo.messages.first.text,
+            style: {
+              '#': Style(
+                fontWeight:
+                    convo.unreadCount != null && (convo.unreadCount ?? 0) > 0
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                padding: EdgeInsets.all(0),
+                margin: EdgeInsets.all(0),
+                maxLines: 2,
+                textOverflow: TextOverflow.ellipsis,
+              ),
+            },
+          ),
+        ),
+        leading: Stack(children: [
+          CircleAvatar(
+            backgroundImage: convo.members.first.profileimageurl == null
+                ? null
+                : NetworkImage(convo.members.first.profileimageurl),
+          ),
+          Positioned(
+            child: Image.asset("assets/MoodleTools.png", width: 20),
+            bottom: 0,
+            right: 0,
+          ),
+        ]));
   }
 
-  Future<_MoodleConversation> getConversationById(int conversationId) async {
+  Future<List<MoodleConversation>> getAllConversations() async {
+    var response = await _moodleRequest<List<Map<String, dynamic>>>(
+        function: "core_message_get_conversations");
+
+    if (response.hasError) {
+      logger.e(response.error);
+      throw ErrorDescription(
+          response.error!.message ?? response.error!.error ?? "");
+    }
+
+    logger.v("[MoodleConvo]" +
+        (response.data!["conversations"]?.length?.toString() ?? "00"));
+
+    try {
+      var convosList = List<Map<String, dynamic>>.from(
+          response.data!["conversations"] ?? []);
+
+      final list =
+          convosList.map((e) => MoodleConversation.fromApi(e)).toList();
+
+      //var copy = subject.valueWrapper?.value ?? [];
+
+      subject.add(list);
+
+      return list;
+    } catch (err) {
+      logger.d(err, null, (err as Error).stackTrace);
+      return [];
+    }
+  }
+
+  Future<MoodleConversation> getConversationById(int conversationId) async {
     var response = await _moodleRequest(
         function: "core_message_get_conversation",
         parameters: {
@@ -149,29 +235,53 @@ class _MoodleMessaging {
         });
 
     if (response.hasError) {
-      throw ErrorDescription(response.error!.message);
+      throw ErrorDescription(response.error!.message ?? "");
     }
 
-    return _MoodleConversation.fromApi(response.data!);
+    final convo = MoodleConversation.fromApi(response.data!);
+
+    var copy = subject.valueWrapper?.value ?? [];
+    copy.removeWhere((element) => element.id == conversationId);
+    copy.add(convo);
+    subject.add(copy);
+
+    return convo;
   }
 
   /// Only supports instant messages to 1 user!
-  Future<void> sendInstantMessage({
+  Future<MoodleMessage> sendInstantMessage({
     required int userId,
     required String text,
   }) async {
     var response = await _moodleRequest(
-        function: "core_message_send_messages_to_conversation",
+        includeUserId: false,
+        function: "core_message_send_instant_messages",
         parameters: {
           "messages[0][touserid]": userId.toString(),
           "messages[0][text]": text,
         });
 
     if (response.hasError) {
-      throw ErrorDescription(response.error!.message);
+      throw ErrorDescription(response.error!.message ?? "");
     }
 
-    return;
+    var data = (response.data as List).first;
+
+    final sentMsg = MoodleMessage(
+        id: data["msgid"],
+        text: data["text"],
+        timeCreated:
+            DateTime.fromMillisecondsSinceEpoch(data["timecreated"] * 1000),
+        userIdFrom: data["useridfrom"]);
+
+    var copy = subject.valueWrapper?.value ?? [];
+    copy
+        .firstWhere((element) => element.id == data["conversationid"])
+        .messages
+        .insert(0, sentMsg);
+    subject.add(copy);
+
+    return sentMsg;
   }
 
   Future<List<_MoodleConversationMember>> searchUsers(

@@ -33,6 +33,11 @@ class PageDevTools extends StatelessWidget {
           MainBottomAppBar(),
           ElevatedButton(
               onPressed: () async {
+                await AngerApp.moodle.login.creds.init();
+              },
+              child: Text("[MoodleMessaging] load creds")),
+          ElevatedButton(
+              onPressed: () async {
                 await Services.portalLinks.fetchFromServer();
               },
               child: Text("Univention Portal Linke")),

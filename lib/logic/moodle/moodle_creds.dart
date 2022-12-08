@@ -45,6 +45,7 @@ class _MoodleCredsManager extends CredentialsManager<_MoodleCreds> {
 
   @override
   Future<void> removeCredentials({bool withDatabaseEntry = true}) async {
+    logger.v("[MoodleCreds] removing creds");
     var db = getIt.get<AppManager>().db;
 
     if (withDatabaseEntry) {
@@ -55,6 +56,7 @@ class _MoodleCredsManager extends CredentialsManager<_MoodleCreds> {
 
   @override
   fetchFromDatabase() async {
+    logger.v("[MoodleCreds] fetch from db");
     var db = getIt.get<AppManager>().db;
     var record =
         await AppManager.stores.data.record(_moodleCredsDbRecordKey).get(db);
@@ -63,9 +65,11 @@ class _MoodleCredsManager extends CredentialsManager<_MoodleCreds> {
       removeCredentials(withDatabaseEntry: false);
       return null;
     } else {
-      return _MoodleCreds(
+      final creds = _MoodleCreds(
           token: record["token"].toString(),
           userId: int.parse(record["userid"].toString()));
+      setCredentials(creds, withDatabaseEntry: false);
+      return creds;
     }
   }
 }

@@ -31,10 +31,10 @@ class _MoodleConversationMember {
   final int id;
   final String fullname;
   final String profileimageurl;
-  final bool isContact;
-  final bool canMessage;
-  final bool requiresContact;
-  final bool isBlocked;
+  final bool? isContact;
+  final bool? canMessage;
+  final bool? requiresContact;
+  final bool? isBlocked;
 
   _MoodleConversationMember(
       {required this.canMessage,
@@ -55,11 +55,11 @@ class _MoodleConversationMember {
         requiresContact = apiMap["requirescontact"];
 }
 
-class _MoodleConversation {
+class MoodleConversation {
   final int id;
 
   /// # most likely an empty string
-  final String name;
+  final String? name;
 
   /// # most likely null
   final String? subname;
@@ -67,11 +67,11 @@ class _MoodleConversation {
   final bool isMuted;
   final bool isFav;
   final bool isRead;
-  final int unreadCount;
+  final int? unreadCount;
   final List<_MoodleConversationMember> members;
-  final List<_MoodleMessage> messages;
+  final List<MoodleMessage> messages;
 
-  _MoodleConversation(
+  MoodleConversation(
       {required this.id,
       required this.name,
       required this.unreadCount,
@@ -83,9 +83,9 @@ class _MoodleConversation {
       required this.messages,
       required this.subname});
 
-  _MoodleConversation.fromApi(Map<String, dynamic> apiMap)
+  MoodleConversation.fromApi(Map<String, dynamic> apiMap)
       : id = apiMap["id"],
-        members = (apiMap["members"] as List<Map<String, dynamic>>)
+        members = (List<Map<String, dynamic>>.from((apiMap)["members"]))
             .map(_MoodleConversationMember.fromApi)
             .toList(),
         name = apiMap["name"],
@@ -93,30 +93,31 @@ class _MoodleConversation {
         unreadCount = apiMap["unreadcount"],
         isRead = apiMap["isread"],
         isFav = apiMap["isfavourite"],
-        messages = (apiMap["messages"] as List<Map<String, dynamic>>)
-            .map(_MoodleMessage.fromApi)
+        messages = (List<Map<String, dynamic>>.from((apiMap)["messages"]))
+            .map(MoodleMessage.fromApi)
             .toList(),
         isMuted = apiMap["ismuted"],
         memberCount = apiMap["membercount"];
 }
 
-class _MoodleMessage {
+class MoodleMessage {
   final int id;
   final int userIdFrom;
   final String text;
-  final int timeCreated;
+  final DateTime timeCreated;
 
-  _MoodleMessage(
+  MoodleMessage(
       {required this.id,
       required this.text,
       required this.timeCreated,
       required this.userIdFrom});
 
-  _MoodleMessage.fromApi(Map<String, dynamic> apiMap)
+  MoodleMessage.fromApi(Map<String, dynamic> apiMap)
       : id = apiMap["id"],
         userIdFrom = apiMap["useridfrom"],
         text = apiMap["text"],
-        timeCreated = apiMap["timecreated"];
+        timeCreated = DateTime.fromMillisecondsSinceEpoch(
+            (apiMap["timecreated"] as int) * 1000);
 }
 
 enum _MoodleInstantMessageType {
