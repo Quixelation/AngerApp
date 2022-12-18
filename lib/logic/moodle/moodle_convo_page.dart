@@ -31,7 +31,7 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
       });
     });
 
-    AngerApp.moodle.messaging.getConversationById(widget.conversation.id).then((value) {
+    AngerApp.moodle.messaging.getConversationById(widget.conversation.id, markAsRead: true).then((value) {
       setState(() {
         messages = value.messages;
       });
@@ -129,7 +129,7 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                             ),
                           )),
                           IconButton(
-                            icon: const Icon(Icons.send_outlined),
+                            icon: const Icon(Icons.send),
                             onPressed: () async {
                               if (_sendController.text.trim() == "") return;
                               var msg = await AngerApp.moodle.messaging

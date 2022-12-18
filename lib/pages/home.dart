@@ -47,12 +47,6 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
-            label: const Text("Vertretungsplan"),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const PageVp()));
-            },
-            icon: const Icon(Icons.switch_account_rounded)),
         bottomNavigationBar: BottomAppBar(
             color: Theme.of(context).colorScheme.tertiary,
             child: TabBar(controller: _tabController, tabs: [
@@ -72,211 +66,218 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
               )
             ])),
         body: TabBarView(controller: _tabController, children: [
-          CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                leading: kIsWeb && MediaQuery.of(context).size.width > 900
-                    ? null
-                    : IconButton(
-                        iconSize: 26,
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {
-                          getIt.get<AppManager>().mainScaffoldState.currentState!.openDrawer();
-                        },
-                      ),
-                actions: [
-                  IconButton(
-                    iconSize: 26,
-                    icon: const Icon(Icons.notifications),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          kIsWeb
-                              ? PageRouteBuilder(
-                                  pageBuilder: (context, animation, secondaryAnimation) => const PageNotificationSettings(),
-                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                    // const begin = Offset(0.0, 1.0);
-                                    const begin = Offset.zero;
-                                    const end = Offset.zero;
-                                    const curve = Curves.ease;
+          Scaffold(
+            floatingActionButton: FloatingActionButton.extended(
+                label: const Text("Vertretungsplan"),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PageVp()));
+                },
+                icon: const Icon(Icons.switch_account_rounded)),
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  leading: kIsWeb && MediaQuery.of(context).size.width > 900
+                      ? null
+                      : IconButton(
+                          iconSize: 26,
+                          icon: const Icon(Icons.menu),
+                          onPressed: () {
+                            getIt.get<AppManager>().mainScaffoldState.currentState!.openDrawer();
+                          },
+                        ),
+                  actions: [
+                    IconButton(
+                      iconSize: 26,
+                      icon: const Icon(Icons.notifications),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            kIsWeb
+                                ? PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) => const PageNotificationSettings(),
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                      // const begin = Offset(0.0, 1.0);
+                                      const begin = Offset.zero;
+                                      const end = Offset.zero;
+                                      const curve = Curves.ease;
 
-                                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
-                                    return SlideTransition(
-                                      position: animation.drive(tween),
-                                      child: child,
-                                    );
-                                  },
-                                )
-                              : MaterialPageRoute(builder: (context) => const PageNotificationSettings()));
-                    },
+                                      return SlideTransition(
+                                        position: animation.drive(tween),
+                                        child: child,
+                                      );
+                                    },
+                                  )
+                                : MaterialPageRoute(builder: (context) => const PageNotificationSettings()));
+                      },
+                    ),
+                  ],
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    stretchModes: const [StretchMode.zoomBackground],
+                    background: Container(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                    ),
+                    // collapseMode: CollapseMode.pin,
+                    title: Text(
+                      "Anger",
+                      style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                    ),
                   ),
-                ],
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  stretchModes: const [StretchMode.zoomBackground],
-                  background: Container(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                  ),
-                  // collapseMode: CollapseMode.pin,
-                  title: Text(
-                    "Anger",
-                    style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
-                  ),
+                  expandedHeight: 150,
                 ),
-                expandedHeight: 150,
-              ),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                const _QuickInfosList(),
-                const WelcomeText(),
-                const SizedBox(height: 16),
-                // ResponseHomeLayout([
-                //   const FerienCard(),
+                SliverList(
+                    delegate: SliverChildListDelegate([
+                  const _QuickInfosList(),
+                  const WelcomeText(),
+                  const SizedBox(height: 16),
+                  // ResponseHomeLayout([
+                  //   const FerienCard(),
 
-                //   // const Padding(
-                //   //   padding: EdgeInsets.symmetric(horizontal: 8.0),
-                //   //   child: VpHomeWidget(),
-                //   // ),
-                //   // const SizedBox(height: 4),
-                //   Flexible(child: _PinnedKlausurenList()),
-                //   const EventsThisWeek(),
-                //   const _NewsCard(),
+                  //   // const Padding(
+                  //   //   padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  //   //   child: VpHomeWidget(),
+                  //   // ),
+                  //   // const SizedBox(height: 4),
+                  //   Flexible(child: _PinnedKlausurenList()),
+                  //   const EventsThisWeek(),
+                  //   const _NewsCard(),
 
-                //   const _ServerStatusWidget(),
-                // ]),
+                  //   const _ServerStatusWidget(),
+                  // ]),
 
-                /// -> kleine Bildschirmgröße: 1 Spalte
-                if (MediaQuery.of(context).size.width < 1080)
-                  Flex(direction: Axis.vertical, crossAxisAlignment: CrossAxisAlignment.start, children: const [
-                    // SchwarzesBrettHome(),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: FerienCard(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: MatrixHomepageQuicklook(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: VpWidget(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: AushangHomepageWidget(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: _PinnedKlausurenList(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: EventsThisWeek(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: _NewsCard(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                      child: OpenSenseOverviewWidget(),
-                    ), /*
+                  /// -> kleine Bildschirmgröße: 1 Spalte
+                  if (MediaQuery.of(context).size.width < 1080)
+                    Flex(direction: Axis.vertical, crossAxisAlignment: CrossAxisAlignment.start, children: const [
+                      // SchwarzesBrettHome(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                        child: FerienCard(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                        child: MatrixHomepageQuicklook(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                        child: VpWidget(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                        child: AushangHomepageWidget(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                        child: _PinnedKlausurenList(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                        child: EventsThisWeek(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                        child: _NewsCard(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                        child: OpenSenseOverviewWidget(),
+                      ), /*
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                       child: const _ServerStatusWidget(),
                     ),*/
-                  ])
+                    ])
 
-                /// TODO: Add Schwarzes Brett zu mittel und groß
-                /// -> mittlere Bildschirmgröße: 2 Spalten
-                else if (MediaQuery.of(context).size.width < 1600)
-                  Flex(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Flex(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Padding(padding: EdgeInsets.all(8), child: FerienCard()),
-                              Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child:
-                                      EventsThisWeek()), /*
+                  /// TODO: Add Schwarzes Brett zu mittel und groß
+                  /// -> mittlere Bildschirmgröße: 2 Spalten
+                  else if (MediaQuery.of(context).size.width < 1600)
+                    Flex(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: Flex(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Padding(padding: EdgeInsets.all(8), child: FerienCard()),
+                                Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child:
+                                        EventsThisWeek()), /*
                           Padding(
                               padding: EdgeInsets.all(8),
                               child: const _ServerStatusWidget())*/
-                            ],
-                            direction: Axis.vertical,
+                              ],
+                              direction: Axis.vertical,
+                            ),
                           ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Flex(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: _PinnedKlausurenList(),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: _NewsCard(),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: OpenSenseOverviewWidget(),
-                              ),
-                              // SchwarzesBrettHome(),
-                            ],
-                            direction: Axis.vertical,
+                          Flexible(
+                            flex: 1,
+                            child: Flex(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: _PinnedKlausurenList(),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: _NewsCard(),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: OpenSenseOverviewWidget(),
+                                ),
+                                // SchwarzesBrettHome(),
+                              ],
+                              direction: Axis.vertical,
+                            ),
                           ),
-                        ),
-                      ],
-                      direction: Axis.horizontal)
+                        ],
+                        direction: Axis.horizontal)
 
-                /// -> große Bildschirmgröße: 3 Spalten
-                else
-                  Flex(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Flex(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: FerienCard(),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: _NewsCard(),
-                              ),
-                            ],
-                            direction: Axis.vertical,
+                  /// -> große Bildschirmgröße: 3 Spalten
+                  else
+                    Flex(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: Flex(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: FerienCard(),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: _NewsCard(),
+                                ),
+                              ],
+                              direction: Axis.vertical,
+                            ),
                           ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Flex(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: _PinnedKlausurenList(),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: EventsThisWeek(),
-                              ),
-                            ],
-                            direction: Axis.vertical,
+                          Flexible(
+                            flex: 1,
+                            child: Flex(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: _PinnedKlausurenList(),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: EventsThisWeek(),
+                                ),
+                              ],
+                              direction: Axis.vertical,
+                            ),
                           ),
-                        ),
-                        /*
+                          /*
                     Flexible(
                       flex: 1,
                       child: Flex(
@@ -290,9 +291,9 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                         direction: Axis.vertical,
                       ),
                     ),*/
-                      ],
-                      direction: Axis.horizontal),
-                /*  ResponsiveGridList(
+                        ],
+                        direction: Axis.horizontal),
+                  /*  ResponsiveGridList(
               minSpacing: 10,
               desiredItemWidth: 400,
               children: (() {
@@ -324,9 +325,10 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
               })(),
               scroll: false,
             ),*/
-                const SizedBox(height: 16),
-              ])),
-            ],
+                  const SizedBox(height: 16),
+                ])),
+              ],
+            ),
           ),
           MessagesListPage()
           // CustomScrollView(
@@ -445,13 +447,21 @@ class _WelcomeTextState extends State<WelcomeText> {
                 : RichText(
                     text: TextSpan(style: DefaultTextStyle.of(context).style, children: [
                     const TextSpan(text: "Heute ist "),
-                    TextSpan(text: intToDayString(DateTime.now().weekday), style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
+                    TextSpan(
+                        text: intToDayString(DateTime.now().weekday),
+                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
                     const TextSpan(text: ", der "),
-                    TextSpan(text: DateTime.now().day.toString(), style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
+                    TextSpan(
+                        text: DateTime.now().day.toString(),
+                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
                     const TextSpan(text: ". "),
-                    TextSpan(text: intToMonthString(DateTime.now().month), style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
+                    TextSpan(
+                        text: intToMonthString(DateTime.now().month),
+                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
                     const TextSpan(text: " "),
-                    TextSpan(text: DateTime.now().year.toString(), style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
+                    TextSpan(
+                        text: DateTime.now().year.toString(),
+                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
                     const TextSpan(text: "."),
                   ])),
           ),
@@ -650,7 +660,8 @@ class _FerienCardState extends State<FerienCard> {
                         ),
                         const SizedBox(height: 2),
                         LinearProgressIndicator(
-                          value: (data!.data!.start.difference(DateTime.now()).inDays.abs()) / data!.data!.end.difference(data!.data!.start).inDays.abs(),
+                          value: (data!.data!.start.difference(DateTime.now()).inDays.abs()) /
+                              data!.data!.end.difference(data!.data!.start).inDays.abs(),
                           minHeight: 10,
                         ),
                       ],
@@ -691,7 +702,8 @@ class __NewsCardState extends State<_NewsCard> {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
           padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 5),
-          child: Text((newsData!.error == true || newsData!.data.isEmpty) ? "Nachrichten" : newsData!.data[0].title!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+          child: Text((newsData!.error == true || newsData!.data.isEmpty) ? "Nachrichten" : newsData!.data[0].title!,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
         ),
         const Divider(),
         if (newsData!.error == true || newsData!.data.isEmpty) ...[
@@ -971,7 +983,10 @@ class __QuickInfosListState extends State<_QuickInfosList> {
   Widget build(BuildContext context) {
     return Stack(children: [
       _quickInfos != null
-          ? Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: _quickInfos!.data.map((e) => _QuickInfo(e)).toList())
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: _quickInfos!.data.map((e) => _QuickInfo(e)).toList())
           : Container(),
       if (_quickInfos?.loadingAction == AsyncDataResponseLoadingAction.currentlyLoading)
         const Positioned(
@@ -1040,7 +1055,9 @@ class _QuickInfo extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ((quickInfo.title?.trim() == "") || (quickInfo.title == null)) ? Container() : Text(quickInfo.title!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  ((quickInfo.title?.trim() == "") || (quickInfo.title == null))
+                      ? Container()
+                      : Text(quickInfo.title!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   MarkdownBody(
                     data: quickInfo.content,
                     onTapLink: (String text, String? href, String title) {

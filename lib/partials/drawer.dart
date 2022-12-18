@@ -73,7 +73,8 @@ class MainDrawer extends StatelessWidget {
                   shadowColor: snapshot.hasData ? null : Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(color: snapshot.hasData ? Colors.grey[700]! : Theme.of(context).colorScheme.primary, width: snapshot.hasData ? 1 : 2.5),
+                    side: BorderSide(
+                        color: snapshot.hasData ? Colors.grey[700]! : Theme.of(context).colorScheme.primary, width: snapshot.hasData ? 1 : 2.5),
                   ),
                   child: InkWell(
                     onTap: () {
@@ -282,7 +283,8 @@ class MainDrawer extends StatelessWidget {
                 kIsWeb
                     ? const _DrawerExternalLink(
                         title: "Android App",
-                        url: "https://play.google.com/store/apps/details?id=com.robertstuendl.angergymapp&referrer=utm_source%3DAngerApp%26utm_medium%3DDrawer%26utm_campaign%3DAndroidApp_link",
+                        url:
+                            "https://play.google.com/store/apps/details?id=debug.robertstuendl.angergymapp&referrer=utm_source%3DAngerApp%26utm_medium%3DDrawer%26utm_campaign%3DAndroidApp_link",
                         icon: Icons.get_app_outlined)
                     : Container(),
                 const _DrawerLink(
@@ -305,7 +307,8 @@ class MainDrawer extends StatelessWidget {
                   icon: Icons.feedback_outlined,
                   page: PageFeedback(),
                 ),
-                const _DrawerExternalLink(title: "Nutzung/Datenschutz", url: "https://angergymapp.robertstuendl.com/terms.html", icon: Icons.shield_outlined),
+                const _DrawerExternalLink(
+                    title: "Nutzung/Datenschutz", url: "https://angergymapp.robertstuendl.com/terms.html", icon: Icons.shield_outlined),
                 const _DrawerExternalLink(title: "Code (GitHub)", url: "https://github.com/Quixelation/AngerApp", icon: Icons.code),
               ].where((element) => element != null).toList()),
         ],

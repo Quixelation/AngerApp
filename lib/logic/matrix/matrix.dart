@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
+import 'package:anger_buddy/utils/url.dart';
 import "package:dismissible_page/dismissible_page.dart";
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/secure_storage/secure_storage.dart';
@@ -48,6 +49,12 @@ part "matrix_homepage_quicklook.dart";
 part "matrix_page.dart";
 part "matrix_room_info.dart";
 part "matrix_create_chat.dart";
+part "message_types/file_message.dart";
+part "message_types/image_message.dart";
+part "message_types/matrix_message.dart";
+part "message_types/poll_message.dart";
+part "message_types/reply_message.dart";
+part "message_types/geo_message.dart";
 
 DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
@@ -144,7 +151,7 @@ class JspMatrix {
     await client.init();
   }
 
-  Widget buildAvatar(BuildContext context, Uri? imgUrl) {
+  Widget buildAvatar(BuildContext context, Uri? imgUrl, {bool showLogo = true}) {
     return Stack(children: [
       CircleAvatar(
         backgroundColor: Colors.grey.shade400.withAlpha(200),
@@ -165,14 +172,15 @@ class JspMatrix {
                 )
                 .toString()),
       ),
-      Positioned(
-        child: Text(
-          "JSP",
-          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11, color: Theme.of(context).colorScheme.tertiary),
+      if (showLogo)
+        Positioned(
+          child: Text(
+            "JSP",
+            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11, color: Theme.of(context).colorScheme.tertiary),
+          ),
+          bottom: 0,
+          right: 0,
         ),
-        bottom: 0,
-        right: 0,
-      ),
     ]);
   }
 

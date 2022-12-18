@@ -242,7 +242,7 @@ class _MoodleMessaging {
     }
   }
 
-  Future<MoodleConversation> getConversationById(int conversationId) async {
+  Future<MoodleConversation> getConversationById(int conversationId, {bool markAsRead = false}) async {
     var response = await _moodleRequest(
         function: "core_message_get_conversation",
         parameters: {"includecontactrequests": "0", "includeprivacyinfo": "0", "conversationid": conversationId.toString()});
@@ -258,7 +258,32 @@ class _MoodleMessaging {
     copy.add(convo);
     subject.add(copy);
 
+    if (markAsRead) {
+      await markConversationAsRead(conversationId: conversationId);
+    }
+
     return convo;
+  }
+
+  Future<bool> markConversationAsRead({required int conversationId}) async {
+    var response = await _moodleRequest(
+        function: "core_message_mark_all_conversation_messages_as_read",
+        includeToken: true,
+        includeUserId: true,
+        parameters: {"conversationid": conversationId.toString()});
+
+    if (response.hasError) {
+      logger.e(response.error);
+      throw ErrorDescription(response.error?.message ?? "");
+    }
+
+    var copy = this.subject.valueWrapper?.value ?? [];
+    var elem = copy.firstWhere((element) => element.id == conversationId);
+    copy.removeWhere((element) => element.id == conversationId);
+    copy.add(elem.copyWith(unreadCount: 0, isRead: true));
+    subject.add(copy);
+
+    return true;
   }
 
   /// Only supports instant messages to 1 user!

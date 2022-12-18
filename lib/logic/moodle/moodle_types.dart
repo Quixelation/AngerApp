@@ -94,6 +94,21 @@ class MoodleConversation {
         messages = (List<Map<String, dynamic>>.from((apiMap)["messages"])).map(MoodleMessage.fromApi).toList(),
         isMuted = apiMap["ismuted"],
         memberCount = apiMap["membercount"];
+
+  copyWith({int? unreadCount, bool? isRead}) {
+    return MoodleConversation(
+        id: id,
+        name: name,
+        unreadCount: unreadCount ?? this.unreadCount,
+        isFav: isFav,
+        members: members,
+        isMuted: isMuted,
+        isRead: isRead ?? this.isRead,
+        memberCount: memberCount,
+        messages: messages,
+        subname: subname);
+    ;
+  }
 }
 
 class MoodleMessage {

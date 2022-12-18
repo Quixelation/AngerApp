@@ -2,24 +2,22 @@
 // ignore_for_file: type=todo
 part of matrix;
 
-class MatrixPage extends StatelessWidget {
-  final Client client;
-  const MatrixPage({required this.client, Key? key}) : super(key: key);
+// class MatrixPage extends StatelessWidget {
+//   final Client client;
+//   const MatrixPage({required this.client, Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return client.isLogged()
-        ? const RoomListPage()
-        : const Center(
-            child: Text(
-                "Es gab einen Login-Fehler. JSP-Login stimmt nicht mit Matrix login überein"),
-          );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return client.isLogged()
+//         ? const RoomListPage()
+//         : const Center(
+//             child: Text("Es gab einen Login-Fehler. JSP-Login stimmt nicht mit Matrix login überein"),
+//           );
+//   }
+// }
 
 class MoodlePromoCard extends StatelessWidget {
-  const MoodlePromoCard({Key? key, required this.hasMoodleIntegration})
-      : super(key: key);
+  const MoodlePromoCard({Key? key, required this.hasMoodleIntegration}) : super(key: key);
 
   final bool hasMoodleIntegration;
 
@@ -30,8 +28,7 @@ class MoodlePromoCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title:
-                    Opacity(opacity: 0.87, child: Text("Moodle Integration")),
+                title: Opacity(opacity: 0.87, child: Text("Moodle Integration")),
                 leading: Icon(
                   Icons.check_circle_outline_rounded,
                   color: Colors.green,
@@ -43,8 +40,7 @@ class MoodlePromoCard extends StatelessWidget {
                         context: context,
                         builder: (context) => AlertDialog(
                               title: Text("Wirklich Ausloggen?"),
-                              content: Text(
-                                  "Dies löscht die Moodle Anmeldedaten aus der App"),
+                              content: Text("Dies löscht die Moodle Anmeldedaten aus der App"),
                               actions: [
                                 TextButton.icon(
                                     onPressed: () {
@@ -65,8 +61,7 @@ class MoodlePromoCard extends StatelessWidget {
             child: Card(
                 child: InkWell(
               onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => MoodleLoginPage()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoodleLoginPage()));
               },
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -91,8 +86,7 @@ class MoodlePromoCard extends StatelessWidget {
                               opacity: 0.87,
                               child: Text(
                                 "Moodle-Integration",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                               ),
                             )),
                             Flexible(
@@ -121,249 +115,235 @@ class MoodlePromoCard extends StatelessWidget {
   }
 }
 
-class RoomListPage extends StatefulWidget {
-  const RoomListPage({Key? key}) : super(key: key);
+// class RoomListPage extends StatefulWidget {
+//   const RoomListPage({Key? key}) : super(key: key);
 
-  @override
-  _RoomListPageState createState() => _RoomListPageState();
-}
+//   @override
+//   _RoomListPageState createState() => _RoomListPageState();
+// }
 
-class _RoomListPageState extends State<RoomListPage> {
-  void _join(Room room, BuildContext context) async {
-    if (room.membership != Membership.join) {
-      await room.join();
-    }
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => RoomPage(room: room),
-      ),
-    );
-  }
+// class _RoomListPageState extends State<RoomListPage> {
+//   void _join(Room room, BuildContext context) async {
+//     if (room.membership != Membership.join) {
+//       await room.join();
+//     }
+//     Navigator.of(context).push(
+//       MaterialPageRoute(
+//         builder: (_) => RoomPage(room: room),
+//       ),
+//     );
+//   }
 
-  bool? _hasMoodleIntegration;
-  List<MoodleConversation>? _moodleConversations =
-      AngerApp.moodle.messaging.subject.valueWrapper?.value;
-  StreamSubscription? _moodleConvoStreamSub;
+//   bool? _hasMoodleIntegration;
+//   List<MoodleConversation>? _moodleConversations = AngerApp.moodle.messaging.subject.valueWrapper?.value;
+//   StreamSubscription? _moodleConvoStreamSub;
 
-  @override
-  void initState() {
-    super.initState();
+//   @override
+//   void initState() {
+//     super.initState();
 
-    if (AngerApp.moodle.login.creds.credentialsAvailable) {
-      setState(() {
-        _hasMoodleIntegration = true;
-      });
+//     if (AngerApp.moodle.login.creds.credentialsAvailable) {
+//       setState(() {
+//         _hasMoodleIntegration = true;
+//       });
 
-      _moodleConvoStreamSub = AngerApp.moodle.messaging.subject.listen((value) {
-        if (!mounted) {
-          _moodleConvoStreamSub?.cancel();
-          return;
-        }
-        setState(() {
-          logger
-              .v("[MoodleMatrixSubjectListener] got value " + value.toString());
-          _moodleConversations = value;
-        });
-      });
+//       _moodleConvoStreamSub = AngerApp.moodle.messaging.subject.listen((value) {
+//         if (!mounted) {
+//           _moodleConvoStreamSub?.cancel();
+//           return;
+//         }
+//         setState(() {
+//           logger.v("[MoodleMatrixSubjectListener] got value " + value.toString());
+//           _moodleConversations = value;
+//         });
+//       });
 
-      logger.v("Loading Moodle Convos");
-      AngerApp.moodle.messaging.getAllConversations().then((value) {
-        setState(() {
-          logger.v("[MoodleMatrix] got value " + value.toString());
-          _moodleConversations = value;
-        });
-      }).catchError((err) {
-        logger.e(err);
-      });
-    } else {
-      logger.v("no moodle creds");
-      setState(() {
-        _hasMoodleIntegration = false;
-      });
-    }
-  }
+//       logger.v("Loading Moodle Convos");
+//       AngerApp.moodle.messaging.getAllConversations().then((value) {
+//         setState(() {
+//           logger.v("[MoodleMatrix] got value " + value.toString());
+//           _moodleConversations = value;
+//         });
+//       }).catchError((err) {
+//         logger.e(err);
+//       });
+//     } else {
+//       logger.v("no moodle creds");
+//       setState(() {
+//         _hasMoodleIntegration = false;
+//       });
+//     }
+//   }
 
-  @override
-  void dispose() {
-    _moodleConvoStreamSub?.cancel();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     _moodleConvoStreamSub?.cancel();
+//     super.dispose();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    final client = Services.matrix.client;
+//   @override
+//   Widget build(BuildContext context) {
+//     final client = Services.matrix.client;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chats'),
-        actions: const [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: null,
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => _MatrixCreatePage()));
-        },
-      ),
-      body: StreamBuilder(
-          stream: client.onSync.stream,
-          builder: (context, _) {
-            debugPrint(_moodleConversations.toString());
-            debugPrint(client.rooms.toString());
-            List<dynamic> allConversations = [
-              ..._moodleConversations ?? <dynamic>[],
-              ...client.rooms
-            ];
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Chats'),
+//         actions: const [
+//           IconButton(
+//             icon: Icon(Icons.logout),
+//             onPressed: null,
+//           ),
+//         ],
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         child: Icon(Icons.add),
+//         onPressed: () {
+//           Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixCreatePage()));
+//         },
+//       ),
+//       body: StreamBuilder(
+//           stream: client.onSync.stream,
+//           builder: (context, _) {
+//             debugPrint(_moodleConversations.toString());
+//             debugPrint(client.rooms.toString());
+//             List<dynamic> allConversations = [..._moodleConversations ?? <dynamic>[], ...client.rooms];
 
-            allConversations.sort((a, b) {
-              late DateTime aDate;
-              late DateTime bDate;
+//             allConversations.sort((a, b) {
+//               late DateTime aDate;
+//               late DateTime bDate;
 
-              if (a is Room) {
-                aDate = a.lastEvent?.originServerTs ?? DateTime.now();
-              } else if (a is MoodleConversation) {
-                aDate = a.messages.first.timeCreated;
-              }
-              if (b is Room) {
-                bDate = b.lastEvent?.originServerTs ?? DateTime.now();
-              } else if (b is MoodleConversation) {
-                bDate = b.messages.first.timeCreated;
-              }
+//               if (a is Room) {
+//                 aDate = a.lastEvent?.originServerTs ?? DateTime.now();
+//               } else if (a is MoodleConversation) {
+//                 aDate = a.messages.first.timeCreated;
+//               }
+//               if (b is Room) {
+//                 bDate = b.lastEvent?.originServerTs ?? DateTime.now();
+//               } else if (b is MoodleConversation) {
+//                 bDate = b.messages.first.timeCreated;
+//               }
 
-              return bDate.millisecondsSinceEpoch -
-                  aDate.millisecondsSinceEpoch;
-            });
+//               return bDate.millisecondsSinceEpoch - aDate.millisecondsSinceEpoch;
+//             });
 
-            return ListView.builder(
-                itemCount: allConversations.length + 1,
-                itemBuilder: (context, i) {
-                  if (i == 0)
-                    return MoodlePromoCard(
-                      hasMoodleIntegration: _hasMoodleIntegration ?? true,
-                    );
-                  else {
-                    i = i - 1;
+//             return ListView.builder(
+//                 itemCount: allConversations.length + 1,
+//                 itemBuilder: (context, i) {
+//                   if (i == 0)
+//                     return MoodlePromoCard(
+//                       hasMoodleIntegration: _hasMoodleIntegration ?? true,
+//                     );
+//                   else {
+//                     i = i - 1;
 
-                    if (allConversations[i] is MoodleConversation) {
-                      final moodleConvo =
-                          allConversations[i] as MoodleConversation;
-                      return AngerApp.moodle.messaging
-                          .buildListTile(context, moodleConvo);
-                    } else if (allConversations[i] is Room) {
-                      final room = client.rooms.firstWhere((element) =>
-                          (allConversations[i] as Room).id == element.id);
-                      return Slidable(
-                        key: UniqueKey(),
-                        enabled: true,
-                        closeOnScroll: true,
-                        startActionPane: ActionPane(
-                          motion: DrawerMotion(),
+//                     if (allConversations[i] is MoodleConversation) {
+//                       final moodleConvo = allConversations[i] as MoodleConversation;
+//                       return AngerApp.moodle.messaging.buildListTile(context, moodleConvo);
+//                     } else if (allConversations[i] is Room) {
+//                       final room = client.rooms.firstWhere((element) => (allConversations[i] as Room).id == element.id);
+//                       return Slidable(
+//                         key: UniqueKey(),
+//                         enabled: true,
+//                         closeOnScroll: true,
+//                         startActionPane: ActionPane(
+//                           motion: DrawerMotion(),
 
-                          // All actions are defined in the children parameter.
-                          children: [
-                            // A SlidableAction can have an icon and/or a label.
-                            SlidableAction(
-                              onPressed: (context) {
-                                //TODO: Confirmation through user
-                                room.leave();
-                              },
-                              backgroundColor: Color(0xFFFE4A49),
-                              foregroundColor: Colors.white,
-                              icon: Icons.exit_to_app,
-                              label: 'Verlassen',
-                            ),
-                            SlidableAction(
-                              onPressed: (context) {
-                                room.markUnread(true);
-                              },
-                              autoClose: true,
-                              backgroundColor: Color(0xFF21B7CA),
-                              foregroundColor: Colors.white,
-                              icon: Icons.share,
-                              label: 'Ungelesen',
-                            ),
-                          ],
-                        ),
-                        child: ListTile(
-                          leading: Stack(children: [
-                            CircleAvatar(
-                              backgroundColor: Theme.of(context).cardColor,
-                              backgroundImage: room.avatar == null
-                                  ? null
-                                  : NetworkImage(room.avatar!
-                                      .getThumbnail(
-                                        client,
-                                        width: 56,
-                                        height: 56,
-                                      )
-                                      .toString()),
-                            ),
-                            Positioned(
-                              child: Text(
-                                "JSP",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w800, fontSize: 10),
-                              ),
-                              bottom: 0,
-                              right: 0,
-                            ),
-                          ]),
-                          onLongPress: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) {
-                                return Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextButton.icon(
-                                        onPressed: () {
-                                          room.markUnread(true);
-                                        },
-                                        icon: Icon(
-                                            Icons.mark_chat_unread_outlined),
-                                        label: Text("als ungelesen markieren"))
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                          title: Row(
-                            children: [
-                              Expanded(child: Text(room.displayname)),
-                              if (room.notificationCount > 0 || room.isUnread)
-                                Material(
-                                    borderRadius: BorderRadius.circular(99),
-                                    color: Colors.red,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: Text(room.notificationCount > 0
-                                          ? room.notificationCount.toString()
-                                          : "  "),
-                                    ))
-                            ],
-                          ),
-                          subtitle: Text(
-                            room.lastEvent?.body ?? "NO",
-                            maxLines: 1,
-                          ),
-                          onTap: () => _join(room, context),
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }
-                });
-          }),
-    );
-  }
-}
+//                           // All actions are defined in the children parameter.
+//                           children: [
+//                             // A SlidableAction can have an icon and/or a label.
+//                             SlidableAction(
+//                               onPressed: (context) {
+//                                 //TODO: Confirmation through user
+//                                 room.leave();
+//                               },
+//                               backgroundColor: Color(0xFFFE4A49),
+//                               foregroundColor: Colors.white,
+//                               icon: Icons.exit_to_app,
+//                               label: 'Verlassen',
+//                             ),
+//                             SlidableAction(
+//                               onPressed: (context) {
+//                                 room.markUnread(true);
+//                               },
+//                               autoClose: true,
+//                               backgroundColor: Color(0xFF21B7CA),
+//                               foregroundColor: Colors.white,
+//                               icon: Icons.share,
+//                               label: 'Ungelesen',
+//                             ),
+//                           ],
+//                         ),
+//                         child: ListTile(
+//                           leading: Stack(children: [
+//                             CircleAvatar(
+//                               backgroundColor: Theme.of(context).cardColor,
+//                               backgroundImage: room.avatar == null
+//                                   ? null
+//                                   : NetworkImage(room.avatar!
+//                                       .getThumbnail(
+//                                         client,
+//                                         width: 56,
+//                                         height: 56,
+//                                       )
+//                                       .toString()),
+//                             ),
+//                             Positioned(
+//                               child: Text(
+//                                 "JSP",
+//                                 style: TextStyle(fontWeight: FontWeight.w800, fontSize: 10),
+//                               ),
+//                               bottom: 0,
+//                               right: 0,
+//                             ),
+//                           ]),
+//                           onLongPress: () {
+//                             showModalBottomSheet(
+//                               context: context,
+//                               builder: (context) {
+//                                 return Column(
+//                                   mainAxisSize: MainAxisSize.min,
+//                                   crossAxisAlignment: CrossAxisAlignment.start,
+//                                   children: [
+//                                     TextButton.icon(
+//                                         onPressed: () {
+//                                           room.markUnread(true);
+//                                         },
+//                                         icon: Icon(Icons.mark_chat_unread_outlined),
+//                                         label: Text("als ungelesen markieren"))
+//                                   ],
+//                                 );
+//                               },
+//                             );
+//                           },
+//                           title: Row(
+//                             children: [
+//                               Expanded(child: Text(room.displayname)),
+//                               if (room.notificationCount > 0 || room.isUnread)
+//                                 Material(
+//                                     borderRadius: BorderRadius.circular(99),
+//                                     color: Colors.red,
+//                                     child: Padding(
+//                                       padding: const EdgeInsets.all(2.0),
+//                                       child: Text(room.notificationCount > 0 ? room.notificationCount.toString() : "  "),
+//                                     ))
+//                             ],
+//                           ),
+//                           subtitle: Text(
+//                             room.lastEvent?.body ?? "NO",
+//                             maxLines: 1,
+//                           ),
+//                           onTap: () => _join(room, context),
+//                         ),
+//                       );
+//                     } else {
+//                       return Container();
+//                     }
+//                   }
+//                 });
+//           }),
+//     );
+//   }
+// }
 
 class RoomPage extends StatefulWidget {
   final Room room;
@@ -412,10 +392,13 @@ class _RoomPageState extends State<RoomPage> {
     return Scaffold(
       appBar: AppBar(
         title: InkWell(
-          child: Text(widget.room.displayname),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [AngerApp.matrix.buildAvatar(context, widget.room.avatar, showLogo: false), SizedBox(width: 8), Text(widget.room.displayname)],
+          ),
           onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => _MatrixRoomInfo()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixRoomInfo()));
           },
         ),
       ),
@@ -436,9 +419,7 @@ class _RoomPageState extends State<RoomPage> {
                   return Column(
                     children: [
                       Center(
-                        child: TextButton(
-                            onPressed: timeline.requestHistory,
-                            child: const Text('Load more...')),
+                        child: TextButton(onPressed: timeline.requestHistory, child: const Text('Load more...')),
                       ),
                       const Divider(height: 1),
                       Expanded(
@@ -447,9 +428,7 @@ class _RoomPageState extends State<RoomPage> {
                           reverse: true,
                           initialItemCount: timeline.events.length,
                           itemBuilder: (context, i, animation) {
-                            return (timeline.events[i].relationshipEventId !=
-                                        null) &&
-                                    timeline.events[i].type != "m.room.message"
+                            return (timeline.events[i].relationshipEventId != null) && timeline.events[i].type != "m.room.message"
                                 ? Container()
                                 : _MatrixMessage(
                                     timeline: timeline,
@@ -470,6 +449,7 @@ class _RoomPageState extends State<RoomPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.attach_file)),
                   Expanded(
                       child: TextField(
                     maxLines: 8,
@@ -493,437 +473,12 @@ class _RoomPageState extends State<RoomPage> {
   }
 }
 
-class _MatrixMessage extends StatelessWidget {
-  const _MatrixMessage(
-      {Key? key,
-      required this.animation,
-      required this.event,
-      required this.timeline,
-      required this.room})
-      : super(key: key);
 
-  final Animation<double> animation;
-  final Event event;
-  final Timeline timeline;
-  final Room room;
 
-  @override
-  Widget build(BuildContext context) {
-    var id = Services.matrix.client.userID;
-    //TODO: Is there a better way?
-    var isSender = event.senderId == id;
 
-    final displayEvent = event.getDisplayEvent(timeline);
 
-    final events = timeline.events.where(
-        (element) => element.relationshipEventId == displayEvent.eventId);
 
-    logger.d(events);
 
-    final Color textColor = isSender
-        ? Theme.of(context).colorScheme.onSecondaryContainer
-        : Theme.of(context).colorScheme.onSurface;
-
-    room.postReceipt(displayEvent.eventId);
-
-    if (displayEvent.type == "m.room.message" ||
-        displayEvent.type == "org.matrix.msc3381.poll.start") {
-      return GestureDetector(
-        onLongPress: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              var encoder = new JsonEncoder.withIndent("     ");
-                              var text = encoder.convert(displayEvent.toJson());
-                              return Material(
-                                  child:
-                                      SingleChildScrollView(child: Text(text)));
-                            },
-                          );
-                        },
-                        icon: Icon(Icons.safety_check),
-                        label: Text("Debug"))
-                  ],
-                );
-              });
-        },
-        child: ScaleTransition(
-          scale: animation,
-          child: Opacity(
-            opacity: event.status.isSent ? 1 : 0.5,
-            child: ChatBubble(
-                margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                backGroundColor: isSender
-                    ? Theme.of(context).colorScheme.secondaryContainer
-                    : Theme.of(context).colorScheme.surface,
-                shadowColor: isSender
-                    ? Theme.of(context).colorScheme.secondary
-                    : Theme.of(context).colorScheme.shadow,
-                alignment: isSender ? Alignment.topRight : Alignment.topLeft,
-                clipper: ChatBubbleClipper4(
-                    type: isSender
-                        ? BubbleType.sendBubble
-                        : BubbleType.receiverBubble),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (!isSender) ...[
-                      Text(
-                        /*event.type +
-                                  " " +
-                                  displayEvent.messageType +
-                                  " " + */
-                        (displayEvent.sender.displayName ?? event.senderId),
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, color: textColor),
-                      ),
-                      SizedBox(height: 4),
-                    ],
-                    // Builder(
-                    //   builder: (context) {
-                    //     if (displayEvent.content["m.relates_to"]
-                    //             ?["m.in_reply_to"] !=
-                    //         null) {
-                    //       return _ChatBubbleReplyRenderer(event, timeline);
-                    //     } else {
-                    //       return Container();
-                    //     }
-                    //   },
-                    // ),
-                    Builder(
-                      builder: (context) {
-                        if (displayEvent.type == "m.room.message") {
-                          if (displayEvent.messageType == "m.text") {
-                            return Text(
-                              displayEvent.body,
-                              style: TextStyle(color: textColor),
-                            );
-                          }
-                          //TODO: m.notice
-                          else if (displayEvent.messageType == "m.image") {
-                            return ChatBubbleImageRenderer(event);
-                          } else if (displayEvent.messageType == "m.file") {
-                            return ChatBubbleFileRenderer(
-                                event, timeline, room);
-                          } else {
-                            return Text("Unbekannter Nachrichten-Typ");
-                          }
-                        } else if (displayEvent.type == "m.room.encrypted") {
-                          return Text("encrypted");
-                        }
-
-                        if (displayEvent.type ==
-                            "org.matrix.msc3381.poll.start") {
-                          return _ChatBubblePollRenderer(event, timeline, room);
-                        } else {
-                          return /*Text(displayEvent.type)*/ Container();
-                        }
-                      },
-                    ),
-                    SizedBox(height: 4),
-                    IntrinsicWidth(
-                      child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                time2string(event.originServerTs,
-                                    onlyTime: true),
-                                style: TextStyle(
-                                    fontSize: 10,
-                                    color: textColor.withAlpha(200)),
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                          ]),
-                    ),
-                    if (events.isNotEmpty)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: events
-                            .where((element) => element.type == "m.reaction")
-                            .map((e) {
-                          logger.d(e.toJson());
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            child: Chip(
-                              label: Text("1"),
-                              avatar: Text(
-                                e.content["m.relates_to"]["key"],
-                                style: TextStyle(color: textColor),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      )
-                  ],
-                )),
-          ),
-        ),
-      );
-    } else {
-      return Container();
-    }
-  }
-}
-
-class ChatBubbleImageRenderer extends StatefulWidget {
-  const ChatBubbleImageRenderer(this.event, {Key? key}) : super(key: key);
-
-  final Event event;
-
-  @override
-  State<ChatBubbleImageRenderer> createState() =>
-      _ChatBubbleImageRendererState();
-}
-
-class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<MatrixFile>(
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
-        } else if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator.adaptive(
-              valueColor: AlwaysStoppedAnimation(
-                  Theme.of(context).colorScheme.onPrimaryContainer),
-            ),
-          );
-        } else {
-          return GestureDetector(
-              onTap: () {
-                showImageViewer(
-                    context, Image.memory(snapshot.data!.bytes).image,
-                    doubleTapZoomable: true,
-                    swipeDismissible: true,
-                    immersive: false);
-                // context.pushTransparentRoute(_DismissableImage(
-                //     snapshot.data!.bytes, widget.event.eventId));
-              },
-              child: Hero(
-                  tag: widget.event.eventId,
-                  child: Image.memory(snapshot.data!.bytes)));
-        }
-      },
-      future: widget.event.downloadAndDecryptAttachment(),
-    );
-  }
-}
-
-class _DismissableImage extends StatelessWidget {
-  _DismissableImage(this.bytes, this.id);
-
-  final Uint8List bytes;
-  final String id;
-
-  @override
-  Widget build(BuildContext context) {
-    return DismissiblePage(
-      onDismissed: () {
-        Navigator.of(context).pop();
-      },
-      // Note that scrollable widget inside DismissiblePage might limit the functionality
-      // If scroll direction matches DismissiblePage direction
-      direction: DismissiblePageDismissDirection.multi,
-      isFullScreen: false,
-      child: Hero(
-        tag: id,
-        child: InteractiveViewer(
-            onInteractionEnd: (details) {},
-            maxScale: 10,
-            minScale: 0.5,
-            child: Image.memory(
-              bytes,
-              fit: BoxFit.contain,
-            )),
-      ),
-    );
-  }
-}
-
-class _ChatBubbleReplyRenderer extends StatelessWidget {
-  const _ChatBubbleReplyRenderer(this.event, this.timeline, {Key? key})
-      : super(key: key);
-
-  final Event event;
-  final Timeline timeline;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class _ChatBubblePollRenderer extends StatelessWidget {
-  const _ChatBubblePollRenderer(this.event, this.timeline, this.room,
-      {Key? key})
-      : super(key: key);
-
-  final Event event;
-  final Timeline timeline;
-  final Room room;
-
-  @override
-  Widget build(BuildContext context) {
-    final responseEvents = timeline.events
-        .where((elem) => elem.relationshipEventId == event.eventId);
-
-    logger.wtf("message: " +
-        responseEvents
-            .map(
-              (e) => e.content,
-            )
-            .toString());
-
-    Map<String, String> responsesByUsers = {};
-
-    String? userResponse;
-
-    for (var response in responseEvents) {
-      if (response.type != "org.matrix.msc3381.poll.response") continue;
-      final String responseAnswer = response
-              .content["org.matrix.msc3381.poll.response"]?["answers"]?[0] ??
-          "<ERROR>";
-      responsesByUsers[event.senderId] = responseAnswer;
-
-      logger.i("userId: " + (Services.matrix.client.userID ?? ""));
-      logger.i("event.senderId: " + response.senderId);
-
-      if (response.senderId == Services.matrix.client.userID) {
-        logger.wtf("I already polled");
-        userResponse = responseAnswer;
-      }
-    }
-
-    List<Map<String, String>> answers = [];
-
-    for (var answer
-        in ((event.content["org.matrix.msc3381.poll.start"]?["answers"] ?? [])
-            as List<dynamic>)) {
-      answers.add({answer["id"]: answer["org.matrix.msc1767.text"]});
-    }
-
-    return FlutterPolls(
-      pollId: event.eventId,
-      onVoted: (PollOption pollOption, int newTotalVotes) async {
-        print('Voted: ${pollOption.id}');
-        Map<String, dynamic> content = {
-          "org.matrix.msc3381.poll.response": {
-            "answers": [answers[pollOption.id!].keys.first]
-          },
-          "m.relates_to": {
-            "event_id": "${event.eventId}",
-            "rel_type": "m.reference"
-          }
-        };
-        logger.i(content.toString());
-        var resultResp = await room.sendEvent(content,
-            type: "org.matrix.msc3381.poll.response");
-
-        logger.i(resultResp);
-
-        return true;
-      },
-      hasVoted: userResponse != null,
-      userVotedOptionId:
-          answers.indexWhere((element) => element.keys.first == userResponse),
-      pollOptionsSplashColor: Colors.white,
-      votedProgressColor: Colors.green.withOpacity(0.3),
-      votedBackgroundColor: Colors.grey.withOpacity(0.2),
-      votesTextStyle: Theme.of(context).textTheme.subtitle1,
-      votedPercentageTextStyle: Theme.of(context).textTheme.headline4?.copyWith(
-            color: Colors.black,
-          ),
-      votedCheckmark: Icon(
-        Icons.check_circle,
-        color: Colors.black,
-        size: 18,
-      ),
-      pollTitle: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          event.content["org.matrix.msc3381.poll.start"]?["question"]
-                  ?["body"] ??
-              "",
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
-      ),
-      pollOptions: answers
-          .mapWithIndex<PollOption, Map<String, String>>(
-              (e, index) => PollOption(
-                    id: index,
-                    title: Text(
-                      e.values.first,
-                    ),
-                    votes: responsesByUsers.values
-                        .where((element) => element == (e.keys.first))
-                        .length,
-                  ))
-          .toList(),
-      metaWidget: Row(
-        children: [
-          const SizedBox(width: 6),
-          Text(
-            '•',
-            style: TextStyle(
-              fontSize: 20,
-            ),
-          ),
-          const SizedBox(
-            width: 6,
-          ),
-          Text(
-            '2 weeks left',
-            style: TextStyle(
-              fontSize: 20,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ChatBubbleFileRenderer extends StatefulWidget {
-  const ChatBubbleFileRenderer(this.event, this.timeline, this.room, {Key? key})
-      : super(key: key);
-
-  final Event event;
-  final Timeline timeline;
-  final Room room;
-
-  @override
-  State<ChatBubbleFileRenderer> createState() => _ChatBubbleFileRendererState();
-}
-
-class _ChatBubbleFileRendererState extends State<ChatBubbleFileRenderer> {
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-        onPressed: () {},
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [Icon(Icons.download), Text(widget.event.body)],
-        ));
-  }
-}
 
 
 

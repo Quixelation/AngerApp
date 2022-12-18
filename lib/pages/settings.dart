@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
+import 'package:anger_buddy/logic/messages/messages_settings.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -28,6 +29,7 @@ class _PageSettingsState extends State<PageSettings> {
       body: ListView(children: [
         ListTile(
           title: const Text("Farben"),
+          leading: Icon(Icons.color_lens_outlined),
           trailing: const Icon(Icons.keyboard_arrow_right),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
@@ -35,14 +37,24 @@ class _PageSettingsState extends State<PageSettings> {
         ),
         ListTile(
           title: const Text("Vertretungsplan"),
+          leading: Icon(Icons.switch_account_outlined),
           trailing: const Icon(Icons.keyboard_arrow_right),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const SettingsPageVertretung()));
           },
         ),
         ListTile(
+          title: const Text("Nachrichten"),
+          leading: Icon(Icons.messenger_outline),
+          trailing: const Icon(Icons.keyboard_arrow_right),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const MessageSettings()));
+          },
+        ),
+        ListTile(
           title: const Text("Benachrichtigungen"),
           trailing: const Icon(Icons.keyboard_arrow_right),
+          leading: Icon(Icons.notifications_outlined),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageNotificationSettings()));
           },
@@ -64,7 +76,9 @@ class _PageSettingsState extends State<PageSettings> {
                 _devToolsSwitch = act;
               });
             },
-            title: const Text('Entwickler-Menu')),
+            title: Row(
+              children: [Icon(Icons.developer_mode_outlined), SizedBox(width: 32), const Text('Entwickler-Menu')],
+            )),
       ]),
     );
   }

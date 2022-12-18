@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/jsp/jsp_loginpage.dart';
+import 'package:anger_buddy/logic/messages/messages_settings.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:flutter/material.dart';
@@ -127,7 +128,16 @@ class _MessagesListPageState extends State<MessagesListPage> {
     final showServiceIntegrationLogin = (_hasMatrixIntegration && !_hasMoodleIntegration) || (!_hasMatrixIntegration && _hasMoodleIntegration);
 
     return Scaffold(
-        appBar: AppBar(title: Text("Chats")),
+        appBar: AppBar(
+          title: Text("Chats"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MessageSettings()));
+                },
+                icon: Icon(Icons.settings))
+          ],
+        ),
         body: (_hasMatrixIntegration || _hasMoodleIntegration)
             ? ListView.separated(
                 itemCount: combinedList.length + (showServiceIntegrationLogin ? 1 : 0),
