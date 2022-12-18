@@ -30,7 +30,8 @@ class AppManager {
     CurrentClassManager.init(database);
   }
   static String directusUrl = (() {
-    final isRobertStuendlCom = uhtml.window.location.host.endsWith("robertstuendl.com");
+    final isRobertStuendlCom =
+        uhtml.window.location.host.endsWith("robertstuendl.com");
 
     if (kIsWeb) {
       if (kDebugMode) {
@@ -47,7 +48,8 @@ class AppManager {
     }
   })();
   static String apiUrl = (() {
-    final isRobertStuendlCom = uhtml.window.location.host.endsWith("robertstuendl.com");
+    final isRobertStuendlCom =
+        uhtml.window.location.host.endsWith("robertstuendl.com");
 
     if (kIsWeb) {
       if (kDebugMode || isRobertStuendlCom) {
@@ -113,6 +115,7 @@ class _tableNames {
   final String aushaenge = "aushaenge";
   final String aushaengeLastRead = "aushaengeLastRead";
   final String schwarzesBrett = "schwarzesBrett";
+  final String srNews = "srnews";
 
   List<String> get allTables {
     return [
@@ -129,7 +132,10 @@ class _tableNames {
       quickinfos,
       lessontimes,
       schwarzesBrett,
-      aushaenge
+      aushaenge,
+      aushaengeLastRead,
+      schwarzesBrett,
+      srNews
     ];
   }
 }
@@ -137,19 +143,25 @@ class _tableNames {
 class _stores {
   final vp = stringMapStoreFactory.store(AppManager.tables.vp);
   final ags = stringMapStoreFactory.store(AppManager.tables.ags);
-  final pinnedKlausuren = stringMapStoreFactory.store(AppManager.tables.pinnedKlausuren);
+  final pinnedKlausuren =
+      stringMapStoreFactory.store(AppManager.tables.pinnedKlausuren);
   final klausuren = stringMapStoreFactory.store(AppManager.tables.klausuren);
   final ferien = stringMapStoreFactory.store(AppManager.tables.ferien);
   final data = stringMapStoreFactory.store(AppManager.tables.data);
   final lastsync = stringMapStoreFactory.store(AppManager.tables.lastsync);
   final events = stringMapStoreFactory.store(AppManager.tables.events);
   final news = stringMapStoreFactory.store(AppManager.tables.news);
-  final fcmSubscriptions = stringMapStoreFactory.store(AppManager.tables.fcmSubscriptions);
+  final fcmSubscriptions =
+      stringMapStoreFactory.store(AppManager.tables.fcmSubscriptions);
   final quickinfos = stringMapStoreFactory.store(AppManager.tables.quickinfos);
-  final lessontimes = stringMapStoreFactory.store(AppManager.tables.lessontimes);
+  final lessontimes =
+      stringMapStoreFactory.store(AppManager.tables.lessontimes);
   final aushaenge = stringMapStoreFactory.store(AppManager.tables.aushaenge);
-  final aushaengeLastRead = stringMapStoreFactory.store(AppManager.tables.aushaengeLastRead);
-  final schwarzesBrett = stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
+  final aushaengeLastRead =
+      stringMapStoreFactory.store(AppManager.tables.aushaengeLastRead);
+  final schwarzesBrett =
+      stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
+  final srNews = stringMapStoreFactory.store(AppManager.tables.srNews);
 
   List<StoreRef> get allStores {
     return [
@@ -166,13 +178,19 @@ class _stores {
       quickinfos,
       lessontimes,
       aushaenge,
-      aushaengeLastRead
+      aushaengeLastRead,
+      schwarzesBrett,
+      srNews
     ];
   }
 }
 
 class _urlManager {
-  String _urlSwitcher({required String webUrl, required String appUrl, String? webDebugUrl, String? appDebugUrl}) {
+  String _urlSwitcher(
+      {required String webUrl,
+      required String appUrl,
+      String? webDebugUrl,
+      String? appDebugUrl}) {
     if (kIsWeb) {
       if (kDebugMode && webDebugUrl != null) {
         return webDebugUrl;
