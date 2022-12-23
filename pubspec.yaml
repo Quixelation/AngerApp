@@ -81,6 +81,7 @@ dependencies:
   easy_image_viewer: ^1.2.0
   flutter_slidable: ^2.0.0
   badges: ^2.0.3
+  sqlite_viewer: ^1.0.5
   # charts_painter: ^3.0.0
   # flutter_echarts: ^2.3.0
   # graphic: ^0.6.2

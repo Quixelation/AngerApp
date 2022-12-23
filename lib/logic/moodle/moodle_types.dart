@@ -53,6 +53,11 @@ class _MoodleMember {
         isBlocked = apiMap["isblocked"],
         isContact = apiMap["iscontact"],
         requiresContact = apiMap["requirescontact"];
+
+  @override
+  String toString() {
+    return "MoodleMember(id: $id, fullname: $fullname)";
+  }
 }
 
 class MoodleConversation {
@@ -107,7 +112,11 @@ class MoodleConversation {
         memberCount: memberCount,
         messages: messages,
         subname: subname);
-    ;
+  }
+
+  @override
+  String toString() {
+    return "MoodleConversation(id: $id, members: $members, messages: $messages)";
   }
 }
 

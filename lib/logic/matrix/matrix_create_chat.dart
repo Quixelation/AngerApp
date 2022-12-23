@@ -1,13 +1,13 @@
 part of matrix;
 
-class _MatrixCreatePage extends StatefulWidget {
-  const _MatrixCreatePage({Key? key}) : super(key: key);
+class MatrixCreatePage extends StatefulWidget {
+  const MatrixCreatePage({Key? key}) : super(key: key);
 
   @override
-  State<_MatrixCreatePage> createState() => __MatrixCreatePageState();
+  State<MatrixCreatePage> createState() => _MatrixCreatePageState();
 }
 
-class __MatrixCreatePageState extends State<_MatrixCreatePage> {
+class _MatrixCreatePageState extends State<MatrixCreatePage> {
   var groupNameController = TextEditingController();
   List<Profile> usersToAdd = [];
 
@@ -34,10 +34,8 @@ class __MatrixCreatePageState extends State<_MatrixCreatePage> {
         invite: usersToAdd.map((e) => e.userId).toList(),
       );
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => RoomPage(
-              room: AngerApp.matrix.client.rooms
-                  .firstWhere((element) => element.id == id))));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => RoomPage(room: AngerApp.matrix.client.rooms.firstWhere((element) => element.id == id))));
     } catch (err) {
       showDialog(
           context: context,
@@ -57,14 +55,13 @@ class __MatrixCreatePageState extends State<_MatrixCreatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Neuer Chat")),
+      appBar: AppBar(title: Text("Neuer JSP Chat")),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         children: [
           TextField(
             controller: groupNameController,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(), labelText: "Chat-Name"),
+            decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Chat-Name"),
           ),
           SizedBox(
             height: 32,
@@ -84,17 +81,14 @@ class __MatrixCreatePageState extends State<_MatrixCreatePage> {
                       return Text("Keine Benutzer gefunden");
                     },
                     textFieldConfiguration: TextFieldConfiguration(
-                      decoration:
-                          InputDecoration(labelText: "Teilnehmer suchen"),
+                      decoration: InputDecoration(labelText: "Teilnehmer suchen"),
                     ),
                     minCharsForSuggestions: 1,
                     suggestionsCallback: (pattern) => searchUser(pattern),
                     itemBuilder: (context, itemData) {
                       return ListTile(
                           title: Text(itemData.displayName ?? itemData.userId),
-                          subtitle: itemData.displayName == null
-                              ? null
-                              : Text(itemData.userId));
+                          subtitle: itemData.displayName == null ? null : Text(itemData.userId));
                     },
                     onSuggestionSelected: (suggestion) {
                       addUserToUsersToAdd(suggestion);

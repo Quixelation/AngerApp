@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/messages/messages_settings.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
@@ -9,6 +11,7 @@ import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/pages/notifications.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:flutter/material.dart';
+import 'package:sqlite_viewer/sqlite_viewer.dart';
 
 class PageSettings extends StatefulWidget {
   const PageSettings({Key? key}) : super(key: key);
@@ -33,6 +36,14 @@ class _PageSettingsState extends State<PageSettings> {
           trailing: const Icon(Icons.keyboard_arrow_right),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
+          },
+        ),
+        ListTile(
+          title: const Text("Startseite"),
+          leading: Icon(Icons.home_outlined),
+          trailing: const Icon(Icons.keyboard_arrow_right),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => HomepageSettingsPage()));
           },
         ),
         ListTile(
@@ -68,6 +79,14 @@ class _PageSettingsState extends State<PageSettings> {
         //   },
         // ),
         const Divider(),
+        ListTile(
+          title: const Text("Datenbank-Einsicht"),
+          trailing: const Icon(Icons.keyboard_arrow_right),
+          leading: Icon(Icons.table_rows),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => DatabaseList(dbPath: dbDir)));
+          },
+        ),
         SwitchListTile.adaptive(
             value: _devToolsSwitch,
             onChanged: (act) {

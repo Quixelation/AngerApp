@@ -17,6 +17,7 @@ import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import "package:http/http.dart" as http;
 import 'package:motion/motion.dart';
 import 'package:rxdart/subjects.dart';
@@ -29,6 +30,7 @@ part "moodle_http.dart";
 part "moodle_creds.dart";
 part "moodle_convo_page.dart";
 part "moodle_contacts.dart";
+part "moodle_create_chat.dart";
 
 class Moodle {
   late final _MoodleLogin login;
@@ -287,10 +289,7 @@ class _MoodleMessaging {
   }
 
   /// Only supports instant messages to 1 user!
-  Future<MoodleMessage> sendInstantMessage({
-    required int userId,
-    required String text,
-  }) async {
+  Future<MoodleMessage> sendInstantMessage({required int userId, required String text, bool doSubjectChange = true}) async {
     var response = await _moodleRequest(includeUserId: false, function: "core_message_send_instant_messages", parameters: {
       "messages[0][touserid]": userId.toString(),
       "messages[0][text]": text,
@@ -308,37 +307,12 @@ class _MoodleMessaging {
         timeCreated: DateTime.fromMillisecondsSinceEpoch(data["timecreated"] * 1000),
         userIdFrom: data["useridfrom"]);
 
-    var copy = subject.valueWrapper?.value ?? [];
-    copy.firstWhere((element) => element.id == data["conversationid"]).messages.insert(0, sentMsg);
-    subject.add(copy);
+    if (doSubjectChange) {
+      var copy = subject.valueWrapper?.value ?? [];
+      copy.firstWhere((element) => element.id == data["conversationid"]).messages.insert(0, sentMsg);
+      subject.add(copy);
+    }
 
     return sentMsg;
-  }
-
-  Future<List<_MoodleMember>> searchUsers(String searchQuery) async {
-    final token = _login.creds.subject.valueWrapper!.value!.token;
-    final userId = _login.creds.subject.valueWrapper!.value!.userId;
-
-    if (token == null) {
-      throw ErrorDescription("No user token");
-    } else if (userId == null) {
-      throw ErrorDescription("no user id");
-    }
-
-    var response = await http.get(Uri.parse(AppManager.moodleApi +
-        "?userid=$userId&wstoken=$token&wsfunction=core_message_message_search_users&moodlewsrestformat=json&search=${Uri.encodeComponent(searchQuery)}"));
-
-    if (response.statusCode != 200) {
-      throw ErrorDescription("Status ain't 200");
-    }
-
-    var json = jsonDecode(response.body);
-
-    List<_MoodleMember> peopleList = [];
-
-    peopleList.addAll((json["contacts"] as List<Map<String, dynamic>>).map(_MoodleMember.fromApi));
-    peopleList.addAll((json["noncontacts"] as List<Map<String, dynamic>>).map(_MoodleMember.fromApi));
-
-    return peopleList;
   }
 }

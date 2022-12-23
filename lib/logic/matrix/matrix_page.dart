@@ -376,7 +376,10 @@ class _RoomPageState extends State<RoomPage> {
     });
 
     widget.room.markUnread(false);
-
+    _timelineFuture.then((value) {
+      widget.room.setReadMarker(value.events.last.eventId);
+      widget.room.postReceipt(value.events.last.eventId);
+    });
     super.initState();
   }
 
@@ -446,9 +449,17 @@ class _RoomPageState extends State<RoomPage> {
             ),
             const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
                 children: [
+                  IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => _MatrixCreatePollPage(
+                                  room: widget.room,
+                                )));
+                      },
+                      icon: Icon(Icons.ballot_outlined)),
                   IconButton(onPressed: () {}, icon: Icon(Icons.attach_file)),
                   Expanded(
                       child: TextField(

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/jsp/jsp_loginpage.dart';
+import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/messages/messages_settings.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/utils/logger.dart';
@@ -137,6 +138,45 @@ class _MessagesListPageState extends State<MessagesListPage> {
                 },
                 icon: Icon(Icons.settings))
           ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add_comment_outlined),
+          onPressed: () {
+            showModalBottomSheet(
+                context: context,
+                builder: (context) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
+                          child: Text(
+                            "Wähle einen Service aus",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        //TODO: Only show enabled Services
+                        ListTile(
+                          title: Text("JSP-Matrix"),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => MatrixCreatePage()));
+                          },
+                        ),
+                        ListTile(
+                          title: Text("Moodle"),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoodleCreateChatPage()));
+                          },
+                        ),
+                      ],
+                    ));
+          },
         ),
         body: (_hasMatrixIntegration || _hasMoodleIntegration)
             ? ListView.separated(

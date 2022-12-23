@@ -36,248 +36,258 @@ class PageHome extends StatefulWidget {
 }
 
 class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
-  late TabController _tabController;
+  int selectedPageIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: BottomAppBar(
-            color: Theme.of(context).colorScheme.tertiary,
-            child: TabBar(controller: _tabController, tabs: [
-              Tab(icon: Icon(Icons.home_rounded)),
-              Tab(
-                icon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.chat),
-                    SizedBox(width: 4),
-                    Chip(
-                      label: Text("Beta"),
-                      visualDensity: VisualDensity.compact,
-                    )
-                  ],
-                ),
-              )
-            ])),
-        body: TabBarView(controller: _tabController, children: [
-          Scaffold(
-            floatingActionButton: FloatingActionButton.extended(
-                label: const Text("Vertretungsplan"),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PageVp()));
+        bottomNavigationBar: AngerApp.homepage.settings.useNavBar
+            ? NavigationBar(
+                // backgroundColor: Theme.of(context).colorScheme.primaryContainer.withAlpha(25),
+                // surfaceTintColor: Colors.red,
+                // elevation: 25,
+                selectedIndex: selectedPageIndex,
+                onDestinationSelected: (value) {
+                  setState(() {
+                    selectedPageIndex = value;
+                  });
                 },
-                icon: const Icon(Icons.switch_account_rounded)),
-            body: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  leading: kIsWeb && MediaQuery.of(context).size.width > 900
-                      ? null
-                      : IconButton(
-                          iconSize: 26,
-                          icon: const Icon(Icons.menu),
-                          onPressed: () {
-                            getIt.get<AppManager>().mainScaffoldState.currentState!.openDrawer();
-                          },
-                        ),
-                  actions: [
-                    IconButton(
-                      iconSize: 26,
-                      icon: const Icon(Icons.notifications),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            kIsWeb
-                                ? PageRouteBuilder(
-                                    pageBuilder: (context, animation, secondaryAnimation) => const PageNotificationSettings(),
-                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                      // const begin = Offset(0.0, 1.0);
-                                      const begin = Offset.zero;
-                                      const end = Offset.zero;
-                                      const curve = Curves.ease;
+                destinations: [
+                  NavigationDestination(icon: Icon(Icons.home_outlined), label: "App"),
+                  NavigationDestination(icon: Icon(Icons.messenger_outline), label: "Chats")
+                ],
+              )
+            : null,
+        body: [_HomePageContent(), MessagesListPage()][selectedPageIndex]);
+  }
+}
 
-                                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+abstract class _HideableStatefulWidget extends StatefulWidget {
+  bool show = false;
+}
 
-                                      return SlideTransition(
-                                        position: animation.drive(tween),
-                                        child: child,
-                                      );
-                                    },
-                                  )
-                                : MaterialPageRoute(builder: (context) => const PageNotificationSettings()));
-                      },
-                    ),
-                  ],
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    stretchModes: const [StretchMode.zoomBackground],
-                    background: Container(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                    ),
-                    // collapseMode: CollapseMode.pin,
-                    title: Text(
-                      "Anger",
-                      style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
-                    ),
+class _HomePageContent extends StatelessWidget {
+  const _HomePageContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // floatingActionButton: FloatingActionButton.extended(
+      //     label: const Text("Vertretungsplan"),
+      //     onPressed: () {
+      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const PageVp()));
+      //     },
+      //     icon: const Icon(Icons.switch_account_rounded)),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            leading: kIsWeb && MediaQuery.of(context).size.width > 900
+                ? null
+                : IconButton(
+                    iconSize: 26,
+                    icon: const Icon(Icons.menu),
+                    onPressed: () {
+                      getIt.get<AppManager>().mainScaffoldState.currentState!.openDrawer();
+                    },
                   ),
-                  expandedHeight: 150,
+            actions: [
+              IconButton(
+                iconSize: 26,
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      kIsWeb
+                          ? PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) => const PageNotificationSettings(),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                // const begin = Offset(0.0, 1.0);
+                                const begin = Offset.zero;
+                                const end = Offset.zero;
+                                const curve = Curves.ease;
+
+                                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
+                            )
+                          : MaterialPageRoute(builder: (context) => const PageNotificationSettings()));
+                },
+              ),
+            ],
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const [StretchMode.zoomBackground],
+              background: Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              // collapseMode: CollapseMode.pin,
+              title: Text(
+                "Anger",
+                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+              ),
+            ),
+            expandedHeight: 150,
+          ),
+          SliverList(
+              delegate: SliverChildListDelegate([
+            const _QuickInfosList(),
+            const WelcomeText(),
+            const SizedBox(height: 16),
+            // ResponseHomeLayout([
+            //   const FerienCard(),
+
+            //   // const Padding(
+            //   //   padding: EdgeInsets.symmetric(horizontal: 8.0),
+            //   //   child: VpHomeWidget(),
+            //   // ),
+            //   // const SizedBox(height: 4),
+            //   Flexible(child: _PinnedKlausurenList()),
+            //   const EventsThisWeek(),
+            //   const _NewsCard(),
+
+            //   const _ServerStatusWidget(),
+            // ]),
+
+            /// -> kleine Bildschirmgröße: 1 Spalte
+            if (MediaQuery.of(context).size.width < 1080)
+              Flex(direction: Axis.vertical, crossAxisAlignment: CrossAxisAlignment.start, children: const [
+                // SchwarzesBrettHome(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: FerienCard(),
                 ),
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  const _QuickInfosList(),
-                  const WelcomeText(),
-                  const SizedBox(height: 16),
-                  // ResponseHomeLayout([
-                  //   const FerienCard(),
-
-                  //   // const Padding(
-                  //   //   padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  //   //   child: VpHomeWidget(),
-                  //   // ),
-                  //   // const SizedBox(height: 4),
-                  //   Flexible(child: _PinnedKlausurenList()),
-                  //   const EventsThisWeek(),
-                  //   const _NewsCard(),
-
-                  //   const _ServerStatusWidget(),
-                  // ]),
-
-                  /// -> kleine Bildschirmgröße: 1 Spalte
-                  if (MediaQuery.of(context).size.width < 1080)
-                    Flex(direction: Axis.vertical, crossAxisAlignment: CrossAxisAlignment.start, children: const [
-                      // SchwarzesBrettHome(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                        child: FerienCard(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                        child: MatrixHomepageQuicklook(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                        child: VpWidget(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                        child: AushangHomepageWidget(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                        child: _PinnedKlausurenList(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                        child: EventsThisWeek(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                        child: _NewsCard(),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                        child: OpenSenseOverviewWidget(),
-                      ), /*
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: MatrixHomepageQuicklook(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: VpWidget(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: AushangHomepageWidget(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: _PinnedKlausurenList(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: EventsThisWeek(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: _NewsCard(),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                  child: OpenSenseOverviewWidget(),
+                ), /*
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                       child: const _ServerStatusWidget(),
                     ),*/
-                    ])
+              ])
 
-                  /// TODO: Add Schwarzes Brett zu mittel und groß
-                  /// -> mittlere Bildschirmgröße: 2 Spalten
-                  else if (MediaQuery.of(context).size.width < 1600)
-                    Flex(
+            /// TODO: Add Schwarzes Brett zu mittel und groß
+            /// -> mittlere Bildschirmgröße: 2 Spalten
+            else if (MediaQuery.of(context).size.width < 1600)
+              Flex(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: Flex(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Padding(padding: EdgeInsets.all(8), child: FerienCard()),
-                                Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child:
-                                        EventsThisWeek()), /*
+                        children: const [
+                          Padding(padding: EdgeInsets.all(8), child: FerienCard()),
+                          Padding(
+                              padding: EdgeInsets.all(8),
+                              child:
+                                  EventsThisWeek()), /*
                           Padding(
                               padding: EdgeInsets.all(8),
                               child: const _ServerStatusWidget())*/
-                              ],
-                              direction: Axis.vertical,
-                            ),
+                        ],
+                        direction: Axis.vertical,
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Flex(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: _PinnedKlausurenList(),
                           ),
-                          Flexible(
-                            flex: 1,
-                            child: Flex(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: _PinnedKlausurenList(),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: _NewsCard(),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: OpenSenseOverviewWidget(),
-                                ),
-                                // SchwarzesBrettHome(),
-                              ],
-                              direction: Axis.vertical,
-                            ),
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: _NewsCard(),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: OpenSenseOverviewWidget(),
+                          ),
+                          // SchwarzesBrettHome(),
+                        ],
+                        direction: Axis.vertical,
+                      ),
+                    ),
+                  ],
+                  direction: Axis.horizontal)
+
+            /// -> große Bildschirmgröße: 3 Spalten
+            else
+              Flex(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Flex(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: FerienCard(),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: _NewsCard(),
                           ),
                         ],
-                        direction: Axis.horizontal)
-
-                  /// -> große Bildschirmgröße: 3 Spalten
-                  else
-                    Flex(
+                        direction: Axis.vertical,
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: Flex(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: FerienCard(),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: _NewsCard(),
-                                ),
-                              ],
-                              direction: Axis.vertical,
-                            ),
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: _PinnedKlausurenList(),
                           ),
-                          Flexible(
-                            flex: 1,
-                            child: Flex(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: _PinnedKlausurenList(),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: EventsThisWeek(),
-                                ),
-                              ],
-                              direction: Axis.vertical,
-                            ),
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: EventsThisWeek(),
                           ),
-                          /*
+                        ],
+                        direction: Axis.vertical,
+                      ),
+                    ),
+                    /*
                     Flexible(
                       flex: 1,
                       child: Flex(
@@ -291,9 +301,9 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                         direction: Axis.vertical,
                       ),
                     ),*/
-                        ],
-                        direction: Axis.horizontal),
-                  /*  ResponsiveGridList(
+                  ],
+                  direction: Axis.horizontal),
+            /*  ResponsiveGridList(
               minSpacing: 10,
               desiredItemWidth: 400,
               children: (() {
@@ -325,89 +335,12 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
               })(),
               scroll: false,
             ),*/
-                  const SizedBox(height: 16),
-                ])),
-              ],
-            ),
-          ),
-          MessagesListPage()
-          // CustomScrollView(
-          //   slivers: [
-          //     SliverAppBar(
-          //       leading: kIsWeb && MediaQuery.of(context).size.width > 900
-          //           ? null
-          //           : IconButton(
-          //               iconSize: 26,
-          //               icon: const Icon(Icons.menu),
-          //               onPressed: () {
-          //                 getIt
-          //                     .get<AppManager>()
-          //                     .mainScaffoldState
-          //                     .currentState!
-          //                     .openDrawer();
-          //               },
-          //             ),
-          //       actions: [
-          //         IconButton(
-          //           iconSize: 26,
-          //           icon: const Icon(Icons.notifications),
-          //           onPressed: () {
-          //             Navigator.push(
-          //                 context,
-          //                 kIsWeb
-          //                     ? PageRouteBuilder(
-          //                         pageBuilder: (context, animation,
-          //                                 secondaryAnimation) =>
-          //                             const PageNotificationSettings(),
-          //                         transitionsBuilder: (context, animation,
-          //                             secondaryAnimation, child) {
-          //                           // const begin = Offset(0.0, 1.0);
-          //                           const begin = Offset.zero;
-          //                           const end = Offset.zero;
-          //                           const curve = Curves.ease;
-
-          //                           var tween = Tween(begin: begin, end: end)
-          //                               .chain(CurveTween(curve: curve));
-
-          //                           return SlideTransition(
-          //                             position: animation.drive(tween),
-          //                             child: child,
-          //                           );
-          //                         },
-          //                       )
-          //                     : MaterialPageRoute(
-          //                         builder: (context) =>
-          //                             const PageNotificationSettings()));
-          //           },
-          //         ),
-          //       ],
-          //       pinned: true,
-          //       flexibleSpace: FlexibleSpaceBar(
-          //         stretchModes: const [StretchMode.zoomBackground],
-          //         background: Container(
-          //           color: Theme.of(context).colorScheme.primaryContainer,
-          //         ),
-          //         // collapseMode: CollapseMode.pin,
-          //         title: Text(
-          //           "Nachrichten",
-          //           style: TextStyle(
-          //               color: Theme.of(context).colorScheme.onBackground),
-          //         ),
-          //       ),
-          //       expandedHeight: 150,
-          //     ),
-          //     SliverList(
-          //         delegate: SliverChildListDelegate([
-          //       const SizedBox(height: 16),
-          //     ])),
-          //   ],
-          // ),
-        ]));
+            const SizedBox(height: 16),
+          ])),
+        ],
+      ),
+    );
   }
-}
-
-abstract class _HideableStatefulWidget extends StatefulWidget {
-  bool show = false;
 }
 
 class WelcomeText extends StatefulWidget {

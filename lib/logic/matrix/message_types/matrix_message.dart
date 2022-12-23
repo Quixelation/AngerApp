@@ -16,15 +16,14 @@ class _MatrixMessage extends StatelessWidget {
 
     final displayEvent = event.getDisplayEvent(timeline);
 
-    final events = timeline.events.where((element) => element.relationshipEventId == displayEvent.eventId);
+    final relatedEvents = timeline.events.where((element) => element.relationshipEventId == displayEvent.eventId);
 
-    logger.d(events);
+    logger.d(relatedEvents);
 
     final Color textColor = isSender ? Theme.of(context).colorScheme.onSecondaryContainer : Theme.of(context).colorScheme.onSurface;
 
-    room.postReceipt(displayEvent.eventId);
-
-    if (displayEvent.type == "m.room.message" || displayEvent.type == "org.matrix.msc3381.poll.start") {
+    if ((displayEvent.type == "m.room.message" || displayEvent.type == "org.matrix.msc3381.poll.start") &&
+        ((displayEvent.relationshipType ?? "") != "m.replace")) {
       return GestureDetector(
         behavior: HitTestBehavior.opaque,
         onLongPress: () {
@@ -113,7 +112,7 @@ class _MatrixMessage extends StatelessWidget {
                         }
 
                         if (displayEvent.type == "org.matrix.msc3381.poll.start") {
-                          return _ChatBubblePollRenderer(event, timeline, room);
+                          return ChatBubblePollRendererV2(event, timeline, room);
                         } else {
                           return /*Text(displayEvent.type)*/ Container();
                         }
@@ -122,19 +121,28 @@ class _MatrixMessage extends StatelessWidget {
                     SizedBox(height: 4),
                     IntrinsicWidth(
                       child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [
-                        Expanded(
-                          child: Text(
-                            time2string(event.originServerTs, onlyTime: true),
-                            style: TextStyle(fontSize: 10, color: textColor.withAlpha(200)),
-                            textAlign: TextAlign.right,
-                          ),
+                        Text(
+                          time2string(event.originServerTs, onlyTime: true),
+                          style: TextStyle(fontSize: 10, color: textColor.withAlpha(200)),
+                          textAlign: TextAlign.right,
                         ),
+                        if (relatedEvents.where((element) {
+                              logger.d(element.relationshipEventId.toString() +
+                                  " (${element.body}) " +
+                                  " zu " +
+                                  displayEvent.eventId +
+                                  " (" +
+                                  displayEvent.body +
+                                  ")");
+                              return (element.relationshipType ?? "") == "m.replace";
+                            }).length >
+                            0) ...[SizedBox(width: 4), Text("(bearbeitet)", style: TextStyle(fontSize: 10, color: textColor.withAlpha(200)))],
                       ]),
                     ),
-                    if (events.isNotEmpty)
+                    if (relatedEvents.isNotEmpty)
                       Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: events.where((element) => element.type == "m.reaction").map((e) {
+                        children: relatedEvents.where((element) => element.type == "m.reaction").map((e) {
                           logger.d(e.toJson());
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 2),

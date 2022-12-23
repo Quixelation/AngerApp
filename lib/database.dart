@@ -11,21 +11,25 @@ import 'package:sembast_sqflite/sembast_sqflite.dart';
 import 'package:sembast_web/sembast_web.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
+String? dbDir;
+String? dbPath;
+
 Future<Database> openDB() async {
   DatabaseFactory dbFactory;
-  var dbPath;
+
   if (kIsWeb) {
     dbPath = 'angergymnasiumappdatabase.db';
     dbFactory = databaseFactoryWeb;
   } else {
     var dir = await getApplicationDocumentsDirectory();
     await dir.create(recursive: true);
+    dbDir = dir.path;
     dbPath = join(dir.path, 'angergymnasiumappdatabase.db');
     dbFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
   }
+
 // We use the database factory to open the database
-  Database db =
-      await dbFactory.openDatabase(dbPath, mode: DatabaseMode.neverFails);
+  Database db = await dbFactory.openDatabase(dbPath!, mode: DatabaseMode.neverFails);
 
   return db;
 }

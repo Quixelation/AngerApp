@@ -1,4 +1,10 @@
-String time2string(DateTime dateTime, {bool includeWeekday = false, bool useStringMonth = true, bool onlyTime = false, bool onlyWeekday = false, bool includeTime = false}) {
+String time2string(DateTime dateTime,
+    {bool includeWeekday = false,
+    bool useStringMonth = true,
+    bool onlyTime = false,
+    bool onlyWeekday = false,
+    bool includeTime = false,
+    bool showSeconds = false}) {
   if (onlyWeekday) {
     assert(onlyTime == false);
   } else if (onlyTime) {
@@ -90,6 +96,9 @@ String time2string(DateTime dateTime, {bool includeWeekday = false, bool useStri
   var timeString = "";
   if (includeTime || onlyTime) {
     timeString = " ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}";
+    if (showSeconds) {
+      timeString += ":${dateTime.second.toString().padLeft(2, "0")}";
+    }
   }
 
   if (onlyTime) {

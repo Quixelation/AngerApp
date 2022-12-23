@@ -55,6 +55,7 @@ part "message_types/matrix_message.dart";
 part "message_types/poll_message.dart";
 part "message_types/reply_message.dart";
 part "message_types/geo_message.dart";
+part "matrix_create_poll_page.dart";
 
 DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 

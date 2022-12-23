@@ -2,6 +2,7 @@ import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
 import 'package:anger_buddy/logic/files/files.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
@@ -30,6 +31,7 @@ class _ServicesManager {
   final portalLinks = UniventionLinks();
   final credentials = Credentials;
   final moodle = Moodle();
+  final homepage = HomepageManager();
 
   Future<void> init() async {
     await Future.wait([
@@ -40,7 +42,8 @@ class _ServicesManager {
       klausuren.init(),
       vp.init(),
       matrix.init(),
-      moodle.login.creds.init()
+      moodle.login.creds.init(),
+      homepage.init()
       // mail.init(),
     ]);
   }

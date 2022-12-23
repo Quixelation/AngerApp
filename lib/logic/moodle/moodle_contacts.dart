@@ -6,6 +6,7 @@ class _MoodleContacts {
   _MoodleContacts({required this.login});
 
   Future<List<_MoodleMember>> searchMembersByName(String query) async {
+    logger.d("Starting searchUser Request for $query");
     var response = await _moodleRequest(function: "core_message_message_search_users", parameters: {"search": query});
 
     if (response.hasError) {
@@ -21,7 +22,7 @@ class _MoodleContacts {
       ...nonContactsRaw.map((e) => _MoodleMember.fromApi(e)),
     ];
 
-    logger.d(list);
+    logger.d("searchUser Query Result" + list.toString());
     return list;
   }
 }
