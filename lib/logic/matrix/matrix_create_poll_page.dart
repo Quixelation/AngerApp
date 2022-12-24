@@ -10,8 +10,8 @@ class _MatrixCreatePollPage extends StatefulWidget {
 }
 
 class __MatrixCreatePollPageState extends State<_MatrixCreatePollPage> {
-  TextEditingController _pollNameController = TextEditingController();
-  List<TextEditingController> _pollOptions = [TextEditingController()];
+  final TextEditingController _pollNameController = TextEditingController();
+  final List<TextEditingController> _pollOptions = [TextEditingController()];
 
   void addOption() {
     setState(() {
@@ -26,7 +26,7 @@ class __MatrixCreatePollPageState extends State<_MatrixCreatePollPage> {
         "question": {"body": _pollNameController.text, "msgtype": "m.text", "org.matrix.msc1767.text": _pollNameController.text},
         "kind": "org.matrix.msc3381.poll.disclosed",
         "max_selections": 1,
-        "answers": _pollOptions.map((e) => {"org.matrix.msc1767.text": e.text, "id": uuid.Uuid().v4()}).toList()
+        "answers": _pollOptions.map((e) => {"org.matrix.msc1767.text": e.text, "id": const uuid.Uuid().v4()}).toList()
       }
     }, type: "org.matrix.msc3381.poll.start");
     logger.d("Sent Poll with id $generatedEventId");
@@ -36,13 +36,13 @@ class __MatrixCreatePollPageState extends State<_MatrixCreatePollPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Abstimmung erstellen")),
-      body: ListView(padding: EdgeInsets.all(16), children: [
+      appBar: AppBar(title: const Text("Abstimmung erstellen")),
+      body: ListView(padding: const EdgeInsets.all(16), children: [
         TextField(
           controller: _pollNameController,
-          decoration: InputDecoration(label: Text("Titel"), border: OutlineInputBorder()),
+          decoration: const InputDecoration(label: Text("Titel"), border: OutlineInputBorder()),
         ),
-        SizedBox(
+        const SizedBox(
           height: 16,
         ),
         for (var option in _pollOptions) pollOptionField(optionTextController: option),
@@ -50,15 +50,15 @@ class __MatrixCreatePollPageState extends State<_MatrixCreatePollPage> {
             onPressed: () {
               addOption();
             },
-            child: Text("Option hinzufügen")),
-        SizedBox(
+            child: const Text("Option hinzufügen")),
+        const SizedBox(
           height: 32,
         ),
         ElevatedButton(
             onPressed: () {
               sendPoll(context);
             },
-            child: Text("Abstimmung absenden"))
+            child: const Text("Abstimmung absenden"))
       ]),
     );
   }
@@ -68,7 +68,7 @@ class __MatrixCreatePollPageState extends State<_MatrixCreatePollPage> {
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: TextField(
         controller: optionTextController,
-        decoration: InputDecoration(label: Text("Options-Text"), border: OutlineInputBorder()),
+        decoration: const InputDecoration(label: Text("Options-Text"), border: OutlineInputBorder()),
       ),
     );
   }

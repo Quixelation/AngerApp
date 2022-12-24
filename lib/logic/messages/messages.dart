@@ -1,12 +1,20 @@
-/// IN DEVELOPMENT
-
 library messages;
 
+import 'dart:async';
+import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/logic/jsp/jsp_loginpage.dart';
+import 'package:anger_buddy/logic/matrix/matrix.dart';
+import 'package:anger_buddy/logic/moodle/moodle.dart';
+import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import "package:anger_buddy/extensions.dart";
 import 'package:flutter_html/flutter_html.dart';
+import 'package:matrix/matrix.dart';
+
+part "messages_page.dart";
+part "messages_settings.dart";
 
 abstract class MessageService<M extends Message, C extends Conversation> {
   abstract final String name;
@@ -52,7 +60,7 @@ class DefaultMessageListTile extends StatelessWidget {
         onTap: onTap,
         trailing: hasUnread
             ? Badge(
-                padding: EdgeInsets.all(6),
+                padding: const EdgeInsets.all(6),
                 badgeColor: Theme.of(context).colorScheme.primary,
                 badgeContent: Text(
                   unreadCount == 0 ? " " : unreadCount.toString(),
@@ -72,7 +80,7 @@ class DefaultMessageListTile extends StatelessWidget {
               child: Text(
                 datetime == null
                     ? ""
-                    : (datetime!.millisecondsSinceEpoch > DateTime.now().at0.subtract(Duration(seconds: 1)).millisecondsSinceEpoch
+                    : (datetime!.millisecondsSinceEpoch > DateTime.now().at0.subtract(const Duration(seconds: 1)).millisecondsSinceEpoch
                         ? time2string(datetime!, onlyTime: true)
                         : (DateTime.now().at0.difference(datetime!).inDays <= 6
                             ? time2string(datetime!, includeTime: false, onlyWeekday: true)
@@ -81,7 +89,7 @@ class DefaultMessageListTile extends StatelessWidget {
                                 includeTime: false,
                                 useStringMonth: false,
                               ))),
-                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
               ),
             )
           ],
@@ -93,8 +101,8 @@ class DefaultMessageListTile extends StatelessWidget {
             style: {
               '#': Style(
                 fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
-                padding: EdgeInsets.all(0),
-                margin: EdgeInsets.all(0),
+                padding: const EdgeInsets.all(0),
+                margin: const EdgeInsets.all(0),
                 maxLines: 2,
                 textOverflow: TextOverflow.ellipsis,
               ),
@@ -102,6 +110,5 @@ class DefaultMessageListTile extends StatelessWidget {
           ),
         ),
         leading: avatar);
-    ;
   }
 }

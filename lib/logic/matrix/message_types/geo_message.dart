@@ -20,11 +20,11 @@ class ChatBubbleLocationRenderer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(Icons.map_outlined),
-            SizedBox(
+            const Icon(Icons.map_outlined),
+            const SizedBox(
               width: 8,
             ),
-            Text("In Google-Maps öffnen"),
+            const Text("In Google-Maps öffnen"),
             // SizedBox(
             //   width: 8,
             // ),

@@ -1,16 +1,4 @@
-import 'dart:async';
-
-import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/logic/jsp/jsp_loginpage.dart';
-import 'package:anger_buddy/logic/matrix/matrix.dart';
-import 'package:anger_buddy/logic/messages/messages_settings.dart';
-import 'package:anger_buddy/logic/moodle/moodle.dart';
-import 'package:anger_buddy/utils/logger.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:matrix/matrix.dart';
+part of messages;
 
 class MessagesListPage extends StatefulWidget {
   const MessagesListPage({Key? key}) : super(key: key);
@@ -130,17 +118,17 @@ class _MessagesListPageState extends State<MessagesListPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Chats"),
+          title: const Text("Chats"),
           actions: [
             IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MessageSettings()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MessageSettings()));
                 },
-                icon: Icon(Icons.settings))
+                icon: const Icon(Icons.settings))
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add_comment_outlined),
+          child: const Icon(Icons.add_comment_outlined),
           onPressed: () {
             showModalBottomSheet(
                 context: context,
@@ -148,9 +136,9 @@ class _MessagesListPageState extends State<MessagesListPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(height: 16),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
+                        const SizedBox(height: 16),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 16,
                           ),
                           child: Text(
@@ -158,22 +146,24 @@ class _MessagesListPageState extends State<MessagesListPage> {
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         //TODO: Only show enabled Services
-                        ListTile(
-                          title: Text("JSP-Matrix"),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => MatrixCreatePage()));
-                          },
-                        ),
-                        ListTile(
-                          title: Text("Moodle"),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoodleCreateChatPage()));
-                          },
-                        ),
+                        if (AngerApp.matrix.client.isLogged())
+                          ListTile(
+                            title: const Text("JSP-Matrix"),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MatrixCreatePage()));
+                            },
+                          ),
+                        if (AngerApp.moodle.login.creds.credentialsAvailable)
+                          ListTile(
+                            title: const Text("Moodle"),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MoodleCreateChatPage()));
+                            },
+                          ),
                       ],
                     ));
           },
@@ -195,11 +185,11 @@ class _MessagesListPageState extends State<MessagesListPage> {
                                     height: 16,
                                   ),
                                 )
-                              : Text(
+                              : const Text(
                                   "JSP",
                                   style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
                                 ),
-                          loginPage: _hasMatrixIntegration ? MoodleLoginPage() : JspLoginPage());
+                          loginPage: _hasMatrixIntegration ? const MoodleLoginPage() : const JspLoginPage());
                     }
                   }
                   final e = combinedList[index];
@@ -212,7 +202,7 @@ class _MessagesListPageState extends State<MessagesListPage> {
                   }
                 },
                 separatorBuilder: (context, index) {
-                  return Divider(
+                  return const Divider(
                     thickness: 0.5,
                     height: 8,
                   );
@@ -220,35 +210,40 @@ class _MessagesListPageState extends State<MessagesListPage> {
               )
             : Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 200),
+                  constraints: const BoxConstraints(maxWidth: 200),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      const Text(
                         "Keine Konten verbunden",
                         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
-                      Opacity(opacity: 0.87, child: Text("Wähle einen Service aus, um dich anzumelden")),
-                      SizedBox(
+                      const Opacity(opacity: 0.87, child: Text("Wähle einen Service aus, um dich anzumelden")),
+                      const SizedBox(
                         height: 16,
                       ),
                       Row(
                         children: [
                           Expanded(
                             child: OutlinedButton.icon(
-                                style: ButtonStyle(alignment: Alignment.centerLeft),
+                                style: const ButtonStyle(alignment: Alignment.centerLeft),
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => JspLoginPage()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => const JspLoginPage(
+                                                popOnSuccess: true,
+                                              )));
                                 },
-                                icon: Text(
+                                icon: const Text(
                                   "JSP",
                                   style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
                                 ),
-                                label: Text("Jenaer Schulportal")),
+                                label: const Text("Jenaer Schulportal")),
                           ),
                         ],
                       ),
@@ -256,9 +251,9 @@ class _MessagesListPageState extends State<MessagesListPage> {
                         children: [
                           Expanded(
                             child: OutlinedButton.icon(
-                                style: ButtonStyle(alignment: Alignment.centerLeft),
+                                style: const ButtonStyle(alignment: Alignment.centerLeft),
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MoodleLoginPage()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MoodleLoginPage()));
                                 },
                                 icon: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 2.25),
@@ -267,7 +262,7 @@ class _MessagesListPageState extends State<MessagesListPage> {
                                     height: 16,
                                   ),
                                 ),
-                                label: Text("Moodle")),
+                                label: const Text("Moodle")),
                           )
                         ],
                       )
@@ -327,7 +322,7 @@ class _ServicePromoCard extends StatelessWidget {
             ],
           ),
         ),
-        Divider()
+        const Divider()
       ],
     );
   }

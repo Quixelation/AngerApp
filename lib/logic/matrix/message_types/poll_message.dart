@@ -50,7 +50,7 @@ class _ChatBubblePollRenderer extends StatelessWidget {
           "org.matrix.msc3381.poll.response": {
             "answers": [answers[pollOption.id!].keys.first]
           },
-          "m.relates_to": {"event_id": "${event.eventId}", "rel_type": "m.reference"}
+          "m.relates_to": {"event_id": event.eventId, "rel_type": "m.reference"}
         };
         logger.i(content.toString());
         var resultResp = await room.sendEvent(content, type: "org.matrix.msc3381.poll.response");
@@ -68,7 +68,7 @@ class _ChatBubblePollRenderer extends StatelessWidget {
       votedPercentageTextStyle: Theme.of(context).textTheme.headline4?.copyWith(
             color: Colors.black,
           ),
-      votedCheckmark: Icon(
+      votedCheckmark: const Icon(
         Icons.check_circle,
         color: Colors.black,
         size: 18,
@@ -77,7 +77,7 @@ class _ChatBubblePollRenderer extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Text(
           event.content["org.matrix.msc3381.poll.start"]?["question"]?["body"] ?? "",
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
           ),
         ),
@@ -92,15 +92,15 @@ class _ChatBubblePollRenderer extends StatelessWidget {
               ))
           .toList(),
       metaWidget: Row(
-        children: [
-          const SizedBox(width: 6),
+        children: const [
+          SizedBox(width: 6),
           Text(
             '•',
             style: TextStyle(
               fontSize: 20,
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 6,
           ),
           Text(
@@ -184,20 +184,20 @@ class _ChatBubblePollRendererV2State extends State<ChatBubblePollRendererV2> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (_currentlyLoading) CircularProgressIndicator.adaptive(),
+        if (_currentlyLoading) const CircularProgressIndicator.adaptive(),
         Row(
           children: [
-            Icon(Icons.bar_chart),
-            SizedBox(
+            const Icon(Icons.bar_chart),
+            const SizedBox(
               width: 4,
             ),
             Text(
               widget.event.content["org.matrix.msc3381.poll.start"]?["question"]?["body"] ?? "",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 4,
         ),
         for (var option in widget.event.content["org.matrix.msc3381.poll.start"]?["answers"])
@@ -211,12 +211,12 @@ class _ChatBubblePollRendererV2State extends State<ChatBubblePollRendererV2> {
                 setState(() {
                   _currentlyLoading = true;
                 });
-                print('Voted: ${optionId} // ${option["org.matrix.msc1767.text"]}');
+                logger.d('Voted: $optionId // ${option["org.matrix.msc1767.text"]}');
                 Map<String, dynamic> content = {
                   "org.matrix.msc3381.poll.response": {
                     "answers": [optionId]
                   },
-                  "m.relates_to": {"event_id": "${widget.event.eventId}", "rel_type": "m.reference"}
+                  "m.relates_to": {"event_id": widget.event.eventId, "rel_type": "m.reference"}
                 };
                 logger.i(content.toString());
 
@@ -268,13 +268,13 @@ class _ChatBubblePollRendererV2State extends State<ChatBubblePollRendererV2> {
                       selected ? Icons.radio_button_on : Icons.radio_button_off,
                       size: 20,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(optionText),
-                    Expanded(child: SizedBox()),
+                    const Expanded(child: SizedBox()),
                     Opacity(opacity: 0.87, child: Text("$votes ${votes == 1 ? "Stimme" : "Stimmen"}"))
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Container(
                   width: double.infinity,
                   height: 16,

@@ -3,7 +3,9 @@ import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:flutter/material.dart';
 
 class JspLoginPage extends StatefulWidget {
-  const JspLoginPage({Key? key}) : super(key: key);
+  const JspLoginPage({Key? key, this.popOnSuccess = false}) : super(key: key);
+
+  final bool popOnSuccess;
 
   @override
   State<JspLoginPage> createState() => _JspLoginPageState();
@@ -96,19 +98,20 @@ class _JspLoginPageState extends State<JspLoginPage> {
                               loginStatus = _loginStatus.checking;
                             });
 
-                            var credsValid =
-                                await loginToJsp(username: usernameController.text, password: passwordController.text);
+                            var credsValid = await loginToJsp(username: usernameController.text, password: passwordController.text);
                             if (!credsValid) {
+                              // Creds are invalid
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
                                         title: const Text("Fehler"),
-                                        actions: [
-                                          TextButton(onPressed: () => Navigator.pop(context), child: const Text("ok"))
-                                        ],
-                                        content: const Text(
-                                            "Entweder sind die eingegebenen Login-Daten falsch oder der Server ist nicht erreichbar."),
+                                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("ok"))],
+                                        content:
+                                            const Text("Entweder sind die eingegebenen Login-Daten falsch oder der Server ist nicht erreichbar."),
                                       ));
+                            } else if (widget.popOnSuccess) {
+                              // Creds are valid & should pop
+                              Navigator.pop(context);
                             }
                             setState(() {
                               loginStatus = _loginStatus.awaiting;

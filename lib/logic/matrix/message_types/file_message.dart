@@ -20,7 +20,7 @@ class _ChatBubbleFileRendererState extends State<ChatBubbleFileRenderer> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [Icon(Icons.download), Text(widget.event.body)],
+          children: [const Icon(Icons.download), Text(widget.event.body)],
         ));
   }
 }

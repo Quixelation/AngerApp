@@ -4,8 +4,7 @@ import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
-import 'package:anger_buddy/logic/messages/messages_page.dart';
-import 'package:anger_buddy/logic/version_manager/version_manager.dart';
+import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -22,7 +21,6 @@ import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
-import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -57,13 +55,13 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                     selectedPageIndex = value;
                   });
                 },
-                destinations: [
+                destinations: const [
                   NavigationDestination(icon: Icon(Icons.home_outlined), label: "App"),
                   NavigationDestination(icon: Icon(Icons.messenger_outline), label: "Chats")
                 ],
               )
             : null,
-        body: [_HomePageContent(), MessagesListPage()][selectedPageIndex]);
+        body: [const _HomePageContent(), const MessagesListPage()][selectedPageIndex]);
   }
 }
 

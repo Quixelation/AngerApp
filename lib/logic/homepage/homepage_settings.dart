@@ -20,13 +20,13 @@ class _HomepageSettingsPageState extends State<HomepageSettingsPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.horizontal_rule),
-                  SizedBox(
+                  const Icon(Icons.horizontal_rule),
+                  const SizedBox(
                     width: 32,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: const [
                       Text("BottomNavBar anzeigen"),
                       SizedBox(height: 2),
                       Opacity(

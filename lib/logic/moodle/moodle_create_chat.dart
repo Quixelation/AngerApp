@@ -22,13 +22,13 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
       showDialog(
           context: context,
           builder: (context2) => AlertDialog(
-                title: Text("Wähle zuerst einen Benutzer aus!"),
+                title: const Text("Wähle zuerst einen Benutzer aus!"),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(context2).pop();
                       },
-                      child: Text("ok"))
+                      child: const Text("ok"))
                 ],
               ));
       return;
@@ -66,13 +66,13 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
       showDialog(
           context: context,
           builder: (context2) => AlertDialog(
-                title: Text("Es gab einen Fehler"),
+                title: const Text("Es gab einen Fehler"),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(context2).pop();
                       },
-                      child: Text("ok"))
+                      child: const Text("ok"))
                 ],
               ));
     }
@@ -81,9 +81,9 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Neuer Moodle Chat")),
+      appBar: AppBar(title: const Text("Neuer Moodle Chat")),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         children: [
           Card(
             child: Padding(
@@ -93,13 +93,13 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
                 children: [
                   TypeAheadField<_MoodleMember>(
                     errorBuilder: (context, error) {
-                      return Text("Keine Benutzer gefunden");
+                      return const Text("Keine Benutzer gefunden");
                     },
-                    textFieldConfiguration: TextFieldConfiguration(
+                    textFieldConfiguration: const TextFieldConfiguration(
                       decoration: InputDecoration(labelText: "Moodle-Benutzer suchen (max. 1)"),
                     ),
                     minCharsForSuggestions: 2,
-                    debounceDuration: Duration(seconds: 1),
+                    debounceDuration: const Duration(seconds: 1),
                     suggestionsCallback: (pattern) => searchUser(pattern),
                     itemBuilder: (context, itemData) {
                       return ListTile(
@@ -112,13 +112,13 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
                       });
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   if (selectedUser != null)
                     ListTile(
                       leading: CircleAvatar(
-                        foregroundImage: selectedUser!.profileimageurl == null ? null : NetworkImage(selectedUser!.profileimageurl),
+                        foregroundImage: NetworkImage(selectedUser!.profileimageurl),
                       ),
                       title: Text(selectedUser!.fullname),
                     )
@@ -126,13 +126,13 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
               ),
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           OutlinedButton.icon(
               onPressed: () {
                 create(context);
               },
-              icon: Icon(Icons.check_circle_outline_sharp),
-              label: Text("Chat erstellen"))
+              icon: const Icon(Icons.check_circle_outline_sharp),
+              label: const Text("Chat erstellen"))
         ],
       ),
     );

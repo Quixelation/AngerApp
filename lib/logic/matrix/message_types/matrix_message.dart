@@ -39,14 +39,14 @@ class _MatrixMessage extends StatelessWidget {
                           showDialog(
                             context: context,
                             builder: (context) {
-                              var encoder = new JsonEncoder.withIndent("     ");
+                              var encoder = const JsonEncoder.withIndent("     ");
                               var text = encoder.convert(displayEvent.toJson());
                               return Material(child: SingleChildScrollView(child: Text(text)));
                             },
                           );
                         },
-                        icon: Icon(Icons.safety_check),
-                        label: Text("Debug"))
+                        icon: const Icon(Icons.safety_check),
+                        label: const Text("Debug"))
                   ],
                 );
               });
@@ -56,7 +56,7 @@ class _MatrixMessage extends StatelessWidget {
           child: Opacity(
             opacity: event.status.isSent ? 1 : 0.5,
             child: ChatBubble(
-                margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                 backGroundColor: isSender ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.surface,
                 shadowColor: isSender ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.shadow,
                 alignment: isSender ? Alignment.topRight : Alignment.topLeft,
@@ -74,7 +74,7 @@ class _MatrixMessage extends StatelessWidget {
                         (displayEvent.sender.displayName ?? event.senderId),
                         style: TextStyle(fontWeight: FontWeight.w500, color: textColor),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                     ],
                     // Builder(
                     //   builder: (context) {
@@ -108,7 +108,7 @@ class _MatrixMessage extends StatelessWidget {
                             return Text(displayEvent.body);
                           }
                         } else if (displayEvent.type == "m.room.encrypted") {
-                          return Text("encrypted");
+                          return const Text("encrypted");
                         }
 
                         if (displayEvent.type == "org.matrix.msc3381.poll.start") {
@@ -118,7 +118,7 @@ class _MatrixMessage extends StatelessWidget {
                         }
                       },
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     IntrinsicWidth(
                       child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [
                         Text(
@@ -127,16 +127,18 @@ class _MatrixMessage extends StatelessWidget {
                           textAlign: TextAlign.right,
                         ),
                         if (relatedEvents.where((element) {
-                              logger.d(element.relationshipEventId.toString() +
-                                  " (${element.body}) " +
-                                  " zu " +
-                                  displayEvent.eventId +
-                                  " (" +
-                                  displayEvent.body +
-                                  ")");
-                              return (element.relationshipType ?? "") == "m.replace";
-                            }).length >
-                            0) ...[SizedBox(width: 4), Text("(bearbeitet)", style: TextStyle(fontSize: 10, color: textColor.withAlpha(200)))],
+                          logger.d(element.relationshipEventId.toString() +
+                              " (${element.body}) " +
+                              " zu " +
+                              displayEvent.eventId +
+                              " (" +
+                              displayEvent.body +
+                              ")");
+                          return (element.relationshipType ?? "") == "m.replace";
+                        }).isNotEmpty) ...[
+                          const SizedBox(width: 4),
+                          Text("(bearbeitet)", style: TextStyle(fontSize: 10, color: textColor.withAlpha(200)))
+                        ],
                       ]),
                     ),
                     if (relatedEvents.isNotEmpty)
@@ -147,7 +149,8 @@ class _MatrixMessage extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 2),
                             child: Chip(
-                              label: Text("1"),
+                              //TODO: add real badge number
+                              label: const Text("1"),
                               avatar: Text(
                                 e.content["m.relates_to"]["key"],
                                 style: TextStyle(color: textColor),

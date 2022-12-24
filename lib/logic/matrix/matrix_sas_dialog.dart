@@ -13,12 +13,12 @@ class MatrixSasDialog extends StatelessWidget {
             onPressed: () {
               event.acceptSas();
             },
-            icon: Icon(Icons.verified_user),
-            label: Text("Emojis stimmen überein"))
+            icon: const Icon(Icons.verified_user),
+            label: const Text("Emojis stimmen überein"))
       ],
       content: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [Text("Verification"), Text(event.sasEmojis.map((e) => e.emoji).toList().join(" "))],
+        children: [const Text("Verification"), Text(event.sasEmojis.map((e) => e.emoji).toList().join(" "))],
       ),
     );
   }

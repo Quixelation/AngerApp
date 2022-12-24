@@ -36,13 +36,13 @@ class JspFilesClient {
     }
 
     void setWithSavedCreds() {
-      logger.v("[JspFilesClient] setWithSavedCreds()");
+      logger.v("[JspFilesClient] called setWithSavedCreds()");
       var username = Credentials.jsp.subject.valueWrapper?.value?.username;
       var password = Credentials.jsp.subject.valueWrapper?.value?.password;
       if (username == null || password == null || username == "" || password == "") {
         logger.i("ClientData not set bc password or username is empty");
       }
-      logger.i("Set CLient to specific $username : $password");
+      logger.d("Set Client to specific $username : $password");
       client = Credentials.jsp.subject.valueWrapper?.value != null
           ? NextcloudClient(
               'https://nextcloud.jsp.jena.de',
@@ -53,8 +53,8 @@ class JspFilesClient {
           : null;
     }
 
-    setWithSavedCreds();
     Credentials.jsp.subject.listen((value) {
+      logger.d("[JspFilesClient] JspCredsSubjectListenCallback");
       setWithSavedCreds();
     });
   }
@@ -63,8 +63,7 @@ class JspFilesClient {
 
   Future<Uint8List> getPreview(WebDavFile file) async {
     if (!_previewCache.containsKey(file.fileId)) {
-      var resp = await http.get(
-          Uri.parse("https://nextcloud.jsp.jena.de/core/preview?fileId=${file!.fileId!}&x=32&y=32&a=0&forceIcon=0"),
+      var resp = await http.get(Uri.parse("https://nextcloud.jsp.jena.de/core/preview?fileId=${file!.fileId!}&x=32&y=32&a=0&forceIcon=0"),
           headers: client!.authentication!.headers);
 
       var bodyBytes = resp.bodyBytes;
@@ -82,12 +81,8 @@ class JspFilesClient {
         throw ErrorDescription("no WebDavClient");
       }
 
-      var list = await client!.webdav.ls(dir, props: {
-        WebDavProps.ocFileId.name,
-        WebDavProps.ncHasPreview.name,
-        WebDavProps.ocId.name,
-        WebDavProps.davContentType.name
-      });
+      var list = await client!.webdav
+          .ls(dir, props: {WebDavProps.ocFileId.name, WebDavProps.ncHasPreview.name, WebDavProps.ocId.name, WebDavProps.davContentType.name});
 
       list.forEach((f) {
         logger.d('${f.name} ${f.path}');

@@ -16,11 +16,7 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
     setState(() {
       _loading = true;
     });
-    await AngerApp.moodle.login
-        .login(
-            username: _usernameController.text.trim(),
-            password: _passwordController.text.trim())
-        .catchError((err) {
+    await AngerApp.moodle.login.login(username: _usernameController.text.trim(), password: _passwordController.text.trim()).catchError((err) {
       logger.e(err, null, StackTrace.current);
     });
     setState(() {
@@ -33,15 +29,14 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
       showDialog(
           context: context,
           builder: (context2) => AlertDialog(
-                title: Text("Es gab einen Fehler"),
-                content: Text(
-                    "Der Login ist fehlgeschlagen. Bitte überprüfe deine Internetverbindung und deine Login-Daten"),
+                title: const Text("Es gab einen Fehler"),
+                content: const Text("Der Login ist fehlgeschlagen. Bitte überprüfe deine Internetverbindung und deine Login-Daten"),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(context2).pop();
                       },
-                      child: Text("Ok"))
+                      child: const Text("Ok"))
                 ],
               ));
     }
@@ -51,48 +46,46 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Moodle Login"),
+          title: const Text("Moodle Login"),
         ),
         body: Form(
           child: ListView(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             children: [
-              Opacity(
+              const Opacity(
                 opacity: 0.87,
                 child: Text(
                   "Schulmoodle Jena",
                   style: TextStyle(fontSize: 16),
                 ),
               ),
-              Text(
+              const Text(
                 "Login",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
-              SizedBox(height: 16),
-              _MoodleLoginInfoField(),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
+              const _MoodleLoginInfoField(),
+              const SizedBox(height: 16),
               TextFormField(
                 enabled: !_loading,
                 controller: _usernameController,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(), labelText: "Benutzername"),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Benutzername"),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextFormField(
                 enabled: !_loading,
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(), labelText: "Passwort"),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Passwort"),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ElevatedButton.icon(
                   onPressed: _loading
                       ? null
                       : () {
                           login();
                         },
-                  icon: Icon(Icons.login),
+                  icon: const Icon(Icons.login),
                   label: Text(_loading ? "Bitte warten" : "Einloggen"))
             ],
           ),
@@ -129,7 +122,7 @@ class _MoodleLoginInfoField extends StatelessWidget {
             child: Card(
       child: Expandable(
           collapsed: ExpandableButton(
-            child: ListTile(
+            child: const ListTile(
               dense: true,
               leading: Icon(Icons.policy),
               title: Text("Infos: Datenspeicherung"),
@@ -144,13 +137,12 @@ class _MoodleLoginInfoField extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ExpandableButton(
-                  child: ListTile(
+                  child: const ListTile(
                       dense: true,
                       trailing: Icon(Icons.keyboard_arrow_down),
                       title: Text(
                         "Was wir speichern",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       )),
                 ),
                 tile(saving: false, title: "Dein Benutzername"),
@@ -159,17 +151,15 @@ class _MoodleLoginInfoField extends StatelessWidget {
                 tile(
                     saving: true,
                     title: "Den von Moodle zufällig generierten Token",
-                    subtitle:
-                        "(Der Token wird für die zukünfigte Authentifizierung mit dem Moodle-Server benötigt)"),
+                    subtitle: "(Der Token wird für die zukünfigte Authentifizierung mit dem Moodle-Server benötigt)"),
                 tile(
                     saving: true,
                     title: "Die von Moodle generierte Benutzer-ID",
                     subtitle:
                         "(Sagt Moodle, welcher Benutzer du bist, da das Moodle mit dem oben genannten Token leider nicht auch gleich noch mit speichert)"),
-                SizedBox(height: 8),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                const SizedBox(height: 8),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   child: Opacity(
                     opacity: 0.92,
                     child: Text(

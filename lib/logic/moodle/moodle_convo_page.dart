@@ -57,7 +57,7 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                     : widget.conversation!.name!))
                 : (widget.startingNewConversatrionWithMember!.fullname))),
         body: (widget.conversation != null && messages == null)
-            ? Center(child: CircularProgressIndicator.adaptive())
+            ? const Center(child: CircularProgressIndicator.adaptive())
             : Flex(
                 direction: Axis.vertical,
                 children: [
@@ -92,15 +92,15 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                                       widget.conversation!.members.firstWhere((element) => element.id == currentMessage.userIdFrom).fullname,
                                       style: TextStyle(fontWeight: FontWeight.w500, color: textColor),
                                     ),
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                   ],
                                   Html(
                                     data: currentMessage.text,
                                     style: {
-                                      '#': Style(padding: EdgeInsets.all(0), margin: EdgeInsets.all(0), color: textColor),
+                                      '#': Style(padding: const EdgeInsets.all(0), margin: const EdgeInsets.all(0), color: textColor),
                                     },
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   IntrinsicWidth(
                                     child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [
                                       Expanded(
@@ -146,9 +146,7 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                               _sendController.clear();
                               if (widget.conversation == null) {
                                 setState(() {
-                                  if (messages == null) {
-                                    messages = [];
-                                  }
+                                  messages ??= [];
                                   messages!.add(msg);
                                 });
                               }

@@ -11,7 +11,7 @@ class _MoodleContacts {
 
     if (response.hasError) {
       logger.e(response.error!);
-      new ErrorDescription(response.error!.message ?? "");
+      ErrorDescription(response.error!.message ?? "");
     }
 
     var contactsRaw = List.from(response.data["contacts"]);

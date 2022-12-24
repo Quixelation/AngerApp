@@ -1,10 +1,4 @@
-import 'dart:convert';
-
-import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/utils/logger.dart';
-import 'package:anger_buddy/utils/time_2_string.dart';
-import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
+part of matrix;
 
 class MatrixSettings extends StatefulWidget {
   const MatrixSettings({Key? key}) : super(key: key);
@@ -18,17 +12,17 @@ class _MatrixSettingsState extends State<MatrixSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Matrix"),
+          title: const Text("Matrix"),
         ),
         body: ListView(
           children: [
-            Text("Geräte"),
+            const Text("Geräte"),
             FutureBuilder<List<Device>?>(
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 } else if (!snapshot.hasData) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator.adaptive(),
                   );
                 } else {
@@ -38,13 +32,13 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                     children: [
                       ...(snapshot.data ?? []).map((e) {
                         var myUnverifiedDevices = devices.where((element) => element.deviceId == e.deviceId);
-                        var myUnverifiedDevice = devices.length == 0 ? null : devices.first;
+                        var myUnverifiedDevice = devices.isEmpty ? null : devices.first;
 
                         return ListTile(
                           title: Text((e.displayName ?? e.deviceId)),
                           leading: Icon(myUnverifiedDevice == null ? Icons.verified : Icons.devices),
                           subtitle: Text("${e.deviceId} - ${time2string(DateTime.fromMillisecondsSinceEpoch((e.lastSeenTs ?? 0)))}"),
-                          trailing: myUnverifiedDevice != null ? Icon(Icons.more_horiz) : Container(),
+                          trailing: myUnverifiedDevice != null ? const Icon(Icons.more_horiz) : Container(),
                           onTap: myUnverifiedDevice != null
                               ? () {
                                   showModalBottomSheet(
@@ -56,24 +50,24 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                                             children: [
                                               ListTile(
                                                   leading: Icon(myUnverifiedDevice.verified ? Icons.verified : Icons.close),
-                                                  title: Text("Verifiziert")),
+                                                  title: const Text("Verifiziert")),
                                               ListTile(
                                                   leading: Icon(myUnverifiedDevice.directVerified ? Icons.verified : Icons.close),
-                                                  title: Text("Direkt-Verifiziert")),
+                                                  title: const Text("Direkt-Verifiziert")),
                                               ListTile(
                                                   leading: Icon(myUnverifiedDevice.crossVerified ? Icons.verified : Icons.close),
-                                                  title: Text("Cross-Verifiziert")),
+                                                  title: const Text("Cross-Verifiziert")),
                                               ListTile(
-                                                title: Text("Signiert"),
+                                                title: const Text("Signiert"),
                                                 leading: Icon(myUnverifiedDevice.signed ? Icons.verified : Icons.close),
                                               ),
                                               ListTile(
-                                                title: Text("JSON"),
+                                                title: const Text("JSON"),
                                                 onTap: () {
                                                   showDialog(
                                                     context: context,
                                                     builder: (context) {
-                                                      var encoder = new JsonEncoder.withIndent("     ");
+                                                      var encoder = const JsonEncoder.withIndent("     ");
                                                       var text = encoder.convert(myUnverifiedDevice.toJson());
                                                       return Material(child: SingleChildScrollView(child: Text(text)));
                                                     },
@@ -109,7 +103,7 @@ class _ProfileEditorState extends State<ProfileEditor> {
   Widget build(BuildContext context) {
     return Card(
       child: Column(
-        children: [],
+        children: const [],
       ),
     );
   }

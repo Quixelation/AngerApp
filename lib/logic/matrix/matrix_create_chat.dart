@@ -40,13 +40,13 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
       showDialog(
           context: context,
           builder: (context2) => AlertDialog(
-                title: Text("Es gab einen Fehler"),
+                title: const Text("Es gab einen Fehler"),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(context2).pop();
                       },
-                      child: Text("ok"))
+                      child: const Text("ok"))
                 ],
               ));
     }
@@ -55,15 +55,15 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Neuer JSP Chat")),
+      appBar: AppBar(title: const Text("Neuer JSP Chat")),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         children: [
           TextField(
             controller: groupNameController,
-            decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Chat-Name"),
+            decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Chat-Name"),
           ),
-          SizedBox(
+          const SizedBox(
             height: 32,
           ),
           Card(
@@ -72,15 +72,15 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Teilnehmer:",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   TypeAheadField<Profile>(
                     errorBuilder: (context, error) {
-                      return Text("Keine Benutzer gefunden");
+                      return const Text("Keine Benutzer gefunden");
                     },
-                    textFieldConfiguration: TextFieldConfiguration(
+                    textFieldConfiguration: const TextFieldConfiguration(
                       decoration: InputDecoration(labelText: "Teilnehmer suchen"),
                     ),
                     minCharsForSuggestions: 1,
@@ -94,7 +94,7 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
                       addUserToUsersToAdd(suggestion);
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   ...usersToAdd.map((e) => ListTile(
@@ -115,13 +115,13 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
               ),
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           OutlinedButton.icon(
               onPressed: () {
                 create(context);
               },
-              icon: Icon(Icons.check_circle_outline_sharp),
-              label: Text("Chat erstellen"))
+              icon: const Icon(Icons.check_circle_outline_sharp),
+              label: const Text("Chat erstellen"))
         ],
       ),
     );
