@@ -8,20 +8,14 @@ class _WpImageDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final imgUrl = image.mediaDetails?.sizes?.full.sourceUrl ?? image.sourceUrl;
-    final nwImg = Image.network(
-      imgUrl,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
-            ),
-          ),
-        );
-      },
-    );
+    final nwImg = CachedNetworkImage(
+        imageUrl: imgUrl,
+        progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+        errorWidget: (context, url, error) => Icon(
+              Icons.broken_image,
+              color: Colors.red,
+            ));
+
     return Scaffold(
       appBar: AppBar(),
       body: ListView(children: [
@@ -29,7 +23,7 @@ class _WpImageDetails extends StatelessWidget {
           constraints: BoxConstraints(maxHeight: 400, maxWidth: 400),
           child: InkWell(
               onTap: () {
-                final imageProvider = nwImg.image;
+                final imageProvider = CachedNetworkImageProvider(nwImg.imageUrl);
                 showImageViewer(context, imageProvider,
                     doubleTapZoomable: true, swipeDismissible: true, immersive: false, closeButtonTooltip: "Schließen", onViewerDismissed: () {
                   logger.v("ImageViewer dismissed");
