@@ -19,7 +19,8 @@ abstract class DataManager<E> {
 
     var serverData = await fetchFromServer();
 
-    final dataResponse = AsyncDataResponse(data: serverData, loadingAction: AsyncDataResponseLoadingAction.none);
+    final dataResponse = AsyncDataResponse(
+        data: serverData, loadingAction: AsyncDataResponseLoadingAction.none);
 
     subject.add(dataResponse);
     return dataResponse;
@@ -29,7 +30,8 @@ abstract class DataManager<E> {
     logger.v("[DataManager::$syncManagerKey] loading from Database");
     var databaseData = await fetchFromDatabase();
 
-    final dataResponse = AsyncDataResponse(data: databaseData, loadingAction: AsyncDataResponseLoadingAction.none);
+    final dataResponse = AsyncDataResponse(
+        data: databaseData, loadingAction: AsyncDataResponseLoadingAction.none);
 
     subject.add(dataResponse);
     return dataResponse;
@@ -38,7 +40,8 @@ abstract class DataManager<E> {
   Future<bool> needsSync({SyncManager? lastSync}) async {
     lastSync ??= await SyncManager.getLastSync(syncManagerKey);
 
-    return lastSync.never || lastSync.difference(DateTime.now()).inMinutes > syncManagerTTL;
+    return lastSync.never ||
+        lastSync.difference(DateTime.now()).inMinutes > syncManagerTTL;
   }
 
   @nonVirtual
@@ -50,15 +53,18 @@ abstract class DataManager<E> {
       try {
         return await _getData__Server();
       } catch (e) {
-        logger.v("[DataManager] Daten konnten nicht vom Server geladen werden. Versuche Datenbank");
+        logger.e(e, null, StackTrace.current);
+        logger.v(
+            "[DataManager] Daten konnten nicht vom Server geladen werden. Versuche Datenbank");
         try {
           if (force) {
-            logger.v("[DataManager] Datenbank-Versuch unterbrochen wegen force==true");
+            logger.v(
+                "[DataManager] Datenbank-Versuch unterbrochen wegen force==true");
             rethrow;
           }
           return await _getData__Database();
         } catch (e) {
-          logger.e("[DataManager] Datenbank-Versuch versuc fehlgeschlagen!");
+          logger.e("[DataManager] Datenbank-Versuch versuch fehlgeschlagen!");
           logger.e(e);
           logger.e((e as Error).stackTrace);
           //TODO: What went wrong? --> inform user

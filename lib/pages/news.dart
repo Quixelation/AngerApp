@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/feedback/feedback.dart';
+import 'package:anger_buddy/logic/schuelerrat/schuelerrat.dart';
+import 'package:anger_buddy/logic/schuelerrat/schuelerrat_page.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/network/news.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
@@ -10,6 +12,7 @@ import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
@@ -24,6 +27,7 @@ class PageNewsList extends StatefulWidget {
 
 class _PageNewsListState extends State<PageNewsList> {
   AsyncDataResponse<List<NewsApiDataElement>>? data;
+  AsyncDataResponse<List<SrNewsElement>>? srNews = Services.srNews.subject.valueWrapper?.value;
 
   SyncManager? lastSync = null;
   StreamSubscription? lastSyncSub;
@@ -52,8 +56,7 @@ class _PageNewsListState extends State<PageNewsList> {
       }
       if (value["id"] == "news") {
         setState(() {
-          lastSync?.syncDate =
-              DateTime.fromMillisecondsSinceEpoch(value["timestamp"]);
+          lastSync?.syncDate = DateTime.fromMillisecondsSinceEpoch(value["timestamp"]);
         });
       }
     });
@@ -67,6 +70,26 @@ class _PageNewsListState extends State<PageNewsList> {
 
   @override
   Widget build(BuildContext context) {
+    List<dynamic> combinedNews = [...(data?.data ?? []), ...(srNews?.data ?? [])];
+    combinedNews.sort(
+      (a, b) {
+        DateTime dateA;
+        DateTime dateB;
+
+        if (a is NewsApiDataElement) {
+          dateA = a.pubDate;
+        } else {
+          dateA = a.dateCreated.realDate;
+        }
+        if (b is NewsApiDataElement) {
+          dateB = b.pubDate;
+        } else {
+          dateB = b.dateCreated.realDate;
+        }
+        return dateB.compareTo(dateA);
+      },
+    );
+
     return Scaffold(
         appBar: AppBar(
           //Action button to load new data
@@ -83,39 +106,57 @@ class _PageNewsListState extends State<PageNewsList> {
           title: const Text("Nachrichten"),
         ),
         body: Stack(children: [
-          data != null && data!.data.isNotEmpty
+          combinedNews.isNotEmpty
               ? ListView(
                   children: [
                     const SizedBox(height: 10),
-                    if (lastSync?.never == false)
-                      LastSync(lastSync!.syncDate)
-                    else
-                      Container(),
+                    if (lastSync?.never == false) LastSync(lastSync!.syncDate) else Container(),
                     const SizedBox(height: 10),
                     if (MediaQuery.of(context).size.width > 600)
                       //Split all elemnents in 2 columns with alternating content
                       Column(
                         children: [
-                          for (var i = 0; i < data!.data.length; i += 2)
+                          for (var i = 0; i < combinedNews.length; i += 2)
                             Row(
                               children: [
                                 Expanded(
                                   child: NewsCard(
-                                    data!.data[i],
-                                  ),
+                                      title: combinedNews[i].title!,
+                                      newsElem: combinedNews[i] is NewsApiDataElement ? combinedNews[i] : null,
+                                      publisher: combinedNews[i] is SrNewsElement ? _NewsPublisher.sr : _NewsPublisher.website,
+                                      srNewsId: combinedNews[i] is SrNewsElement ? combinedNews[i].id : null,
+                                      date: time2string(
+                                          combinedNews[i + 1] is NewsApiDataElement ? combinedNews[i].pubDate : combinedNews[i].dateCreated.realDate),
+                                      subtitle: combinedNews[i] is SrNewsElement ? combinedNews[i].content : combinedNews[i].desc!,
+                                      heroTag: combinedNews[i].id!.toString()),
                                 ),
-                                if (i + 1 < data!.data.length)
+                                if (i + 1 < combinedNews.length)
                                   Expanded(
                                     child: NewsCard(
-                                      data!.data[i + 1],
-                                    ),
+                                        title: combinedNews[i + 1].title!,
+                                        newsElem: combinedNews[i + 1] is NewsApiDataElement ? combinedNews[i + 1] : null,
+                                        publisher: combinedNews[i + 1] is SrNewsElement ? _NewsPublisher.sr : _NewsPublisher.website,
+                                        subtitle: combinedNews[i + 1] is SrNewsElement ? combinedNews[i + 1].content : combinedNews[i + 1].desc!,
+                                        srNewsId: combinedNews[i + 1] is SrNewsElement ? combinedNews[i + 1].id : null,
+                                        date: time2string(combinedNews[i + 1] is NewsApiDataElement
+                                            ? combinedNews[i + 1].pubDate
+                                            : combinedNews[i + 1].dateCreated.realDate),
+                                        heroTag: combinedNews[i + 1].id!.toString()),
                                   ),
                               ],
                             ),
                         ],
                       )
                     else
-                      for (var newsElem in data!.data) NewsCard(newsElem),
+                      for (var newsElem in combinedNews)
+                        NewsCard(
+                            title: newsElem.title!,
+                            newsElem: newsElem is NewsApiDataElement ? newsElem : null,
+                            date: time2string(newsElem is NewsApiDataElement ? newsElem.pubDate : newsElem.dateCreated.realDate),
+                            publisher: newsElem is SrNewsElement ? _NewsPublisher.sr : _NewsPublisher.website,
+                            subtitle: newsElem is SrNewsElement ? newsElem.content : newsElem.desc!,
+                            srNewsId: newsElem is SrNewsElement ? newsElem.id : null,
+                            heroTag: newsElem.id!.toString()),
                     const SizedBox(height: 20),
                   ],
                 )
@@ -124,8 +165,7 @@ class _PageNewsListState extends State<PageNewsList> {
                       child: CircularProgressIndicator(),
                     )
                   : const NoConnectionColumn()),
-          if (data?.loadingAction ==
-              AsyncDataResponseLoadingAction.currentlyLoading)
+          if (data?.loadingAction == AsyncDataResponseLoadingAction.currentlyLoading)
             const Positioned(
               child: LinearProgressIndicator(),
               top: 0,
@@ -135,38 +175,116 @@ class _PageNewsListState extends State<PageNewsList> {
         ]));
   }
 
-  Widget NewsCard(NewsApiDataElement newsElem) {
+  Widget NewsCard(
+      {required String title,
+      required String subtitle,
+      required String heroTag,
+      NewsApiDataElement? newsElem,
+      required String date,
+      String? srNewsId,
+      required _NewsPublisher publisher}) {
+    if (_NewsPublisher.website == publisher) {
+      assert(newsElem != null);
+    } else if (_NewsPublisher.sr == publisher) {
+      assert(srNewsId != null);
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
       child: Hero(
-        tag: "news_${newsElem.id}",
+        tag: heroTag,
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 12),
-            child: ListTile(
-              title: Padding(
-                padding: const EdgeInsets.only(bottom: 2.0),
-                child: Opacity(
-                  opacity: 0.87,
-                  child: Text(newsElem.title!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+          child: InkWell(
+            onTap: () {
+              if (publisher == _NewsPublisher.website) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageNewsDetails(data: newsElem!)));
+              } else if (publisher == _NewsPublisher.sr) {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SchuelerratNachrichtPage(
+                          id: srNewsId!,
+                        )));
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12).copyWith(bottom: 6),
+                  child: Text(
+                    title,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
-              ),
-              subtitle: Opacity(
-                opacity: 0.67,
-                child: Text(newsElem.desc!,
-                    maxLines: 3, overflow: TextOverflow.ellipsis),
-              ),
-              isThreeLine: false,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PageNewsDetails(data: newsElem)),
-                );
-              },
+                Divider(
+                  height: 1,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: Html(
+                    data: subtitle,
+                    style: {
+                      '#': Style(
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        maxLines: 3,
+                        color: Theme.of(context).colorScheme.onSurface.withAlpha(187),
+                        textOverflow: TextOverflow.ellipsis,
+                      ),
+                    },
+                  ),
+                ),
+                Divider(
+                  height: 1,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12).copyWith(top: 8),
+                  child: Opacity(
+                    opacity: 0.87,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Builder(
+                          builder: (context) {
+                            double iconSize = 16;
+
+                            switch (publisher) {
+                              case _NewsPublisher.website:
+                                return Row(
+                                  children: [
+                                    Icon(
+                                      Icons.web,
+                                      size: iconSize,
+                                    ),
+                                    SizedBox(width: 2),
+                                    Text(
+                                      "Website",
+                                      style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
+                                    )
+                                  ],
+                                );
+                              case _NewsPublisher.sr:
+                                return Row(
+                                  children: [
+                                    Icon(Icons.groups, size: iconSize),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      "Schülerrat",
+                                      style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
+                                    )
+                                  ],
+                                );
+                            }
+                          },
+                        ),
+                        Text(
+                          date,
+                          style: TextStyle(fontSize: 12),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
         ),
@@ -252,28 +370,23 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
         body: ListView(children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Opacity(
-                    opacity: 0.92,
-                    child: Text(widget.data.title!,
-                        style: const TextStyle(
-                            fontSize: 26, fontWeight: FontWeight.bold)),
+            child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Opacity(
+                opacity: 0.92,
+                child: Text(widget.data.title!, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 2),
+              Opacity(
+                opacity: 0.60,
+                child: Text(
+                  time2string(
+                    widget.data.pubDate,
+                    includeWeekday: true,
                   ),
-                  const SizedBox(height: 2),
-                  Opacity(
-                    opacity: 0.60,
-                    child: Text(
-                      time2string(
-                        widget.data.pubDate,
-                        includeWeekday: true,
-                      ),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  )
-                ]),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              )
+            ]),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -286,40 +399,31 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
                       data: widget.data.content!,
                       style: {
                         "p": Style(
-                          fontSize: FontSize.larger,
-                          lineHeight: LineHeight.number(1.3),
+                          fontSize: FontSize.rem(1.05),
+                          // fontSize: FontSize.larger,
+                          lineHeight: LineHeight.number(1.1),
                           color:
                               // 87% Opacity
-                              Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .color!
-                                  .withAlpha(222),
+                              Theme.of(context).textTheme.bodyText1!.color!.withAlpha(222),
                         ),
                       },
                       customRender: {
                         "div": (RenderContext rcontext, Widget child) {
-                          if (rcontext.tree.elementClasses
-                              .contains("wp-block-file")) {
+                          if (rcontext.tree.elementClasses.contains("wp-block-file")) {
                             return Center(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
                                 child: OutlinedButton.icon(
                                     onPressed: () {
-                                      var hrefChild = findChild(
-                                          rcontext.tree.element, "href");
+                                      var hrefChild = findChild(rcontext.tree.element, "href");
                                       if (hrefChild != null) {
-                                        launchURL(hrefChild.attributes["href"]!,
-                                            context);
+                                        launchURL(hrefChild.attributes["href"]!, context);
                                       }
                                     },
                                     icon: const Icon(Icons.download),
                                     label: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: Text(
-                                          "Download\n${rcontext.tree.element!.text}"),
+                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      child: Text("Download\n${rcontext.tree.element!.text}"),
                                     )),
                               ),
                             );
@@ -327,10 +431,7 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
                         },
                       },
                       tagsList: Html.tags..addAll(["bird", "flutter"]),
-                      onLinkTap: (String? url,
-                          RenderContext rcontext,
-                          Map<String, String> attributes,
-                          dom.Element? element) {
+                      onLinkTap: (String? url, RenderContext rcontext, Map<String, String> attributes, dom.Element? element) {
                         printInDebug(url);
                         printInDebug(attributes);
                         printInDebug(element);
@@ -342,19 +443,14 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
                                   actions: <Widget>[
                                     TextButton(
                                       child: const Text('OK'),
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
+                                      onPressed: () => Navigator.of(context).pop(),
                                     )
                                   ],
-                                  content:
-                                      const Text('Die Url ist fehlerhaft.')));
+                                  content: const Text('Die Url ist fehlerhaft.')));
                         }
                         launchURL(url!, context);
                       },
-                      onImageTap: (String? url,
-                          RenderContext context,
-                          Map<String, String> attributes,
-                          dom.Element? element) {
+                      onImageTap: (String? url, RenderContext context, Map<String, String> attributes, dom.Element? element) {
                         //open image in webview, or launch image in browser, or any other logic here
                       }),
                 ),
@@ -414,3 +510,5 @@ class LastSync extends StatelessWidget {
     );
   }
 }
+
+enum _NewsPublisher { website, sr }

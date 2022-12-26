@@ -11,8 +11,10 @@ import 'package:anger_buddy/logic/mail/mail.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
+import 'package:anger_buddy/logic/schuelerrat/schuelerrat_page.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
+import 'package:anger_buddy/logic/wp_images/wp_images.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/page_engine/page_engine.dart';
@@ -190,8 +192,8 @@ class MainDrawer extends StatelessWidget {
             )
           ]),
           const Divider(),
-          _Category("Jenaer-Schulportal", [
-            const _DrawerLink(
+          const _Category("Jenaer-Schulportal", [
+            _DrawerLink(
               title: "Dateien / Cloud",
               icon: Icons.folder_outlined,
               page: JspPassthroughPage(child: FileExplorer("/")),
@@ -209,12 +211,15 @@ class MainDrawer extends StatelessWidget {
           const Divider(),
           _Category("Informationen", [
             const _DrawerLink(
-              wip: true,
               title: "Schülerrat",
-              icon: Icons.groups,
-              page: PageTempUnderConstruction(),
+              icon: Icons.groups_outlined,
+              page: SchuelerratMainPage(),
             ),
-
+            const _DrawerLink(
+              title: "Bilder",
+              icon: Icons.perm_media_outlined,
+              page: WpImagesPage(),
+            ),
             _DrawerLink(
               title: "Stundenzeiten",
               icon: Icons.access_time_outlined,

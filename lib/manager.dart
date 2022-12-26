@@ -30,6 +30,9 @@ class AppManager {
 
     CurrentClassManager.init(database);
   }
+
+  static String angergymnasiumWebsiteUrl = "https://angergymnasium.jena.de/";
+
   static String directusUrl = (() {
     final isRobertStuendlCom = uhtml.window.location.host.endsWith("robertstuendl.com");
 
@@ -118,6 +121,7 @@ class _tableNames {
   final String aushaenge = "aushaenge";
   final String aushaengeLastRead = "aushaengeLastRead";
   final String schwarzesBrett = "schwarzesBrett";
+  final String srNews = "srnews";
 
   List<String> get allTables {
     return [
@@ -134,7 +138,10 @@ class _tableNames {
       quickinfos,
       lessontimes,
       schwarzesBrett,
-      aushaenge
+      aushaenge,
+      aushaengeLastRead,
+      schwarzesBrett,
+      srNews
     ];
   }
 }
@@ -155,6 +162,7 @@ class _stores {
   final aushaenge = stringMapStoreFactory.store(AppManager.tables.aushaenge);
   final aushaengeLastRead = stringMapStoreFactory.store(AppManager.tables.aushaengeLastRead);
   final schwarzesBrett = stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
+  final srNews = stringMapStoreFactory.store(AppManager.tables.srNews);
 
   List<StoreRef> get allStores {
     return [
@@ -171,7 +179,9 @@ class _stores {
       quickinfos,
       lessontimes,
       aushaenge,
-      aushaengeLastRead
+      aushaengeLastRead,
+      schwarzesBrett,
+      srNews
     ];
   }
 }

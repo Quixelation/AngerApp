@@ -6,6 +6,7 @@ import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
+import 'package:anger_buddy/logic/schuelerrat/schuelerrat.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
@@ -29,6 +30,7 @@ class _ServicesManager {
   /* -- ENDE: Funktions-Seiten -- */
   final currentClass = CurrentClassManager();
   final portalLinks = UniventionLinks();
+  final srNews = SrNewsManager();
   final credentials = Credentials;
   final moodle = Moodle();
   final homepage = HomepageManager();
@@ -40,6 +42,7 @@ class _ServicesManager {
       calendar.init(),
       ferien.init(),
       klausuren.init(),
+      srNews.init(),
       vp.init(),
       matrix.init(),
       moodle.login.creds.init(),
