@@ -110,7 +110,14 @@ class _WpImagesPageState extends State<WpImagesPage> {
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 100),
                     itemBuilder: (context, index) {
                       return InkWell(
-                        child: Image.network(images[index].mediaDetails!.sizes?.thumbnail.sourceUrl ?? images[index].sourceUrl),
+                        child: CachedNetworkImage(
+                            imageUrl: images[index].mediaDetails!.sizes?.thumbnail.sourceUrl ?? images[index].sourceUrl,
+                            progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                            errorWidget: (context, url, error) => Icon(
+                                  Icons.broken_image,
+                                  color: Colors.red,
+                                )),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(builder: (context) => _WpImageDetails(images[index])));
                         },
