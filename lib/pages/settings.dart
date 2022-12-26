@@ -31,14 +31,6 @@ class _PageSettingsState extends State<PageSettings> {
       ),
       body: ListView(children: [
         ListTile(
-          title: const Text("Farben"),
-          leading: Icon(Icons.color_lens_outlined),
-          trailing: const Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
-          },
-        ),
-        ListTile(
           title: const Text("Startseite"),
           leading: Icon(Icons.home_outlined),
           trailing: const Icon(Icons.keyboard_arrow_right),
@@ -68,6 +60,14 @@ class _PageSettingsState extends State<PageSettings> {
           leading: Icon(Icons.notifications_outlined),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageNotificationSettings()));
+          },
+        ),
+        ListTile(
+          title: const Text("Farben"),
+          leading: Icon(Icons.color_lens_outlined),
+          trailing: const Icon(Icons.keyboard_arrow_right),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
           },
         ),
         // ListTile(
