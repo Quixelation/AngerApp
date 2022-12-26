@@ -82,6 +82,9 @@ dependencies:
   flutter_slidable: ^2.0.0
   badges: ^2.0.3
   sqlite_viewer: ^1.0.5
+  tinycolor2: ^3.0.1
+  image_picker: ^0.8.6
+  crop_your_image: ^0.7.3
   # charts_painter: ^3.0.0
   # flutter_echarts: ^2.3.0
   # graphic: ^0.6.2
@@ -178,6 +181,7 @@ flutter:
     - assets/mainLogo.png
     - assets/s3aa-Logo.png
     - assets/MoodleTools.png
+    - assets/school_trans.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

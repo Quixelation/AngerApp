@@ -41,7 +41,7 @@ class _RoomPageState extends State<RoomPage> {
 
     _scrollCtrl.addListener(() {
       if (_scrollCtrl.position.extentAfter < 200 && !(timeline?.isRequestingHistory ?? true)) {
-        timeline?.requestHistory();
+        timeline?.requestHistory(historyCount: Room.defaultHistoryCount * 2);
       }
     });
 
@@ -71,92 +71,139 @@ class _RoomPageState extends State<RoomPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AngerApp.matrix.buildAvatar(context, widget.room.avatar, showLogo: false),
+              AngerApp.matrix.buildAvatar(context, widget.room.avatar, showLogo: false, room: widget.room),
               const SizedBox(width: 8),
               Text(widget.room.displayname)
             ],
           ),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const _MatrixRoomInfo()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixRoomInfo(widget.room)));
           },
         ),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: FutureBuilder<Timeline>(
-                future: _timelineFuture,
-                builder: (context, snapshot) {
-                  final timeline = snapshot.data;
-                  if (timeline == null) {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    );
-                  }
-                  _count = timeline.events.length;
-
-                  return Column(
-                    children: [
-                      // Center(
-                      //   child: TextButton(onPressed: timeline.requestHistory, child: const Text('Load more...')),
-                      // ),
-                      // const Divider(height: 1),
-                      Expanded(
-                        child: AnimatedList(
-                          controller: _scrollCtrl,
-                          key: _listKey,
-                          reverse: true,
-                          initialItemCount: timeline.events.length,
-                          itemBuilder: (context, i, animation) {
-                            return (timeline.events[i].relationshipEventId != null) && timeline.events[i].type != "m.room.message"
-                                ? Container()
-                                : _MatrixMessage(
-                                    timeline: timeline,
-                                    event: timeline.events[i],
-                                    room: widget.room,
-                                    animation: animation,
-                                  );
-                          },
-                        ),
-                      )
-                    ],
-                  );
-                },
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            child: ColorFiltered(
+              child: Image.asset(
+                "assets/school_trans.png",
+                scale: 1.25,
+                repeat: ImageRepeat.repeat,
+                opacity: AlwaysStoppedAnimation(0.25),
               ),
-            ),
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => _MatrixCreatePollPage(
-                                  room: widget.room,
-                                )));
-                      },
-                      icon: const Icon(Icons.ballot_outlined)),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
-                  Expanded(
-                      child: TextField(
-                    maxLines: 8,
-                    minLines: 1,
-                    controller: _sendController,
-                    decoration: const InputDecoration(
-                      hintText: 'Nachricht senden',
+              colorFilter: Theme.of(context).brightness == Brightness.light
+                  ? const ColorFilter.mode(Colors.transparent, BlendMode.overlay)
+                  : const ColorFilter.matrix(
+                      //Invert
+                      [
+                        //R  G   B    A  Const
+                        -1, 0, 0, 0, 255, //
+                        0, -1, 0, 0, 255, //
+                        0, 0, -1, 0, 255, //
+                        0, 0, 0, 1, 0, //
+                      ],
                     ),
-                  )),
-                  IconButton(
-                    icon: const Icon(Icons.send_outlined),
-                    onPressed: _send,
-                  ),
-                ],
-              ),
             ),
-          ],
-        ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: FutureBuilder<Timeline>(
+                    future: _timelineFuture,
+                    builder: (context, snapshot) {
+                      final timeline = snapshot.data;
+                      if (timeline == null) {
+                        return const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        );
+                      }
+                      _count = timeline.events.length;
+
+                      return Column(
+                        children: [
+                          // Center(
+                          //   child: TextButton(onPressed: timeline.requestHistory, child: const Text('Load more...')),
+                          // ),
+                          // const Divider(height: 1),
+                          Expanded(
+                            child: AnimatedList(
+                              controller: _scrollCtrl,
+                              key: _listKey,
+                              reverse: true,
+                              initialItemCount: timeline.events.length,
+                              itemBuilder: (context, i, animation) {
+                                var sameDay = true;
+                                if (i != 0) {
+                                  sameDay = timeline.events[i].originServerTs.isSameDay(timeline.events[i - 1].originServerTs);
+                                  if (!sameDay) {
+                                    logger.d("Day Switch between");
+                                  }
+                                }
+                                return (timeline.events[i].relationshipEventId != null) && timeline.events[i].type != "m.room.message" && false
+                                    ? Container()
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          if (!sameDay)
+                                            _MatrixChatNotice(
+                                              event: null,
+                                              child: Text(time2string(timeline.events[i].originServerTs, includeTime: false)),
+                                            ),
+                                          _MatrixMessage(
+                                            timeline: timeline,
+                                            event: timeline.events[i],
+                                            room: widget.room,
+                                            animation: animation,
+                                          )
+                                        ],
+                                      );
+                              },
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const Divider(height: 1),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => _MatrixCreatePollPage(
+                                      room: widget.room,
+                                    )));
+                          },
+                          icon: const Icon(Icons.ballot_outlined)),
+                      IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
+                      Expanded(
+                          child: TextField(
+                        maxLines: 8,
+                        minLines: 1,
+                        controller: _sendController,
+                        decoration: const InputDecoration(
+                          hintText: 'Nachricht senden',
+                        ),
+                      )),
+                      IconButton(
+                        icon: const Icon(Icons.send_outlined),
+                        onPressed: _send,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

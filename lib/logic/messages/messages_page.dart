@@ -18,6 +18,8 @@ class _MessagesListPageState extends State<MessagesListPage> {
   StreamSubscription? _matrixSub;
   bool _hasMatrixIntegration = AngerApp.matrix.client.isLogged();
 
+  late int numberOfIntegrations;
+
   void _initMoodle() {
     AngerApp.moodle.login.creds.subject.listen(
       (value) {
@@ -75,6 +77,7 @@ class _MessagesListPageState extends State<MessagesListPage> {
     super.initState();
     _initMoodle();
     _initMatrix();
+    numberOfIntegrations = [_hasMatrixIntegration, _hasMoodleIntegration].where((elem) => elem == true).length;
   }
 
   @override
@@ -120,52 +123,73 @@ class _MessagesListPageState extends State<MessagesListPage> {
         appBar: AppBar(
           title: const Text("Chats"),
           actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MessageSettings()));
-                },
-                icon: const Icon(Icons.settings))
+            if (numberOfIntegrations > 0)
+              IconButton(
+                  onPressed: () {
+                    // Je nach dem, welche Integrationen der Benutzer eingerichtet hat,
+                    // soll er entweder direkt zu der jeweilligen Einstellung-Seite kommen,
+                    // oder zuerst zu einer Seite, wo er die Integration auswählen kann,
+                    // dessen Einstellungen er bearbeiten möchte
+                    if (numberOfIntegrations > 1) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const MessageSettings()));
+                    } else {
+                      if (_hasMatrixIntegration) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const MatrixSettings()));
+                      } else if (_hasMoodleIntegration) {
+                        //TODO:!!! add Moode Settings Page
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.settings))
           ],
         ),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add_comment_outlined),
           onPressed: () {
-            showModalBottomSheet(
-                context: context,
-                builder: (context) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 16),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
+            if (numberOfIntegrations > 1) {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 16),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
+                            child: Text(
+                              "Wähle einen Service aus",
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
                           ),
-                          child: Text(
-                            "Wähle einen Service aus",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        //TODO: Only show enabled Services
-                        if (AngerApp.matrix.client.isLogged())
-                          ListTile(
-                            title: const Text("JSP-Matrix"),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MatrixCreatePage()));
-                            },
-                          ),
-                        if (AngerApp.moodle.login.creds.credentialsAvailable)
-                          ListTile(
-                            title: const Text("Moodle"),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MoodleCreateChatPage()));
-                            },
-                          ),
-                      ],
-                    ));
+                          const SizedBox(height: 8),
+                          //TODO: Only show enabled Services
+                          if (AngerApp.matrix.client.isLogged())
+                            ListTile(
+                              title: const Text("JSP-Matrix"),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MatrixCreatePage()));
+                              },
+                            ),
+                          if (AngerApp.moodle.login.creds.credentialsAvailable)
+                            ListTile(
+                              title: const Text("Moodle"),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MoodleCreateChatPage()));
+                              },
+                            ),
+                        ],
+                      ));
+            } else {
+              if (_hasMatrixIntegration) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MatrixCreatePage()));
+              } else if (_hasMoodleIntegration) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MoodleCreateChatPage()));
+              }
+            }
           },
         ),
         body: (_hasMatrixIntegration || _hasMoodleIntegration)
@@ -194,9 +218,9 @@ class _MessagesListPageState extends State<MessagesListPage> {
                   }
                   final e = combinedList[index];
                   if (e is Room) {
-                    return AngerApp.matrix.buildListTile(context, e);
+                    return AngerApp.matrix.buildListTile(context, e, showLogo: numberOfIntegrations > 1);
                   } else if (e is MoodleConversation) {
-                    return AngerApp.moodle.messaging.buildListTile(context, e);
+                    return AngerApp.moodle.messaging.buildListTile(context, e, showLogo: numberOfIntegrations > 1);
                   } else {
                     return Container();
                   }
@@ -310,7 +334,7 @@ class _ServicePromoCard extends StatelessWidget {
                           Opacity(
                               opacity: 0.78,
                               child: Text(
-                                "$serviceTitle-Chat verbinden",
+                                "$serviceTitle-Chats verbinden",
                                 style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500),
                               )),
                           Icon(

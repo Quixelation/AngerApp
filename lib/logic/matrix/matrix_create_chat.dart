@@ -11,12 +11,6 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
   var groupNameController = TextEditingController();
   List<Profile> usersToAdd = [];
 
-  Future<List<Profile>> searchUser(String search) async {
-    var resp = await AngerApp.matrix.client.searchUserDirectory(search);
-
-    return resp.results;
-  }
-
   void addUserToUsersToAdd(Profile user) {
     if (!usersToAdd.contains(user)) {
       setState(() {
@@ -76,24 +70,7 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
                     "Teilnehmer:",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                  TypeAheadField<Profile>(
-                    errorBuilder: (context, error) {
-                      return const Text("Keine Benutzer gefunden");
-                    },
-                    textFieldConfiguration: const TextFieldConfiguration(
-                      decoration: InputDecoration(labelText: "Teilnehmer suchen"),
-                    ),
-                    minCharsForSuggestions: 1,
-                    suggestionsCallback: (pattern) => searchUser(pattern),
-                    itemBuilder: (context, itemData) {
-                      return ListTile(
-                          title: Text(itemData.displayName ?? itemData.userId),
-                          subtitle: itemData.displayName == null ? null : Text(itemData.userId));
-                    },
-                    onSuggestionSelected: (suggestion) {
-                      addUserToUsersToAdd(suggestion);
-                    },
-                  ),
+                  _MatrixUserTypeAhead(onSelect: addUserToUsersToAdd),
                   const SizedBox(
                     height: 8,
                   ),

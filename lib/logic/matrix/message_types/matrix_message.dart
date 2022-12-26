@@ -8,6 +8,8 @@ class _MatrixMessage extends StatelessWidget {
   final Timeline timeline;
   final Room room;
 
+  final double chatNoticeIconSize = 18;
+
   @override
   Widget build(BuildContext context) {
     var id = Services.matrix.client.userID;
@@ -20,9 +22,14 @@ class _MatrixMessage extends StatelessWidget {
 
     logger.d(relatedEvents);
 
-    final Color textColor = isSender ? Theme.of(context).colorScheme.onSecondaryContainer : Theme.of(context).colorScheme.onSurface;
+    final Color textColor = Theme.of(context).colorScheme.onSurface;
+    final Color bgColor = isSender
+        ? (Theme.of(context).brightness == Brightness.dark
+            ? TinyColor.fromColor(Theme.of(context).colorScheme.secondaryContainer).darken(32).desaturate(55).color
+            : TinyColor.fromColor(Theme.of(context).colorScheme.secondaryContainer).brighten(40).color)
+        : (Theme.of(context).brightness == Brightness.dark ? Colors.blueGrey.shade900 : Colors.grey.shade100);
 
-    if ((displayEvent.type == "m.room.message" || displayEvent.type == "org.matrix.msc3381.poll.start") &&
+    if ((displayEvent.type == "m.room.message" || displayEvent.type == "m.room.encrypted" || displayEvent.type == "org.matrix.msc3381.poll.start") &&
         ((displayEvent.relationshipType ?? "") != "m.replace")) {
       return GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -34,6 +41,34 @@ class _MatrixMessage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (displayEvent.canRedact && !displayEvent.redacted)
+                      TextButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            displayEvent.redactEvent().catchError((err) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context2) => AlertDialog(
+                                        title: const Text("Fehler beim Löschen"),
+                                        content: Text(err),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context2).pop();
+                                              },
+                                              child: const Text("ok"))
+                                        ],
+                                      ));
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.delete_forever,
+                            color: Colors.red,
+                          ),
+                          label: const Text(
+                            "Löschen",
+                            style: TextStyle(color: Colors.red),
+                          )),
                     TextButton.icon(
                         onPressed: () {
                           showDialog(
@@ -57,7 +92,7 @@ class _MatrixMessage extends StatelessWidget {
             opacity: event.status.isSent ? 1 : 0.5,
             child: ChatBubble(
                 margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                backGroundColor: isSender ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.surface,
+                backGroundColor: bgColor,
                 shadowColor: isSender ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.shadow,
                 alignment: isSender ? Alignment.topRight : Alignment.topLeft,
                 clipper: ChatBubbleClipper4(type: isSender ? BubbleType.sendBubble : BubbleType.receiverBubble),
@@ -89,32 +124,55 @@ class _MatrixMessage extends StatelessWidget {
                     // ),
                     Builder(
                       builder: (context) {
-                        if (displayEvent.type == "m.room.message") {
-                          if (displayEvent.messageType == "m.text") {
-                            return Text(
-                              displayEvent.body,
-                              style: TextStyle(color: textColor),
-                            );
-                          }
-                          //TODO: m.notice
-                          else if (displayEvent.messageType == "m.image") {
-                            return ChatBubbleImageRenderer(event);
-                          } else if (displayEvent.messageType == "m.file") {
-                            return ChatBubbleFileRenderer(event, timeline, room);
-                          } else if (displayEvent.messageType == "m.location") {
-                            return ChatBubbleLocationRenderer(event);
-                          } else {
-                            // return Text("Unbekannter Nachrichten-Typ");
-                            return Text(displayEvent.body);
-                          }
-                        } else if (displayEvent.type == "m.room.encrypted") {
-                          return const Text("encrypted");
-                        }
-
-                        if (displayEvent.type == "org.matrix.msc3381.poll.start") {
-                          return ChatBubblePollRendererV2(event, timeline, room);
+                        if (displayEvent.redacted) {
+                          return Opacity(
+                            opacity: 0.87,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.delete_forever),
+                                const SizedBox(width: 4),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text("Nachricht gelöscht"),
+                                    if (displayEvent.redactedBecause?.content["reason"] != null)
+                                      Opacity(opacity: 0.67, child: Text("(" + displayEvent.redactedBecause!.content["reason"] + ")"))
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
                         } else {
-                          return /*Text(displayEvent.type)*/ Container();
+                          switch (displayEvent.type) {
+                            case "m.room.message":
+                              switch (displayEvent.messageType) {
+                                //TODO: "m.notice"
+                                case "m.text":
+                                  return Text(
+                                    displayEvent.body,
+                                    style: TextStyle(color: textColor),
+                                  );
+                                case "m.image":
+                                  return ChatBubbleImageRenderer(event);
+                                case "m.file":
+                                  return ChatBubbleFileRenderer(event, timeline, room);
+                                case "m.location":
+                                  return ChatBubbleLocationRenderer(event);
+                                default:
+                                  return Text(displayEvent.body);
+                              }
+                            case "m.room.encrypted":
+                              return Text(
+                                "Verschlüsselte Nachricht",
+                                style: TextStyle(color: Colors.pink, fontWeight: FontWeight.w500),
+                              );
+                            case "org.matrix.msc3381.poll.start":
+                              return ChatBubblePollRendererV2(event, timeline, room);
+                            default:
+                              return Text(displayEvent.type);
+                          }
                         }
                       },
                     ),
@@ -162,6 +220,60 @@ class _MatrixMessage extends StatelessWidget {
                   ],
                 )),
           ),
+        ),
+      );
+    } else if (displayEvent.type == "m.room.member" &&
+        displayEvent.content["membership"] == "leave" &&
+        displayEvent.stateKey == displayEvent.senderId) {
+      return _MatrixChatNotice(
+          event: displayEvent,
+          icon: Icon(Icons.directions_walk),
+          child: Text((displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") + " hat den Chat verlassen"));
+    } else if (displayEvent.type == "m.room.member" &&
+        displayEvent.content["membership"] == "leave" &&
+        displayEvent.stateKey != displayEvent.senderId) {
+      return _MatrixChatNotice(
+          event: displayEvent,
+          icon: Icon(Icons.person_remove),
+          child: Text(displayEvent.sender.calcDisplayname() +
+              " hat " +
+              (displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") +
+              " entfernt"));
+    } else if (displayEvent.type == "m.room.member" && displayEvent.content["membership"] == "join" && displayEvent.content["displayname"] == null) {
+      return _MatrixChatNotice(
+          event: displayEvent,
+          icon: Icon(Icons.emoji_people),
+          child: Text((displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") + " ist dem Chat beigetreten"));
+    } else if (displayEvent.type == "m.room.member" && displayEvent.content["membership"] == "invite") {
+      return _MatrixChatNotice(
+          event: displayEvent,
+          icon: Icon(Icons.person_add),
+          child: Text(displayEvent.sender.calcDisplayname() + " hat " + displayEvent.content["displayname"] + " eingeladen"));
+    } else if (displayEvent.type == "m.room.avatar") {
+      return _MatrixChatNotice(
+          event: displayEvent, icon: Icon(Icons.image), child: Text(displayEvent.sender.calcDisplayname() + " hat das Chat-Bild geändert"));
+    } else if (getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) {
+      return InkWell(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              var encoder = const JsonEncoder.withIndent("     ");
+              var text = encoder.convert(displayEvent.toJson());
+              return Material(child: SingleChildScrollView(child: Text(text)));
+            },
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.blueGrey.shade900 : Colors.blueGrey.shade100,
+          child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: RichText(
+                  text: TextSpan(style: Theme.of(context).textTheme.bodyText2, children: [
+                TextSpan(style: TextStyle(fontWeight: FontWeight.bold), text: displayEvent.sender.calcDisplayname() + ": "),
+                TextSpan(text: displayEvent.type + " (" + displayEvent.messageType + ")")
+              ]))),
         ),
       );
     } else {

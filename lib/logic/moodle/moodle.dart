@@ -137,9 +137,9 @@ class _MoodleMessaging {
 
   final subject = BehaviorSubject<List<MoodleConversation>>();
 
-  Widget buildListTile(BuildContext context, MoodleConversation convo) {
+  Widget buildListTile(BuildContext context, MoodleConversation convo, {bool showLogo = true}) {
     return DefaultMessageListTile(
-      avatar: buildAvatar(convo.members.first.profileimageurl),
+      avatar: buildAvatar(convo.members.first.profileimageurl, showLogo: showLogo),
       datetime: convo.messages.isEmpty ? null : convo.messages.first.timeCreated,
       hasUnread: convo.unreadCount != null && convo.unreadCount != 0,
       unreadCount: convo.unreadCount != null ? convo.unreadCount! : 0,
@@ -205,16 +205,17 @@ class _MoodleMessaging {
     //     leading: );
   }
 
-  Widget buildAvatar(String? imgUrl) {
+  Widget buildAvatar(String? imgUrl, {bool showLogo = true}) {
     return Stack(children: [
       CircleAvatar(
         backgroundImage: imgUrl == null ? null : NetworkImage(imgUrl),
       ),
-      Positioned(
-        child: Image.asset("assets/MoodleTools.png", width: 20),
-        bottom: 0,
-        right: 0,
-      ),
+      if (showLogo)
+        Positioned(
+          child: Image.asset("assets/MoodleTools.png", width: 20),
+          bottom: 0,
+          right: 0,
+        ),
     ]);
   }
 

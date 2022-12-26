@@ -36,8 +36,18 @@ class PageHome extends StatefulWidget {
 class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
   int selectedPageIndex = 0;
 
+  late final TabController _tabController;
+
   @override
   void initState() {
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+
+    _tabController.addListener(() {
+      logger.w("TabControl Listeenr");
+      setState(() {
+        selectedPageIndex = _tabController.index;
+      });
+    });
     super.initState();
   }
 
@@ -52,6 +62,7 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                 selectedIndex: selectedPageIndex,
                 onDestinationSelected: (value) {
                   setState(() {
+                    _tabController.animateTo(value);
                     selectedPageIndex = value;
                   });
                 },
@@ -61,7 +72,10 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                 ],
               )
             : null,
-        body: [const _HomePageContent(), const MessagesListPage()][selectedPageIndex]);
+        body: TabBarView(
+          controller: _tabController,
+          children: [const _HomePageContent(), const MessagesListPage()],
+        ));
   }
 }
 

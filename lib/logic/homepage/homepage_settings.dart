@@ -32,7 +32,7 @@ class _HomepageSettingsPageState extends State<HomepageSettingsPage> {
                       Opacity(
                           opacity: 0.87,
                           child: Text(
-                            "(Neustart erforderlich)",
+                            "(Neustart der App erforderlich)",
                             style: TextStyle(fontSize: 12),
                           ))
                     ],

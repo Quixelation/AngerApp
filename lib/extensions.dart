@@ -22,4 +22,8 @@ extension DateExt on DateTime {
     var datified = date2.at0;
     return isAtSameMomentAs(datified) || isBefore(datified);
   }
+
+  bool isSameDay(DateTime date2) {
+    return year == date2.year && month == date2.month && day == date2.day;
+  }
 }

@@ -280,7 +280,7 @@ class _ChatBubblePollRendererV2State extends State<ChatBubblePollRendererV2> {
                   height: 16,
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
-                    colors: [Colors.red, Colors.black.withAlpha(22)],
+                    colors: [Theme.of(context).colorScheme.primary, Colors.black.withAlpha(22)],
                     stops: List.filled(2, votes / maxVotes),
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
