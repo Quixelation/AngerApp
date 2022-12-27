@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
@@ -60,11 +61,9 @@ class VertretungsplanManager {
 
   Future<VpDetailsFetchResponse> fetchDetailsApi(VertretungsPlanItem vp) async {
     logger.d("Fetching details for ${vp.uniqueName}");
-    var response = await http.get(
-        Uri.parse(AppManager.urls.vpdetail(vp.contentUrl.toString())),
-        headers: {
-          "encoding": "utf-8",
-        });
+    var response = await http.get(Uri.parse(AppManager.urls.vpdetail(vp.contentUrl.toString())), headers: {
+      "encoding": "utf-8",
+    });
 
     if (response.statusCode != 200) {
       throw "Status not 200";
@@ -83,17 +82,14 @@ class VertretungsplanManager {
       logger.e(err);
     }
 
-    return VpDetailsFetchResponse(
-        details: converted, html: body, error: errorWhileConverting);
+    return VpDetailsFetchResponse(details: converted, html: body, error: errorWhileConverting);
   }
 
   Future<AsyncDataResponse<_VpListResponse>> fetchListApi() async {
     try {
-      String client =
-          Credentials.vertretungsplan.subject.valueWrapper?.value ?? "";
+      String client = Credentials.vertretungsplan.subject.valueWrapper?.value ?? "";
       logger.v("VP fetching Api using CLient: $client");
-      var url =
-          Uri.parse('${AppManager.urls.vplist}?request=list&client=$client');
+      var url = Uri.parse('${AppManager.urls.vplist}?request=list&client=$client');
       var response = await http.get(url, headers: {
         "encoding": "utf-8",
       });
@@ -102,8 +98,7 @@ class VertretungsplanManager {
         throw "Status not 200";
       }
 
-      final json =
-          jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
+      final json = jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true));
 
       if (json["result"] == true) {
         final objects = json['objects'];
@@ -120,8 +115,7 @@ class VertretungsplanManager {
                 contentUrl: jsonObj["contentUrl"],
                 lastChanged: _extractChangedDate(jsonObj["changed"]),
                 isTicker: jsonObj["type"] == "ticker",
-                read: await getAushangReadStatusFromDatabase(
-                    jsonObj["uniqueId"], lastChanged),
+                read: await getAushangReadStatusFromDatabase(jsonObj["uniqueId"], lastChanged),
                 uniqueId: jsonObj["uniqueId"]));
           } else {
             items.add(VertretungsPlanItem.fromDbJson(
@@ -137,10 +131,7 @@ class VertretungsplanManager {
         }
         AngerApp.aushang.vpAushangSubject.add(nonVpObjects);
         return AsyncDataResponse(
-            data: _VpListResponse(data: items, result: true),
-            loadingAction: AsyncDataResponseLoadingAction.none,
-            allowReload: true,
-            error: false);
+            data: _VpListResponse(data: items, result: true), loadingAction: AsyncDataResponseLoadingAction.none, allowReload: true, error: false);
       } else {
         return AsyncDataResponse(
             data: _VpListResponse(result: false, msg: json["msg"]),
@@ -151,10 +142,7 @@ class VertretungsplanManager {
     } catch (err) {
       logger.e("[VP] Failed to fetch ListApi", err, StackTrace.current);
       return AsyncDataResponse(
-          data: _VpListResponse(result: false),
-          loadingAction: AsyncDataResponseLoadingAction.none,
-          allowReload: true,
-          error: true);
+          data: _VpListResponse(result: false), loadingAction: AsyncDataResponseLoadingAction.none, allowReload: true, error: true);
     }
   }
 }
@@ -196,16 +184,13 @@ class _VpDatabaseManager {
 
     ///  Enthält alle `uniqueId`s, welche *nicht* mehr auf dem Server sind
     var filteredDbResp = dbResp.where((element) {
-      var savedDate = DateTime.fromMillisecondsSinceEpoch(
-          int.parse(element["saveDate"].toString()));
+      var savedDate = DateTime.fromMillisecondsSinceEpoch(int.parse(element["saveDate"].toString()));
       var now = DateTime.now();
       var diff = now.difference(savedDate).abs();
 
       var vpSettingsVal = Services.vp.settings.subject.value;
 
-      var maxDiff = vpSettingsVal?.saveDuration != null
-          ? Duration(days: vpSettingsVal!.saveDuration)
-          : const Duration(days: 2);
+      var maxDiff = vpSettingsVal?.saveDuration != null ? Duration(days: vpSettingsVal!.saveDuration) : const Duration(days: 2);
 
       if ((vpSettingsVal?.saveDuration ?? 2) == 0) {
         return !(uniqueIds.contains(element["uniqueId"]));
@@ -218,17 +203,14 @@ class _VpDatabaseManager {
 
     db.transaction((transaction) async {
       for (var item in filteredDbResp) {
-        await AppManager.stores.vp
-            .record(item["uniqueId"].toString())
-            .delete(transaction);
+        await AppManager.stores.vp.record(item["uniqueId"].toString()).delete(transaction);
       }
     });
 
     return;
   }
 
-  Future<void> saveToDb(
-      {required String data, required VertretungsPlanItem vpItem}) async {
+  Future<void> saveToDb({required String data, required VertretungsPlanItem vpItem}) async {
     printInDebug("Saving to db");
     try {
       var db = getIt.get<AppManager>().db;

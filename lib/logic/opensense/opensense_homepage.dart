@@ -1,8 +1,7 @@
 part of opensense;
 
 class OpenSenseOverviewWidget extends StatefulWidget {
-  const OpenSenseOverviewWidget({Key? key, this.onSensorTap, this.showOnError = false, this.showTitle = true})
-      : super(key: key);
+  const OpenSenseOverviewWidget({Key? key, this.onSensorTap, this.showOnError = false, this.showTitle = true}) : super(key: key);
 
   final void Function(String sensorId)? onSensorTap;
   final bool showTitle;
@@ -105,40 +104,41 @@ class _OpenSenseOverviewWidgetState extends State<OpenSenseOverviewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: openSenseData?.data != null
-          ? Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                if (widget.showTitle) ...[
-                  Text(
-                    "openSense-Box",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                ],
-                ...openSenseData!.data!.sensors
-                    .map((e) => widget.onSensorTap != null ? SensorListTile(e) : SensorRow(e))
-                    .toList()
-              ]),
-            )
-          : (widget.showOnError
-              ? NoConnectionColumn(
-                  showImage: true,
-                  title: "Keine Daten",
-                  subtitle: "Sensordaten konnten nicht abgerufen werden. Überprüfe ggf. deine Internetverbindung.",
-                  footerWidgets: [
-                    Center(
-                      child: TextButton.icon(
-                          onPressed: () {
-                            Services.openSense.init();
-                          },
-                          icon: Icon(Icons.refresh),
-                          label: Text("Erneut versuchen")),
-                    )
+    return HomepageWidget(
+      show: true,
+      builder: (context) => Card(
+        child: openSenseData?.data != null
+            ? Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  if (widget.showTitle) ...[
+                    Text(
+                      "openSense-Box",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8),
                   ],
-                )
-              : Container()),
+                  ...openSenseData!.data!.sensors.map((e) => widget.onSensorTap != null ? SensorListTile(e) : SensorRow(e)).toList()
+                ]),
+              )
+            : (widget.showOnError
+                ? NoConnectionColumn(
+                    showImage: true,
+                    title: "Keine Daten",
+                    subtitle: "Sensordaten konnten nicht abgerufen werden. Überprüfe ggf. deine Internetverbindung.",
+                    footerWidgets: [
+                      Center(
+                        child: TextButton.icon(
+                            onPressed: () {
+                              Services.openSense.init();
+                            },
+                            icon: Icon(Icons.refresh),
+                            label: Text("Erneut versuchen")),
+                      )
+                    ],
+                  )
+                : Container()),
+      ),
     );
   }
 }

@@ -22,14 +22,14 @@ class _MatrixMessage extends StatelessWidget {
 
     logger.d(relatedEvents);
 
-    final Color textColor = Theme.of(context).colorScheme.onSurface;
-    final Color bgColor = isSender
-        ? (Theme.of(context).brightness == Brightness.dark
-            ? TinyColor.fromColor(Theme.of(context).colorScheme.secondaryContainer).darken(32).desaturate(55).color
-            : TinyColor.fromColor(Theme.of(context).colorScheme.secondaryContainer).brighten(40).color)
-        : (Theme.of(context).brightness == Brightness.dark ? Colors.blueGrey.shade900 : Colors.grey.shade100);
+    final msgColors = DefaultMessagingColors(context);
+    final Color textColor = msgColors.textColor;
+    final Color bgColor = isSender ? msgColors.messageSent : msgColors.messageRecieved;
 
-    if ((displayEvent.type == "m.room.message" || displayEvent.type == "m.room.encrypted" || displayEvent.type == "org.matrix.msc3381.poll.start") &&
+    if ((displayEvent.type == "m.room.message" ||
+            displayEvent.type == "m.room.encrypted" ||
+            displayEvent.type == "org.matrix.msc3381.poll.start" ||
+            displayEvent.type == "m.poll.start") &&
         ((displayEvent.relationshipType ?? "") != "m.replace")) {
       return GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -164,11 +164,13 @@ class _MatrixMessage extends StatelessWidget {
                                   return Text(displayEvent.body);
                               }
                             case "m.room.encrypted":
-                              return Text(
+                              return const Text(
                                 "Verschlüsselte Nachricht",
                                 style: TextStyle(color: Colors.pink, fontWeight: FontWeight.w500),
                               );
                             case "org.matrix.msc3381.poll.start":
+                              return ChatBubblePollRendererV2(event, timeline, room);
+                            case "m.poll.start":
                               return ChatBubblePollRendererV2(event, timeline, room);
                             default:
                               return Text(displayEvent.type);
@@ -225,33 +227,35 @@ class _MatrixMessage extends StatelessWidget {
     } else if (displayEvent.type == "m.room.member" &&
         displayEvent.content["membership"] == "leave" &&
         displayEvent.stateKey == displayEvent.senderId) {
-      return _MatrixChatNotice(
-          event: displayEvent,
-          icon: Icon(Icons.directions_walk),
+      return MessagingChatNotice(
+          matrixEvent: displayEvent,
+          icon: const Icon(Icons.directions_walk),
           child: Text((displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") + " hat den Chat verlassen"));
     } else if (displayEvent.type == "m.room.member" &&
         displayEvent.content["membership"] == "leave" &&
         displayEvent.stateKey != displayEvent.senderId) {
-      return _MatrixChatNotice(
-          event: displayEvent,
-          icon: Icon(Icons.person_remove),
+      return MessagingChatNotice(
+          matrixEvent: displayEvent,
+          icon: const Icon(Icons.person_remove),
           child: Text(displayEvent.sender.calcDisplayname() +
               " hat " +
               (displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") +
               " entfernt"));
     } else if (displayEvent.type == "m.room.member" && displayEvent.content["membership"] == "join" && displayEvent.content["displayname"] == null) {
-      return _MatrixChatNotice(
-          event: displayEvent,
-          icon: Icon(Icons.emoji_people),
+      return MessagingChatNotice(
+          matrixEvent: displayEvent,
+          icon: const Icon(Icons.emoji_people),
           child: Text((displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") + " ist dem Chat beigetreten"));
     } else if (displayEvent.type == "m.room.member" && displayEvent.content["membership"] == "invite") {
-      return _MatrixChatNotice(
-          event: displayEvent,
-          icon: Icon(Icons.person_add),
+      return MessagingChatNotice(
+          matrixEvent: displayEvent,
+          icon: const Icon(Icons.person_add),
           child: Text(displayEvent.sender.calcDisplayname() + " hat " + displayEvent.content["displayname"] + " eingeladen"));
     } else if (displayEvent.type == "m.room.avatar") {
-      return _MatrixChatNotice(
-          event: displayEvent, icon: Icon(Icons.image), child: Text(displayEvent.sender.calcDisplayname() + " hat das Chat-Bild geändert"));
+      return MessagingChatNotice(
+          matrixEvent: displayEvent,
+          icon: const Icon(Icons.image),
+          child: Text(displayEvent.sender.calcDisplayname() + " hat das Chat-Bild geändert"));
     } else if (getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) {
       return InkWell(
         onTap: () {
@@ -271,7 +275,7 @@ class _MatrixMessage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: RichText(
                   text: TextSpan(style: Theme.of(context).textTheme.bodyText2, children: [
-                TextSpan(style: TextStyle(fontWeight: FontWeight.bold), text: displayEvent.sender.calcDisplayname() + ": "),
+                TextSpan(style: const TextStyle(fontWeight: FontWeight.bold), text: displayEvent.sender.calcDisplayname() + ": "),
                 TextSpan(text: displayEvent.type + " (" + displayEvent.messageType + ")")
               ]))),
         ),

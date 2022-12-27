@@ -1,14 +1,23 @@
-import 'dart:convert';
+library ferien;
 
+import 'dart:async';
+import 'dart:convert';
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/data_manager.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
+import 'package:anger_buddy/utils/network_assistant.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sembast/sembast.dart';
+
+part "ferien_homepage_widget.dart";
 
 class Ferien {
   final String id;
@@ -58,8 +67,7 @@ class FerienManager extends DataManager<Ferien> {
   fetchFromDatabase() async {
     var db = getIt.get<AppManager>().db;
 
-    var ferien =
-        await AppManager.stores.ferien.query(finder: Finder(sortOrders: [SortOrder('begin', true)])).getSnapshots(db);
+    var ferien = await AppManager.stores.ferien.query(finder: Finder(sortOrders: [SortOrder('begin', true)])).getSnapshots(db);
 
     List<Ferien> ferienList = [];
     if (ferien.isNotEmpty) {

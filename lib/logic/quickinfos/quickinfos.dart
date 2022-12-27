@@ -1,12 +1,18 @@
-import 'dart:convert';
+library quickinfos;
 
+import 'dart:convert';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
+import 'package:anger_buddy/utils/url.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import "package:http/http.dart" as http;
 import 'package:sembast/sembast.dart';
+
+part "quickinfos_homepage_widget.dart";
 
 enum QuickInfoType {
   info,
@@ -48,10 +54,7 @@ Stream<AsyncDataResponse<List<QuickInfo>>> fetchQuickInfos() async* {
   if (!lastSync.never) {
     var resp = await AppManager.stores.quickinfos.query().getSnapshots(db);
     dbResp = resp.map((e) => QuickInfo.fromCmsJson(e.value)).toList();
-    yield AsyncDataResponse(
-        data: dbResp,
-        ageType: AsyncDataResponseAgeType.oldData,
-        loadingAction: AsyncDataResponseLoadingAction.currentlyLoading);
+    yield AsyncDataResponse(data: dbResp, ageType: AsyncDataResponseAgeType.oldData, loadingAction: AsyncDataResponseLoadingAction.currentlyLoading);
   }
   bool errOccurred = false;
   http.Response? response;
@@ -73,8 +76,9 @@ Stream<AsyncDataResponse<List<QuickInfo>>> fetchQuickInfos() async* {
     db.transaction((transaction) async {
       await AppManager.stores.quickinfos.delete(transaction);
       for (var quickInfo in quickInfos) {
-        await AppManager.stores.quickinfos.record(quickInfo.id).put(transaction,
-            {"id": quickInfo.id, "type": quickInfo.type.name, "title": quickInfo.title, "content": quickInfo.content});
+        await AppManager.stores.quickinfos
+            .record(quickInfo.id)
+            .put(transaction, {"id": quickInfo.id, "type": quickInfo.type.name, "title": quickInfo.title, "content": quickInfo.content});
       }
     });
 

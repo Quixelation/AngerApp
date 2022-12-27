@@ -1,22 +1,4 @@
-import 'dart:async';
-
-import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/logic/feedback/feedback.dart';
-import 'package:anger_buddy/logic/schuelerrat/schuelerrat.dart';
-import 'package:anger_buddy/logic/schuelerrat/schuelerrat_page.dart';
-import 'package:anger_buddy/logic/sync_manager.dart';
-import 'package:anger_buddy/network/news.dart';
-import 'package:anger_buddy/pages/no_connection.dart';
-import 'package:anger_buddy/utils/logger.dart';
-import 'package:anger_buddy/utils/mini_utils.dart';
-import 'package:anger_buddy/utils/network_assistant.dart';
-import 'package:anger_buddy/utils/time_2_string.dart';
-import 'package:anger_buddy/utils/url.dart';
-import 'package:badges/badges.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:html/dom.dart' as dom;
-import 'package:master_detail_scaffold/master_detail_scaffold.dart';
+part of news;
 
 class PageNewsList extends StatefulWidget {
   const PageNewsList({Key? key}) : super(key: key);
@@ -31,9 +13,14 @@ class _PageNewsListState extends State<PageNewsList> {
 
   SyncManager? lastSync = null;
   StreamSubscription? lastSyncSub;
+  StreamSubscription? newsSub;
 
   void loadNews({bool? force}) {
-    Services.news.subject.listen((event) async {
+    newsSub = Services.news.subject.listen((event) async {
+      if (!mounted) {
+        newsSub?.cancel();
+        return;
+      }
       setState(() {
         data = event;
       });
@@ -65,6 +52,7 @@ class _PageNewsListState extends State<PageNewsList> {
   @override
   void dispose() {
     lastSyncSub?.cancel();
+    newsSub?.cancel();
     super.dispose();
   }
 
@@ -189,7 +177,7 @@ class _PageNewsListState extends State<PageNewsList> {
       assert(srNewsId != null);
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Hero(
         tag: heroTag,
         child: Card(
@@ -208,17 +196,20 @@ class _PageNewsListState extends State<PageNewsList> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12).copyWith(bottom: 6),
-                  child: Text(
-                    title,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16).copyWith(bottom: 12),
+                  child: Opacity(
+                    opacity: 0.87,
+                    child: Text(
+                      title,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
                   ),
                 ),
                 Divider(
                   height: 1,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Html(
                     data: subtitle,
                     style: {
@@ -236,9 +227,9 @@ class _PageNewsListState extends State<PageNewsList> {
                   height: 1,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12).copyWith(top: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16).copyWith(top: 12),
                   child: Opacity(
-                    opacity: 0.87,
+                    opacity: 0.67,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,

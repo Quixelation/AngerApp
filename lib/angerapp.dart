@@ -11,8 +11,8 @@ import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
-import 'package:anger_buddy/network/ferien.dart';
-import 'package:anger_buddy/network/news.dart';
+import 'package:anger_buddy/logic/ferien/ferien.dart';
+import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 
 class _ServicesManager {

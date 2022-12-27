@@ -149,11 +149,7 @@ class _RoomPageState extends State<RoomPage> {
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          if (!sameDay)
-                                            _MatrixChatNotice(
-                                              event: null,
-                                              child: Text(time2string(timeline.events[i].originServerTs, includeTime: false)),
-                                            ),
+                                          if (!sameDay) MessagingChatDateNotice(timeline.events[i].originServerTs),
                                           _MatrixMessage(
                                             timeline: timeline,
                                             event: timeline.events[i],
@@ -171,35 +167,40 @@ class _RoomPageState extends State<RoomPage> {
                   ),
                 ),
                 const Divider(height: 1),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => _MatrixCreatePollPage(
-                                      room: widget.room,
-                                    )));
-                          },
-                          icon: const Icon(Icons.ballot_outlined)),
-                      IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
-                      Expanded(
-                          child: TextField(
-                        maxLines: 8,
-                        minLines: 1,
-                        controller: _sendController,
-                        decoration: const InputDecoration(
-                          hintText: 'Nachricht senden',
-                        ),
-                      )),
-                      IconButton(
-                        icon: const Icon(Icons.send_outlined),
-                        onPressed: _send,
+                ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3, tileMode: TileMode.clamp),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => _MatrixCreatePollPage(
+                                          room: widget.room,
+                                        )));
+                              },
+                              icon: const Icon(Icons.ballot_outlined)),
+                          IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
+                          Expanded(
+                              child: TextField(
+                            maxLines: 8,
+                            minLines: 1,
+                            controller: _sendController,
+                            decoration: const InputDecoration(
+                              hintText: 'Nachricht senden',
+                            ),
+                          )),
+                          IconButton(
+                            icon: const Icon(Icons.send_outlined),
+                            onPressed: _send,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                )
               ],
             ),
           ),

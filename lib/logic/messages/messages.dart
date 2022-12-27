@@ -1,10 +1,13 @@
 library messages;
 
 import 'dart:async';
+import 'dart:convert';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/jsp/jsp_loginpage.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
+import 'package:anger_buddy/main.dart';
+import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:badges/badges.dart';
@@ -12,9 +15,12 @@ import 'package:flutter/material.dart';
 import "package:anger_buddy/extensions.dart";
 import 'package:flutter_html/flutter_html.dart';
 import 'package:matrix/matrix.dart';
+import 'package:tinycolor2/tinycolor2.dart';
 
 part "messages_page.dart";
 part "messages_settings.dart";
+part "message_chat_notice.dart";
+part "message_chat_date_notice.dart";
 
 abstract class MessageService<M extends Message, C extends Conversation> {
   abstract final String name;
@@ -111,4 +117,21 @@ class DefaultMessageListTile extends StatelessWidget {
         ),
         leading: avatar);
   }
+}
+
+class _DefaultMessagingColors {
+  final Color messageSent;
+  final Color messageRecieved;
+  final Color textColor;
+
+  _DefaultMessagingColors({required this.messageRecieved, required this.messageSent, required this.textColor});
+}
+
+_DefaultMessagingColors DefaultMessagingColors(BuildContext context) {
+  return _DefaultMessagingColors(
+      textColor: Theme.of(context).colorScheme.onSurface,
+      messageRecieved: (Theme.of(context).brightness == Brightness.dark ? Colors.blueGrey.shade900 : Colors.grey.shade100),
+      messageSent: (Theme.of(context).brightness == Brightness.dark
+          ? TinyColor.fromColor(Theme.of(context).colorScheme.secondaryContainer).darken(32).desaturate(55).color
+          : TinyColor.fromColor(Theme.of(context).colorScheme.secondaryContainer).brighten(40).color));
 }

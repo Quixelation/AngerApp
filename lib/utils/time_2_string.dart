@@ -63,7 +63,7 @@ String time2string(DateTime dateTime,
         month = "Juni";
         break;
       case DateTime.july:
-        month = "July";
+        month = "Juli";
         break;
       case DateTime.august:
         month = "August";

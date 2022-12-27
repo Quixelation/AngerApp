@@ -123,122 +123,125 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
         .toList();
     forToday.sort((a, b) => a.dateFrom.compareTo(b.dateFrom));
 
-    return Flex(
-      children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      _week = 0;
-                    });
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _week--;
-                            });
-                          },
-                          icon: const Icon(Icons.navigate_before)),
-                      Flexible(
-                        child: Column(
-                          children: [
-                            Opacity(
-                              opacity: 0.87,
-                              child: Text(
-                                _week.abs() >= 3 ? genWeekDiff() : genWeekName(),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.headline6,
-                              ),
-                            ),
-                            if (_week != 0 && _week.abs() < 3)
+    return HomepageWidget(
+      show: true,
+      builder: (context) => Flex(
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _week = 0;
+                      });
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _week--;
+                              });
+                            },
+                            icon: const Icon(Icons.navigate_before)),
+                        Flexible(
+                          child: Column(
+                            children: [
                               Opacity(
-                                opacity: 0.6,
+                                opacity: 0.87,
                                 child: Text(
-                                  genWeekDiff(),
-                                  style: Theme.of(context).textTheme.subtitle1,
+                                  _week.abs() >= 3 ? genWeekDiff() : genWeekName(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.headline6,
                                 ),
                               ),
-                          ],
+                              if (_week != 0 && _week.abs() < 3)
+                                Opacity(
+                                  opacity: 0.6,
+                                  child: Text(
+                                    genWeekDiff(),
+                                    style: Theme.of(context).textTheme.subtitle1,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _week++;
+                              });
+                            },
+                            icon: const Icon(Icons.navigate_next)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (data == null)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      child: Opacity(
+                        opacity: 0.6,
+                        child: Text(
+                          "Daten laden...",
+                          style: TextStyle(fontSize: 16),
                         ),
                       ),
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _week++;
-                            });
-                          },
-                          icon: const Icon(Icons.navigate_next)),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                if (data == null)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    child: Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        "Daten laden...",
-                        style: TextStyle(fontSize: 16),
+                    )
+                  //TODO: Error handling
+                  // else if (data!.error == true)
+                  //   const Padding(
+                  //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  //     child: Opacity(
+                  //       opacity: 0.6,
+                  //       child: Text(
+                  //         "Es gab einen Fehler",
+                  //         style: TextStyle(fontSize: 16),
+                  //       ),
+                  //     ),
+                  //   )
+                  // else if (data!.data == null)
+                  //   const Padding(
+                  //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  //     child: Opacity(
+                  //       opacity: 0.6,
+                  //       child: Text(
+                  //         "Komischerweise keine Daten",
+                  //         style: TextStyle(fontSize: 16),
+                  //       ),
+                  //     ),
+                  //   )
+                  else if (forToday.isNotEmpty)
+                    ...forToday.map((elem) => _EventsThisWeekEvent(elem)).toList()
+                  else
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      child: Opacity(
+                        opacity: 0.6,
+                        child: Text(
+                          "Keine Events",
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ),
-                  )
-                //TODO: Error handling
-                // else if (data!.error == true)
-                //   const Padding(
-                //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                //     child: Opacity(
-                //       opacity: 0.6,
-                //       child: Text(
-                //         "Es gab einen Fehler",
-                //         style: TextStyle(fontSize: 16),
-                //       ),
-                //     ),
-                //   )
-                // else if (data!.data == null)
-                //   const Padding(
-                //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                //     child: Opacity(
-                //       opacity: 0.6,
-                //       child: Text(
-                //         "Komischerweise keine Daten",
-                //         style: TextStyle(fontSize: 16),
-                //       ),
-                //     ),
-                //   )
-                else if (forToday.isNotEmpty)
-                  ...forToday.map((elem) => _EventsThisWeekEvent(elem)).toList()
-                else
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    child: Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        "Keine Events",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 8),
-                // Spacer()
-              ],
+                  const SizedBox(height: 8),
+                  // Spacer()
+                ],
+              ),
             ),
           ),
-        ),
-      ],
-      direction: Axis.vertical,
+        ],
+        direction: Axis.vertical,
+      ),
     );
   }
 }

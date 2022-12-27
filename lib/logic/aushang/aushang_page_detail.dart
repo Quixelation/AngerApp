@@ -52,7 +52,10 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
                                   } else if (!snapshot.hasData) {
                                     return const Center(child: CircularProgressIndicator.adaptive());
                                   } else {
-                                    return Html(data: snapshot.data?.body ?? "<h1>Keine Daten</1>");
+                                    return Html(
+                                      data: snapshot.data?.body ?? "<h1>Keine Daten</h1>",
+                                      style: {"*": Style(color: Theme.of(context).colorScheme.onSurface)},
+                                    );
                                   }
                                 },
                                 future: http.get(Uri.parse(AppManager.urls.vpdetail(widget.aushang.textContent))),
@@ -63,8 +66,7 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
                     const SizedBox(height: 15),
                     if (widget.aushang.status != "vp")
                       const Padding(
-                          child: Text("Dateien",
-                              style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold)),
+                          child: Text("Dateien", style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold)),
                           padding: EdgeInsets.only(left: 10)),
                     if (widget.aushang.status != "vp")
                       for (var file in files!)
@@ -75,9 +77,8 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Scaffold(
-                                          appBar: AppBar(title: Text(file.title)),
-                                          body: Center(child: renderFile(file)))));
+                                      builder: (context) =>
+                                          Scaffold(appBar: AppBar(title: Text(file.title)), body: Center(child: renderFile(file)))));
                             }),
                     if (files!.isEmpty && widget.aushang.status != "vp")
                       const Padding(
@@ -93,8 +94,7 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  "Erstellt: ${time2string(widget.aushang.dateCreated, includeTime: true, includeWeekday: true)}"),
+                              Text("Erstellt: ${time2string(widget.aushang.dateCreated, includeTime: true, includeWeekday: true)}"),
                               const SizedBox(height: 4),
                               Text(
                                   "Geändert:  ${widget.aushang.dateUpdated.millisecondsSinceEpoch == 0 ? "---" : time2string(widget.aushang.dateUpdated, includeTime: true, includeWeekday: true)}"),
@@ -149,9 +149,7 @@ class __RenderImageState extends State<_RenderImage> {
 
         return Center(
           child: CircularProgressIndicator(
-            value: (loadingProgress != null)
-                ? (loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1))
-                : 0,
+            value: (loadingProgress != null) ? (loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)) : 0,
           ),
         );
       },
@@ -172,8 +170,7 @@ class _RenderPdfState extends State<_RenderPdf> {
   @override
   void initState() {
     super.initState();
-    http.get(Uri.parse(_generateDirectusDownloadUrl(widget.file.directusFileId)),
-        headers: {"Authorization": _createAuthHeader()}).then((value) {
+    http.get(Uri.parse(_generateDirectusDownloadUrl(widget.file.directusFileId)), headers: {"Authorization": _createAuthHeader()}).then((value) {
       //TODO: Check Status Code
       setState(() {
         doc = PdfDocument.openData(value.bodyBytes);

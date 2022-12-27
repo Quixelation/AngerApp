@@ -1,6 +1,9 @@
-import 'dart:convert';
+library news;
 
+import 'dart:async';
+import 'dart:convert';
 import 'package:anger_buddy/logic/data_manager.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -13,6 +16,26 @@ import 'package:xml/xml.dart';
 import 'package:intl/intl.dart';
 import 'package:html_character_entities/html_character_entities.dart';
 import "package:rxdart/subjects.dart";
+import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/logic/feedback/feedback.dart';
+import 'package:anger_buddy/logic/schuelerrat/schuelerrat.dart';
+import 'package:anger_buddy/logic/schuelerrat/schuelerrat_page.dart';
+import 'package:anger_buddy/logic/sync_manager.dart';
+import 'package:anger_buddy/logic/news/news.dart';
+import 'package:anger_buddy/pages/no_connection.dart';
+import 'package:anger_buddy/utils/logger.dart';
+import 'package:anger_buddy/utils/mini_utils.dart';
+import 'package:anger_buddy/utils/network_assistant.dart';
+import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:anger_buddy/utils/url.dart';
+import 'package:badges/badges.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
+import 'package:master_detail_scaffold/master_detail_scaffold.dart';
+
+part "news_page.dart";
+part "news_homepage_widget.dart";
 
 class NewsApiDataElement {
   int? id;

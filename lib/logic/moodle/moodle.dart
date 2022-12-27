@@ -10,18 +10,22 @@ import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:anger_buddy/utils/url.dart';
 import 'package:badges/badges.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import "package:http/http.dart" as http;
 import 'package:motion/motion.dart';
 import 'package:rxdart/subjects.dart';
 import "package:sembast/sembast.dart";
+import "package:anger_buddy/extensions.dart";
 import "package:anger_buddy/extensions.dart";
 
 part "moodle_types.dart";
@@ -149,66 +153,12 @@ class _MoodleMessaging {
       },
       sender: convo.members.first.fullname,
     );
-    // ListTile(
-    //     onTap: () {
-    //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoodleConvoPage(convo)));
-    //     },
-    //     trailing: convo.unreadCount != null && convo.unreadCount != 0
-    //         ? Badge(
-    //             padding: EdgeInsets.all(6),
-    //             badgeColor: Theme.of(context).colorScheme.primary,
-    //             badgeContent: Text(
-    //               convo.unreadCount.toString(),
-    //               style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-    //             ),
-    //           )
-    //         : null,
-    //     title: Row(
-    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //       children: [
-    //         Text(
-    //           convo.members.first.fullname,
-    //           style: TextStyle(fontWeight: convo.unreadCount != null && (convo.unreadCount ?? 0) > 0 ? FontWeight.w600 : FontWeight.w400),
-    //         ),
-    //         Opacity(
-    //           opacity: 0.57,
-    //           child: Text(
-    //             convo.messages.first.timeCreated.millisecondsSinceEpoch > DateTime.now().at0.subtract(Duration(seconds: 1)).millisecondsSinceEpoch
-    //                 ? time2string(convo.messages.first.timeCreated, onlyTime: true)
-    //                 : (DateTime.now().at0.difference(convo.messages.first.timeCreated).inDays <= 6
-    //                     ? time2string(convo.messages.first.timeCreated, includeTime: false, onlyWeekday: true)
-    //                     : time2string(
-    //                         convo.messages.first.timeCreated,
-    //                         includeTime: false,
-    //                         useStringMonth: false,
-    //                       )),
-    //             style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
-    //           ),
-    //         )
-    //       ],
-    //     ),
-    //     subtitle: Opacity(
-    //       opacity: 0.67,
-    //       child: Html(
-    //         data: convo.messages.first.text,
-    //         style: {
-    //           '#': Style(
-    //             fontWeight: convo.unreadCount != null && (convo.unreadCount ?? 0) > 0 ? FontWeight.bold : FontWeight.normal,
-    //             padding: EdgeInsets.all(0),
-    //             margin: EdgeInsets.all(0),
-    //             maxLines: 2,
-    //             textOverflow: TextOverflow.ellipsis,
-    //           ),
-    //         },
-    //       ),
-    //     ),
-    //     leading: );
   }
 
   Widget buildAvatar(String? imgUrl, {bool showLogo = true}) {
     return Stack(children: [
       CircleAvatar(
-        backgroundImage: imgUrl == null ? null : NetworkImage(imgUrl),
+        backgroundImage: imgUrl == null ? null : CachedNetworkImageProvider(imgUrl),
       ),
       if (showLogo)
         Positioned(

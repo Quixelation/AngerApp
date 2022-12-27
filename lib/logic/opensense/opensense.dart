@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/data_manager.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
@@ -45,8 +46,7 @@ class OpenSense {
 
   init() async {
     try {
-      var response =
-          await http.get(Uri.parse("https://api.opensensemap.org/boxes/${OpenSense.senseboxId}?format=json"));
+      var response = await http.get(Uri.parse("https://api.opensensemap.org/boxes/${OpenSense.senseboxId}?format=json"));
       var json = jsonDecode(response.body);
       var fullData = _OpenSenseFullData.fromApiMap(json);
       subject.add(ErrorableData(data: fullData, error: false));

@@ -68,8 +68,7 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
     var filteredList = [...aushaenge, ...vpAushaenge.map((e) => e.toAushang())];
 
     filteredList = filteredList.where((element) {
-      if (element.fixed &&
-          (currentClass == null || (currentClass != null && element.klassenstufen.contains(currentClass)))) {
+      if (element.fixed && (currentClass == null || (currentClass != null && element.klassenstufen.contains(currentClass)))) {
         return true;
       } else if (((currentClass == null || element.klassenstufen.isEmpty) && element.read == ReadStatusBasic.notRead)) {
         logger.d("How did whe get here? Let's see...");
@@ -116,15 +115,15 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
   @override
   Widget build(BuildContext context) {
     final filteredAushaenge = filterForClass(aushaenge?.data ?? []);
-    return (aushaenge != null && aushaenge?.error == false && (filteredAushaenge.length) != 0)
-        ? ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 130),
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: filteredAushaenge.map((e) => _AushangHomepageCard(e)).toList(),
+    return HomepageWidget(
+        builder: (context) => ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 130),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: filteredAushaenge.map((e) => _AushangHomepageCard(e)).toList(),
+              ),
             ),
-          )
-        : Container();
+        show: (aushaenge != null && aushaenge?.error == false && (filteredAushaenge.length) != 0));
   }
 }
 
@@ -154,14 +153,10 @@ class __AushangHomepageCardState extends State<_AushangHomepageCard> {
                 direction: Axis.horizontal,
                 children: [
                   widget.aushang.fixed
-                      ? Flexible(
-                          child: Transform.rotate(angle: 0.5, child: const Icon(Icons.push_pin, color: Colors.grey)),
-                          flex: 0)
+                      ? Flexible(child: Transform.rotate(angle: 0.5, child: const Icon(Icons.push_pin, color: Colors.grey)), flex: 0)
                       : Container(),
                   widget.aushang.files.isNotEmpty
-                      ? Flexible(
-                          child: Transform.rotate(angle: 45, child: const Icon(Icons.attachment, color: Colors.grey)),
-                          flex: 0)
+                      ? Flexible(child: Transform.rotate(angle: 45, child: const Icon(Icons.attachment, color: Colors.grey)), flex: 0)
                       : Container(),
                   const Flexible(child: SizedBox(width: 4), flex: 0),
                   Flexible(

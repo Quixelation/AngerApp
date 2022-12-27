@@ -32,47 +32,47 @@ class _PageSettingsState extends State<PageSettings> {
       body: ListView(children: [
         ListTile(
           title: const Text("Startseite"),
-          leading: Icon(Icons.home_outlined),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          leading: Icon(Icons.home_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => HomepageSettingsPage()));
           },
         ),
         ListTile(
           title: const Text("Vertretungsplan"),
-          leading: Icon(Icons.switch_account_outlined),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          leading: Icon(Icons.switch_account_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const SettingsPageVertretung()));
           },
         ),
         ListTile(
           title: const Text("Nachrichten"),
-          leading: Icon(Icons.messenger_outline),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          leading: Icon(Icons.messenger_outline, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const MessageSettings()));
           },
         ),
         ListTile(
           title: const Text("Benachrichtigungen"),
-          trailing: const Icon(Icons.keyboard_arrow_right),
-          leading: Icon(Icons.notifications_outlined),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          leading: Icon(Icons.notifications_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageNotificationSettings()));
           },
         ),
         ListTile(
           title: const Text("Farben"),
-          leading: Icon(Icons.color_lens_outlined),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          leading: Icon(Icons.color_lens_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
           },
         ),
         // ListTile(
         //   title: const Text("Klasse"),
-        //   trailing: const Icon(Icons.keyboard_arrow_right),
+        //   trailing: const Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
         //   onTap: () {
         //     Navigator.push(context,
         //         MaterialPageRoute(builder: (ctx) => const PageCurrentClass()));
@@ -81,8 +81,8 @@ class _PageSettingsState extends State<PageSettings> {
         const Divider(),
         ListTile(
           title: const Text("Datenbank-Einsicht"),
-          trailing: const Icon(Icons.keyboard_arrow_right),
-          leading: Icon(Icons.table_rows),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          leading: Icon(Icons.table_rows, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => DatabaseList(dbPath: dbDir)));
           },
@@ -96,7 +96,11 @@ class _PageSettingsState extends State<PageSettings> {
               });
             },
             title: Row(
-              children: [Icon(Icons.developer_mode_outlined), SizedBox(width: 32), const Text('Entwickler-Menu')],
+              children: [
+                Icon(Icons.developer_mode_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+                SizedBox(width: 32),
+                const Text('Entwickler-Menu')
+              ],
             )),
       ]),
     );

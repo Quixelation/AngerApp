@@ -39,65 +39,65 @@ class _MatrixHomepageQuicklookState extends State<MatrixHomepageQuicklook> {
 
   @override
   Widget build(BuildContext context) {
-    return unreadRooms.isNotEmpty
-        ? Card(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 16, top: 16),
-                  child: Text(
-                    "Neue Nachrichten",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    return HomepageWidget(
+        builder: (context) => Card(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 16, top: 16),
+                    child: Text(
+                      "Neue Nachrichten",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                ...unreadRooms
-                    .map((e) => ListTile(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => RoomPage(room: e),
-                              ),
-                            );
-                          },
-                          leading: CircleAvatar(
-                            foregroundImage: e.avatar == null
-                                ? null
-                                : NetworkImage(e.avatar!
-                                    .getThumbnail(
-                                      Services.matrix.client,
-                                      width: 56,
-                                      height: 56,
-                                    )
-                                    .toString()),
-                          ),
-                          title: Text(e.displayname),
-                          subtitle: e.lastEvent?.body != null
-                              ? Text(
-                                  e.lastEvent!.body,
-                                  maxLines: 1,
-                                )
-                              : null,
-                          trailing: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                              child: Text(
-                                e.notificationCount.toString(),
-                                style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
-                              ),
+                  const SizedBox(height: 4),
+                  ...unreadRooms
+                      .map((e) => ListTile(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => RoomPage(room: e),
+                                ),
+                              );
+                            },
+                            leading: CircleAvatar(
+                              foregroundImage: e.avatar == null
+                                  ? null
+                                  : NetworkImage(e.avatar!
+                                      .getThumbnail(
+                                        Services.matrix.client,
+                                        width: 56,
+                                        height: 56,
+                                      )
+                                      .toString()),
                             ),
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primaryContainer,
-                                borderRadius: const BorderRadius.all(Radius.circular(999999999))),
-                          ),
-                        ))
-                    .toList()
-              ],
+                            title: Text(e.displayname),
+                            subtitle: e.lastEvent?.body != null
+                                ? Text(
+                                    e.lastEvent!.body,
+                                    maxLines: 1,
+                                  )
+                                : null,
+                            trailing: Container(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                child: Text(
+                                  e.notificationCount.toString(),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
+                                ),
+                              ),
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primaryContainer,
+                                  borderRadius: const BorderRadius.all(Radius.circular(999999999))),
+                            ),
+                          ))
+                      .toList()
+                ],
+              ),
             ),
-          )
-        : Container();
+        show: unreadRooms.isNotEmpty);
   }
 }

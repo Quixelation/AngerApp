@@ -1,9 +1,7 @@
 part of vertretungsplan;
 
 class VpWidget extends StatefulWidget {
-  const VpWidget(
-      {Key? key, AsyncDataResponse<_VpListResponse>? this.overrideResponseData})
-      : super(key: key);
+  const VpWidget({Key? key, AsyncDataResponse<_VpListResponse>? this.overrideResponseData}) : super(key: key);
 
   final AsyncDataResponse<_VpListResponse>? overrideResponseData;
 
@@ -22,8 +20,7 @@ class _VpWidgetState extends State<VpWidget> {
     Map<String, bool> isNewTemp = {};
 
     for (var val in value) {
-      isNewTemp[val.uniqueId] =
-          await checkIfUniqueIdIsNew(val.uniqueId, val.changedDate);
+      isNewTemp[val.uniqueId] = await checkIfUniqueIdIsNew(val.uniqueId, val.changedDate);
     }
     setState(() {
       _isNew = isNewTemp;
@@ -71,57 +68,44 @@ class _VpWidgetState extends State<VpWidget> {
     bool showCard = ((_vertretungsplanListe?.isNotEmpty ?? false) &&
             ((widget.overrideResponseData?.data.result ?? true) == true) &&
             widget.overrideResponseData?.error != true) &&
-        (Services.vp.settings.subject.value?.loadListOnStart ??
-            Services.vp.settings.defaultSettings.loadListOnStart);
+        (Services.vp.settings.subject.value?.loadListOnStart ?? Services.vp.settings.defaultSettings.loadListOnStart);
 
-    return showCard == false
-        ? Container()
-        : Card(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 12),
-                      child: Text(
-                        "Vertretungspläne",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
+    return HomepageWidget(
+        builder: (context) => Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 16, top: 12),
+                        child: Text(
+                          "Vertretungspläne",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
                       ),
-                    ),
-                    ...(_vertretungsplanListe!
-                        .map((value) => ListTile(
-                            leading: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _isNew[value.uniqueId] ?? true
-                                      ? const Icon(Icons.new_releases,
-                                          color: Colors.red)
-                                      : const Icon(
-                                          Icons.download_done,
-                                        )
-                                ]),
-                            title: Text(time2string(value.date,
-                                includeWeekday: true, useStringMonth: false)),
-                            subtitle: Text(
-                                "Zuletzt geändert: ${time2string(value.changedDate, includeTime: true, useStringMonth: false)}"),
-                            trailing: const Icon(Icons.keyboard_arrow_right),
-                            onTap: () {
-                              Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              _PageVertretungsplanDetail(
-                                                  value)))
-                                  .then((value) => _checkIfNew(null));
-                            }))
-                        .toList())
-                  ]),
+                      ...(_vertretungsplanListe!
+                          .map((value) => ListTile(
+                              leading: Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.center, children: [
+                                _isNew[value.uniqueId] ?? true
+                                    ? const Icon(Icons.new_releases, color: Colors.red)
+                                    : const Icon(
+                                        Icons.download_done,
+                                      )
+                              ]),
+                              title: Text(time2string(value.date, includeWeekday: true, useStringMonth: false)),
+                              subtitle: Text("Zuletzt geändert: ${time2string(value.changedDate, includeTime: true, useStringMonth: false)}"),
+                              trailing: const Icon(Icons.keyboard_arrow_right),
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => _PageVertretungsplanDetail(value)))
+                                    .then((value) => _checkIfNew(null));
+                              }))
+                          .toList())
+                    ]),
+              ),
             ),
-          );
+        show: showCard);
   }
 }

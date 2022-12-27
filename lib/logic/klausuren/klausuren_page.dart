@@ -1,13 +1,4 @@
-import 'dart:async';
-import 'dart:developer';
-
-import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/logic/klausuren/klausuren.dart';
-import 'package:anger_buddy/pages/no_connection.dart';
-import 'package:anger_buddy/utils/network_assistant.dart';
-import 'package:anger_buddy/utils/time_2_string.dart';
-import 'package:flutter/material.dart';
-import "package:anger_buddy/logic/current_class/current_class.dart";
+part of klausuren;
 
 class PageKlausuren extends StatefulWidget {
   const PageKlausuren({Key? key}) : super(key: key);
@@ -20,7 +11,7 @@ class _PageKlausurenState extends State<PageKlausuren> {
   AsyncDataResponse<List<Klausur>?>? klausurenResp;
 
   /// Die Klassenstufe, nach der die UI gefiltert wird
-  int? selectedClass = Services.currentClass.subject.valueWrapper?.value;
+  int? selectedClass = AngerApp.currentClass.subject.valueWrapper?.value;
 
   @override
   void initState() {
@@ -206,17 +197,13 @@ class _KlausurContainer extends StatelessWidget {
                   opacity: 0.87,
                   child: RichText(
                     text: TextSpan(
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 17, color: Theme.of(context).colorScheme.onSurface),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Theme.of(context).colorScheme.onSurface),
                         children: [
-                          TextSpan(
-                              text: klausur.name, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                          TextSpan(text: klausur.name, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                           if (showClass)
                             TextSpan(
                                 text: " (${klausur.klassenstufe}. Klasse)",
-                                style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onSurface.withAlpha(170),
-                                    fontWeight: FontWeight.normal))
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withAlpha(170), fontWeight: FontWeight.normal))
                         ]),
                   ),
                 ),

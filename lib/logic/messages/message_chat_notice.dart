@@ -1,11 +1,11 @@
-part of matrix;
+part of messages;
 
-class _MatrixChatNotice extends StatelessWidget {
-  const _MatrixChatNotice({Key? key, required this.child, this.icon, required this.event}) : super(key: key);
+class MessagingChatNotice extends StatelessWidget {
+  const MessagingChatNotice({Key? key, required this.child, this.icon, required this.matrixEvent}) : super(key: key);
 
   final Widget child;
   final Widget? icon;
-  final Event? event;
+  final Event? matrixEvent;
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +15,13 @@ class _MatrixChatNotice extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         child: InkWell(
-          onTap: ((getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) && event != null)
+          onTap: ((getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) && matrixEvent != null)
               ? () {
                   showDialog(
                     context: context,
                     builder: (context) {
                       var encoder = const JsonEncoder.withIndent("     ");
-                      var text = encoder.convert(event!.toJson());
+                      var text = encoder.convert(matrixEvent!.toJson());
                       return Material(child: SingleChildScrollView(child: Text(text)));
                     },
                   );

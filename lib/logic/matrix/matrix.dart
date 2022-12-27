@@ -3,17 +3,21 @@ library matrix;
 import 'dart:async';
 import 'dart:convert';
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:anger_buddy/utils/timediff_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_polls/flutter_polls.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/foundation.dart';
@@ -33,7 +37,6 @@ import "package:olm/olm.dart" as olm;
 import "package:path/path.dart";
 import "package:uuid/uuid.dart" as uuid;
 
-part "matrix_chat_notice.dart";
 part "matrix_create_chat.dart";
 part "matrix_create_poll_page.dart";
 part "matrix_homepage_quicklook.dart";
@@ -179,13 +182,15 @@ class JspMatrix {
             : null,
         backgroundImage: imgUrl == null
             ? null
-            : NetworkImage(imgUrl
-                .getThumbnail(
-                  client,
-                  width: 56,
-                  height: 56,
-                )
-                .toString()),
+            : CachedNetworkImageProvider(
+                imgUrl
+                    .getThumbnail(
+                      client,
+                      width: 56,
+                      height: 56,
+                    )
+                    .toString(),
+              ),
       ),
       if (showLogo)
         Positioned(
