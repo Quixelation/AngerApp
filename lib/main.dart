@@ -15,12 +15,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
+import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
 import "package:universal_html/html.dart" as html;
 
 GetIt getIt = GetIt.instance;
 
-Future<void> initApp() async {
+Future<void> initApp({bool onlyBasic = false}) async {
   logger.v("[AngerApp} Starting...");
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -28,9 +29,10 @@ Future<void> initApp() async {
   try {
     allFutures = await Future.wait([
       openDB(),
-      Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ),
+      if (!onlyBasic)
+        Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        ),
     ]);
   } catch (e) {
     logger.e(e);
@@ -40,16 +42,34 @@ Future<void> initApp() async {
 
   getIt.registerSingleton<AppManager>(AppManager(mainScaffoldState: GlobalKey(), database: db));
 
-  toggleSubscribtionToTopic("all", true);
-  enforceDefaultFcmSubscriptions();
-  await Future.wait([initColorSubject(), initializeAllCredentialManagers()]);
+  if (!onlyBasic) {
+    toggleSubscribtionToTopic("all", true);
+    enforceDefaultFcmSubscriptions();
+  }
+  await Future.wait([if (!onlyBasic) initColorSubject(), initializeAllCredentialManagers()]);
   // Services und Credentials müssen getrennt, weil Services aus Credentials beruhen
   await Services.init();
   logger.v("[AngerApp] Initialized");
 }
 
+@pragma('vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    print("Native called background task: $task"); //simpleTask will be emitted here.
+    await initApp(onlyBasic: true);
+    var notis = await AngerApp.matrix.client.getNotifications();
+    print("client has" + notis.notifications.length.toString() + " notifications");
+    print("Native ended background task: $task"); //simpleTask will be emitted here.
+    return Future.value(true);
+  });
+}
+
 void main() async {
   await initApp();
+  Workmanager().initialize(callbackDispatcher, // The top level function, aka callbackDispatcher
+      isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+      );
+  Workmanager().registerOneOffTask("bg-noti", "BackgroundNotification");
   runApp(const RestartWidget(child: MainApp()));
   logger.v("[AngerApp] Running");
 }
@@ -132,6 +152,17 @@ class _MainAppState extends State<MainApp> {
           brightness: Brightness.dark),
     );
 
+    var defaultPageTrans = const PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.fuchsia: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+      },
+    );
+
     return MaterialApp(
       title: 'AngerApp',
       theme: lightTheme.copyWith(
@@ -141,11 +172,7 @@ class _MainAppState extends State<MainApp> {
         ),
         tabBarTheme: const TabBarTheme(labelColor: Colors.white),
         useMaterial3: false,
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
-          },
-        ),
+        pageTransitionsTheme: defaultPageTrans,
       ),
       darkTheme: darkTheme.copyWith(
         useMaterial3: false,
@@ -156,11 +183,7 @@ class _MainAppState extends State<MainApp> {
         primaryTextTheme: darkTheme.textTheme.apply(
           fontFamily: fontFamily,
         ),
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
-          },
-        ),
+        pageTransitionsTheme: defaultPageTrans,
       ),
       themeMode: ThemeMode.system,
       home: const DefaultTextStyle(style: TextStyle(fontFamily: "Montserrat"), child: _IntroductionScreenSwitcher()),

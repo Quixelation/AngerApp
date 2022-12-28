@@ -7,13 +7,23 @@ class WeekView extends StatefulWidget {
   State<WeekView> createState() => _WeekViewState();
 }
 
-final weekViewFontSizeBehavSub = BehaviorSubject.seeded(10.0);
+final weekViewFontSizeBehavSub = BehaviorSubject<double>.seeded(10);
 
 class _WeekViewState extends State<WeekView> {
   final cal = WeekViewCalendar(events: Services.calendar.subject.valueWrapper!.value.data);
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width > 800) {
+      weekViewFontSizeBehavSub.add(15);
+    } else {
+      weekViewFontSizeBehavSub.add(10);
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Wochen-Ansicht"),
@@ -61,8 +71,7 @@ class _WeekViewState extends State<WeekView> {
             });
             var mappedRowsList = mappedRows.toList();
             // Add an empty one
-            mappedRowsList
-                .add(Flex(crossAxisAlignment: CrossAxisAlignment.start, direction: Axis.horizontal, children: [
+            mappedRowsList.add(Flex(crossAxisAlignment: CrossAxisAlignment.start, direction: Axis.horizontal, children: [
               Flexible(
                   fit: FlexFit.tight,
                   flex: 7,
@@ -141,9 +150,7 @@ class __WeekViewEventContainerState extends State<_WeekViewEventContainer> {
         lcTitle.contains("bac blanc");
     isDienstberatung = lcTitle.contains("dienstberatung");
 
-    color = isFerien
-        ? Colors.amber.shade900
-        : (isDienstberatung ? Colors.purple.shade900 : (isPruefung ? Colors.red.shade900 : null));
+    color = isFerien ? Colors.amber.shade900 : (isDienstberatung ? Colors.purple.shade900 : (isPruefung ? Colors.red.shade900 : null));
 
     weekViewFontSizeBehavSub.listen((value) {
       if (!mounted) {

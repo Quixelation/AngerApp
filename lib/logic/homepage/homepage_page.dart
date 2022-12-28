@@ -132,15 +132,11 @@ class _HomePageContent extends StatelessWidget {
             if (MediaQuery.of(context).size.width < 1080)
               Flex(direction: Axis.vertical, crossAxisAlignment: CrossAxisAlignment.start, children: const [
                 // SchwarzesBrettHome(),
-
+                WhatsnewHomepageWidget(),
                 FerienHomepageWidget(),
-
                 MatrixHomepageQuicklook(),
-
                 VpWidget(),
-
                 AushangHomepageWidget(),
-
                 KlausurenHomepageWidget(),
                 EventsThisWeek(),
                 NewsHomepageWidget(),
@@ -164,14 +160,10 @@ class _HomePageContent extends StatelessWidget {
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
-                          Padding(padding: EdgeInsets.all(8), child: FerienHomepageWidget()),
-                          Padding(
-                              padding: EdgeInsets.all(8),
-                              child:
-                                  EventsThisWeek()), /*
-                          Padding(
-                              padding: EdgeInsets.all(8),
-                              child: const _ServerStatusWidget())*/
+                          WhatsnewHomepageWidget(),
+                          FerienHomepageWidget(),
+                          EventsThisWeek(),
+                          NewsHomepageWidget(),
                         ],
                         direction: Axis.vertical,
                       ),
@@ -181,18 +173,13 @@ class _HomePageContent extends StatelessWidget {
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: KlausurenHomepageWidget(),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: NewsHomepageWidget(),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: OpenSenseOverviewWidget(),
-                          ),
+                          MatrixHomepageQuicklook(),
+                          VpWidget(),
+                          AushangHomepageWidget(),
+                          KlausurenHomepageWidget(),
+
+                          OpenSenseOverviewWidget(),
+
                           // SchwarzesBrettHome(),
                         ],
                         direction: Axis.vertical,
@@ -211,14 +198,8 @@ class _HomePageContent extends StatelessWidget {
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: FerienHomepageWidget(),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: NewsHomepageWidget(),
-                          ),
+                          FerienHomepageWidget(),
+                          NewsHomepageWidget(),
                         ],
                         direction: Axis.vertical,
                       ),
@@ -228,32 +209,23 @@ class _HomePageContent extends StatelessWidget {
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: KlausurenHomepageWidget(),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: EventsThisWeek(),
-                          ),
+                          MatrixHomepageQuicklook(),
+                          VpWidget(),
+                          AushangHomepageWidget(),
+                          KlausurenHomepageWidget(),
+                          EventsThisWeek(),
                         ],
                         direction: Axis.vertical,
                       ),
                     ),
-                    /*
                     Flexible(
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: const _ServerStatusWidget(),
-                          ),
-                        ],
+                        children: [WhatsnewHomepageWidget(), OpenSenseOverviewWidget()],
                         direction: Axis.vertical,
                       ),
-                    ),*/
+                    ),
                   ],
                   direction: Axis.horizontal),
             /*  ResponsiveGridList(

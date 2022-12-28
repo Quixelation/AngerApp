@@ -186,14 +186,17 @@ class _ChatBubblePollRendererV2State extends State<ChatBubblePollRendererV2> {
       children: [
         if (_currentlyLoading) const CircularProgressIndicator.adaptive(),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Icon(Icons.bar_chart),
             const SizedBox(
               width: 4,
             ),
-            Text(
-              widget.event.content["org.matrix.msc3381.poll.start"]?["question"]?["body"] ?? "",
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            Flexible(
+              child: Text(
+                widget.event.content["org.matrix.msc3381.poll.start"]?["question"]?["body"] ?? "",
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         ),

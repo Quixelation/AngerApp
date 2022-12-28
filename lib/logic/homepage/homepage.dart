@@ -1,6 +1,7 @@
 library homepage;
 
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/logic/whatsnew/whatsnew.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';

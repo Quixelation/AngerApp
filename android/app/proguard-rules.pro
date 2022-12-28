@@ -1,3 +1,3 @@
--keep class com.robertstuendl.angergymapp.BuildConfig { *; }
+-keep class debug.robertstuendl.angergymapp.BuildConfig { *; }
 -keep,includedescriptorclasses class net.sqlcipher.** { *; }
 -keep,includedescriptorclasses interface net.sqlcipher.** { *; }

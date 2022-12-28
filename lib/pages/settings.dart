@@ -79,14 +79,7 @@ class _PageSettingsState extends State<PageSettings> {
         //   },
         // ),
         const Divider(),
-        ListTile(
-          title: const Text("Datenbank-Einsicht"),
-          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-          leading: Icon(Icons.table_rows, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => DatabaseList(dbPath: dbDir)));
-          },
-        ),
+
         SwitchListTile.adaptive(
             value: _devToolsSwitch,
             onChanged: (act) {

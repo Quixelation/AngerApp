@@ -15,6 +15,7 @@ import 'package:anger_buddy/partials/introduction_screen.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger_flutter_viewer/logger_flutter_viewer.dart';
 import "package:sembast/sembast.dart";
 import "package:sembast/sembast.dart" as sb;
@@ -31,6 +32,17 @@ class PageDevTools extends StatelessWidget {
         body: Scaffold(
             body: ListView(children: [
           const MainBottomAppBar(),
+          ElevatedButton(
+              onPressed: () async {
+                await AngerApp.localNotifications.show(666, "Hello", "Test",
+                    NotificationDetails(android: AndroidNotificationDetails("testchannel", "Entiwckler-Test-Benachrichtigungen")));
+              },
+              child: const Text("[Notificatiosn] send test noti")),
+          ElevatedButton(
+              onPressed: () async {
+                await AngerApp.whatsnew.removeLastCheckedFromDatabase();
+              },
+              child: const Text("[WhatsNew] remove lastchecked")),
           ElevatedButton(
               onPressed: () async {
                 await AngerApp.moodle.login.creds.init();

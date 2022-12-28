@@ -150,6 +150,18 @@ class JspMatrix {
       //TODO: Remove in prod!!
       password: (Credentials.jsp.subject.valueWrapper?.value?.password ?? "") + "abc",
     );
+
+    await client.postPusher(Pusher(
+      appId: "com.robertstuendl.angergymapp",
+      //TODO
+      pushkey: uuid.Uuid().v4(),
+      appDisplayName: "AngerApp",
+      data: PusherData(),
+      //TODO:
+      deviceDisplayName: "Samsung",
+      kind: "http",
+      lang: "de",
+    ));
   }
 
   Future<void> init() async {

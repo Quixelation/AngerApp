@@ -1,4 +1,4 @@
-package com.robertstuendl.angergymapp
+package debug.robertstuendl.angergymapp
 
 import io.flutter.embedding.android.FlutterActivity
 

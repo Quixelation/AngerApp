@@ -14,6 +14,8 @@ import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/logic/ferien/ferien.dart';
 import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
+import 'package:anger_buddy/logic/whatsnew/whatsnew.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class _ServicesManager {
   /* -- Funktions-Seiten -- */
@@ -34,6 +36,9 @@ class _ServicesManager {
   final credentials = Credentials;
   final moodle = Moodle();
   final homepage = HomepageManager();
+  final whatsnew = WhatsnewManager();
+  /* -- Plugins -- */
+  final localNotifications = FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     await Future.wait([
@@ -46,7 +51,12 @@ class _ServicesManager {
       vp.init(),
       matrix.init(),
       moodle.login.creds.init(),
-      homepage.init()
+      homepage.init(),
+      whatsnew.init(),
+      localNotifications.initialize(InitializationSettings(
+        android: AndroidInitializationSettings("background"),
+        iOS: DarwinInitializationSettings(),
+      ))
       // mail.init(),
     ]);
   }

@@ -91,7 +91,7 @@ class _MatrixMessage extends StatelessWidget {
           child: Opacity(
             opacity: event.status.isSent ? 1 : 0.5,
             child: ChatBubble(
-                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                margin: EdgeInsets.only(top: 4, bottom: 4, left: isSender ? 64 : 8, right: !isSender ? 64 : 8),
                 backGroundColor: bgColor,
                 shadowColor: isSender ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.shadow,
                 alignment: isSender ? Alignment.topRight : Alignment.topLeft,
@@ -241,7 +241,9 @@ class _MatrixMessage extends StatelessWidget {
               " hat " +
               (displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") +
               " entfernt"));
-    } else if (displayEvent.type == "m.room.member" && displayEvent.content["membership"] == "join" && displayEvent.content["displayname"] == null) {
+    } else if (displayEvent.type == "m.room.member" &&
+        displayEvent.content["membership"] == "join" &&
+        displayEvent.prevContent?["membership"] == "invite") {
       return MessagingChatNotice(
           matrixEvent: displayEvent,
           icon: const Icon(Icons.emoji_people),

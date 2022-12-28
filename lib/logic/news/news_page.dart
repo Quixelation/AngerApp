@@ -114,7 +114,7 @@ class _PageNewsListState extends State<PageNewsList> {
                                       publisher: combinedNews[i] is SrNewsElement ? _NewsPublisher.sr : _NewsPublisher.website,
                                       srNewsId: combinedNews[i] is SrNewsElement ? combinedNews[i].id : null,
                                       date: time2string(
-                                          combinedNews[i + 1] is NewsApiDataElement ? combinedNews[i].pubDate : combinedNews[i].dateCreated.realDate),
+                                          combinedNews[i] is NewsApiDataElement ? combinedNews[i].pubDate : combinedNews[i].dateCreated.realDate),
                                       subtitle: combinedNews[i] is SrNewsElement ? combinedNews[i].content : combinedNews[i].desc!,
                                       heroTag: combinedNews[i].id!.toString()),
                                 ),
@@ -208,20 +208,26 @@ class _PageNewsListState extends State<PageNewsList> {
                 Divider(
                   height: 1,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Html(
-                    data: subtitle,
-                    style: {
-                      '#': Style(
-                        padding: EdgeInsets.all(0),
-                        margin: EdgeInsets.all(0),
-                        maxLines: 3,
-                        color: Theme.of(context).colorScheme.onSurface.withAlpha(187),
-                        textOverflow: TextOverflow.ellipsis,
+                Row(
+                  children: [
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Html(
+                          data: subtitle,
+                          style: {
+                            '#': Style(
+                              padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.all(0),
+                              maxLines: 3,
+                              color: Theme.of(context).colorScheme.onSurface.withAlpha(187),
+                              textOverflow: TextOverflow.ellipsis,
+                            ),
+                          },
+                        ),
                       ),
-                    },
-                  ),
+                    )
+                  ],
                 ),
                 Divider(
                   height: 1,
