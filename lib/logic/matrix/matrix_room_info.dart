@@ -264,7 +264,10 @@ class _ParticipantsListState extends State<_ParticipantsList> {
                                 offset: const Offset(0, -12),
                                 child: Text(
                                   e.id,
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: Colors.grey),
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      color: Theme.of(context).colorScheme.brightness == Brightness.dark ? Colors.grey : Colors.grey.shade700),
                                 ),
                               ),
                             ),
@@ -290,6 +293,17 @@ class _ParticipantsListState extends State<_ParticipantsList> {
                                 ),
                                 trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
                               ),
+                            ListTile(
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                              leading: Icon(
+                                Icons.how_to_reg,
+                              ),
+                              onTap: () async {},
+                              title: Text(
+                                "Verifizieren",
+                              ),
+                              trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+                            ),
                             const Divider(),
                             if (!userIsSelf)
                               if (AngerApp.matrix.client.ignoredUsers.contains(e.id))

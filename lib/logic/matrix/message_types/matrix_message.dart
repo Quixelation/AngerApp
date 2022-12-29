@@ -155,11 +155,13 @@ class _MatrixMessage extends StatelessWidget {
                                     style: TextStyle(color: textColor),
                                   );
                                 case "m.image":
-                                  return ChatBubbleImageRenderer(event);
+                                  return ChatBubbleImageRenderer(displayEvent);
                                 case "m.file":
-                                  return ChatBubbleFileRenderer(event, timeline, room);
+                                  return ChatBubbleFileRenderer(displayEvent, timeline, room);
                                 case "m.location":
-                                  return ChatBubbleLocationRenderer(event);
+                                  return ChatBubbleLocationRenderer(displayEvent);
+                                case "m.key.verification.request":
+                                  return _MatrixVerifictionMessageRenderer(displayEvent);
                                 default:
                                   return Text(displayEvent.body);
                               }
@@ -169,9 +171,9 @@ class _MatrixMessage extends StatelessWidget {
                                 style: TextStyle(color: Colors.pink, fontWeight: FontWeight.w500),
                               );
                             case "org.matrix.msc3381.poll.start":
-                              return ChatBubblePollRendererV2(event, timeline, room);
+                              return ChatBubblePollRendererV2(displayEvent, timeline, room);
                             case "m.poll.start":
-                              return ChatBubblePollRendererV2(event, timeline, room);
+                              return ChatBubblePollRendererV2(displayEvent, timeline, room);
                             default:
                               return Text(displayEvent.type);
                           }
@@ -224,40 +226,8 @@ class _MatrixMessage extends StatelessWidget {
           ),
         ),
       );
-    } else if (displayEvent.type == "m.room.member" &&
-        displayEvent.content["membership"] == "leave" &&
-        displayEvent.stateKey == displayEvent.senderId) {
-      return MessagingChatNotice(
-          matrixEvent: displayEvent,
-          icon: const Icon(Icons.directions_walk),
-          child: Text((displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") + " hat den Chat verlassen"));
-    } else if (displayEvent.type == "m.room.member" &&
-        displayEvent.content["membership"] == "leave" &&
-        displayEvent.stateKey != displayEvent.senderId) {
-      return MessagingChatNotice(
-          matrixEvent: displayEvent,
-          icon: const Icon(Icons.person_remove),
-          child: Text(displayEvent.sender.calcDisplayname() +
-              " hat " +
-              (displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") +
-              " entfernt"));
-    } else if (displayEvent.type == "m.room.member" &&
-        displayEvent.content["membership"] == "join" &&
-        displayEvent.prevContent?["membership"] == "invite") {
-      return MessagingChatNotice(
-          matrixEvent: displayEvent,
-          icon: const Icon(Icons.emoji_people),
-          child: Text((displayEvent.stateKeyUser?.calcDisplayname() ?? displayEvent.stateKey ?? "<KeinName>") + " ist dem Chat beigetreten"));
-    } else if (displayEvent.type == "m.room.member" && displayEvent.content["membership"] == "invite") {
-      return MessagingChatNotice(
-          matrixEvent: displayEvent,
-          icon: const Icon(Icons.person_add),
-          child: Text(displayEvent.sender.calcDisplayname() + " hat " + displayEvent.content["displayname"] + " eingeladen"));
-    } else if (displayEvent.type == "m.room.avatar") {
-      return MessagingChatNotice(
-          matrixEvent: displayEvent,
-          icon: const Icon(Icons.image),
-          child: Text(displayEvent.sender.calcDisplayname() + " hat das Chat-Bild geändert"));
+    } else if (displayEvent.chatNotice.shouldRender) {
+      return displayEvent.chatNotice.renderChatNotice();
     } else if (getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) {
       return InkWell(
         onTap: () {
@@ -271,7 +241,7 @@ class _MatrixMessage extends StatelessWidget {
           );
         },
         child: Container(
-          width: double.infinity,
+          // width: double.infinity,
           color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.blueGrey.shade900 : Colors.blueGrey.shade100,
           child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -283,7 +253,7 @@ class _MatrixMessage extends StatelessWidget {
         ),
       );
     } else {
-      return Container();
+      return SizedBox();
     }
   }
 }

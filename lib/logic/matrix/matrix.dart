@@ -14,6 +14,7 @@ import 'package:anger_buddy/utils/url.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
@@ -36,6 +37,7 @@ import "package:flutter_slidable/flutter_slidable.dart";
 import "package:olm/olm.dart" as olm;
 import "package:path/path.dart";
 import "package:uuid/uuid.dart" as uuid;
+import "package:anger_buddy/extensions.dart";
 
 part "matrix_create_chat.dart";
 part "matrix_create_poll_page.dart";
@@ -57,6 +59,8 @@ part "matrix_powerlevel_dialog.dart";
 part "settings/matrix_settings_profile.dart";
 part "settings/matrix_settings_devices.dart";
 part "settings/matrix_settings_privacy.dart";
+part "settings/matrix_settings_security.dart";
+part "message_types/verification_message.dart";
 part "matrix_cropped_image_picker.dart";
 
 DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -110,28 +114,13 @@ class JspMatrix {
     logger.w("KeyVerificationRequest");
     logger.w(event);
 
-    showDialog(
-        context: getIt.get<AppManager>().mainScaffoldState.currentContext!,
-        builder: (context) => Dialog(
-              child: ElevatedButton(
-                child: const Text("Verifizierung starten"),
-                onPressed: () {
-                  event.acceptVerification();
-                },
-              ),
-            ));
+    if (event.userId == client.userID) {
+      showKeyVerificationDialog(event);
+    }
+  }
 
-    event.onUpdate = () {
-      logger.w("event Update");
-
-      logger.wtf("SHowing Dialog");
-      logger.d(event.state);
-      if (event.state == KeyVerificationState.askSas) {
-        showDialog(context: getIt.get<AppManager>().mainScaffoldState.currentContext!, builder: (context) => MatrixSasDialog(event));
-      } else if (event.isDone) {
-        logger.d("is Done " + (client.deviceID ?? "") + "  " + (client.accessToken ?? "") + " " + (client.identityKey));
-      }
-    };
+  Future<void> showKeyVerificationDialog(KeyVerification event) async {
+    return await showDialog<void>(context: getIt.get<AppManager>().mainScaffoldState.currentContext!, builder: (context) => MatrixSasDialog(event));
   }
 
   login() async {
@@ -260,7 +249,7 @@ class JspMatrix {
   Widget buildListTile(BuildContext context, Room room, {bool showLogo = true}) {
     return Slidable(
         key: UniqueKey(),
-        enabled: true,
+        enabled: false,
         closeOnScroll: true,
         startActionPane: ActionPane(
           motion: const DrawerMotion(),
@@ -290,7 +279,7 @@ class JspMatrix {
         child: DefaultMessageListTile(
           avatar: buildAvatar(context, room.avatar, showLogo: showLogo, room: room),
           datetime: room.lastEvent!.originServerTs,
-          messageText: room.lastEvent!.plaintextBody,
+          messageText: (room.isDirectChat ? "" : "${room.lastEvent!.sender.calcDisplayname()}: ") + room.lastEvent!.calcBodyPreview(),
           hasUnread: room.isUnreadOrInvited,
           unreadCount: room.notificationCount,
           onTap: () async {
@@ -306,5 +295,122 @@ class JspMatrix {
           },
           sender: room.displayname,
         ));
+  }
+}
+
+extension body on matrix.Event {
+  String calcBodyPreview() {
+    switch (type) {
+      case "m.room.encrypted":
+        return "[Verschlüsselt]";
+      case "m.poll.start":
+        return "Umfrage";
+      case "org.matrix.msc3381.poll.start":
+        return "Umfrage";
+      case "m.room.message":
+        switch (messageType) {
+          case "m.key.verification.request":
+            return "[Verifizierungsanfrage]";
+          default:
+            return plaintextBody;
+        }
+      default:
+        return plaintextBody;
+    }
+  }
+}
+
+extension Rendering on matrix.Event {
+  bool shouldRender({bool overwrite = false}) {
+    if (overwrite || shouldRenderChatBubble || chatNotice.shouldRender) return true;
+    return false;
+  }
+
+  bool get shouldRenderChatBubble {
+    if ((type == "m.room.message" || type == "m.room.encrypted" || type == "org.matrix.msc3381.poll.start" || type == "m.poll.start") &&
+        ((relationshipType ?? "") != "m.replace")) return true;
+
+    return false;
+  }
+
+  _MatrixEventChatNoticeRenderer get chatNotice {
+    return _MatrixEventChatNoticeRenderer(this);
+  }
+}
+
+class _MatrixEventChatNoticeRenderer {
+  final Event event;
+  _MatrixEventChatNoticeRenderer(this.event);
+
+  /* ------------------------------ shouldRender ------------------------------ */
+
+  bool get shouldRender {
+    return shouldRenderInvite || shouldRenderJoin || shouldRenderLeaving || shouldRenderRemovingUser || shouldRenderAvatar;
+  }
+
+  bool get shouldRenderLeaving {
+    return event.type == "m.room.member" && event.content["membership"] == "leave" && event.stateKey == event.senderId;
+  }
+
+  bool get shouldRenderRemovingUser {
+    return event.type == "m.room.member" && event.content["membership"] == "leave" && event.stateKey != event.senderId;
+  }
+
+  bool get shouldRenderInvite {
+    return event.type == "m.room.member" && event.content["membership"] == "invite";
+  }
+
+  bool get shouldRenderJoin {
+    return event.type == "m.room.member" && event.content["membership"] == "join" && event.prevContent?["membership"] == "invite";
+  }
+
+  bool get shouldRenderAvatar {
+    return event.type == "m.room.avatar";
+  }
+
+/* ---------------------------------- TEXT ---------------------------------- */
+  String get stateKeyUserDisplayName {
+    return event.stateKeyUser?.calcDisplayname() ?? event.stateKey ?? "<KeinName>";
+  }
+
+  String get senderDisplayName {
+    return event.stateKeyUser?.calcDisplayname() ?? event.stateKey ?? "<KeinName>";
+  }
+
+  String get invitationText {
+    return senderDisplayName + " hat " + event.content["displayname"] + " eingeladen";
+  }
+
+  String get joinText {
+    return stateKeyUserDisplayName + " ist dem Chat beigetreten";
+  }
+
+  String get leaveText {
+    return stateKeyUserDisplayName + " hat den Chat verlassen";
+  }
+
+  String get removeUserText {
+    return senderDisplayName + " hat " + stateKeyUserDisplayName + " entfernt";
+  }
+
+  String get avatarChangeText {
+    return senderDisplayName + " hat das Chat-Bild geändert";
+  }
+
+  /* --------------------------------- RENDER --------------------------------- */
+  Widget renderChatNotice() {
+    if (shouldRenderLeaving) {
+      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.directions_walk), child: Text(leaveText));
+    } else if (shouldRenderRemovingUser) {
+      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.person_remove), child: Text(removeUserText));
+    } else if (shouldRenderJoin) {
+      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.emoji_people), child: Text(joinText));
+    } else if (shouldRenderInvite) {
+      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.person_add), child: Text(invitationText));
+    } else if (shouldRenderAvatar) {
+      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.image), child: Text(avatarChangeText));
+    } else {
+      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.error), child: Text("App-Fehler: Kann Info nicht anzeigen"));
+    }
   }
 }
