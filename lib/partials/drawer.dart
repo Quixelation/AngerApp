@@ -11,6 +11,7 @@ import 'package:anger_buddy/logic/login_overview/login_overview.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/messages/messages.dart';
+import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/logic/schuelerrat/schuelerrat_page.dart';
@@ -127,6 +128,12 @@ class MainDrawer extends StatelessWidget {
               }
             },
             stream: getIt.get<AppManager>().devtools,
+          ),
+          const _DrawerLink(
+            title: "Moodle",
+            subtitle: "(Experimentell)",
+            icon: Icons.school,
+            page: MoodleCoursesPage(),
           ),
           if (showHomeLink) ...[
             const SizedBox(height: 25),

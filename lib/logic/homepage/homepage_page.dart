@@ -177,9 +177,7 @@ class _HomePageContent extends StatelessWidget {
                           VpWidget(),
                           AushangHomepageWidget(),
                           KlausurenHomepageWidget(),
-
                           OpenSenseOverviewWidget(),
-
                           // SchwarzesBrettHome(),
                         ],
                         direction: Axis.vertical,
@@ -222,7 +220,7 @@ class _HomePageContent extends StatelessWidget {
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [WhatsnewHomepageWidget(), OpenSenseOverviewWidget()],
+                        children: const [WhatsnewHomepageWidget(), OpenSenseOverviewWidget()],
                         direction: Axis.vertical,
                       ),
                     ),

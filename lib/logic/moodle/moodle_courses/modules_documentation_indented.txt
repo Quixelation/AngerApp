@@ -1,0 +1,114 @@
+list of ( 
+    object {
+        id int   //Section ID
+        name string   //Section name
+        visible int  Optional //is the section visible
+        summary string   //Section description
+        summaryformat int   //summary format (1 = HTML, 0 = MOODLE, 2 = PLAIN or 4 = MARKDOWN)
+        section int  Optional //Section number inside the course
+        hiddenbynumsections int  Optional //Whether is a section hidden in the course format
+        uservisible int  Optional //Is the section visible for the user?
+        availabilityinfo string  Optional //Availability information.
+        modules   //list of module
+            list of ( 
+                object {
+                    id int   //activity id
+                    url string  Optional //activity url
+                    name string   //activity module name
+                    instance int  Optional //instance id
+                    contextid int  Optional //Activity context id.
+                    description string  Optional //activity description
+                    visible int  Optional //is the module visible
+                    uservisible int  Optional //Is the module visible for the user?
+                    availabilityinfo string  Optional //Availability information.
+                    visibleoncoursepage int  Optional //is the module visible on course page
+                    modicon string   //activity icon url
+                    modname string   //activity module type
+                    modplural string   //activity module plural name
+                    availability string  Optional //module availability settings
+                    indent int   //number of identation in the site
+                    onclick string  Optional //Onclick action.
+                    afterlink string  Optional //After link info to be displayed.
+                    customdata string  Optional //Custom data (JSON encoded).
+                    noviewlink int  Optional //Whether the module has no view page
+                    completion int  Optional //Type of completion tracking: 0 means none, 1 manual, 2 automatic.
+                    completiondata object {
+                        state int   //overall completion state of this course module.
+                        timecompleted int   //course completion timestamp.
+                        overrideby int   //user ID that has overridden the completion state of this activity for the user.
+                        valueused int   //True if module is used in a condition, false otherwise.
+                        hascompletion int   //Whether this activity module has completion enabled.
+                        isautomatic int   //Whether this activity module instance tracks completion automatically.
+                        istrackeduser int   //Checks whether completion is being tracked for this user.
+                        uservisible int   //Whether this activity is visible to user.
+                        details   //An array of completion details containing the description and status.
+                            list of ( 
+                                object {
+                                    rulename string   //rulename
+                                    rulevalue object {
+                                        status int   //status
+                                        description string   //description
+                                    } 
+                                } 
+                            )
+                    } 
+                    downloadcontent int  Optional //The download content value
+                    dates
+                        list of ( 
+                            object {
+                                label string   //date label
+                                timestamp int   //date timestamp
+                                relativeto int  Optional //relative date timestamp
+                                dataid string  Optional //cm data id
+                            } 
+                        )
+                    contents
+                        list of ( 
+                            object {
+                                type string   //a file or a folder or external link
+                                filename string   //filename
+                                filepath string   //filepath
+                                filesize int   //filesize
+                                fileurl string  Optional //downloadable file url
+                                content string  Optional //Raw content, will be used when type is content
+                                timecreated int   //Time created
+                                timemodified int   //Time modified
+                                sortorder int   //Content sort order
+                                mimetype string  Optional //File mime type.
+                                isexternalfile int  Optional //Whether is an external file.
+                                repositorytype string  Optional //The repository type for external files.
+                                userid int   //User who added this content to moodle
+                                author string   //Content owner
+                                license string   //Content license
+                                tags  Optional //Tags
+                                    list of ( 
+                                        object {
+                                            id int   //Tag id.
+                                            name string   //Tag name.
+                                            rawname string   //The raw, unnormalised name for the tag as entered by users.
+                                            isstandard int   //Whether this tag is standard.
+                                            tagcollid int   //Tag collection id.
+                                            taginstanceid int   //Tag instance id.
+                                            taginstancecontextid int   //Context the tag instance belongs to.
+                                            itemid int   //Id of the record tagged.
+                                            ordering int   //Tag ordering.
+                                            flag int   //Whether the tag is flagged as inappropriate.
+                                        } 
+                                    )
+                            } 
+                        )
+                    contentsinfo  Optional //Contents summary information.
+                        object {
+                            filescount int   //Total number of files.
+                            filessize int   //Total files size.
+                            lastmodified int   //Last time files were modified.
+                            mimetypes   //Files mime types.
+                                list of ( 
+                                    string   //File mime type.
+                                )
+                            repositorytype string  Optional //The repository type for the main file.
+                        } 
+                } 
+            )
+    } 
+)

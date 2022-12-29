@@ -32,6 +32,7 @@ class PageDevTools extends StatelessWidget {
         body: Scaffold(
             body: ListView(children: [
           const MainBottomAppBar(),
+          SelectableText(AngerApp.moodle.login.creds.token ?? "<NoToken>"),
           ElevatedButton(
               onPressed: () async {
                 await AngerApp.localNotifications.show(666, "Hello", "Test",

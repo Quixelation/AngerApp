@@ -22,15 +22,17 @@ class _MoodleCredsManager extends CredentialsManager<_MoodleCreds> {
     return subject.valueWrapper?.value != null;
   }
 
-  @override
-  set credentialsAvailable(bool val) {
-    throw UnimplementedError(
-        "Just don't - it's already connected with the subject");
+  String? get token {
+    return subject.valueWrapper?.value?.token;
   }
 
   @override
-  Future<void> setCredentials(_MoodleCreds credentials,
-      {bool withDatabaseEntry = true}) async {
+  set credentialsAvailable(bool val) {
+    throw UnimplementedError("Just don't - it's already connected with the subject");
+  }
+
+  @override
+  Future<void> setCredentials(_MoodleCreds credentials, {bool withDatabaseEntry = true}) async {
     var db = getIt.get<AppManager>().db;
 
     if (withDatabaseEntry) {
@@ -58,16 +60,13 @@ class _MoodleCredsManager extends CredentialsManager<_MoodleCreds> {
   fetchFromDatabase() async {
     logger.v("[MoodleCreds] fetch from db");
     var db = getIt.get<AppManager>().db;
-    var record =
-        await AppManager.stores.data.record(_moodleCredsDbRecordKey).get(db);
+    var record = await AppManager.stores.data.record(_moodleCredsDbRecordKey).get(db);
 
     if (record == null || record.isEmpty) {
       removeCredentials(withDatabaseEntry: false);
       return null;
     } else {
-      final creds = _MoodleCreds(
-          token: record["token"].toString(),
-          userId: int.parse(record["userid"].toString()));
+      final creds = _MoodleCreds(token: record["token"].toString(), userId: int.parse(record["userid"].toString()));
       setCredentials(creds, withDatabaseEntry: false);
       return creds;
     }
