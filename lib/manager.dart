@@ -122,6 +122,7 @@ class _tableNames {
   final String aushaengeLastRead = "aushaengeLastRead";
   final String schwarzesBrett = "schwarzesBrett";
   final String srNews = "srnews";
+  final String moodleModules = "moodlemodules";
 
   List<String> get allTables {
     return [
@@ -141,7 +142,8 @@ class _tableNames {
       aushaenge,
       aushaengeLastRead,
       schwarzesBrett,
-      srNews
+      srNews,
+      moodleModules
     ];
   }
 }
@@ -163,6 +165,7 @@ class _stores {
   final aushaengeLastRead = stringMapStoreFactory.store(AppManager.tables.aushaengeLastRead);
   final schwarzesBrett = stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
   final srNews = stringMapStoreFactory.store(AppManager.tables.srNews);
+  final moodleModules = intMapStoreFactory.store(AppManager.tables.moodleModules);
 
   List<StoreRef> get allStores {
     return [

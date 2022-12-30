@@ -130,7 +130,7 @@ class MainDrawer extends StatelessWidget {
             stream: getIt.get<AppManager>().devtools,
           ),
           const _DrawerLink(
-            title: "Moodle",
+            title: "M**dle",
             subtitle: "(Experimentell)",
             icon: Icons.school,
             page: MoodleCoursesPage(),

@@ -12,6 +12,8 @@ class _MoodleCourseDetailsPage extends StatefulWidget {
 class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
   List<_MoodleCourseSection>? sections;
   List<Widget>? abschnitte;
+  final scrollController = ScrollController();
+
   void loadContents() async {
     var contents = await AngerApp.moodle.courses.fetchCourseContents(widget.course.id);
     setState(() {
@@ -34,25 +36,31 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
         appBar: AppBar(
           title: Text(widget.course.displayname),
         ),
+        bottomNavigationBar: sections != null ? _MainBottomSectionsBar(sections: sections!) : null,
         body: sections == null
             ? Center(
                 child: CircularProgressIndicator.adaptive(),
               )
-            : ListView(
-                padding: EdgeInsets.all(0),
-                children: [
-                  // ElevatedButton.icon(
-                  //     onPressed: () {
-                  //       setState(() {
-                  //         abschnitte = sections!.map((section) {
-                  //           return _MoodleCourseDetailsPageSection(section, opened: false);
-                  //         }).toList();
-                  //       });
-                  //     },
-                  //     icon: Icon(Icons.unfold_less),
-                  //     label: Text("Alle Abschnitte zusammenklappen")),
-                  ...abschnitte!
-                ],
+            : Scrollbar(
+                thumbVisibility: true,
+                controller: scrollController,
+                child: ListView(
+                  controller: scrollController,
+                  padding: EdgeInsets.all(0),
+                  children: [
+                    // ElevatedButton.icon(
+                    //     onPressed: () {
+                    //       setState(() {
+                    //         abschnitte = sections!.map((section) {
+                    //           return _MoodleCourseDetailsPageSection(section, opened: false);
+                    //         }).toList();
+                    //       });
+                    //     },
+                    //     icon: Icon(Icons.unfold_less),
+                    //     label: Text("Alle Abschnitte zusammenklappen")),
+                    ...abschnitte!
+                  ],
+                ),
               ));
   }
 }
@@ -69,12 +77,11 @@ class _MoodleCourseDetailsPageSection extends StatefulWidget {
 
 class _MoodleCourseDetailsPageSectionState extends State<_MoodleCourseDetailsPageSection> {
   late bool opened;
-  late bool hasSummary;
 
   @override
   void initState() {
     opened = widget.opened;
-    hasSummary = widget.section.summary.trim().length != 0;
+
     super.initState();
   }
 
@@ -105,29 +112,55 @@ class _MoodleCourseDetailsPageSectionState extends State<_MoodleCourseDetailsPag
                 ),
               ),
             ),
-            if (opened)
-              ListView.separated(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.all(8),
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    if (hasSummary && index == 0) {
-                      return BasicHtml(
-                        widget.section.summary,
-                      );
-                    } else {
-                      index = hasSummary ? index - 1 : index;
-                      return _MoodleCourseDetailsPageSectionModule(widget.section.modules[index]);
-                    }
-                  },
-                  separatorBuilder: (context, index) => Divider(
-                        height: 24,
-                        color: Theme.of(context).brightness.isDark ? Colors.white.withOpacity(0.87) : Colors.black.withOpacity(0.87),
-                      ),
-                  itemCount: (hasSummary ? widget.section.modules.length + 1 : widget.section.modules.length))
+            if (opened) _MoodleCourseSectionContent(widget.section)
           ]),
         ),
       ),
+    );
+  }
+}
+
+class _MoodleCourseSectionContent extends StatefulWidget {
+  _MoodleCourseSectionContent(this.section, {super.key, this.allowScroll = false});
+
+  final bool allowScroll;
+  final _MoodleCourseSection section;
+
+  @override
+  State<_MoodleCourseSectionContent> createState() => _MoodleCourseSectionContentState();
+}
+
+class _MoodleCourseSectionContentState extends State<_MoodleCourseSectionContent> {
+  final scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    bool hasSummary = widget.section.summary.trim().length != 0;
+    return Scrollbar(
+      thumbVisibility: widget.allowScroll,
+      controller: scrollController,
+      child: ListView.separated(
+          controller: scrollController,
+          shrinkWrap: true,
+          padding: EdgeInsets.all(8),
+          physics: widget.allowScroll ? null : NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            if (hasSummary && index == 0) {
+              return BasicHtml(
+                widget.section.summary,
+              );
+            } else {
+              index = hasSummary ? index - 1 : index;
+              return _MoodleCourseDetailsPageSectionModule(widget.section.modules[index]);
+            }
+          },
+          separatorBuilder: (context, index) => SizedBox(height: 12)
+          /* Divider(
+                height: 24,
+                color: Theme.of(context).brightness.isDark ? Colors.white.withOpacity(0.87) : Colors.black.withOpacity(0.87),
+              )*/
+          ,
+          itemCount: (hasSummary ? widget.section.modules.length + 1 : widget.section.modules.length)),
     );
   }
 }
@@ -140,68 +173,85 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (module.userVisible ?? true)
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              InkWell(
-                onTap: module.modType == "assign" || module.url != null
-                    ? () {
-                        if (module.modType == "assign") {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MoodleCourseAssignPage(module)));
-                        } else {
-                          launchURL(module.url!, context);
-                        }
-                      }
-                    : null,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: module.modIconUrl,
-                        errorWidget: (context, url, error) {
-                          return SvgPicture.network(module.modIconUrl);
-                        },
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      if (getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) ...[
-                        Text(module.modType + " [module ${module.id}]"),
-                        SizedBox(width: 8)
-                      ],
-                      if (module.modType != "label")
-                        Flexible(child: Text(module.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, overflow: TextOverflow.fade))),
-                      if (module.url != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Opacity(
-                            opacity: 0.87,
-                            child: Icon(module.modType == "assign" ? Icons.keyboard_arrow_right : Icons.open_in_new),
+        ? Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: module.modType == "assign" || module.url != null
+                        ? () {
+                            if (module.modType == "assign") {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MoodleCourseAssignPage(module)));
+                            } else {
+                              launchURL(module.url!, context);
+                            }
+                          }
+                        : null,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: module.modIconUrl,
+                                  errorWidget: (context, url, error) {
+                                    return SvgPicture.network(module.modIconUrl);
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                if (getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) ...[
+                                  Text(module.modType + " [module ${module.id}]"),
+                                  SizedBox(width: 8)
+                                ],
+                                if (module.modType != "label")
+                                  Flexible(
+                                      child: Text(module.name,
+                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, overflow: TextOverflow.fade))),
+                              ],
+                            ),
                           ),
-                        )
-                    ],
+                          if (module.url != null)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Opacity(
+                                opacity: 0.7,
+                                child: Icon(module.modType == "assign" ? Icons.keyboard_arrow_right : Icons.open_in_new, size: 20),
+                              ),
+                            )
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  if (module.description != null)
+                    Flexible(
+                        child: BasicHtml(
+                      module.description!,
+                    )),
+                  if (module.contents != null && (module.contents?.isNotEmpty ?? false))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                      child: Wrap(
+                        spacing: 8,
+                        children: module.contents!.map((content) => _MoodleCourseDetailsPageSectionModuleContent(content)).toList(),
+                      ),
+                    )
+                ],
               ),
-              if (module.description != null)
-                Flexible(
-                    child: BasicHtml(
-                  module.description!,
-                )),
-              if (module.contents != null && (module.contents?.isNotEmpty ?? false))
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                  child: Wrap(
-                    spacing: 8,
-                    children: module.contents!.map((content) => _MoodleCourseDetailsPageSectionModuleContent(content)).toList(),
-                  ),
-                )
-            ],
+            ),
           )
         : SizedBox(height: 0, width: 0);
   }
