@@ -9,6 +9,7 @@ import 'package:anger_buddy/logic/mail/mail.dart';
 import 'package:anger_buddy/logic/schuelerrat/schuelerrat.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
+import 'package:anger_buddy/logic/statuspage/statuspage.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/logic/ferien/ferien.dart';
@@ -37,6 +38,7 @@ class _ServicesManager {
   final moodle = Moodle();
   final homepage = HomepageManager();
   final whatsnew = WhatsnewManager();
+  final statuspage = StatuspageManager();
   /* -- Plugins -- */
   final localNotifications = FlutterLocalNotificationsPlugin();
 
