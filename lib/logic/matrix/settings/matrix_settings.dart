@@ -17,38 +17,37 @@ class _MatrixSettingsState extends State<MatrixSettings> {
         body: ListView(
           children: [
             ListTile(
-              leading: Icon(Icons.account_circle_outlined),
-              title: Text("Profil"),
-              subtitle: Text("Profilbild, Anzeigename"),
-              trailing: Icon(Icons.keyboard_arrow_right),
+              leading: const Icon(Icons.account_circle_outlined),
+              title: const Text("Profil"),
+              subtitle: const Text("Profilbild, Anzeigename"),
+              trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixSettingsProfile()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const _MatrixSettingsProfile()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text("Privatsphäre"),
-              subtitle: Text("Blockierte Accounts, Lesebestätigung"),
-              trailing: Icon(Icons.keyboard_arrow_right),
+              leading: const Icon(Icons.lock_outline),
+              title: const Text("Privatsphäre"),
+              subtitle: const Text("Blockierte Accounts, Lesebestätigung"),
+              trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixSettingsPrivacy()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const _MatrixSettingsPrivacy()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.security_outlined),
-              title: Text("Sicherheit"),
-              enabled: false,
-              trailing: Icon(Icons.keyboard_arrow_right),
+              leading: const Icon(Icons.security_outlined),
+              title: const Text("Sicherheit"),
+              trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixSettingsDevices()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const _MatrixSettingsSecurity()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.devices),
-              title: Text("Geräte"),
-              trailing: Icon(Icons.keyboard_arrow_right),
+              leading: const Icon(Icons.devices),
+              title: const Text("Geräte"),
+              trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixSettingsDevices()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const _MatrixSettingsDevices()));
               },
             ),
           ],

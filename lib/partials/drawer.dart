@@ -15,6 +15,7 @@ import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/logic/schuelerrat/schuelerrat_page.dart';
+import 'package:anger_buddy/logic/statuspage/statuspage.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/logic/wp_images/wp_images.dart';
@@ -206,6 +207,7 @@ class MainDrawer extends StatelessWidget {
               page: JspPassthroughPage(child: FileExplorer("/")),
             ),
             const _DrawerLink(title: "Links", icon: Icons.link, page: UniventionLinksPage()),
+            const _DrawerLink(title: "Status", icon: Icons.dns_outlined, page: StatuspagePage()),
             const _DrawerExternalLink(title: "Mail", url: "https://jsp.jena.de/appsuite/", icon: Icons.mail_outline),
             const _DrawerExternalLink(
               title: "Hilfe",

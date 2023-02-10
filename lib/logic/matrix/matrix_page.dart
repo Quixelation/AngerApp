@@ -121,6 +121,8 @@ class _RoomPageState extends State<RoomPage> {
                         );
                       }
                       _count = timeline.events.length;
+                      var isDevMode = getIt.get<AppManager>().devtools.valueWrapper?.value ?? false;
+                      final eventsToBeRendered = timeline.events.where((element) => element.shouldRender(overwrite: isDevMode));
 
                       return Column(
                         children: [

@@ -11,7 +11,6 @@ import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/partials/bottom_appbar.dart';
-import 'package:anger_buddy/partials/introduction_screen.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -35,8 +34,13 @@ class PageDevTools extends StatelessWidget {
           SelectableText(AngerApp.moodle.login.creds.token ?? "<NoToken>"),
           ElevatedButton(
               onPressed: () async {
-                await AngerApp.localNotifications.show(666, "Hello", "Test",
-                    NotificationDetails(android: AndroidNotificationDetails("testchannel", "Entiwckler-Test-Benachrichtigungen")));
+                await AngerApp.localNotifications.show(
+                    666,
+                    "Hello",
+                    "Test",
+                    NotificationDetails(
+                        android: AndroidNotificationDetails("testchannel",
+                            "Entiwckler-Test-Benachrichtigungen")));
               },
               child: const Text("[Notificatiosn] send test noti")),
           ElevatedButton(
@@ -160,7 +164,9 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                AppManager.stores.data.record("wp-mail-cookie").delete(getIt.get<AppManager>().db);
+                AppManager.stores.data
+                    .record("wp-mail-cookie")
+                    .delete(getIt.get<AppManager>().db);
               },
               child: const Text("Mail Kontakt Login löschen")),
           const SizedBox(
@@ -193,15 +199,8 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                toggleSeenIntroductionScreen(false);
-              },
-              child: const Text("IntroScreen Seen false")),
-          const SizedBox(
-            height: 25,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                enforceDefaultFcmSubscriptions(enforceEvenWhenValueAlreadySet: true);
+                enforceDefaultFcmSubscriptions(
+                    enforceEvenWhenValueAlreadySet: true);
               },
               child: const Text("Enforce Default Notification Subscriptions")),
           const SizedBox(
@@ -244,5 +243,7 @@ Future<bool> getDevToolsActiveFromDB(sb.Database db) async {
 Future<void> toogleDevtools(bool state) async {
   getIt.get<AppManager>().devtools.add(state);
   var db = getIt.get<AppManager>().db;
-  await AppManager.stores.data.record("devtoolsactive").put(db, {"value": state ? "TRUE" : "FALSE"});
+  await AppManager.stores.data
+      .record("devtoolsactive")
+      .put(db, {"value": state ? "TRUE" : "FALSE"});
 }
