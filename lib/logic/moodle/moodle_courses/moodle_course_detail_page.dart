@@ -6,7 +6,8 @@ class _MoodleCourseDetailsPage extends StatefulWidget {
   final _MoodleCourse course;
 
   @override
-  State<_MoodleCourseDetailsPage> createState() => __MoodleCourseDetailsPageState();
+  State<_MoodleCourseDetailsPage> createState() =>
+      __MoodleCourseDetailsPageState();
 }
 
 class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
@@ -15,11 +16,15 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
   final scrollController = ScrollController();
 
   void loadContents() async {
-    var contents = await AngerApp.moodle.courses.fetchCourseContents(widget.course.id);
+    var contents =
+        await AngerApp.moodle.courses.fetchCourseContents(widget.course.id);
     setState(() {
       sections = contents;
       abschnitte = sections!.map((section) {
-        return _MoodleCourseDetailsPageSection(section);
+        return _MoodleCourseDetailsPageSection(
+          section,
+          opened: true,
+        );
       }).toList();
     });
   }
@@ -32,11 +37,15 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Theme(
+      data: Theme.of(context),
+      child: Scaffold(
         appBar: AppBar(
           title: Text(widget.course.displayname),
         ),
-        bottomNavigationBar: sections != null ? _MainBottomSectionsBar(sections: sections!) : null,
+        bottomNavigationBar: sections != null
+            ? _MainBottomSectionsBar(sections: sections!)
+            : null,
         body: sections == null
             ? Center(
                 child: CircularProgressIndicator.adaptive(),
@@ -61,21 +70,26 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
                     ...abschnitte!
                   ],
                 ),
-              ));
+              ),
+      ),
+    );
   }
 }
 
 class _MoodleCourseDetailsPageSection extends StatefulWidget {
-  const _MoodleCourseDetailsPageSection(this.section, {super.key, this.opened = true});
+  const _MoodleCourseDetailsPageSection(this.section,
+      {super.key, this.opened = true});
 
   final _MoodleCourseSection section;
   final bool opened;
 
   @override
-  State<_MoodleCourseDetailsPageSection> createState() => _MoodleCourseDetailsPageSectionState();
+  State<_MoodleCourseDetailsPageSection> createState() =>
+      _MoodleCourseDetailsPageSectionState();
 }
 
-class _MoodleCourseDetailsPageSectionState extends State<_MoodleCourseDetailsPageSection> {
+class _MoodleCourseDetailsPageSectionState
+    extends State<_MoodleCourseDetailsPageSection> {
   late bool opened;
 
   @override
@@ -93,27 +107,36 @@ class _MoodleCourseDetailsPageSectionState extends State<_MoodleCourseDetailsPag
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(8),
-          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            InkWell(
-              onTap: () {
-                setState(() {
-                  opened = !opened;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Flexible(child: Text(widget.section.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                    Icon(opened ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right)
-                  ],
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      opened = !opened;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Flexible(
+                            child: Text(widget.section.name,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold))),
+                        Icon(opened
+                            ? Icons.keyboard_arrow_down
+                            : Icons.keyboard_arrow_right)
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            if (opened) _MoodleCourseSectionContent(widget.section)
-          ]),
+                if (opened) _MoodleCourseSectionContent(widget.section)
+              ]),
         ),
       ),
     );
@@ -121,16 +144,19 @@ class _MoodleCourseDetailsPageSectionState extends State<_MoodleCourseDetailsPag
 }
 
 class _MoodleCourseSectionContent extends StatefulWidget {
-  _MoodleCourseSectionContent(this.section, {super.key, this.allowScroll = false});
+  _MoodleCourseSectionContent(this.section,
+      {super.key, this.allowScroll = false});
 
   final bool allowScroll;
   final _MoodleCourseSection section;
 
   @override
-  State<_MoodleCourseSectionContent> createState() => _MoodleCourseSectionContentState();
+  State<_MoodleCourseSectionContent> createState() =>
+      _MoodleCourseSectionContentState();
 }
 
-class _MoodleCourseSectionContentState extends State<_MoodleCourseSectionContent> {
+class _MoodleCourseSectionContentState
+    extends State<_MoodleCourseSectionContent> {
   final scrollController = ScrollController();
 
   @override
@@ -151,7 +177,8 @@ class _MoodleCourseSectionContentState extends State<_MoodleCourseSectionContent
               );
             } else {
               index = hasSummary ? index - 1 : index;
-              return _MoodleCourseDetailsPageSectionModule(widget.section.modules[index]);
+              return _MoodleCourseDetailsPageSectionModule(
+                  widget.section.modules[index]);
             }
           },
           separatorBuilder: (context, index) => SizedBox(height: 12)
@@ -160,7 +187,9 @@ class _MoodleCourseSectionContentState extends State<_MoodleCourseSectionContent
                 color: Theme.of(context).brightness.isDark ? Colors.white.withOpacity(0.87) : Colors.black.withOpacity(0.87),
               )*/
           ,
-          itemCount: (hasSummary ? widget.section.modules.length + 1 : widget.section.modules.length)),
+          itemCount: (hasSummary
+              ? widget.section.modules.length + 1
+              : widget.section.modules.length)),
     );
   }
 }
@@ -175,7 +204,11 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
     return (module.userVisible ?? true)
         ? Container(
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(4)),
+                border: Border.all(
+                    color: Colors.grey.withOpacity(0.5),
+                    width: 1,
+                    style: BorderStyle.solid),
+                borderRadius: BorderRadius.circular(4)),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -186,7 +219,9 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
                     onTap: module.modType == "assign" || module.url != null
                         ? () {
                             if (module.modType == "assign") {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MoodleCourseAssignPage(module)));
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      _MoodleCourseAssignPage(module)));
                             } else {
                               launchURL(module.url!, context);
                             }
@@ -207,20 +242,30 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
                                 CachedNetworkImage(
                                   imageUrl: module.modIconUrl,
                                   errorWidget: (context, url, error) {
-                                    return SvgPicture.network(module.modIconUrl);
+                                    return SvgPicture.network(
+                                        module.modIconUrl);
                                   },
                                 ),
                                 SizedBox(
                                   width: 8,
                                 ),
-                                if (getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) ...[
-                                  Text(module.modType + " [module ${module.id}]"),
+                                if (getIt
+                                        .get<AppManager>()
+                                        .devtools
+                                        .valueWrapper
+                                        ?.value ??
+                                    false) ...[
+                                  Text(module.modType +
+                                      " [module ${module.id}]"),
                                   SizedBox(width: 8)
                                 ],
                                 if (module.modType != "label")
                                   Flexible(
                                       child: Text(module.name,
-                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, overflow: TextOverflow.fade))),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              overflow: TextOverflow.fade))),
                               ],
                             ),
                           ),
@@ -229,7 +274,11 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Opacity(
                                 opacity: 0.7,
-                                child: Icon(module.modType == "assign" ? Icons.keyboard_arrow_right : Icons.open_in_new, size: 20),
+                                child: Icon(
+                                    module.modType == "assign"
+                                        ? Icons.keyboard_arrow_right
+                                        : Icons.open_in_new,
+                                    size: 20),
                               ),
                             )
                         ],
@@ -241,12 +290,18 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
                         child: BasicHtml(
                       module.description!,
                     )),
-                  if (module.contents != null && (module.contents?.isNotEmpty ?? false))
+                  if (module.contents != null &&
+                      (module.contents?.isNotEmpty ?? false))
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8),
                       child: Wrap(
                         spacing: 8,
-                        children: module.contents!.map((content) => _MoodleCourseDetailsPageSectionModuleContent(content)).toList(),
+                        children: module.contents!
+                            .map((content) =>
+                                _MoodleCourseDetailsPageSectionModuleContent(
+                                    content))
+                            .toList(),
                       ),
                     )
                 ],
@@ -286,8 +341,10 @@ class _MoodleCourseDetailsPageSectionModuleContent extends StatelessWidget {
             ? () {
                 launchURL(
                     content.fileUrl!.contains("?")
-                        ? content.fileUrl! + "&token=${AngerApp.moodle.login.creds.token}"
-                        : content.fileUrl! + "?token=${AngerApp.moodle.login.creds.token}",
+                        ? content.fileUrl! +
+                            "&token=${AngerApp.moodle.login.creds.token}"
+                        : content.fileUrl! +
+                            "?token=${AngerApp.moodle.login.creds.token}",
                     context);
               }
             : null,
@@ -295,7 +352,9 @@ class _MoodleCourseDetailsPageSectionModuleContent extends StatelessWidget {
         label: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Text((content.filename ?? "<DATEI>") +
-              (content.type == "file" && content.filesize != null ? " (${content.filesize!.readableFileSize()})" : "")),
+              (content.type == "file" && content.filesize != null
+                  ? " (${content.filesize!.readableFileSize()})"
+                  : "")),
         ));
   }
 }
