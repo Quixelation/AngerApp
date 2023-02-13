@@ -36,7 +36,15 @@ enum eventType { normal, klausur, ferien }
 class EventData {
   late final String id;
   late final DateTime dateFrom;
-  late final DateTime? dateTo;
+  late final DateTime? _dateTo;
+  DateTime? get dateTo {
+    if (_dateTo?.hour == 0 && _dateTo?.minute == 0) {
+      return _dateTo!.subtract(const Duration(seconds: 1));
+    } else {
+      return _dateTo;
+    }
+  }
+
   late final bool allDay;
   late final String title;
   late final String desc;
@@ -47,25 +55,31 @@ class EventData {
   Map<dynamic, dynamic>? info;
 
   bool get isMultiDay {
-    if (dateTo == null) return false;
-    return !(dateFrom.day == dateTo!.day && dateFrom.month == dateTo!.month && dateFrom.year == dateTo!.year);
+    if (_dateTo == null) return false;
+    return !(dateFrom.day == _dateTo!.day &&
+        dateFrom.month == _dateTo!.month &&
+        dateFrom.year == _dateTo!.year);
   }
 
   EventData(
       {required this.id,
       required this.dateFrom,
-      this.dateTo,
+      DateTime? dateTo,
       required this.title,
       required this.desc,
       this.type = null,
       required this.allDay,
       this.klassen = const [],
-      this.info = const {}});
+      this.info = const {}}) {
+    _dateTo = dateTo;
+  }
 
   EventData.fromIcalJson(Map<String, dynamic> icalJson)
       : id = icalJson["uid"],
-        dateFrom = DateTime.tryParse(icalJson["dtstart"]?.dt ?? "")?.toLocal() ?? DateTime.now(),
-        dateTo = DateTime.tryParse(icalJson["dtend"]?.dt ?? "")?.toUtc(),
+        dateFrom =
+            DateTime.tryParse(icalJson["dtstart"]?.dt ?? "")?.toLocal() ??
+                DateTime.now(),
+        _dateTo = DateTime.tryParse(icalJson["dtend"]?.dt ?? "")?.toLocal(),
         title = icalJson["summary"],
         desc = icalJson["description"] ?? "",
         type = eventType.normal,
@@ -76,10 +90,15 @@ class EventData {
     id = dbJson["id"].toString();
     type = eventType.normal;
     // logger.d("[Calendar] Date-fromDbJSON: ${dbJson['date_from']} // ${dbJson['date_to']}");
-    dateFrom = DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["date_from"].toString())).toLocal();
+    dateFrom = DateTime.fromMillisecondsSinceEpoch(
+            int.parse(dbJson["date_from"].toString()))
+        .toLocal();
     // logger.d("[Calendar] DateTo-fromDbJSON-parsed: ${dateFrom}");
-    dateTo =
-        dbJson["date_to"].toString().trim() == "0" ? null : DateTime.fromMillisecondsSinceEpoch(int.parse(dbJson["date_to"].toString())).toLocal();
+    _dateTo = dbJson["date_to"].toString().trim() == "0"
+        ? null
+        : DateTime.fromMillisecondsSinceEpoch(
+                int.parse(dbJson["date_to"].toString()))
+            .toLocal();
     // logger.d("[Calendar] DateFrom-fromDbJSON-parsed: ${dateTo}");
     title = dbJson["title"].toString();
     desc = dbJson["desc"].toString();
@@ -138,7 +157,9 @@ class CalendarManager extends DataManager<EventData> {
     await appManager.db.transaction((transaction) async {
       await AppManager.stores.events.delete(transaction);
       for (var currentEvent in events) {
-        await AppManager.stores.events.record(currentEvent.id).put(transaction, {
+        await AppManager.stores.events
+            .record(currentEvent.id)
+            .put(transaction, {
           "id": currentEvent.id,
           "date_from": currentEvent.dateFrom.millisecondsSinceEpoch,
           "date_to": currentEvent.dateTo?.millisecondsSinceEpoch ?? 0,
@@ -155,19 +176,24 @@ class CalendarManager extends DataManager<EventData> {
 
   @override
   fetchFromServer() async {
+    logger.d("[Calendar] Fetching from Server [START]");
     try {
-      Future<List<EventData>> createErrorSafeFutureWrapper(Future<List<EventData>> Function() T) async {
+      Future<List<EventData>> createErrorSafeFutureWrapper(
+          Future<List<EventData>> Function() T) async {
         try {
           return await T();
         } catch (e) {
-          logger.e("[Calendar] Could not load EventData from server\n$e\n${(e as Error).stackTrace}");
+          logger.e(
+              "[Calendar] Could not load EventData from server\n$e\n${(e as Error).stackTrace}");
 
           return [];
         }
       }
 
-      var eventFutures =
-          await Future.wait<List<EventData>>([createErrorSafeFutureWrapper(_fetchGcalendarData), createErrorSafeFutureWrapper(_fetchCmsCal)]);
+      var eventFutures = await Future.wait<List<EventData>>([
+        createErrorSafeFutureWrapper(_fetchGcalendarData),
+        createErrorSafeFutureWrapper(_fetchCmsCal)
+      ]);
       List<EventData> events = [];
       for (var future in eventFutures) {
         events.addAll(future);
@@ -196,7 +222,8 @@ class CalendarManager extends DataManager<EventData> {
   }
 
   Future<List<EventData>> _fetchCmsCal() async {
-    var resp = await http.get(Uri.parse("${AppManager.directusUrl}/items/kalender"));
+    var resp =
+        await http.get(Uri.parse("${AppManager.directusUrl}/items/kalender"));
     if (resp.statusCode != 200) {
       logger.e("Error fetching calendar: Non 200 response");
       throw "Error fetching calendar: Non 200 response";
@@ -209,13 +236,26 @@ class CalendarManager extends DataManager<EventData> {
     var data = json["data"] as List;
     List<EventData> eventList = [];
     for (var item in data) {
+      logger.d(item["titel"]);
+      logger.d(
+          "item:] : ${(item["date_end"] != null) ? DateTime.parse(item["date_end"]) : "yeahno"}");
+      logger.d(
+          "item:] : ${(item["date_start"] != null) ? DateTime.parse(item["date_end"]) : "yeahno_star"}");
       eventList.add(EventData(
           allDay: item["allday"],
           id: item["id"],
-          dateFrom: DateTime.parse(item["date_start"]),
+          dateFrom: (item["date_start"] != null)
+              ? DateTime.parse(item["date_start"])
+              : DateTime.now(),
           title: item["titel"],
-          dateTo: item["date_end"] != null ? DateTime.parse(item["date_end"]) : null,
-          klassen: item["klassen"] != null ? (item["klassen"] as List<dynamic>).map((e) => int.parse(e)).toList() : [],
+          dateTo: (item["date_end"] != null)
+              ? DateTime.parse(item["date_end"])
+              : null,
+          klassen: item["klassen"] != null
+              ? (item["klassen"] as List<dynamic>)
+                  .map((e) => int.parse(e))
+                  .toList()
+              : [],
           //TODO: ADD desc to CMS
           desc: ""));
     }

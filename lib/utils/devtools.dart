@@ -12,6 +12,7 @@ import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/partials/bottom_appbar.dart';
 import 'package:anger_buddy/utils/logger.dart';
+import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -205,6 +206,15 @@ class PageDevTools extends StatelessWidget {
           const SizedBox(
             height: 25,
           ),
+          ElevatedButton(
+              onPressed: () async {
+                Services.calendar.subject.add(AsyncDataResponse(
+                    data: [],
+                    error: false,
+                    loadingAction: AsyncDataResponseLoadingAction.none));
+                await Services.calendar.fetchFromServer();
+              },
+              child: const Text("Cal Clear")),
           ElevatedButton(
               onPressed: () {
                 dumpTheWholeF_ckingDatabase();

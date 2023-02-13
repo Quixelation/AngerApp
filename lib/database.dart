@@ -29,12 +29,15 @@ Future<Database> openDB() async {
   }
 
 // We use the database factory to open the database
-  Database db = await dbFactory.openDatabase(dbPath!, mode: DatabaseMode.neverFails);
+  Database db =
+      await dbFactory.openDatabase(dbPath!, mode: DatabaseMode.neverFails);
 
   return db;
 }
 
 Future<void> dumpTheWholeF_ckingDatabase() async {
+  print("Dumping AngerApp DB");
+
   var db = getIt.get<AppManager>().db;
 
   await db.transaction((transaction) async {
@@ -48,6 +51,7 @@ Future<void> dumpTheWholeF_ckingDatabase() async {
       }
     }
   });
+  print("Dumped AngerApp DB");
 
   return;
 }

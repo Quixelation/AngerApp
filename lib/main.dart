@@ -303,9 +303,9 @@ class MyHomePageState extends State<MyHomePage> {
               ],
             )
           : const _HomeNavigator(),
-      drawer: kIsWeb && MediaQuery.of(context).size.width > 900
-          ? null
-          : MainDrawer(),
+      // drawer: kIsWeb && MediaQuery.of(context).size.width > 900
+      //     ? null
+      //     : MainDrawer(),
 
       //bottomNavigationBar: BottomNavigationBar(
       //  currentIndex: selectedPage,

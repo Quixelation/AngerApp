@@ -14,7 +14,7 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
 
     _tabController.addListener(() {
       setState(() {
@@ -43,13 +43,19 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                   NavigationDestination(
                       icon: Icon(Icons.home_outlined), label: "App"),
                   NavigationDestination(
+                      icon: Icon(Icons.star_outline), label: "Funktionen"),
+                  NavigationDestination(
                       icon: Icon(Icons.messenger_outline), label: "Chats")
                 ],
               )
             : null,
         body: TabBarView(
           controller: _tabController,
-          children: [const _HomePageContent(), const MessagesListPage()],
+          children: [
+            const _HomePageContent(),
+            PageFunctionsDrawer(),
+            const MessagesListPage()
+          ],
         ));
   }
 }
@@ -73,19 +79,19 @@ class _HomePageContent extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: kIsWeb && MediaQuery.of(context).size.width > 900
-                ? null
-                : IconButton(
-                    iconSize: 26,
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {
-                      getIt
-                          .get<AppManager>()
-                          .mainScaffoldState
-                          .currentState!
-                          .openDrawer();
-                    },
-                  ),
+            // leading: kIsWeb && MediaQuery.of(context).size.width > 900
+            //     ? null
+            //     : IconButton(
+            //         iconSize: 26,
+            //         icon: const Icon(Icons.menu),
+            //         onPressed: () {
+            //           getIt
+            //               .get<AppManager>()
+            //               .mainScaffoldState
+            //               .currentState!
+            //               .openDrawer();
+            //         },
+            //       ),
             actions: [
               IconButton(
                 iconSize: 26,
@@ -120,25 +126,23 @@ class _HomePageContent extends StatelessWidget {
                 },
               ),
             ],
-            pinned: true,
+            pinned: false,
+            centerTitle: false,
             flexibleSpace: FlexibleSpaceBar(
-              stretchModes: const [StretchMode.zoomBackground],
-              background: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              // collapseMode: CollapseMode.pin,
-              title: Text(
-                "Anger",
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground),
-              ),
+              centerTitle: true,
+              stretchModes: const [
+                StretchMode.blurBackground,
+              ],
+              background: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [WelcomeText(), SizedBox(height: 32)]),
             ),
-            expandedHeight: 150,
+            expandedHeight: 200,
           ),
           SliverList(
               delegate: SliverChildListDelegate([
             const QuickInfoHomepageWidget(),
-            const WelcomeText(),
+
             const SizedBox(height: 16),
 
             /// -> kleine Bildschirmgröße: 1 Spalte
@@ -146,12 +150,13 @@ class _HomePageContent extends StatelessWidget {
               Flex(
                   direction: Axis.vertical,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     // SchwarzesBrettHome(),
                     WhatsnewHomepageWidget(),
                     FerienHomepageWidget(),
                     MatrixHomepageQuicklook(),
                     VpWidget(),
+                    WeekViewHomepageWidget(),
                     AushangHomepageWidget(),
                     KlausurenHomepageWidget(),
                     EventsThisWeek(),
@@ -308,54 +313,56 @@ class _WelcomeTextState extends State<WelcomeText> {
 
   @override
   Widget build(BuildContext context) {
+    var textStyle = DefaultTextStyle.of(context).style;
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text("Willkommen",
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600)),
+          Text("Willkommen",
+              style: textStyle.copyWith(
+                  fontSize: 32, fontWeight: FontWeight.w600)),
           const SizedBox(height: 5),
           Opacity(
             opacity: 0.87,
             child: newVersion
                 ? const Text("Neue Version der App verfügbar")
                 : RichText(
-                    text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
-                        children: [
-                        const TextSpan(text: "Heute ist "),
-                        TextSpan(
-                            text: intToDayString(DateTime.now().weekday),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.bold)),
-                        const TextSpan(text: ", der "),
-                        TextSpan(
-                            text: DateTime.now().day.toString(),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.bold)),
-                        const TextSpan(text: ". "),
-                        TextSpan(
-                            text: intToMonthString(DateTime.now().month),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.bold)),
-                        const TextSpan(text: " "),
-                        TextSpan(
-                            text: DateTime.now().year.toString(),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.bold)),
-                        const TextSpan(text: "."),
-                      ])),
+                    text: TextSpan(style: textStyle, children: [
+                    const TextSpan(text: "Heute ist "),
+                    TextSpan(
+                        text: intToDayString(DateTime.now().weekday),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold)),
+                    const TextSpan(text: ", der "),
+                    TextSpan(
+                        text: DateTime.now().day.toString(),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold)),
+                    const TextSpan(text: ". "),
+                    TextSpan(
+                        text: intToMonthString(DateTime.now().month),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold)),
+                    const TextSpan(text: " "),
+                    TextSpan(
+                        text: DateTime.now().year.toString(),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold)),
+                    const TextSpan(text: "."),
+                  ])),
           ),
           Opacity(
             opacity: 0.87,
-            child: SenseboxOutdoorTempTextHomepage(),
+            child: SenseboxOutdoorTempTextHomepage(
+              textStyle: textStyle,
+            ),
           )
         ],
       ),

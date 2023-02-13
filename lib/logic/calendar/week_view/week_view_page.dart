@@ -10,7 +10,8 @@ class WeekView extends StatefulWidget {
 final weekViewFontSizeBehavSub = BehaviorSubject<double>.seeded(10);
 
 class _WeekViewState extends State<WeekView> {
-  final cal = WeekViewCalendar(events: Services.calendar.subject.valueWrapper!.value.data);
+  final cal = WeekViewCalendar(
+      events: Services.calendar.subject.valueWrapper!.value.data);
 
   @override
   void initState() {
@@ -36,13 +37,15 @@ class _WeekViewState extends State<WeekView> {
             IconButton(
                 color: Theme.of(context).colorScheme.onPrimary,
                 onPressed: () {
-                  weekViewFontSizeBehavSub.add(weekViewFontSizeBehavSub.valueWrapper!.value + 0.5);
+                  weekViewFontSizeBehavSub
+                      .add(weekViewFontSizeBehavSub.valueWrapper!.value + 0.5);
                 },
                 icon: Icon(Icons.zoom_in)),
             IconButton(
                 color: Theme.of(context).colorScheme.onPrimary,
                 onPressed: () {
-                  weekViewFontSizeBehavSub.add(weekViewFontSizeBehavSub.valueWrapper!.value - 0.5);
+                  weekViewFontSizeBehavSub
+                      .add(weekViewFontSizeBehavSub.valueWrapper!.value - 0.5);
                 },
                 icon: Icon(Icons.zoom_out))
           ],
@@ -51,71 +54,86 @@ class _WeekViewState extends State<WeekView> {
       body: ListView.builder(
           itemCount: 50,
           itemBuilder: (context, index) {
-            var week = cal.generateWeek(index);
-            var structWeek = week.toStructuredWeekEntryData();
-
-            var mappedRows = structWeek.map((e) {
-              return Flex(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                direction: Axis.horizontal,
-                children: e
-                    .map((e) => Flexible(
-                        fit: FlexFit.tight,
-                        flex: e.length,
-                        child: Container(
-                          padding: const EdgeInsets.all(1),
-                          child: _WeekViewEventContainer(e),
-                        )))
-                    .toList(),
-              );
-            });
-            var mappedRowsList = mappedRows.toList();
-            // Add an empty one
-            mappedRowsList.add(Flex(crossAxisAlignment: CrossAxisAlignment.start, direction: Axis.horizontal, children: [
-              Flexible(
-                  fit: FlexFit.tight,
-                  flex: 7,
-                  child: Container(
-                    padding: const EdgeInsets.all(1),
-                    child: SizedBox(height: 20),
-                  ))
-            ]));
-
-            return GestureDetector(
-              onTapUp: (details) {
-                var rightBound = context.findRenderObject()?.paintBounds.right;
-                if (rightBound == null) return;
-                var calc = (details.localPosition.dx / (rightBound / 7)).ceil();
-                logger.d(calc);
-              },
-              child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 100),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Divider(
-                        color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
-                      ),
-                      Flex(
-                          direction: Axis.horizontal,
-                          children: week.days
-                              .map(
-                                (e) => Flexible(
-                                    flex: 1,
-                                    fit: FlexFit.tight,
-                                    child: Text(
-                                      "${e.date.day}${e.date.day == 1 ? " " + intToMonthString(e.date.month).substring(0, 3) : ""}",
-                                      style: TextStyle(color: Colors.grey.shade600),
-                                    )),
-                              )
-                              .toList()),
-                      ...mappedRowsList
-                    ],
-                  )),
-            );
+            return buildWeekViewRow(cal, index, context);
           }),
     );
   }
+}
+
+Widget buildWeekViewRow(WeekViewCalendar cal, int index, BuildContext context,
+    {bool hideDivider = false}) {
+  var week = cal.generateWeek(index);
+  var structWeek = week.toStructuredWeekEntryData();
+
+  var mappedRows = structWeek.map((e) {
+    return Flex(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      direction: Axis.horizontal,
+      children: e
+          .map((e) => Flexible(
+              fit: FlexFit.tight,
+              flex: e.length,
+              child: Container(
+                padding: const EdgeInsets.all(1),
+                child: InkWell(
+                    onTap: () {
+                      print(e);
+                    },
+                    child: _WeekViewEventContainer(e)),
+              )))
+          .toList(),
+    );
+  });
+  var mappedRowsList = mappedRows.toList();
+  // Add an empty one
+  mappedRowsList.add(Flex(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      direction: Axis.horizontal,
+      children: [
+        Flexible(
+            fit: FlexFit.tight,
+            flex: 7,
+            child: Container(
+              padding: const EdgeInsets.all(1),
+              child: SizedBox(height: 20),
+            ))
+      ]));
+
+  return GestureDetector(
+    onTapUp: (false)
+        ? (details) {
+            var rightBound = context.findRenderObject()?.paintBounds.right;
+            if (rightBound == null) return;
+            var calc = (details.localPosition.dx / (rightBound / 7)).ceil();
+            logger.d(calc);
+          }
+        : null,
+    child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: 100),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            if (!hideDivider)
+              Divider(
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
+              ),
+            Flex(
+                direction: Axis.horizontal,
+                children: week.days
+                    .map(
+                      (e) => Flexible(
+                          flex: 1,
+                          fit: FlexFit.tight,
+                          child: Text(
+                            "${e.date.day}${e.date.day == 1 ? " " + intToMonthString(e.date.month).substring(0, 3) : ""}",
+                            style: TextStyle(color: Colors.grey.shade600),
+                          )),
+                    )
+                    .toList()),
+            ...mappedRowsList
+          ],
+        )),
+  );
 }
 
 class _WeekViewEventContainer extends StatefulWidget {
@@ -123,7 +141,8 @@ class _WeekViewEventContainer extends StatefulWidget {
   final _WeekViewCalEntry entry;
 
   @override
-  State<_WeekViewEventContainer> createState() => __WeekViewEventContainerState();
+  State<_WeekViewEventContainer> createState() =>
+      __WeekViewEventContainerState();
 }
 
 class __WeekViewEventContainerState extends State<_WeekViewEventContainer> {
@@ -150,7 +169,11 @@ class __WeekViewEventContainerState extends State<_WeekViewEventContainer> {
         lcTitle.contains("bac blanc");
     isDienstberatung = lcTitle.contains("dienstberatung");
 
-    color = isFerien ? Colors.amber.shade900 : (isDienstberatung ? Colors.purple.shade900 : (isPruefung ? Colors.red.shade900 : null));
+    color = isFerien
+        ? Colors.amber.shade900
+        : (isDienstberatung
+            ? Colors.purple.shade900
+            : (isPruefung ? Colors.red.shade900 : null));
 
     weekViewFontSizeBehavSub.listen((value) {
       if (!mounted) {
@@ -173,13 +196,59 @@ class __WeekViewEventContainerState extends State<_WeekViewEventContainer> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: widget.entry.isEmptySpace ? Colors.transparent : (color ?? Theme.of(context).colorScheme.primary),
+          color: widget.entry.isEmptySpace
+              ? Colors.transparent
+              : (color ?? Theme.of(context).colorScheme.primary),
           borderRadius: BorderRadius.circular(2)),
       padding: EdgeInsets.all(2),
       child: Text(
         (widget.entry.isEmptySpace ? "" : widget.entry.event!.title),
-        style: TextStyle(fontSize: _fontSize, color: Theme.of(context).colorScheme.onPrimary),
+        style: TextStyle(
+            fontSize: _fontSize,
+            color: Theme.of(context).colorScheme.onPrimary),
       ),
     );
+  }
+}
+
+class WeekViewHomepageWidget extends StatefulWidget {
+  const WeekViewHomepageWidget({super.key});
+
+  @override
+  State<WeekViewHomepageWidget> createState() => _WeekViewHomepageWidgetState();
+}
+
+class _WeekViewHomepageWidgetState extends State<WeekViewHomepageWidget> {
+  List<EventData>? events;
+  StreamSubscription? calendarSub;
+
+  @override
+  void initState() {
+    super.initState();
+    calendarSub = Services.calendar.subject.listen((value) {
+      if (!mounted) {
+        calendarSub?.cancel();
+        return;
+      }
+      setState(() {
+        events = value.data;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    calendarSub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return HomepageWidget(
+        builder: (context) => Card(
+            child: buildWeekViewRow(
+                WeekViewCalendar(events: events!), 0, context,
+                hideDivider: true)),
+        show: events != null);
   }
 }
