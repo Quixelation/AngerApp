@@ -88,6 +88,8 @@ dependencies:
   cached_network_image: ^3.2.3
   flutter_local_notifications: ^13.0.0
   workmanager: ^0.5.1
+  webview_flutter: ^2.8.0
+  flutter_inappwebview: ^5.7.2+3
   # charts_painter: ^3.0.0
   # flutter_echarts: ^2.3.0
   # graphic: ^0.6.2

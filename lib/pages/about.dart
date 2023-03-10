@@ -32,14 +32,23 @@ class PageAbout extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Angergym-App", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+                      const Text("Angergym-App",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 30)),
                       FutureBuilder<PackageInfo>(
                           builder: (context, snapshot) {
                             if (snapshot.hasData && snapshot.data != null) {
                               return Text("version ${snapshot.data!.version}",
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Colors.grey));
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: Colors.grey));
                             } else {
-                              return const Text("Lädt Version...", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Colors.grey));
+                              return const Text("Lädt Version...",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: Colors.grey));
                             }
                           },
                           future: PackageInfo.fromPlatform())
@@ -72,21 +81,32 @@ class PageAbout extends StatelessWidget {
               leading: Icon(Icons.group),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) => const _PageTeam()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (ctx) => const _PageTeam()));
               }),
           ListTile(
               title: const Text("Änderungsverlauf"),
               leading: Icon(Icons.history),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) => const WhatsNewVersionListPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => const WhatsNewVersionListPage()));
               }),
           ListTile(
             title: const Text("Datenbank-Einsicht"),
-            trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-            leading: Icon(Icons.table_rows, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+            trailing: Icon(
+              Icons.keyboard_arrow_right,
+            ),
+            leading: Icon(
+              Icons.table_rows,
+            ),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => DatabaseList(dbPath: dbDir)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => DatabaseList(dbPath: dbDir)));
             },
           ),
           ListTile(
@@ -98,7 +118,8 @@ class PageAbout extends StatelessWidget {
                 showLicensePage(
                     context: context,
                     applicationVersion: packageInfo.version,
-                    applicationLegalese: "Programmiert von Robert Steffen Stündl",
+                    applicationLegalese:
+                        "Programmiert von Robert Steffen Stündl",
                     applicationIcon: Image.asset(
                       "assets/mainLogo.png",
                       height: 75,
@@ -121,7 +142,8 @@ class _PageTeam extends StatelessWidget {
         SizedBox(height: 16),
         Padding(
           padding: EdgeInsets.all(16.0),
-          child: Text("Das sind wir", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          child: Text("Das sind wir",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         ),
         SizedBox(height: 4),
         ListTile(
@@ -145,7 +167,8 @@ class _PageTeam extends StatelessWidget {
         SizedBox(height: 8),
         Padding(
           padding: EdgeInsets.all(16.0),
-          child: Text("Vielen Dank an", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          child: Text("Vielen Dank an",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         ),
         SizedBox(height: 4),
         ListTile(

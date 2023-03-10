@@ -2,6 +2,7 @@ import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
 import 'package:anger_buddy/logic/files/files.dart';
+import 'package:anger_buddy/logic/hip/hip.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
@@ -39,6 +40,7 @@ class _ServicesManager {
   final homepage = HomepageManager();
   final whatsnew = WhatsnewManager();
   final statuspage = StatuspageManager();
+  final hip = HipService();
   /* -- Plugins -- */
   final localNotifications = FlutterLocalNotificationsPlugin();
 
