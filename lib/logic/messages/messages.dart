@@ -10,7 +10,6 @@ import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
-
 import 'package:flutter/material.dart';
 import "package:anger_buddy/extensions.dart";
 import 'package:flutter_html/flutter_html.dart';

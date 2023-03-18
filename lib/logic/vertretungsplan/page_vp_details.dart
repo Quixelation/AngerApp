@@ -17,7 +17,13 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail>
   initState() {
     super.initState();
 
-    tabController = TabController(length: 2, vsync: this);
+    var viewType = AngerApp.vp.settings.subject.valueWrapper?.value.viewType ??
+        vpViewTypes.combined;
+
+    tabController = TabController(
+        length: 2,
+        vsync: this,
+        initialIndex: viewType == vpViewTypes.combined ? 0 : 1);
 
     if (widget.vpItem is! VertretungsPlanItem) {
       throw Exception("widget.vpItem is not a VertretungsPlanItem");
@@ -46,7 +52,6 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail>
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      initialIndex: AngerApp.vp.settings.subject.value?.viewType.index ?? 0,
       child: Scaffold(
         appBar: AppBar(
           actions: [

@@ -78,6 +78,22 @@ class _LoginOverviewPageState extends State<LoginOverviewPage> {
           },
           future: fetchMailList(),
         ),
+        FutureBuilder<bool>(
+          builder: (context, snapshot) {
+            return ListTile(
+              title: const Text("Noten"),
+              subtitle: const Text("Zugang zu dem Cevex Home.InfoPoint."),
+              leading: Icon(snapshot.hasData
+                  ? (snapshot.data! == false
+                      ? Icons.close
+                      : (snapshot.data! == true
+                          ? Icons.check
+                          : Icons.warning_amber_outlined))
+                  : Icons.pending_outlined),
+            );
+          },
+          future: AngerApp.hip.creds.hasLoginData(),
+        ),
       ]),
     );
   }
