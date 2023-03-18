@@ -18,7 +18,16 @@ class _MessageSettingsState extends State<MessageSettings> {
           leading: Text("JSP"),
           trailing: Icon(Icons.keyboard_arrow_right),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MatrixSettings()));
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const MatrixSettings()));
+          },
+        ),
+        ListTile(
+          title: Text("Moodle"),
+          trailing: Icon(Icons.keyboard_arrow_right),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const MoodleSettingsPage()));
           },
         )
       ]),

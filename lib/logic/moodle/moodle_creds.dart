@@ -41,6 +41,7 @@ class _MoodleCredsManager extends CredentialsManager<_MoodleCreds> {
     }
 
     subject.add(credentials);
+    logger.w("Moodle Set Creds: ${credentials.token} ${credentials.userId}");
   }
 
   @override
@@ -49,9 +50,14 @@ class _MoodleCredsManager extends CredentialsManager<_MoodleCreds> {
     var db = getIt.get<AppManager>().db;
 
     if (withDatabaseEntry) {
-      await AppManager.stores.data.record(_moodleCredsDbRecordKey).delete(db);
+      try {
+        await AppManager.stores.data.record(_moodleCredsDbRecordKey).delete(db);
+      } catch (err) {
+        logger.w(err);
+      }
     }
     subject.add(null);
+    logger.v("[MoodleCreds] removing creds success");
   }
 
   @override

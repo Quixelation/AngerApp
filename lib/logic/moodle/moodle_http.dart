@@ -5,7 +5,11 @@ class _MoodleException {
   final String? errorcode;
   final String? message;
   final String? error;
-  _MoodleException({required this.errorcode, required this.exception, required this.error, required this.message});
+  _MoodleException(
+      {required this.errorcode,
+      required this.exception,
+      required this.error,
+      required this.message});
 
   _MoodleException.fromApi(Map<String, dynamic> apiMap)
       : exception = apiMap["exception"],
@@ -46,7 +50,9 @@ Future<_MoodleResponse<dynamic>> _moodleRequest<E>({
   }
 
   String encodeMap(Map data) {
-    return data.keys.map((key) => "$key=${Uri.encodeComponent(data[key])}").join("&");
+    return data.keys
+        .map((key) => "$key=${Uri.encodeComponent(data[key])}")
+        .join("&");
   }
 
   Map<String, String> encodeToMap(Map data) {
@@ -87,8 +93,10 @@ Future<_MoodleResponse<dynamic>> _moodleRequest<E>({
 
   logger.v(encodedMap);
 
-  var uri =
-      Uri.https(AppManager.moodleSiteHost, (customPath != null ? customPath : AppManager.moodleApiPath), {...mapToEncode, ...(parameters ?? {})});
+  var uri = Uri.https(
+      AppManager.moodleSiteHost,
+      (customPath != null ? customPath : AppManager.moodleApiPath),
+      {...mapToEncode, ...(parameters ?? {})});
 
   logger.v(uri);
 
@@ -101,8 +109,16 @@ Future<_MoodleResponse<dynamic>> _moodleRequest<E>({
   var json = jsonDecode(response.body);
   logger.v(json);
   try {
-    if ((json is! List) && (json["error"] != null || json["exception"] != null)) {
-      return _MoodleResponse(data: null, hasError: true, error: _MoodleException.fromApi(json));
+    var requestErrored =
+        (json is! List) && (json["error"] != null || json["exception"] != null);
+
+    if (requestErrored) {
+      // Falls der Token der Anfrage nicht mehr gültig war
+      if (json["errorcode"] == "invalidtoken") {
+        AngerApp.moodle.login.logout();
+      }
+      return _MoodleResponse(
+          data: null, hasError: true, error: _MoodleException.fromApi(json));
     } else {
       return _MoodleResponse(data: json, hasError: false);
     }

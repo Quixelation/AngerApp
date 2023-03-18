@@ -26,13 +26,17 @@ part 'opensense_page.dart';
 class OpenSense {
   static const senseboxId = "61dad928bfd633001c618c6a";
 
-  BehaviorSubject<ErrorableData<_OpenSenseFullData?>?> subject = BehaviorSubject();
+  BehaviorSubject<ErrorableData<_OpenSenseFullData?>?> subject =
+      BehaviorSubject();
 
   OpenSense() {
     init();
   }
 
-  Future<List<_OpenSenseHistoricalData>> getSensorHistory(String sensorId, {DateTime? dateStart}) async {
+  Future<List<_OpenSenseHistoricalData>> getSensorHistory(String sensorId,
+      {DateTime? dateStart}) async {
+    logger.d(
+        "Getting sensor history for $sensorId (from ${dateStart?.toUtc().toIso8601String()})");
     final response = await http.get(Uri.parse(
         "https://api.opensensemap.org/boxes/$senseboxId/data/$sensorId${dateStart != null ? "?from-date=${dateStart.toUtc().toIso8601String()}" : ""}"));
     if (response.statusCode != 200) {
@@ -40,13 +44,16 @@ class OpenSense {
       throw Error();
     }
     var json = jsonDecode(response.body);
-    var convertedData = (json as List<dynamic>).map((e) => _OpenSenseHistoricalData.fromApiMap(e)).toList();
+    var convertedData = (json as List<dynamic>)
+        .map((e) => _OpenSenseHistoricalData.fromApiMap(e))
+        .toList();
     return convertedData;
   }
 
   init() async {
     try {
-      var response = await http.get(Uri.parse("https://api.opensensemap.org/boxes/${OpenSense.senseboxId}?format=json"));
+      var response = await http.get(Uri.parse(
+          "https://api.opensensemap.org/boxes/${OpenSense.senseboxId}?format=json"));
       var json = jsonDecode(response.body);
       var fullData = _OpenSenseFullData.fromApiMap(json);
       subject.add(ErrorableData(data: fullData, error: false));

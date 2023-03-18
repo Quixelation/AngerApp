@@ -177,7 +177,7 @@ class MainDrawer extends StatelessWidget {
             ),
             _DrawerLink(
               title: "Noten",
-              icon: Icons.liquor_sharp,
+              icon: Icons.grade_outlined,
               page: HipPage(),
             ),
             _DrawerLink(

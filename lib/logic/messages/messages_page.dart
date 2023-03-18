@@ -10,7 +10,9 @@ class MessagesListPage extends StatefulWidget {
 class _MessagesListPageState extends State<MessagesListPage> {
   // Moodle
   bool _hasMoodleIntegration = false;
-  List<MoodleConversation>? _moodleConversations = AngerApp.moodle.messaging.subject.valueWrapper?.value;
+  List<MoodleConversation>? _moodleConversations =
+      AngerApp.moodle.messaging.subject.valueWrapper?.value;
+  StreamSubscription? _moodleCredsStreamSub;
   StreamSubscription? _moodleConvoStreamSub;
 
   // Matrix
@@ -18,19 +20,8 @@ class _MessagesListPageState extends State<MessagesListPage> {
   StreamSubscription? _matrixSub;
   bool _hasMatrixIntegration = AngerApp.matrix.client.isLogged();
 
-  late int numberOfIntegrations;
-
-  void _initMoodle() {
-    AngerApp.moodle.login.creds.subject.listen(
-      (value) {
-        var hasCreds = AngerApp.moodle.login.creds.credentialsAvailable;
-        setState(() {
-          _hasMoodleIntegration = hasCreds;
-        });
-      },
-    );
-
-    _moodleConvoStreamSub = AngerApp.moodle.messaging.subject.listen((value) {
+  void _startMoodleStreamSub() {
+    _moodleConvoStreamSub ??= AngerApp.moodle.messaging.subject.listen((value) {
       if (!mounted) {
         _moodleConvoStreamSub?.cancel();
         return;
@@ -40,27 +31,29 @@ class _MessagesListPageState extends State<MessagesListPage> {
         _moodleConversations = value;
       });
     });
+  }
 
-    if (AngerApp.moodle.login.creds.credentialsAvailable) {
-      setState(() {
-        _hasMoodleIntegration = true;
-      });
-
-      logger.v("Loading Moodle Convos");
-      AngerApp.moodle.messaging.getAllConversations().then((value) {
+  void _initMoodle() {
+    _moodleCredsStreamSub = AngerApp.moodle.login.creds.subject.listen(
+      (value) {
+        var isLoggedIn = value != null;
+        logger.w("Moodle is logged in: $isLoggedIn");
         setState(() {
-          logger.v("[MoodleMatrix] got value " + value.toString());
-          _moodleConversations = value;
+          _hasMoodleIntegration = isLoggedIn;
         });
-      }).catchError((err) {
-        logger.e(err);
-      });
-    } else {
-      logger.v("no moodle creds");
-      setState(() {
-        _hasMoodleIntegration = false;
-      });
-    }
+        AngerApp.moodle.messaging.getAllConversations().then((value) {
+          setState(() {
+            logger.v("[MoodleMatrix] got value " + value.toString());
+            _moodleConversations = value;
+          });
+        }).catchError((err) {
+          logger.e(err);
+        });
+        if (isLoggedIn) {
+          _startMoodleStreamSub();
+        }
+      },
+    );
   }
 
   void _initMatrix() {
@@ -77,19 +70,22 @@ class _MessagesListPageState extends State<MessagesListPage> {
     super.initState();
     _initMoodle();
     _initMatrix();
-    numberOfIntegrations = [_hasMatrixIntegration, _hasMoodleIntegration].where((elem) => elem == true).length;
   }
 
   @override
   void dispose() {
     _moodleConvoStreamSub?.cancel();
+    _moodleCredsStreamSub?.cancel();
     _matrixSub?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> combinedList = [...(_moodleConversations ?? []), ...(_matrixRooms)];
+    List<dynamic> combinedList = [
+      ...(_moodleConversations ?? []),
+      ...(_matrixRooms)
+    ];
 
     combinedList.sort((a, b) {
       late DateTime aDate;
@@ -117,7 +113,13 @@ class _MessagesListPageState extends State<MessagesListPage> {
       return bDate.millisecondsSinceEpoch - aDate.millisecondsSinceEpoch;
     });
 
-    final showServiceIntegrationLogin = (_hasMatrixIntegration && !_hasMoodleIntegration) || (!_hasMatrixIntegration && _hasMoodleIntegration);
+    final showServiceIntegrationLogin =
+        (_hasMatrixIntegration && !_hasMoodleIntegration) ||
+            (!_hasMatrixIntegration && _hasMoodleIntegration);
+
+    int numberOfIntegrations = [_hasMatrixIntegration, _hasMoodleIntegration]
+        .where((elem) => elem == true)
+        .length;
 
     return Scaffold(
         appBar: AppBar(
@@ -131,12 +133,22 @@ class _MessagesListPageState extends State<MessagesListPage> {
                     // oder zuerst zu einer Seite, wo er die Integration auswählen kann,
                     // dessen Einstellungen er bearbeiten möchte
                     if (numberOfIntegrations > 1) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const MessageSettings()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MessageSettings()));
                     } else {
                       if (_hasMatrixIntegration) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const MatrixSettings()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MatrixSettings()));
                       } else if (_hasMoodleIntegration) {
-                        //TODO:!!! add Moode Settings Page
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const MoodleSettingsPage()));
                       }
                     }
                   },
@@ -160,7 +172,8 @@ class _MessagesListPageState extends State<MessagesListPage> {
                             ),
                             child: Text(
                               "Wähle einen Service aus",
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -170,7 +183,9 @@ class _MessagesListPageState extends State<MessagesListPage> {
                               title: const Text("JSP-Matrix"),
                               onTap: () {
                                 Navigator.of(context).pop();
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MatrixCreatePage()));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const MatrixCreatePage()));
                               },
                             ),
                           if (AngerApp.moodle.login.creds.credentialsAvailable)
@@ -178,32 +193,39 @@ class _MessagesListPageState extends State<MessagesListPage> {
                               title: const Text("Moodle"),
                               onTap: () {
                                 Navigator.of(context).pop();
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MoodleCreateChatPage()));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const MoodleCreateChatPage()));
                               },
                             ),
                         ],
                       ));
             } else {
               if (_hasMatrixIntegration) {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MatrixCreatePage()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const MatrixCreatePage()));
               } else if (_hasMoodleIntegration) {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MoodleCreateChatPage()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const MoodleCreateChatPage()));
               }
             }
           },
         ),
         body: (_hasMatrixIntegration || _hasMoodleIntegration)
             ? ListView.separated(
-                itemCount: combinedList.length + (showServiceIntegrationLogin ? 1 : 0),
+                itemCount:
+                    combinedList.length + (showServiceIntegrationLogin ? 1 : 0),
                 itemBuilder: (context, index) {
                   if (showServiceIntegrationLogin) {
                     index -= 1;
                     if (index == -1) {
                       return _ServicePromoCard(
-                          serviceTitle: _hasMatrixIntegration ? "Moodle" : "Matrix",
+                          serviceTitle:
+                              _hasMatrixIntegration ? "Moodle" : "Matrix",
                           serviceLogo: _hasMatrixIntegration
                               ? Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 2.25),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.25),
                                   child: Image.asset(
                                     "assets/MoodleTools.png",
                                     height: 16,
@@ -211,16 +233,22 @@ class _MessagesListPageState extends State<MessagesListPage> {
                                 )
                               : const Text(
                                   "JSP",
-                                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14),
                                 ),
-                          loginPage: _hasMatrixIntegration ? const MoodleLoginPage() : const JspLoginPage());
+                          loginPage: _hasMatrixIntegration
+                              ? const MoodleLoginPage()
+                              : const JspLoginPage());
                     }
                   }
                   final e = combinedList[index];
                   if (e is Room) {
-                    return AngerApp.matrix.buildListTile(context, e, showLogo: numberOfIntegrations > 1);
+                    return AngerApp.matrix.buildListTile(context, e,
+                        showLogo: numberOfIntegrations > 1);
                   } else if (e is MoodleConversation) {
-                    return AngerApp.moodle.messaging.buildListTile(context, e, showLogo: numberOfIntegrations > 1);
+                    return AngerApp.moodle.messaging.buildListTile(context, e,
+                        showLogo: numberOfIntegrations > 1);
                   } else {
                     return Container();
                   }
@@ -241,12 +269,16 @@ class _MessagesListPageState extends State<MessagesListPage> {
                     children: [
                       const Text(
                         "Keine Konten verbunden",
-                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16),
                       ),
                       const SizedBox(
                         height: 8,
                       ),
-                      const Opacity(opacity: 0.87, child: Text("Wähle einen Service aus, um dich anzumelden")),
+                      const Opacity(
+                          opacity: 0.87,
+                          child: Text(
+                              "Wähle einen Service aus, um dich anzumelden")),
                       const SizedBox(
                         height: 16,
                       ),
@@ -254,18 +286,22 @@ class _MessagesListPageState extends State<MessagesListPage> {
                         children: [
                           Expanded(
                             child: OutlinedButton.icon(
-                                style: const ButtonStyle(alignment: Alignment.centerLeft),
+                                style: const ButtonStyle(
+                                    alignment: Alignment.centerLeft),
                                 onPressed: () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => const JspLoginPage(
+                                          builder: (context) =>
+                                              const JspLoginPage(
                                                 popOnSuccess: true,
                                               )));
                                 },
                                 icon: const Text(
                                   "JSP",
-                                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14),
                                 ),
                                 label: const Text("Jenaer Schulportal")),
                           ),
@@ -275,12 +311,18 @@ class _MessagesListPageState extends State<MessagesListPage> {
                         children: [
                           Expanded(
                             child: OutlinedButton.icon(
-                                style: const ButtonStyle(alignment: Alignment.centerLeft),
+                                style: const ButtonStyle(
+                                    alignment: Alignment.centerLeft),
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MoodleLoginPage()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const MoodleLoginPage()));
                                 },
                                 icon: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 2.25),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.25),
                                   child: Image.asset(
                                     "assets/MoodleTools.png",
                                     height: 16,
@@ -323,11 +365,16 @@ class _ServicePromoCard extends StatelessWidget {
                   child: OutlinedButton.icon(
                       style: ButtonStyle(
                           alignment: Alignment.centerLeft,
-                          side: MaterialStateProperty.all(BorderSide(color: Theme.of(context).colorScheme.tertiary))),
+                          side: MaterialStateProperty.all(BorderSide(
+                              color: Theme.of(context).colorScheme.tertiary))),
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => loginPage));
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => loginPage));
                       },
-                      icon: SizedBox(height: 32, width: 32, child: Center(child: serviceLogo)),
+                      icon: SizedBox(
+                          height: 32,
+                          width: 32,
+                          child: Center(child: serviceLogo)),
                       label: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -335,7 +382,10 @@ class _ServicePromoCard extends StatelessWidget {
                               opacity: 0.78,
                               child: Text(
                                 "$serviceTitle-Chats verbinden",
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    fontWeight: FontWeight.w500),
                               )),
                           Icon(
                             Icons.keyboard_arrow_right,

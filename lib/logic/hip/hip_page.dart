@@ -17,8 +17,17 @@ class _HipPageState extends State<HipPage> {
   bool? hasLoginData = null;
   bool? isLoggedIn = null;
 
+  bool? canAccessHip = null;
+
   void loadLoginData() async {
-    await AngerApp.hip.loadDefault();
+    try {
+      await AngerApp.hip.loadDefault();
+    } catch (err) {
+      logger.e("Error while loading default: $err");
+      setState(() {
+        canAccessHip = false;
+      });
+    }
 
     var _hasLoginData = await AngerApp.hip.creds.hasLoginData();
 
@@ -27,7 +36,7 @@ class _HipPageState extends State<HipPage> {
     });
 
     if (hasLoginData == true) {
-      var result = await AngerApp.hip.loginWithSavedLogin();
+      var result = await AngerApp.hip.loginWithSavedLogin(context);
       logger.w("Login with saved login: $result");
 
       setState(() {
@@ -48,13 +57,63 @@ class _HipPageState extends State<HipPage> {
       data: Theme.of(context).copyWith(
         useMaterial3: true,
       ),
-      child: hasLoginData == null
-          ? Center(child: CircularProgressIndicator())
-          : hasLoginData == true
-              ? (isLoggedIn == null
-                  ? Center(child: CircularProgressIndicator())
-                  : (isLoggedIn == true ? HipDataPage() : HipLoginPage()))
-              : HipLoginPage(),
+      child: canAccessHip != false
+          ? (hasLoginData == null
+              ? _LoadingPage()
+              : hasLoginData == true
+                  ? (isLoggedIn == null
+                      ? _LoadingPage()
+                      : (isLoggedIn == true ? HipDataPage() : HipLoginPage()))
+                  : HipLoginPage())
+          : _NoHipAccess(),
+    );
+  }
+}
+
+class _LoadingPage extends StatelessWidget {
+  const _LoadingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Noten"),
+      ),
+      body: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+class _NoHipAccess extends StatelessWidget {
+  const _NoHipAccess({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Noten"),
+      ),
+      body: ListView(children: [
+        NoConnectionColumn(
+          title: "Kein Zugriff auf Home.InfoPoint",
+          subtitle:
+              "Hast du eine Internetverbindung? Ist der Server erreichbar?",
+          showImage: true,
+          footerWidgets: [
+            Center(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.open_in_new),
+                label: Text("Home.InfoPoint in Browser öffnen"),
+                onPressed: () {
+                  launchURL(AngerApp.hip.homeUrl, context);
+                },
+              ),
+            )
+          ],
+        )
+      ]),
     );
   }
 }

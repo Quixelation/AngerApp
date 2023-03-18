@@ -37,23 +37,48 @@ class _HipDataPageState extends State<HipDataPage>
 
   @override
   Widget build(BuildContext context) {
-    // create webview cookie from hip cookie
-    var hipCookie = AngerApp.hip.phpSessId;
-    var cookie = web.WebViewCookie(
-      name: (hipCookie).split("=")[0],
-      value: (hipCookie).split("=")[1],
-      domain: "homeinfopoint.de",
-    );
-
     return Scaffold(
         appBar: AppBar(
           title: const Text("Noten"),
           actions: [
             IconButton(
+                tooltip: "Ausloggen",
                 icon: const Icon(Icons.lock_open_outlined),
-                onPressed: () {
-                  AngerApp.hip.logout();
-                })
+                onPressed: () async {
+                  var result = await showDialog(
+                      context: context,
+                      builder: (context2) {
+                        return AlertDialog(
+                          title: Text("Ausloggen"),
+                          content: Text(
+                              "Willst du dich wirklich von cevex Home.InfoPoint ausloggen? Wenn nur du die App verwendest ist das nicht nötig."),
+                          actions: [
+                            ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context2, false);
+                                },
+                                icon: Icon(Icons.close),
+                                label: Text("Abbrechen")),
+                            FilledButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context2, true);
+                                },
+                                icon: Icon(Icons.logout),
+                                label: Text("Ausloggen"))
+                          ],
+                        );
+                      });
+                  if (result == true) {
+                    AngerApp.hip.logout();
+                  }
+                }),
+            IconButton(
+              onPressed: () {
+                launchURL(AngerApp.hip.homeUrl, context);
+              },
+              icon: Icon(Icons.open_in_new),
+              tooltip: "In Browser öffnen",
+            )
           ],
         ),
         bottomNavigationBar: NavigationBar(
@@ -75,10 +100,7 @@ class _HipDataPageState extends State<HipDataPage>
                 physics: const NeverScrollableScrollPhysics(),
                 controller: tabController,
                 children: [
-                    web.WebView(
-                      initialUrl: AngerApp.hip.getDataUrl,
-                      initialCookies: [cookie],
-                    ),
+                    _HipBrowserView(),
                     if (hipData == null)
                       Center(child: CircularProgressIndicator())
                     else
@@ -89,6 +111,49 @@ class _HipDataPageState extends State<HipDataPage>
                         ],
                       )
                   ]));
+  }
+}
+
+class _HipBrowserView extends StatelessWidget {
+  _HipBrowserView({super.key});
+
+  final Completer<web.WebViewController> _controller =
+      Completer<web.WebViewController>();
+
+  @override
+  Widget build(BuildContext context) {
+    // create webview cookie from hip cookie
+    var hipCookie = AngerApp.hip.phpSessId;
+    var cookie = web.WebViewCookie(
+      name: (hipCookie).split("=")[0],
+      value: (hipCookie).split("=")[1],
+      domain: "homeinfopoint.de",
+    );
+    return FutureBuilder<web.WebViewController>(
+      future: _controller.future,
+      builder: (context, snapshot) {
+        return web.WebView(
+          initialUrl: AngerApp.hip.getDataUrl,
+          initialCookies: [cookie],
+          userAgent: "AngerApp <angerapp@robertstuendl.com>",
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (webViewController) {
+            _controller.complete(webViewController);
+          },
+          onPageFinished: (url) {
+            if (snapshot.hasData) {
+              snapshot.data!.runJavascript("""
+            // Logout-Knopf entfernen
+            document.querySelector("a[href*='logout.php']").remove()
+
+            // Drucken-Knopf entfernen
+            document.querySelector("a[href*='print']").remove()
+          """);
+            }
+          },
+        );
+      },
+    );
   }
 }
 
