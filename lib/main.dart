@@ -178,36 +178,26 @@ class _MainAppState extends State<MainApp> {
 
     return MaterialApp(
       title: 'AngerApp',
-      theme: ThemeData(
-          colorSchemeSeed: mainColor.color,
-          useMaterial3: true,
-          brightness: Brightness.light),
-
-      // lightTheme.copyWith(
-      //   textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
-      //   primaryTextTheme: lightTheme.textTheme.apply(
-      //     fontFamily: fontFamily,
-      //   ),
-      //   tabBarTheme: const TabBarTheme(labelColor: Colors.white),
-      //   useMaterial3: false,
-      //   pageTransitionsTheme: defaultPageTrans,
-      // ),
-      darkTheme: ThemeData(
-          colorSchemeSeed: mainColor.color,
-          useMaterial3: true,
-          brightness: Brightness.dark),
-
-      //  darkTheme.copyWith(
-      //   useMaterial3: false,
-      //   drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF232323)),
-      //   textTheme: darkTheme.textTheme.apply(
-      //     fontFamily: fontFamily,
-      //   ),
-      //   primaryTextTheme: darkTheme.textTheme.apply(
-      //     fontFamily: fontFamily,
-      //   ),
-      //   pageTransitionsTheme: defaultPageTrans,
-      // ),
+      theme: lightTheme.copyWith(
+        textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
+        primaryTextTheme: lightTheme.textTheme.apply(
+          fontFamily: fontFamily,
+        ),
+        tabBarTheme: const TabBarTheme(labelColor: Colors.white),
+        useMaterial3: false,
+        pageTransitionsTheme: defaultPageTrans,
+      ),
+      darkTheme: darkTheme.copyWith(
+        useMaterial3: false,
+        drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF232323)),
+        textTheme: darkTheme.textTheme.apply(
+          fontFamily: fontFamily,
+        ),
+        primaryTextTheme: darkTheme.textTheme.apply(
+          fontFamily: fontFamily,
+        ),
+        pageTransitionsTheme: defaultPageTrans,
+      ),
       themeMode: ThemeMode.system,
       home: const DefaultTextStyle(
           style: TextStyle(fontFamily: "Montserrat"),

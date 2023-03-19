@@ -142,12 +142,6 @@ class MainDrawer extends StatelessWidget {
             },
             stream: getIt.get<AppManager>().devtools,
           ),
-          const _DrawerLink(
-            title: "M**dle",
-            subtitle: "(Experimentell)",
-            icon: Icons.school,
-            page: MoodleCoursesPage(),
-          ),
           if (showHomeLink) ...[
             const SizedBox(height: 25),
             const _DrawerLink(
@@ -155,11 +149,6 @@ class MainDrawer extends StatelessWidget {
               icon: Icons.home,
             )
           ],
-          _DrawerLink(
-            title: "Messenger",
-            icon: Icons.messenger_outline,
-            page: PageTempUnderConstruction(page: MessagesListPage()),
-          ),
           const _Category("Aktuelles", [
             _DrawerLink(
               title: "Nachrichten",
@@ -181,6 +170,12 @@ class MainDrawer extends StatelessWidget {
               title: "Vertretungsplan",
               icon: Icons.switch_account_outlined,
               page: PageVp(),
+            ),
+            _DrawerLink(
+              title: "Moodle",
+              subtitle: "(Experimentell)",
+              icon: Icons.school,
+              page: MoodleCoursesPage(),
             ),
             _DrawerLink(
               title: "Noten",
