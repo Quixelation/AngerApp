@@ -168,6 +168,215 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
   }
 }
 
+class ParticipantTile extends StatelessWidget {
+  const ParticipantTile({super.key, required this.participant});
+
+  final User participant;
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: participant.membership.isJoin ? 1 : 0.6,
+      child: ListTile(
+        leading: AngerApp.matrix.buildAvatar(context, participant.avatarUrl,
+            showLogo: true,
+            userId: participant.id,
+            customLogo: (participant.powerLevel == 100
+                ? Icon(
+                    Icons.shield,
+                    color: Colors.amberAccent.shade700,
+                    size: 20,
+                  )
+                : (participant.powerLevel == 50 ? const Icon(Icons.shield, size: 20, color: Colors.blueAccent) : Container()))),
+        title: Text(participant.calcDisplayname() + (participant.id == AngerApp.matrix.client.id ? " (Du)" : "")),
+        onTap: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (context2) {
+                final userIsSelf = participant.id == AngerApp.matrix.client.userID;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      participant.avatarUrl == null
+                          ? const SizedBox(
+                              height: 40,
+                            )
+                          : Transform.translate(
+                              offset: const Offset(0, -35),
+                              child: CircleAvatar(
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                radius: 60.0,
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(participant.avatarUrl!
+                                      .getThumbnail(
+                                        AngerApp.matrix.client,
+                                        width: 56,
+                                        height: 56,
+                                      )
+                                      .toString()),
+                                  radius: 55.0,
+                                ),
+                              ),
+                            ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
+                        child: Transform.translate(
+                          offset: const Offset(0, -15),
+                          child: Text(
+                            participant.calcDisplayname() + (userIsSelf ? " (Du)" : ""),
+                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
+                        child: Transform.translate(
+                          offset: const Offset(0, -12),
+                          child: Text(
+                            participant.id,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Theme.of(context).colorScheme.brightness == Brightness.dark ? Colors.grey : Colors.grey.shade700),
+                          ),
+                        ),
+                      ),
+                      const Divider(),
+                      if (participant.canChangePowerLevel)
+                        ListTile(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                          leading: Icon(
+                            Icons.bolt,
+                          ),
+                          onTap: () async {
+                            var newLevel = await showDialog<int>(
+                                context: context,
+                                builder: (context2) => _MatrixPowerLevelDialog(
+                                      currentPowerLevel: participant.powerLevel,
+                                    ));
+                            if (newLevel != null) {
+                              participant.setPower(newLevel);
+                            }
+                          },
+                          title: Text(
+                            "Power-Level ändern",
+                          ),
+                          trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+                        ),
+                      ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        leading: Icon(
+                          Icons.how_to_reg,
+                        ),
+                        onTap: () async {},
+                        title: Text(
+                          "Verifizieren",
+                        ),
+                        trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+                      ),
+                      const Divider(),
+                      if (!userIsSelf)
+                        if (AngerApp.matrix.client.ignoredUsers.contains(participant.id))
+                          ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                            leading: const Icon(
+                              Icons.check_circle_outline,
+                              color: Colors.green,
+                            ),
+                            onTap: () async {
+                              await AngerApp.matrix.client.unignoreUser(participant.id);
+                              Navigator.of(context2).pop();
+                            },
+                            title: const Text(
+                              "Blockierung aufheben",
+                              style: TextStyle(color: Colors.green),
+                            ),
+                          )
+                        else
+                          ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                            leading: const Icon(
+                              Icons.block,
+                              color: Colors.red,
+                            ),
+                            onTap: () async {
+                              await AngerApp.matrix.client.ignoreUser(participant.id);
+                              Navigator.of(context2).pop();
+                            },
+                            title: const Text(
+                              "Blockieren",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                      if (participant.canKick)
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          leading: const Icon(
+                            Icons.person_remove,
+                            color: Colors.red,
+                          ),
+                          onTap: () {
+                            participant.kick();
+                          },
+                          title: const Text(
+                            "Entfernen",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        )
+                      else if (userIsSelf)
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          leading: const Icon(
+                            Icons.exit_to_app,
+                            color: Colors.red,
+                          ),
+                          title: const Text(
+                            "Chat verlassen",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onTap: () {},
+                        ),
+                      if (participant.canBan)
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          leading: const Icon(
+                            Icons.gavel,
+                            color: Colors.red,
+                          ),
+                          onTap: () {
+                            participant.ban();
+                          },
+                          title: const Text(
+                            "Bannen",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        )
+                    ],
+                  ),
+                );
+              });
+        },
+        trailing: const Opacity(opacity: 0.87, child: Icon(Icons.more_horiz)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Power-Level: " +
+                participant.powerLevel.toString() +
+                (participant.powerLevel == 100 ? " (Admin)" : (participant.powerLevel == 50 ? " (Moderator)" : ""))),
+            if (participant.membership.isInvite) const Text("[Eingeladen]"),
+            if (participant.membership.isKnock) const Text("[Angefragt]")
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ParticipantsList extends StatefulWidget {
   const _ParticipantsList({Key? key, required this.room}) : super(key: key);
 
@@ -178,11 +387,16 @@ class _ParticipantsList extends StatefulWidget {
 }
 
 class _ParticipantsListState extends State<_ParticipantsList> {
-  late final List<User> participants;
+  late List<User> participants;
 
   @override
   void initState() {
     participants = widget.room.getParticipants();
+    widget.room.requestParticipants().then((value) {
+      setState(() {
+        participants = value;
+      });
+    });
     super.initState();
   }
 
@@ -200,205 +414,33 @@ class _ParticipantsListState extends State<_ParticipantsList> {
         const SizedBox(
           height: 6,
         ),
-        ...widget.room.getParticipants().map((e) {
-          return Opacity(
-            opacity: e.membership.isJoin ? 1 : 0.6,
-            child: ListTile(
-              leading: AngerApp.matrix.buildAvatar(context, e.avatarUrl,
-                  showLogo: true,
-                  userId: e.id,
-                  customLogo: (e.powerLevel == 100
-                      ? Icon(
-                          Icons.shield,
-                          color: Colors.amberAccent.shade700,
-                          size: 20,
-                        )
-                      : (e.powerLevel == 50 ? const Icon(Icons.shield, size: 20, color: Colors.blueAccent) : Container()))),
-              title: Text(e.calcDisplayname() + (e.id == widget.room.client.userID ? " (Du)" : "")),
-              onTap: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (context2) {
-                      final userIsSelf = e.id == AngerApp.matrix.client.userID;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            e.avatarUrl == null
-                                ? const SizedBox(
-                                    height: 40,
-                                  )
-                                : Transform.translate(
-                                    offset: const Offset(0, -35),
-                                    child: CircleAvatar(
-                                      backgroundColor: Theme.of(context).colorScheme.primary,
-                                      radius: 60.0,
-                                      child: CircleAvatar(
-                                        backgroundImage: NetworkImage(e.avatarUrl!
-                                            .getThumbnail(
-                                              AngerApp.matrix.client,
-                                              width: 56,
-                                              height: 56,
-                                            )
-                                            .toString()),
-                                        radius: 55.0,
-                                      ),
-                                    ),
-                                  ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 0),
-                              child: Transform.translate(
-                                offset: const Offset(0, -15),
-                                child: Text(
-                                  e.calcDisplayname() + (userIsSelf ? " (Du)" : ""),
-                                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 0),
-                              child: Transform.translate(
-                                offset: const Offset(0, -12),
-                                child: Text(
-                                  e.id,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      color: Theme.of(context).colorScheme.brightness == Brightness.dark ? Colors.grey : Colors.grey.shade700),
-                                ),
-                              ),
-                            ),
-                            const Divider(),
-                            if (e.canChangePowerLevel)
-                              ListTile(
-                                contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                                leading: Icon(
-                                  Icons.bolt,
-                                ),
-                                onTap: () async {
-                                  var newLevel = await showDialog<int>(
-                                      context: context,
-                                      builder: (context2) => _MatrixPowerLevelDialog(
-                                            currentPowerLevel: e.powerLevel,
-                                          ));
-                                  if (newLevel != null) {
-                                    e.setPower(newLevel);
-                                  }
-                                },
-                                title: Text(
-                                  "Power-Level ändern",
-                                ),
-                                trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
-                              ),
-                            ListTile(
-                              contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                              leading: Icon(
-                                Icons.how_to_reg,
-                              ),
-                              onTap: () async {},
-                              title: Text(
-                                "Verifizieren",
-                              ),
-                              trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
-                            ),
-                            const Divider(),
-                            if (!userIsSelf)
-                              if (AngerApp.matrix.client.ignoredUsers.contains(e.id))
-                                ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                                  leading: const Icon(
-                                    Icons.check_circle_outline,
-                                    color: Colors.green,
-                                  ),
-                                  onTap: () async {
-                                    await AngerApp.matrix.client.unignoreUser(e.id);
-                                    Navigator.of(context2).pop();
-                                  },
-                                  title: const Text(
-                                    "Blockierung aufheben",
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                )
-                              else
-                                ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                                  leading: const Icon(
-                                    Icons.block,
-                                    color: Colors.red,
-                                  ),
-                                  onTap: () async {
-                                    await AngerApp.matrix.client.ignoreUser(e.id);
-                                    Navigator.of(context2).pop();
-                                  },
-                                  title: const Text(
-                                    "Blockieren",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                            if (e.canKick)
-                              ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                                leading: const Icon(
-                                  Icons.person_remove,
-                                  color: Colors.red,
-                                ),
-                                onTap: () {
-                                  e.kick();
-                                },
-                                title: const Text(
-                                  "Entfernen",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              )
-                            else if (userIsSelf)
-                              ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                                leading: const Icon(
-                                  Icons.exit_to_app,
-                                  color: Colors.red,
-                                ),
-                                title: const Text(
-                                  "Chat verlassen",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                                onTap: () {},
-                              ),
-                            if (e.canBan)
-                              ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                                leading: const Icon(
-                                  Icons.gavel,
-                                  color: Colors.red,
-                                ),
-                                onTap: () {
-                                  e.ban();
-                                },
-                                title: const Text(
-                                  "Bannen",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              )
-                          ],
-                        ),
-                      );
-                    });
-              },
-              trailing: const Opacity(opacity: 0.87, child: Icon(Icons.more_horiz)),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("Power-Level: " + e.powerLevel.toString() + (e.powerLevel == 100 ? " (Admin)" : (e.powerLevel == 50 ? " (Moderator)" : ""))),
-                  if (e.membership.isInvite) const Text("[Eingeladen]"),
-                  if (e.membership.isKnock) const Text("[Angefragt]")
-                ],
-              ),
-            ),
+        ...participants.take(9).map((e) {
+          return ParticipantTile(
+            participant: e,
           );
         }).toList(),
+        if (participants.length > 9)
+          Center(
+            child: OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (builder) => Scaffold(
+                            appBar: AppBar(
+                              title: Text("Alle Teilnehmer"),
+                            ),
+                            body: ListView.builder(
+                              itemBuilder: (context, index) {
+                                var e = participants[index];
+                                return ParticipantTile(
+                                  participant: e,
+                                );
+                              },
+                              itemCount: participants.length,
+                            ),
+                          )));
+                },
+                child: Text("Alle anzeigen")),
+          ),
         if (widget.room.canInvite)
           ListTile(
             leading: Padding(

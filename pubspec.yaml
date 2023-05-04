@@ -90,6 +90,7 @@ dependencies:
   workmanager: ^0.5.1
   webview_flutter: ^2.8.0
   flutter_inappwebview: ^5.7.2+3
+  flutter_dotenv: ^5.0.2
   # charts_painter: ^3.0.0
   # flutter_echarts: ^2.3.0
   # graphic: ^0.6.2
@@ -187,6 +188,7 @@ flutter:
     - assets/s3aa-Logo.png
     - assets/MoodleTools.png
     - assets/school_trans.png
+    - chat.env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

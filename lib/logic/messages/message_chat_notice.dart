@@ -38,9 +38,9 @@ class MessagingChatNotice extends StatelessWidget {
                 children: [
                   if (icon != null) ...[
                     Theme(data: themeData, child: icon!),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 8),
                   ],
-                  child
+                  Flexible(child: child)
                 ],
               ),
             ),

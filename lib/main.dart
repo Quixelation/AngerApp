@@ -13,6 +13,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
 import 'package:workmanager/workmanager.dart';
@@ -40,43 +41,36 @@ Future<void> initApp({bool onlyBasic = false}) async {
 
   var db = allFutures[0] as Database;
 
-  getIt.registerSingleton<AppManager>(
-      AppManager(mainScaffoldState: GlobalKey(), database: db));
+  getIt.registerSingleton<AppManager>(AppManager(mainScaffoldState: GlobalKey(), database: db));
 
   if (!onlyBasic) {
     toggleSubscribtionToTopic("all", true);
     enforceDefaultFcmSubscriptions();
   }
-  await Future.wait(
-      [if (!onlyBasic) initColorSubject(), initializeAllCredentialManagers()]);
+  await dotenv.load(fileName: "chat.env");
+
+  await Future.wait([if (!onlyBasic) initColorSubject(), initializeAllCredentialManagers()]);
   // Services und Credentials müssen getrennt, weil Services aus Credentials beruhen
   await Services.init();
   logger.v("[AngerApp] Initialized");
 }
 
-@pragma(
-    'vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
+@pragma('vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    print(
-        "Native called background task: $task"); //simpleTask will be emitted here.
+    print("Native called background task: $task"); //simpleTask will be emitted here.
     await initApp(onlyBasic: true);
     var notis = await AngerApp.matrix.client.getNotifications();
-    print("client has" +
-        notis.notifications.length.toString() +
-        " notifications");
-    print(
-        "Native ended background task: $task"); //simpleTask will be emitted here.
+    print("client has" + notis.notifications.length.toString() + " notifications");
+    print("Native ended background task: $task"); //simpleTask will be emitted here.
     return Future.value(true);
   });
 }
 
 void main() async {
   await initApp();
-  Workmanager().initialize(
-      callbackDispatcher, // The top level function, aka callbackDispatcher
-      isInDebugMode:
-          true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+  Workmanager().initialize(callbackDispatcher, // The top level function, aka callbackDispatcher
+      isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
       );
   Workmanager().registerOneOffTask("bg-noti", "BackgroundNotification");
   runApp(const RestartWidget(child: MainApp()));
@@ -97,8 +91,7 @@ class _MainAppState extends State<MainApp> {
   Future<void> setupInteractedMessage() async {
     // Get any messages which caused the application to open from
     // a terminated state.
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
@@ -141,18 +134,14 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     precacheImage(const AssetImage("assets/AngerWiki.jpg"), context);
 
-    var fontFamily =
-        kIsWeb && html.window.navigator.userAgent.contains('OS 15_')
-            ? '-apple-system'
-            : null;
+    var fontFamily = kIsWeb && html.window.navigator.userAgent.contains('OS 15_') ? '-apple-system' : null;
 
     var lightTheme = ThemeData.from(
       colorScheme: ColorScheme.fromSwatch(
           primarySwatch: mainColor.color,
           accentColor: mainColor.accentColor,
           primaryColorDark: mainColor.color.shade700,
-          backgroundColor:
-              Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
+          backgroundColor: Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
           brightness: Brightness.light),
     );
 
@@ -200,9 +189,7 @@ class _MainAppState extends State<MainApp> {
         pageTransitionsTheme: defaultPageTrans,
       ),
       themeMode: ThemeMode.system,
-      home: const DefaultTextStyle(
-          style: TextStyle(fontFamily: "Montserrat"),
-          child: _IntroductionScreenSwitcher()),
+      home: const DefaultTextStyle(style: TextStyle(fontFamily: "Montserrat"), child: _IntroductionScreenSwitcher()),
     );
   }
 }
@@ -218,12 +205,10 @@ class _IntroductionScreenSwitcher extends StatefulWidget {
   const _IntroductionScreenSwitcher({Key? key}) : super(key: key);
 
   @override
-  _IntroductionScreenSwitcherState createState() =>
-      _IntroductionScreenSwitcherState();
+  _IntroductionScreenSwitcherState createState() => _IntroductionScreenSwitcherState();
 }
 
-class _IntroductionScreenSwitcherState
-    extends State<_IntroductionScreenSwitcher> {
+class _IntroductionScreenSwitcherState extends State<_IntroductionScreenSwitcher> {
   bool? _needToShowIntroScreen = false;
 
   @override
@@ -273,13 +258,9 @@ class _HomeNavigator extends StatelessWidget {
       child: Navigator(
           key: homeNavigatorKey,
           initialRoute: "/",
-          onUnknownRoute: (settings) =>
-              MaterialPageRoute(builder: (ctx) => const PageHome()),
+          onUnknownRoute: (settings) => MaterialPageRoute(builder: (ctx) => const PageHome()),
           onGenerateRoute: (settings) =>
-              {
-                "/": MaterialPageRoute(builder: (ctx) => (const PageHome()))
-              }[settings.name] ??
-              MaterialPageRoute(builder: (ctx) => const PageHome())),
+              {"/": MaterialPageRoute(builder: (ctx) => (const PageHome()))}[settings.name] ?? MaterialPageRoute(builder: (ctx) => const PageHome())),
     );
   }
 }
@@ -304,9 +285,7 @@ class MyHomePageState extends State<MyHomePage> {
               ],
             )
           : const _HomeNavigator(),
-      drawer: kIsWeb && MediaQuery.of(context).size.width > 900
-          ? null
-          : MainDrawer(),
+      drawer: kIsWeb && MediaQuery.of(context).size.width > 900 ? null : MainDrawer(),
 
       //bottomNavigationBar: BottomNavigationBar(
       //  currentIndex: selectedPage,

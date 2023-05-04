@@ -18,6 +18,7 @@ import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/logic/whatsnew/whatsnew.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import "package:flutter_dotenv/flutter_dotenv.dart";
 
 class _ServicesManager {
   /* -- Funktions-Seiten -- */
@@ -57,6 +58,7 @@ class _ServicesManager {
       moodle.login.creds.init(),
       homepage.init(),
       whatsnew.init(),
+
       localNotifications.initialize(InitializationSettings(
         android: AndroidInitializationSettings("background"),
         iOS: DarwinInitializationSettings(),

@@ -38,6 +38,7 @@ import "package:olm/olm.dart" as olm;
 import "package:path/path.dart";
 import "package:uuid/uuid.dart" as uuid;
 import "package:anger_buddy/extensions.dart";
+import "package:flutter_dotenv/flutter_dotenv.dart";
 
 part "matrix_create_chat.dart";
 part "matrix_create_poll_page.dart";
@@ -130,27 +131,26 @@ class JspMatrix {
     }
 
     logger.d("[Matrix] running login()");
-    await client.checkHomeserver(Uri.parse("https://matrix.org"));
+    await client.checkHomeserver(Uri.parse(dotenv.env["CHAT_URI"] ?? ""));
 
     await client.login(
       matrix.LoginType.mLoginPassword,
       identifier: matrix.AuthenticationUserIdentifier(user: Credentials.jsp.subject.valueWrapper?.value?.username ?? ""),
       initialDeviceDisplayName: "AngerApp",
-      //TODO: Remove in prod!!
-      password: (Credentials.jsp.subject.valueWrapper?.value?.password ?? "") + "abc",
+      password: (Credentials.jsp.subject.valueWrapper?.value?.password ?? ""),
     );
 
-    await client.postPusher(Pusher(
-      appId: "com.robertstuendl.angergymapp",
-      //TODO
-      pushkey: uuid.Uuid().v4(),
-      appDisplayName: "AngerApp",
-      data: PusherData(),
-      //TODO:
-      deviceDisplayName: "Samsung",
-      kind: "http",
-      lang: "de",
-    ));
+    // await client.postPusher(Pusher(
+    //   appId: "com.robertstuendl.angergymapp",
+    //   //TODO
+    //   pushkey: uuid.Uuid().v4(),
+    //   appDisplayName: "AngerApp",
+    //   data: PusherData(),
+    //   //TODO:
+    //   deviceDisplayName: "Samsung",
+    //   kind: "http",
+    //   lang: "de",
+    // ));
   }
 
   Future<void> init() async {
@@ -374,7 +374,7 @@ class _MatrixEventChatNoticeRenderer {
   }
 
   String get senderDisplayName {
-    return event.stateKeyUser?.calcDisplayname() ?? event.stateKey ?? "<KeinName>";
+    return event.senderFromMemoryOrFallback.displayName ?? event.senderFromMemoryOrFallback.id;
   }
 
   String get invitationText {
