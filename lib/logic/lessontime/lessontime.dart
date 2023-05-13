@@ -6,7 +6,6 @@ import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
-import 'package:flutter/cupertino.dart';
 import "package:http/http.dart" as http;
 import 'package:sembast/sembast.dart';
 

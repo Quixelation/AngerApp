@@ -6,11 +6,11 @@ class MoodleSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Moodle")),
+      appBar: AppBar(title: const Text("Moodle")),
       body: ListView(
         children: [
           ListTile(
-            title: Text("Ausloggen"),
+            title: const Text("Ausloggen"),
             onTap: () async {
               AngerApp.moodle.login.logout();
               Navigator.of(context).pop();

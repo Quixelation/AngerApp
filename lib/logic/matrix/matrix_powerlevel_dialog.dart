@@ -8,7 +8,7 @@ class _MatrixPowerLevelDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
+      title: const Text(
         "Wähle ein Power-Level aus",
       ),
       content: Column(

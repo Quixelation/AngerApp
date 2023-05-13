@@ -1,7 +1,7 @@
 part of moodle;
 
 class _MoodleCourseAssignPage extends StatefulWidget {
-  const _MoodleCourseAssignPage(this.module, {super.key});
+  const _MoodleCourseAssignPage(this.module);
 
   final _MoodleCourseModule module;
 

@@ -4,8 +4,6 @@ import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
 import 'package:anger_buddy/logic/files/files.dart';
 import 'package:anger_buddy/logic/secure_storage/secure_storage.dart';
-import 'package:anger_buddy/main.dart';
-import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import "package:rxdart/subjects.dart";
 
@@ -98,5 +96,6 @@ class JspCredsManager implements CredentialsManager<JspCreds> {
     } catch (err) {
       logger.e(err);
     }
+    return null;
   }
 }

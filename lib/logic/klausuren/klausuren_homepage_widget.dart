@@ -1,7 +1,7 @@
 part of klausuren;
 
 class KlausurenHomepageWidget extends StatefulWidget {
-  const KlausurenHomepageWidget() : super();
+  const KlausurenHomepageWidget({super.key});
 
   @override
   State<KlausurenHomepageWidget> createState() => _KlausurenHomepageWidgetState();
@@ -36,7 +36,7 @@ class _KlausurenHomepageWidgetState extends State<KlausurenHomepageWidget> {
     final now = DateTime.now();
 
     setState(() {
-      pinnedKlausuren = temp?.where((element) => element.date.isAfter(now)).toList();
+      pinnedKlausuren = temp.where((element) => element.date.isAfter(now)).toList();
       showingPinned = false;
     });
   }
@@ -138,9 +138,9 @@ class _KlausurTerminCard extends StatelessWidget {
                           }
                         },
                         itemBuilder: (context) => [
-                              PopupMenuItem(
+                              const PopupMenuItem(
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Icon(
                                       Icons.delete_outline,
                                       color: Colors.red,

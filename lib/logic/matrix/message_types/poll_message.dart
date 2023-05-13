@@ -64,8 +64,8 @@ class _ChatBubblePollRenderer extends StatelessWidget {
       pollOptionsSplashColor: Colors.white,
       votedProgressColor: Colors.green.withOpacity(0.3),
       votedBackgroundColor: Colors.grey.withOpacity(0.2),
-      votesTextStyle: Theme.of(context).textTheme.subtitle1,
-      votedPercentageTextStyle: Theme.of(context).textTheme.headline4?.copyWith(
+      votesTextStyle: Theme.of(context).textTheme.titleMedium,
+      votedPercentageTextStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
             color: Colors.black,
           ),
       votedCheckmark: const Icon(
@@ -91,8 +91,8 @@ class _ChatBubblePollRenderer extends StatelessWidget {
                 votes: responsesByUsers.values.where((element) => element == (e.keys.first)).length,
               ))
           .toList(),
-      metaWidget: Row(
-        children: const [
+      metaWidget: const Row(
+        children: [
           SizedBox(width: 6),
           Text(
             '•',
@@ -223,7 +223,7 @@ class _ChatBubblePollRendererV2State extends State<ChatBubblePollRendererV2> {
                 };
                 logger.i(content.toString());
 
-                var resultResp;
+                String? resultResp;
                 try {
                   resultResp = await widget.room.sendEvent(content, type: "org.matrix.msc3381.poll.response");
                 } catch (err) {

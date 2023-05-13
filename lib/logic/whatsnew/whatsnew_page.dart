@@ -1,7 +1,7 @@
 part of whatsnew;
 
 class _WhatsnewPage extends StatelessWidget {
-  const _WhatsnewPage(this.version, {super.key});
+  const _WhatsnewPage(this.version);
 
   final String version;
 
@@ -18,14 +18,14 @@ class _WhatsnewPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Version " + version)),
       body: hasError
-          ? Center(
+          ? const Center(
               child: Icon(
                 Icons.error,
                 color: Colors.red,
                 size: 60,
               ),
             )
-          : ListView(padding: EdgeInsets.all(16), children: [
+          : ListView(padding: const EdgeInsets.all(16), children: [
               typeColumn(_ChangeType.critical, availableUpdates.first.whatsnew),
               typeColumn(_ChangeType.newFeature, availableUpdates.first.whatsnew),
               typeColumn(_ChangeType.improvement, availableUpdates.first.whatsnew),
@@ -47,7 +47,7 @@ class _WhatsnewPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Row(
@@ -56,36 +56,36 @@ class _WhatsnewPage extends StatelessWidget {
               children: [
                 Text(
                   type.emoji,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   type.title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             ...updatesForType.map((e) => Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4).copyWith(left: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 4).copyWith(left: 16),
                   child: Opacity(
                     opacity: 0.87,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4),
                           child: Icon(Icons.circle, size: 6),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Flexible(child: MarkdownBody(data: e.description))
                       ],
                     ),
                   ),
                 )),
-            SizedBox(height: 16),
-            Divider(),
+            const SizedBox(height: 16),
+            const Divider(),
           ],
         ),
       );

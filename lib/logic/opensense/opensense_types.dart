@@ -8,7 +8,7 @@ class _OpenSenseSensor {
   late final String unit;
 
   _OpenSenseSensor.fromApiMap(Map<String, dynamic> apiData) {
-    this.id = apiData["_id"];
+    id = apiData["_id"];
     lastMeasurement =
         _OpenSenseLastMeasurement.fromApiMap(apiData["lastMeasurement"]);
     sensorType = apiData["sensorType"];

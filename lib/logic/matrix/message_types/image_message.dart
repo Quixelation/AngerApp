@@ -38,7 +38,7 @@ class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
 }
 
 class _DismissableImage extends StatelessWidget {
-  _DismissableImage(this.bytes, this.id);
+  const _DismissableImage(this.bytes, this.id);
 
   final Uint8List bytes;
   final String id;

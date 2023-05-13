@@ -135,12 +135,12 @@ class _QuickInfo extends StatelessWidget {
             children: <Widget>[
               Text(
                 'Möchtest du den folgenden Link öffen?',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 8),
               Text(
                 href ?? text,
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),

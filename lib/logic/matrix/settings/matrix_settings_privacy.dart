@@ -6,15 +6,15 @@ class _MatrixSettingsPrivacy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Privatsphäre")),
+        appBar: AppBar(title: const Text("Privatsphäre")),
         body: ListView(
           children: [
             ListTile(
-              leading: Icon(Icons.block),
-              title: Text("Blockierte Accounts"),
-              trailing: Icon(Icons.keyboard_arrow_right),
+              leading: const Icon(Icons.block),
+              title: const Text("Blockierte Accounts"),
+              trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixSettingsBlockedAccounts()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const _MatrixSettingsBlockedAccounts()));
               },
             ),
           ],
@@ -80,31 +80,31 @@ class __MatrixSettingsBlockedAccountsState extends State<_MatrixSettingsBlockedA
                       return ListTile(
                           title: Text(data.displayname ?? e),
                           leading: AngerApp.matrix.buildAvatar(context, data.avatarUrl, showLogo: false),
-                          trailing: Icon(Icons.more_horiz),
+                          trailing: const Icon(Icons.more_horiz),
                           onTap: () {
                             showDialog(
                                 context: context,
                                 builder: (context2) => AlertDialog(
-                                      title: Text("Blockierung aufheben"),
+                                      title: const Text("Blockierung aufheben"),
                                       actions: [
                                         TextButton.icon(
                                             onPressed: () {
                                               Navigator.of(context2).pop();
                                             },
                                             icon: Icon(Icons.adaptive.arrow_back),
-                                            label: Text("Zurück")),
+                                            label: const Text("Zurück")),
                                         TextButton.icon(
                                             onPressed: () async {
                                               await AngerApp.matrix.client.unignoreUser(e);
                                               Navigator.of(context2).pop();
                                             },
-                                            icon: Icon(Icons.check),
-                                            label: Text("Aufheben")),
+                                            icon: const Icon(Icons.check),
+                                            label: const Text("Aufheben")),
                                       ],
                                     ));
                           });
                     } else {
-                      return ListTile(title: Center(child: CircularProgressIndicator.adaptive()));
+                      return const ListTile(title: Center(child: CircularProgressIndicator.adaptive()));
                     }
                   },
                   future: client.getUserProfile(e)))

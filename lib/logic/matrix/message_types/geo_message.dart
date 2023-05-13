@@ -15,16 +15,16 @@ class ChatBubbleLocationRenderer extends StatelessWidget {
         onPressed: () {
           launchURL(googleMapsUrlGenerator(event.body), context);
         },
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Icon(Icons.map_outlined),
-            const SizedBox(
+            Icon(Icons.map_outlined),
+            SizedBox(
               width: 8,
             ),
-            const Text("In Google-Maps öffnen"),
+            Text("In Google-Maps öffnen"),
             // SizedBox(
             //   width: 8,
             // ),

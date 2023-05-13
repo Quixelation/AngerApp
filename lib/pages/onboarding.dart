@@ -1,8 +1,5 @@
 import 'package:anger_buddy/logic/current_class/current_class.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class AngerAppOnboarding extends StatefulWidget {
   const AngerAppOnboarding({Key? key}) : super(key: key);
@@ -23,7 +20,7 @@ class _AngerAppOnboardingState extends State<AngerAppOnboarding> {
             fit: FlexFit.tight,
             child: Center(
               child: Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(18)), boxShadow: [
+                  decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(18)), boxShadow: [
                     BoxShadow(blurRadius: 15, blurStyle: BlurStyle.normal, color: Colors.blue.shade900, spreadRadius: 0)
                   ]),
                   child: ClipRRect(
@@ -39,8 +36,8 @@ class _AngerAppOnboardingState extends State<AngerAppOnboarding> {
               flex: 6,
               fit: FlexFit.tight,
               child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Column(children: [
                     Text("AngerApp", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                     PageCurrentClass()
@@ -48,7 +45,7 @@ class _AngerAppOnboardingState extends State<AngerAppOnboarding> {
                 ),
                 decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8))),
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8))),
               ))
         ],
       ),

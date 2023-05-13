@@ -100,10 +100,10 @@ class _PageCalendarState extends State<PageCalendar>
   void _loadFerienEvent() async {
     ferienSub = Services.ferien.subject.listen((event) {
       logger.v("[CalendarPage] Subscription(Ferien) recieved data");
-      if (mounted && event.data != null && !event.error) {
+      if (mounted && !event.error) {
         setState(() {
           logger.v("[CalendarPage] Setting Ferien");
-          ferienEvents = event.data!.map((e) => e.toEvent()).toList();
+          ferienEvents = event.data.map((e) => e.toEvent()).toList();
           loadingADR++;
         });
       } else {
@@ -139,8 +139,9 @@ class _PageCalendarState extends State<PageCalendar>
       ...(ferienEvents ?? []),
     ];
     if (MediaQuery.of(context).size.width > 600) {
-      AppManager.calController.events
-          .forEach((e) => AppManager.calController.remove(e));
+      for (var e in AppManager.calController.events) {
+        AppManager.calController.remove(e);
+      }
       AppManager.calController.addAll(eventList
           .map((e) => CalendarEventData(
               title: e.title,

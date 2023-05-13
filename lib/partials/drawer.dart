@@ -12,8 +12,6 @@ import 'package:anger_buddy/logic/jsp/jsp_passthrough_page.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/login_overview/login_overview.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
-import 'package:anger_buddy/logic/matrix/matrix.dart';
-import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
@@ -28,7 +26,6 @@ import 'package:anger_buddy/page_engine/page_engine.dart';
 import 'package:anger_buddy/pages/SchuSo.pageengine.dart';
 import 'package:anger_buddy/pages/about.dart';
 import 'package:anger_buddy/pages/ags.dart';
-import 'package:anger_buddy/pages/downloads.dart';
 import 'package:anger_buddy/pages/kontakt.dart';
 import 'package:anger_buddy/pages/oberstufe.pageengine.dart';
 import 'package:anger_buddy/pages/settings.dart';
@@ -54,10 +51,10 @@ class MainDrawer extends StatelessWidget {
         addAutomaticKeepAlives: true,
         controller: _scrollController,
         children: [
-          SizedBox(
+          const SizedBox(
             height: kIsWeb ? 0 : 202.6,
             child: Stack(
-              children: const [
+              children: [
                 _ImageBanner(),
                 Positioned(
                   child: Text(
@@ -209,16 +206,16 @@ class MainDrawer extends StatelessWidget {
               icon: Icons.folder_outlined,
               page: JspPassthroughPage(child: FileExplorer("/")),
             ),
-            const _DrawerLink(title: "Links", icon: Icons.link, page: UniventionLinksPage()),
-            const _DrawerLink(title: "Status", icon: Icons.dns_outlined, page: StatuspagePage()),
-            const _DrawerExternalLink(title: "Mail", url: "https://jsp.jena.de/appsuite/", icon: Icons.mail_outline),
-            const _DrawerExternalLink(
+            _DrawerLink(title: "Links", icon: Icons.link, page: UniventionLinksPage()),
+            _DrawerLink(title: "Status", icon: Icons.dns_outlined, page: StatuspagePage()),
+            _DrawerExternalLink(title: "Mail", url: "https://jsp.jena.de/appsuite/", icon: Icons.mail_outline),
+            _DrawerExternalLink(
               title: "Hilfe",
               icon: Icons.help_outline,
               url: "https://faq.jsp.jena.de/",
             ),
-            const _DrawerExternalLink(title: "WLAN Einrichtung", icon: Icons.wifi_outlined, url: "https://faq.jsp.jena.de/faq/wlan/jsp"),
-            const _DrawerExternalLink(title: "JSP-Startseite", url: "https://jsp.jena.de/", icon: Icons.home_outlined),
+            _DrawerExternalLink(title: "WLAN Einrichtung", icon: Icons.wifi_outlined, url: "https://faq.jsp.jena.de/faq/wlan/jsp"),
+            _DrawerExternalLink(title: "JSP-Startseite", url: "https://jsp.jena.de/", icon: Icons.home_outlined),
           ]),
           const Divider(),
           _Category("Informationen", [

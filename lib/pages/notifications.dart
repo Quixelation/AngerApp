@@ -87,8 +87,8 @@ class _PageNotificationSettingsState extends State<PageNotificationSettings> {
                         label: const Text("Benachrichtigungen erlauben"))
                     : ((notiSettings?.authorizationStatus ?? AuthorizationStatus.authorized) ==
                             AuthorizationStatus.denied)
-                        ? Row(
-                            children: const [
+                        ? const Row(
+                            children: [
                               Icon(
                                 Icons.warning,
                                 color: Colors.orange,
@@ -103,8 +103,8 @@ class _PageNotificationSettingsState extends State<PageNotificationSettings> {
                           )
                         : (((notiSettings?.authorizationStatus ?? AuthorizationStatus.authorized) ==
                                 AuthorizationStatus.authorized)
-                            ? Row(
-                                children: const [
+                            ? const Row(
+                                children: [
                                   Icon(
                                     Icons.check,
                                     color: Colors.green,

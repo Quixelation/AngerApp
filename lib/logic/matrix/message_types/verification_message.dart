@@ -1,7 +1,7 @@
 part of matrix;
 
 class _MatrixVerifictionMessageRenderer extends StatefulWidget {
-  const _MatrixVerifictionMessageRenderer(this.event, {super.key});
+  const _MatrixVerifictionMessageRenderer(this.event);
 
   final Event event;
 
@@ -37,16 +37,16 @@ class __MatrixVerifictionMessageRendererState extends State<_MatrixVerifictionMe
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Verifizierungs-Anfrage", style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text("Verifizierungs-Anfrage", style: TextStyle(fontWeight: FontWeight.w600)),
             Opacity(
               opacity: 0.87,
               child: Text("(${widget.event.senderId})"),
             ),
             if (selfIsSender)
-              SizedBox()
+              const SizedBox()
             else if (request == null)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
                 child: Text("Abgelaufen", style: TextStyle(fontWeight: FontWeight.w500)),
               )
             else
@@ -59,19 +59,19 @@ class __MatrixVerifictionMessageRendererState extends State<_MatrixVerifictionMe
                     ElevatedButton.icon(
                         style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red.shade700)),
                         onPressed: () {
-                          request!.cancel("m.user");
+                          request.cancel("m.user");
                         },
-                        icon: Icon(Icons.block, color: Colors.white),
-                        label: Text("Ablehnen", style: TextStyle(color: Colors.white))),
+                        icon: const Icon(Icons.block, color: Colors.white),
+                        label: const Text("Ablehnen", style: TextStyle(color: Colors.white))),
                     ElevatedButton.icon(
                         style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.green.shade700)),
                         onPressed: () {
-                          AngerApp.matrix.showKeyVerificationDialog(request!).then((value) {
+                          AngerApp.matrix.showKeyVerificationDialog(request).then((value) {
                             setState(() {});
                           });
                         },
-                        icon: Icon(Icons.check, color: Colors.white),
-                        label: Text("Annehmen", style: TextStyle(color: Colors.white)))
+                        icon: const Icon(Icons.check, color: Colors.white),
+                        label: const Text("Annehmen", style: TextStyle(color: Colors.white)))
                   ],
                 ),
               )

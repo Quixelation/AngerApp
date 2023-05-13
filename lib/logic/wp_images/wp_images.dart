@@ -2,7 +2,6 @@ library wp_images;
 
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:math';
 
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
@@ -10,7 +9,6 @@ import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/subjects.dart';
 import "package:http/http.dart" as http;

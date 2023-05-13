@@ -6,10 +6,8 @@ import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
-import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
-import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/partials/bottom_appbar.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -38,7 +36,7 @@ class PageDevTools extends StatelessWidget {
                     666,
                     "Hello",
                     "Test",
-                    NotificationDetails(
+                    const NotificationDetails(
                         android: AndroidNotificationDetails("testchannel",
                             "Entiwckler-Test-Benachrichtigungen")));
               },
@@ -64,64 +62,64 @@ class PageDevTools extends StatelessWidget {
 
                 print("[[Connected]]");
               },
-              child: Text("MAIL: Init and Connext")),
+              child: const Text("MAIL: Init and Connext")),
           ElevatedButton(
               onPressed: () async {
                 // logger.d(Services.mail.imapClient);
               },
-              child: Text("Test if Mail init")),
-          SizedBox(height: 8),
+              child: const Text("Test if Mail init")),
+          const SizedBox(height: 8),
           ElevatedButton(
               onPressed: () async {
                 await DEVONLYdeleteAushangReadStateForAllAushange();
               },
-              child: Text("[Aushang] Delete Read State")),
+              child: const Text("[Aushang] Delete Read State")),
           ElevatedButton(
               onPressed: () async {
                 await Services.matrix.client.init();
               },
-              child: Text("[Matrix] client init")),
+              child: const Text("[Matrix] client init")),
           ElevatedButton(
               onPressed: () async {
                 await Services.matrix.login();
               },
-              child: Text("[Matrix] login")),
+              child: const Text("[Matrix] login")),
           ElevatedButton(
               onPressed: () async {
                 await JspMatrix().init();
               },
-              child: Text("JustCallJspMatrix&init")),
+              child: const Text("JustCallJspMatrix&init")),
           ElevatedButton(
               onPressed: () async {
                 var matric = JspMatrix();
                 await matric.init();
-                logger.d(matric.client!.accountData);
+                logger.d(matric.client.accountData);
               },
-              child: Text("JustCallJspMatrix::AccountData")),
+              child: const Text("JustCallJspMatrix::AccountData")),
           ElevatedButton(
               onPressed: () async {
                 var matric = JspMatrix();
                 await matric.init();
-                var rooms = await matric.client!.getJoinedRooms();
+                var rooms = await matric.client.getJoinedRooms();
                 logger.d("[Matrix] joined Rooms");
                 logger.d(rooms);
               },
-              child: Text("Aushänge DELETE READ")),
-          SizedBox(height: 8),
+              child: const Text("Aushänge DELETE READ")),
+          const SizedBox(height: 8),
           ElevatedButton(
               onPressed: () {
                 var week = WeekViewCalendar(events: [
                   EventData(
                       id: "id1",
                       dateFrom: DateTime.now(),
-                      dateTo: DateTime.now().add(Duration(days: 3)),
+                      dateTo: DateTime.now().add(const Duration(days: 3)),
                       title: "title1",
                       desc: "desc",
                       allDay: true),
                   EventData(
                       id: "id1",
-                      dateFrom: DateTime.now().add(Duration(days: 1)),
-                      dateTo: DateTime.now().add(Duration(days: 4)),
+                      dateFrom: DateTime.now().add(const Duration(days: 1)),
+                      dateTo: DateTime.now().add(const Duration(days: 4)),
                       title: "title1",
                       desc: "desc",
                       allDay: true)
@@ -130,14 +128,14 @@ class PageDevTools extends StatelessWidget {
                 logger.i(week);
                 week.toStructuredWeekEntryData();
               },
-              child: Text("GenWeek")),
-          SizedBox(height: 16),
+              child: const Text("GenWeek")),
+          const SizedBox(height: 16),
           ElevatedButton(
               onPressed: () {
                 Credentials.jsp.removeCredentials();
               },
               child: const Text("LogOut JSP")),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
               onPressed: () {
                 LogConsole.open(context, dark: false);

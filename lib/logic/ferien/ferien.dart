@@ -42,6 +42,7 @@ class Ferien {
     }
   }
 
+  @override
   String toString() {
     return "Ferien {id: $id, name: $name, start: $start, end: $end, diff: $diff, status: $status}";
   }
@@ -61,6 +62,7 @@ class FerienManager extends DataManager<Ferien> {
   @override
   final syncManagerKey = "ferien";
 
+  @override
   final subject = BehaviorSubject();
 
   @override

@@ -1,6 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'dart:async';
 
 import 'package:logger/logger.dart';
 import 'package:logger_flutter_viewer/logger_flutter_viewer.dart';

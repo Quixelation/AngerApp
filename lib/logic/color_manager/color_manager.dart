@@ -38,6 +38,7 @@ class _AngerAppColor {
   final MaterialAccentColor accentColor;
 
   _AngerAppColor(this.color, this.accentColor);
+  @override
   String toString() {
     return "AngerAppColor(color: $color, accentColor: $accentColor)";
   }

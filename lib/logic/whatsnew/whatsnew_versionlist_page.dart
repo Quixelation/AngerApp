@@ -6,7 +6,7 @@ class WhatsNewVersionListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Änderungsverlauf")),
+      appBar: AppBar(title: const Text("Änderungsverlauf")),
       body: ListView.builder(
         itemCount: _whatsnewUpdates.length,
         itemBuilder: (context, index) => ListTile(
@@ -14,7 +14,7 @@ class WhatsNewVersionListPage extends StatelessWidget {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => _WhatsnewPage(_whatsnewUpdates[index].version)));
           },
           title: Text(_whatsnewUpdates[index].version),
-          trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+          trailing: const Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
         ),
       ),
     );

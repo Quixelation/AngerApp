@@ -1,7 +1,7 @@
 part of vertretungsplan;
 
 class VpWidget extends StatefulWidget {
-  const VpWidget({Key? key, AsyncDataResponse<_VpListResponse>? this.overrideResponseData}) : super(key: key);
+  const VpWidget({Key? key, this.overrideResponseData}) : super(key: key);
 
   final AsyncDataResponse<_VpListResponse>? overrideResponseData;
 

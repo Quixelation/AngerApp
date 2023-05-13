@@ -1,7 +1,7 @@
 part of moodle;
 
 class _MoodleCourseDetailsPage extends StatefulWidget {
-  const _MoodleCourseDetailsPage(this.course, {super.key});
+  const _MoodleCourseDetailsPage(this.course);
 
   final _MoodleCourse course;
 
@@ -47,7 +47,7 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
             ? _MainBottomSectionsBar(sections: sections!)
             : null,
         body: sections == null
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator.adaptive(),
               )
             : Scrollbar(
@@ -55,7 +55,7 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
                 controller: scrollController,
                 child: ListView(
                   controller: scrollController,
-                  padding: EdgeInsets.all(0),
+                  padding: const EdgeInsets.all(0),
                   children: [
                     // ElevatedButton.icon(
                     //     onPressed: () {
@@ -78,7 +78,7 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
 
 class _MoodleCourseDetailsPageSection extends StatefulWidget {
   const _MoodleCourseDetailsPageSection(this.section,
-      {super.key, this.opened = true});
+      {this.opened = true});
 
   final _MoodleCourseSection section;
   final bool opened;
@@ -106,7 +106,7 @@ class _MoodleCourseDetailsPageSectionState
       padding: const EdgeInsets.all(8.0),
       child: Card(
         child: Padding(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +125,7 @@ class _MoodleCourseDetailsPageSectionState
                       children: [
                         Flexible(
                             child: Text(widget.section.name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold))),
                         Icon(opened
@@ -144,8 +144,8 @@ class _MoodleCourseDetailsPageSectionState
 }
 
 class _MoodleCourseSectionContent extends StatefulWidget {
-  _MoodleCourseSectionContent(this.section,
-      {super.key, this.allowScroll = false});
+  const _MoodleCourseSectionContent(this.section,
+      {this.allowScroll = false});
 
   final bool allowScroll;
   final _MoodleCourseSection section;
@@ -161,15 +161,15 @@ class _MoodleCourseSectionContentState
 
   @override
   Widget build(BuildContext context) {
-    bool hasSummary = widget.section.summary.trim().length != 0;
+    bool hasSummary = widget.section.summary.trim().isNotEmpty;
     return Scrollbar(
       thumbVisibility: widget.allowScroll,
       controller: scrollController,
       child: ListView.separated(
           controller: scrollController,
           shrinkWrap: true,
-          padding: EdgeInsets.all(8),
-          physics: widget.allowScroll ? null : NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(8),
+          physics: widget.allowScroll ? null : const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             if (hasSummary && index == 0) {
               return BasicHtml(
@@ -181,7 +181,7 @@ class _MoodleCourseSectionContentState
                   widget.section.modules[index]);
             }
           },
-          separatorBuilder: (context, index) => SizedBox(height: 12)
+          separatorBuilder: (context, index) => const SizedBox(height: 12)
           /* Divider(
                 height: 24,
                 color: Theme.of(context).brightness.isDark ? Colors.white.withOpacity(0.87) : Colors.black.withOpacity(0.87),
@@ -195,7 +195,7 @@ class _MoodleCourseSectionContentState
 }
 
 class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
-  const _MoodleCourseDetailsPageSectionModule(this.module, {super.key});
+  const _MoodleCourseDetailsPageSectionModule(this.module);
 
   final _MoodleCourseModule module;
 
@@ -246,7 +246,7 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
                                         module.modIconUrl);
                                   },
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 8,
                                 ),
                                 if (getIt
@@ -257,12 +257,12 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
                                     false) ...[
                                   Text(module.modType +
                                       " [module ${module.id}]"),
-                                  SizedBox(width: 8)
+                                  const SizedBox(width: 8)
                                 ],
                                 if (module.modType != "label")
                                   Flexible(
                                       child: Text(module.name,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500,
                                               overflow: TextOverflow.fade))),
@@ -308,19 +308,19 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
               ),
             ),
           )
-        : SizedBox(height: 0, width: 0);
+        : const SizedBox(height: 0, width: 0);
   }
 }
 
 class _MoodleCourseDetailsPageSectionModuleContent extends StatelessWidget {
-  const _MoodleCourseDetailsPageSectionModuleContent(this.content, {super.key});
+  const _MoodleCourseDetailsPageSectionModuleContent(this.content);
 
   final _MoodleCourseModuleContent content;
 
   @override
   Widget build(BuildContext context) {
     if (content.type == "content") {
-      return Text("Not implemented");
+      return const Text("Not implemented");
     }
 
     IconData icon;

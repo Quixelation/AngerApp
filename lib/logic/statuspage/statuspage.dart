@@ -7,7 +7,6 @@ import 'package:anger_buddy/utils/url.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
-import 'package:matrix/matrix.dart';
 
 part "statuspage_api_types.dart";
 part "statuspage_page.dart";

@@ -90,13 +90,13 @@ Future<bool> mailListLogin(String passcode) async {
     String? cookie;
     if (response.headers["set-cookie"] != null) {
       cookie = getCookie(_wpMailCookieName, response.headers["set-cookie"]!);
-    } else if (response.body != null && response.body != "") {
+    } else if (response.body != "") {
       cookie = getCookie(_wpMailCookieName, response.body);
     } else {
       return false;
     }
     if (cookie != null) {
-      logger.i("COOKIE: ${cookie}");
+      logger.i("COOKIE: $cookie");
       await AppManager.stores.data
           .record("wp-mail-cookie")
           .put(getIt.get<AppManager>().db, {"key": "wp-mail-cookie", "value": cookie});

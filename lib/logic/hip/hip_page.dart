@@ -14,10 +14,10 @@ class _HipPageState extends State<HipPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool? hasLoginData = null;
-  bool? isLoggedIn = null;
+  bool? hasLoginData;
+  bool? isLoggedIn;
 
-  bool? canAccessHip = null;
+  bool? canAccessHip;
 
   void loadLoginData() async {
     try {
@@ -40,7 +40,7 @@ class _HipPageState extends State<HipPage> {
       logger.w("Login with saved login: $result");
 
       setState(() {
-        this.isLoggedIn = result;
+        isLoggedIn = result;
       });
     }
   }
@@ -59,19 +59,19 @@ class _HipPageState extends State<HipPage> {
       ),
       child: canAccessHip != false
           ? (hasLoginData == null
-              ? _LoadingPage()
+              ? const _LoadingPage()
               : hasLoginData == true
                   ? (isLoggedIn == null
-                      ? _LoadingPage()
-                      : (isLoggedIn == true ? HipDataPage() : HipLoginPage()))
-                  : HipLoginPage())
-          : _NoHipAccess(),
+                      ? const _LoadingPage()
+                      : (isLoggedIn == true ? const HipDataPage() : const HipLoginPage()))
+                  : const HipLoginPage())
+          : const _NoHipAccess(),
     );
   }
 }
 
 class _LoadingPage extends StatelessWidget {
-  const _LoadingPage({super.key});
+  const _LoadingPage();
 
   @override
   Widget build(BuildContext context) {
@@ -87,13 +87,13 @@ class _LoadingPage extends StatelessWidget {
 }
 
 class _NoHipAccess extends StatelessWidget {
-  const _NoHipAccess({super.key});
+  const _NoHipAccess();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Noten"),
+        title: const Text("Noten"),
       ),
       body: ListView(children: [
         NoConnectionColumn(
@@ -104,8 +104,8 @@ class _NoHipAccess extends StatelessWidget {
           footerWidgets: [
             Center(
               child: ElevatedButton.icon(
-                icon: Icon(Icons.open_in_new),
-                label: Text("Home.InfoPoint in Browser öffnen"),
+                icon: const Icon(Icons.open_in_new),
+                label: const Text("Home.InfoPoint in Browser öffnen"),
                 onPressed: () {
                   launchURL(AngerApp.hip.homeUrl, context);
                 },

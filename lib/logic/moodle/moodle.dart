@@ -15,24 +15,18 @@ import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/timediff_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
-import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import "package:http/http.dart" as http;
-import 'package:motion/motion.dart';
 import 'package:rxdart/subjects.dart';
 import "package:sembast/sembast.dart";
 import "package:anger_buddy/extensions.dart";
-import 'package:tinycolor2/tinycolor2.dart';
-import 'package:sembast/sembast.dart';
 
 part "moodle_types.dart";
 part "moodle_login_page.dart";
@@ -75,7 +69,7 @@ class _MoodleLogin {
       final token = await _fetchToken(username: username, password: password);
       final siteInfo = await _fetchSiteInfo(token);
 
-      if (token == null || siteInfo.userid == null) {
+      if (siteInfo.userid == null) {
         throw ErrorDescription("Fehler beim Anmelden");
       }
 
@@ -243,7 +237,7 @@ class _MoodleMessaging {
       throw ErrorDescription(response.error?.message ?? "");
     }
 
-    var copy = this.subject.valueWrapper?.value ?? [];
+    var copy = subject.valueWrapper?.value ?? [];
     var elem = copy.firstWhere((element) => element.id == conversationId);
     copy.removeWhere((element) => element.id == conversationId);
     copy.add(elem.copyWith(unreadCount: 0, isRead: true));

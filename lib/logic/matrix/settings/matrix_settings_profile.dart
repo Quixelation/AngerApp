@@ -49,13 +49,13 @@ class __MatrixSettingsProfileState extends State<_MatrixSettingsProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Profil")),
+      appBar: AppBar(title: const Text("Profil")),
       body: userInfo == null
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator.adaptive(),
             )
           : ListView(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               children: [
                 Center(
                     child: InkWell(
@@ -67,15 +67,15 @@ class __MatrixSettingsProfileState extends State<_MatrixSettingsProfile> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 ListTile(
-                                    title: Text("Avatar entfernen"),
-                                    leading: Icon(Icons.remove),
+                                    title: const Text("Avatar entfernen"),
+                                    leading: const Icon(Icons.remove),
                                     onTap: () async {
                                       await AngerApp.matrix.client.setAvatar(null);
                                       Navigator.of(context2).pop();
                                     }),
                                 ListTile(
-                                    title: Text("Bild von Gallerie auswählen"),
-                                    leading: Icon(Icons.image),
+                                    title: const Text("Bild von Gallerie auswählen"),
+                                    leading: const Icon(Icons.image),
                                     onTap: () async {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(content: Text("Bitte benutze die Webseite, um das Avatar zu ändern.")));
@@ -100,7 +100,7 @@ class __MatrixSettingsProfileState extends State<_MatrixSettingsProfile> {
                             .toString())
                         : null,
                     child: userInfo!.avatarUrl == null
-                        ? Icon(
+                        ? const Icon(
                             Icons.person,
                             size: 60,
                             color: Colors.white,
@@ -108,12 +108,12 @@ class __MatrixSettingsProfileState extends State<_MatrixSettingsProfile> {
                         : null,
                   ),
                 )),
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 TextField(
                   controller: nameController,
-                  decoration: InputDecoration(label: Text("Anzeige-Name"), border: OutlineInputBorder()),
+                  decoration: const InputDecoration(label: Text("Anzeige-Name"), border: OutlineInputBorder()),
                 ),
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 ElevatedButton.icon(
                     onPressed: () async {
                       Future<void> doSave(BuildContext dialogContext) async {
@@ -129,14 +129,14 @@ class __MatrixSettingsProfileState extends State<_MatrixSettingsProfile> {
                               context: context,
                               builder: (context2) {
                                 return AlertDialog(
-                                  title: Text("Fehler"),
+                                  title: const Text("Fehler"),
                                   content: Text(err.toString()),
                                   actions: [
                                     TextButton(
                                         onPressed: () {
                                           Navigator.of(context2).pop();
                                         },
-                                        child: Text("ok"))
+                                        child: const Text("ok"))
                                   ],
                                 );
                               });
@@ -148,14 +148,14 @@ class __MatrixSettingsProfileState extends State<_MatrixSettingsProfile> {
                           context: context,
                           builder: (context2) {
                             doSave(context2);
-                            return AlertDialog(
+                            return const AlertDialog(
                               title: Text("Bitte warten"),
                               content: Text("Änderungen werden gespeichert"),
                             );
                           });
                     },
-                    icon: Icon(Icons.save),
-                    label: Text("Änderungen speichern"))
+                    icon: const Icon(Icons.save),
+                    label: const Text("Änderungen speichern"))
               ],
             ),
     );

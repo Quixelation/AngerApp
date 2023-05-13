@@ -1,20 +1,17 @@
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/database.dart';
-import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/partials/drawer.dart';
 
-import 'package:anger_buddy/theme.dart';
 
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
@@ -121,7 +118,7 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
     mainColor = colorSubject.valueWrapper!.value;
-    logger.d("[ColorManager] ${mainColor}");
+    logger.d("[ColorManager] $mainColor");
     colorSubject.listen((value) {
       setState(() {
         mainColor = value;
@@ -226,7 +223,7 @@ class _IntroductionScreenSwitcher extends StatefulWidget {
 }
 
 class _IntroductionScreenSwitcherState extends State<_IntroductionScreenSwitcher> {
-  bool? _needToShowIntroScreen = false;
+  final bool? _needToShowIntroScreen = false;
 
   @override
   void initState() {

@@ -27,14 +27,14 @@ class _UniventionLinksPageState extends State<UniventionLinksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Links"),
+        title: const Text("Links"),
       ),
       body: data == null
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator.adaptive(),
             )
           : ListView(children: [
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               ...data!.content
@@ -49,7 +49,7 @@ class _UniventionLinksPageState extends State<UniventionLinksPage> {
                                 padding: const EdgeInsets.only(top: 16, bottom: 4, left: 12, right: 12),
                                 child: Text(
                                   e.category.display_name.de_DE!,
-                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Column(
@@ -64,7 +64,7 @@ class _UniventionLinksPageState extends State<UniventionLinksPage> {
                                             height: 50,
                                           ),
                                           onTap: () => launchURL(f.link.toString(), context),
-                                          trailing: Icon(Icons.open_in_new),
+                                          trailing: const Icon(Icons.open_in_new),
                                           subtitle: Text(f.description.de_DE!),
                                           title: Text(f.name.de_DE!)),
                                     )
@@ -75,7 +75,7 @@ class _UniventionLinksPageState extends State<UniventionLinksPage> {
                         ),
                       ))
                   .toList(),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               )
             ]),

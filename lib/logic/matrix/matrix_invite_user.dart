@@ -22,31 +22,31 @@ class __MatrixInviteUserPageState extends State<_MatrixInviteUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Benutzer einladen")),
+      appBar: AppBar(title: const Text("Benutzer einladen")),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (usersToInvite.isEmpty) {
             showDialog(
                 context: context,
                 builder: (context2) => AlertDialog(
-                      title: Text("Keine Benutzer"),
-                      content: Text("Füge zuerst Benutzer zum einladen hinzu."),
+                      title: const Text("Keine Benutzer"),
+                      content: const Text("Füge zuerst Benutzer zum einladen hinzu."),
                       actions: [
                         TextButton(
                             onPressed: () {
                               Navigator.of(context2).pop();
                             },
-                            child: Text("ok"))
+                            child: const Text("ok"))
                       ],
                     ));
             return;
           }
           Navigator.of(context).pop(usersToInvite);
         },
-        child: Opacity(opacity: usersToInvite.isEmpty ? 0.5 : 1, child: Icon(Icons.check)),
+        child: Opacity(opacity: usersToInvite.isEmpty ? 0.5 : 1, child: const Icon(Icons.check)),
       ),
       body: ListView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         children: [
           _MatrixUserTypeAhead(
               excludeUsers: alreadyMembers,
@@ -59,7 +59,7 @@ class __MatrixInviteUserPageState extends State<_MatrixInviteUserPage> {
                   }
                 });
               }),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           ...usersToInvite.map((e) => ListTile(
               leading: CircleAvatar(
                 foregroundImage: e.avatarUrl == null

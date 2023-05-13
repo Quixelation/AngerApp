@@ -11,7 +11,7 @@ class _PageNewsListState extends State<PageNewsList> {
   AsyncDataResponse<List<NewsApiDataElement>>? data;
   AsyncDataResponse<List<SrNewsElement>>? srNews = Services.srNews.subject.valueWrapper?.value;
 
-  SyncManager? lastSync = null;
+  SyncManager? lastSync;
   StreamSubscription? lastSyncSub;
   StreamSubscription? newsSub;
 
@@ -201,11 +201,11 @@ class _PageNewsListState extends State<PageNewsList> {
                     opacity: 0.87,
                     child: Text(
                       title,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                   ),
                 ),
-                Divider(
+                const Divider(
                   height: 1,
                 ),
                 Row(
@@ -217,7 +217,7 @@ class _PageNewsListState extends State<PageNewsList> {
                           data: subtitle,
                           style: {
                             '#': Style(
-                              padding: EdgeInsets.all(0),
+                              padding: const EdgeInsets.all(0),
                               margin: Margins.all(0),
                               maxLines: 3,
                               color: Theme.of(context).colorScheme.onSurface.withAlpha(187),
@@ -229,11 +229,11 @@ class _PageNewsListState extends State<PageNewsList> {
                     )
                   ],
                 ),
-                Divider(
+                const Divider(
                   height: 1,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16).copyWith(top: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16).copyWith(top: 12),
                   child: Opacity(
                     opacity: 0.67,
                     child: Row(
@@ -252,8 +252,8 @@ class _PageNewsListState extends State<PageNewsList> {
                                       Icons.web,
                                       size: iconSize,
                                     ),
-                                    SizedBox(width: 2),
-                                    Text(
+                                    const SizedBox(width: 2),
+                                    const Text(
                                       "Website",
                                       style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
                                     )
@@ -263,8 +263,8 @@ class _PageNewsListState extends State<PageNewsList> {
                                 return Row(
                                   children: [
                                     Icon(Icons.groups, size: iconSize),
-                                    SizedBox(width: 4),
-                                    Text(
+                                    const SizedBox(width: 4),
+                                    const Text(
                                       "Schülerrat",
                                       style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
                                     )
@@ -275,7 +275,7 @@ class _PageNewsListState extends State<PageNewsList> {
                         ),
                         Text(
                           date,
-                          style: TextStyle(fontSize: 12),
+                          style: const TextStyle(fontSize: 12),
                         )
                       ],
                     ),
@@ -401,7 +401,7 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
                           lineHeight: LineHeight.number(1.1),
                           color:
                               // 87% Opacity
-                              Theme.of(context).textTheme.bodyText1!.color!.withAlpha(222),
+                              Theme.of(context).textTheme.bodyLarge!.color!.withAlpha(222),
                         ),
                       },
                       customRenders: {
@@ -477,11 +477,9 @@ dom.Element? findChild(dom.Element? element, String attribute) {
     return element;
   }
   for (var child in element.children) {
-    if (child is dom.Element) {
-      var result = findChild(child, attribute);
-      if (result != null) {
-        return result;
-      }
+    var result = findChild(child, attribute);
+    if (result != null) {
+      return result;
     }
   }
   return null;

@@ -3,16 +3,12 @@ library files;
 import 'dart:io';
 
 import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/logic/jsp/jsp_passthrough_page.dart';
 import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/foundation/key.dart';
 import 'package:skeletons/skeletons.dart';
 import "package:path/path.dart" as path;
 // import 'package:webdav_client/webdav_client.dart' as webdav;
@@ -59,11 +55,11 @@ class JspFilesClient {
     });
   }
 
-  Map<String, Uint8List> _previewCache = {};
+  final Map<String, Uint8List> _previewCache = {};
 
   Future<Uint8List> getPreview(WebDavFile file) async {
     if (!_previewCache.containsKey(file.fileId)) {
-      var resp = await http.get(Uri.parse("https://nextcloud.jsp.jena.de/core/preview?fileId=${file!.fileId!}&x=32&y=32&a=0&forceIcon=0"),
+      var resp = await http.get(Uri.parse("https://nextcloud.jsp.jena.de/core/preview?fileId=${file.fileId!}&x=32&y=32&a=0&forceIcon=0"),
           headers: client!.authentications.first.headers);
 
       var bodyBytes = resp.bodyBytes;

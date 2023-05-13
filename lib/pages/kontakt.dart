@@ -196,12 +196,12 @@ class _PageMailKontaktState extends State<PageMailKontakt> {
                                             .then((nothing) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
-                                            SnackBar(
+                                            const SnackBar(
                                               duration:
-                                                  const Duration(seconds: 1),
+                                                  Duration(seconds: 1),
                                               backgroundColor: Colors.green,
                                               content: Row(
-                                                children: const [
+                                                children: [
                                                   Icon(Icons.check,
                                                       color: Colors.white),
                                                   SizedBox(width: 10),
@@ -215,10 +215,10 @@ class _PageMailKontaktState extends State<PageMailKontakt> {
                                         }).catchError((error) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
-                                            SnackBar(
+                                            const SnackBar(
                                               backgroundColor: Colors.red,
                                               content: Row(
-                                                children: const [
+                                                children: [
                                                   Icon(Icons.check,
                                                       color: Colors.white),
                                                   SizedBox(width: 10),

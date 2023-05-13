@@ -11,22 +11,22 @@ class _HomepageSettingsPageState extends State<HomepageSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Homepage")),
+      appBar: AppBar(title: const Text("Homepage")),
       body: ListView(
         children: [
           SwitchListTile.adaptive(
               value: AngerApp.homepage.settings.useNavBar,
-              title: Row(
+              title: const Row(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.horizontal_rule),
-                  const SizedBox(
+                  Icon(Icons.horizontal_rule),
+                  SizedBox(
                     width: 32,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text("BottomNavBar anzeigen"),
                       SizedBox(height: 2),
                       Opacity(

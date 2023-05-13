@@ -13,22 +13,17 @@ import 'package:anger_buddy/utils/timediff_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
 import 'dart:ui';
 import 'package:flutter_polls/flutter_polls.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart' as matrix;
 import 'package:matrix/matrix.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tinycolor2/tinycolor2.dart';
 import "package:anger_buddy/extensions.dart";
 import "package:device_info_plus/device_info_plus.dart";
 import "package:dismissible_page/dismissible_page.dart";
@@ -36,7 +31,6 @@ import "package:flutter_slidable/flutter_slidable.dart";
 import "package:olm/olm.dart" as olm;
 import "package:path/path.dart";
 import "package:uuid/uuid.dart" as uuid;
-import "package:anger_buddy/extensions.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 
 part "matrix_create_chat.dart";
@@ -172,7 +166,7 @@ class JspMatrix {
       CircleAvatar(
         backgroundColor: Colors.grey.shade400.withAlpha(200),
         child: imgUrl == null
-            ? Icon(
+            ? const Icon(
                 Icons.person,
                 size: 32,
                 color: Colors.white,
@@ -407,7 +401,7 @@ class _MatrixEventChatNoticeRenderer {
     } else if (shouldRenderAvatar) {
       return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.image), child: Text(avatarChangeText));
     } else {
-      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.error), child: Text("App-Fehler: Kann Info nicht anzeigen"));
+      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.error), child: const Text("App-Fehler: Kann Info nicht anzeigen"));
     }
   }
 }

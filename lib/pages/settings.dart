@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/messages/messages.dart';
@@ -11,7 +10,6 @@ import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/pages/notifications.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:flutter/material.dart';
-import 'package:sqlite_viewer/sqlite_viewer.dart';
 
 class PageSettings extends StatefulWidget {
   const PageSettings({Key? key}) : super(key: key);
@@ -35,7 +33,7 @@ class _PageSettingsState extends State<PageSettings> {
           leading: Icon(Icons.home_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) => HomepageSettingsPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const HomepageSettingsPage()));
           },
         ),
         ListTile(
@@ -91,7 +89,7 @@ class _PageSettingsState extends State<PageSettings> {
             title: Row(
               children: [
                 Icon(Icons.developer_mode_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-                SizedBox(width: 32),
+                const SizedBox(width: 32),
                 const Text('Entwickler-Menu')
               ],
             )),

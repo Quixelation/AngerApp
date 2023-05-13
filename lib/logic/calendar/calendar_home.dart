@@ -37,7 +37,7 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
 
   void _loadFerien() {
     ferienStreamSub = Services.ferien.subject.listen((event) {
-      if (mounted && event.data != null && !event.error) {
+      if (mounted && !event.error) {
         setState(() {
           ferienEvents = event.data.map((e) => e.toEvent()).toList();
         });
@@ -161,7 +161,7 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.headline6,
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                               ),
                               if (_week != 0 && _week.abs() < 3)
@@ -169,7 +169,7 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
                                   opacity: 0.6,
                                   child: Text(
                                     genWeekDiff(),
-                                    style: Theme.of(context).textTheme.subtitle1,
+                                    style: Theme.of(context).textTheme.titleMedium,
                                   ),
                                 ),
                             ],

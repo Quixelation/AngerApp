@@ -46,18 +46,18 @@ class _FileExplorerState extends State<FileExplorer> {
       ),
       floatingActionButton: widget.dir != "/"
           ? FloatingActionButton(
-              child: Opacity(opacity: 0.57, child: Icon(Icons.upload_file)),
+              child: const Opacity(opacity: 0.57, child: Icon(Icons.upload_file)),
               onPressed: () {
                 showDialog(
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text("Datei-Upload"),
-                        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Ok"))],
-                        content: Column(
+                        title: const Text("Datei-Upload"),
+                        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Ok"))],
+                        content: const Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text("Diese Funktion kommt in den nächsten Wochen."),
                             SizedBox(height: 8),
                             Text("Wir bitten um Verständnis"),
@@ -71,17 +71,17 @@ class _FileExplorerState extends State<FileExplorer> {
       body: Skeleton(
         isLoading: files == null && hasError == false,
         skeleton: SkeletonListView(
-          itemBuilder: (context, nr) => _FileListTile(null),
+          itemBuilder: (context, nr) => const _FileListTile(null),
         ),
         child: hasError == false
-            ? ListView(children: [if (widget.dir == "/") _LoggedInAs(), ...emptyStateManager()])
+            ? ListView(children: [if (widget.dir == "/") const _LoggedInAs(), ...emptyStateManager()])
             : Center(child: Text(error == null ? "Fehler (ohne Info)" : error.toString())),
       ),
     );
   }
 
   List<Widget> emptyStateManager() {
-    List<Widget> items = (files ?? []).map((e) => _FileListTile(e) as Widget).toList();
+    List<Widget> items = (files ?? []).map((e) => _FileListTile(e)).toList();
     if (items.isEmpty) {
       items.add(const Padding(
         padding: EdgeInsets.only(top: 8.0),
@@ -111,7 +111,6 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
       logger.w("No FIle Preview");
       return;
     }
-    ;
     logger.d(
         "Loading Preview ${widget.file!.path} :: ${widget.file?.id} :: ${widget.file?.fileId} :: ${widget.file?.etag}");
 
@@ -132,7 +131,7 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
 
   Widget bottomSheet(WebDavFile file) {
     return Padding(
-      padding: EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,10 +165,10 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
                     builder: (context) {
                       dcontext = context;
 
-                      return AlertDialog(
+                      return const AlertDialog(
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
+                          children: [
                             Text("Bitte warten..."),
                             Text("Datei wird heruntergeladen."),
                             SizedBox(height: 12),
@@ -197,7 +196,7 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text("Ok"))
+                                child: const Text("Ok"))
                           ],
                         ));
               }
@@ -229,16 +228,16 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
                           onClosing: () {},
                           builder: (context) => bottomSheet(widget.file!)));
                 },
-      title: widget.file == null ? SkeletonLine() : Text(widget.file?.name ?? "%KEINNAME%"),
+      title: widget.file == null ? const SkeletonLine() : Text(widget.file?.name ?? "%KEINNAME%"),
       leading: SizedBox(
         child: widget.file == null
             ? SkeletonAvatar(
                 style: SkeletonAvatarStyle(borderRadius: BorderRadius.circular(8)),
               )
             : (widget.file?.isDirectory ?? false)
-                ? Icon(Icons.folder)
+                ? const Icon(Icons.folder)
                 : (preview == null
-                    ? Icon(Icons.file_present)
+                    ? const Icon(Icons.file_present)
                     : Image.memory(
                         preview!,
                       )),
@@ -254,7 +253,7 @@ class _LoggedInAs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(12),
+      margin: const EdgeInsets.all(12),
       child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -263,24 +262,24 @@ class _LoggedInAs extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.account_circle_outlined, size: 30),
-                  SizedBox(width: 14),
+                  const Icon(Icons.account_circle_outlined, size: 30),
+                  const SizedBox(width: 14),
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(
+                    const Text(
                       "Eingeloggt als:",
                       style: TextStyle(fontSize: 14),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 2,
                     ),
                     Text(
                       (Services.files.client!.username ?? "Unbekant"),
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ])
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
@@ -288,16 +287,16 @@ class _LoggedInAs extends StatelessWidget {
                           onPressed: () {
                             launchURL("https://nextcloud.jsp.jena.de", context);
                           },
-                          icon: Icon(Icons.link),
-                          label: Text("Im Web öffnen"))),
-                  SizedBox(width: 8),
+                          icon: const Icon(Icons.link),
+                          label: const Text("Im Web öffnen"))),
+                  const SizedBox(width: 8),
                   Expanded(
                       child: OutlinedButton.icon(
                           onPressed: () {
                             Credentials.jsp.removeCredentials();
                           },
-                          icon: Icon(Icons.logout),
-                          label: Text("Ausloggen"))),
+                          icon: const Icon(Icons.logout),
+                          label: const Text("Ausloggen"))),
                 ],
               )
             ],

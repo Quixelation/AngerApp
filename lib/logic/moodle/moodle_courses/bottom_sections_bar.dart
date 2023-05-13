@@ -32,7 +32,7 @@ class _MainBottomSectionsBarState extends State<_MainBottomSectionsBar>
 
   @override
   Widget build(BuildContext context) {
-    final double MainButtonHeight = 60;
+    const double MainButtonHeight = 60;
     return Container(
       child: Theme(
         data: Theme.of(context).copyWith(useMaterial3: false),
@@ -61,37 +61,37 @@ class _MainBottomSectionsBarState extends State<_MainBottomSectionsBar>
                         color: Theme.of(context).colorScheme.background,
                       ),
                       child: Padding(
-                        padding: EdgeInsets.only(top: MainButtonHeight),
+                        padding: const EdgeInsets.only(top: MainButtonHeight),
                         child: Scrollbar(
                           thumbVisibility: true,
                           controller: mainScrollController,
                           child: ListView.separated(
                               controller: mainScrollController,
-                              padding: EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.only(top: 8),
                               separatorBuilder: (context, index) =>
-                                  Divider(height: 1),
+                                  const Divider(height: 1),
                               itemCount: userVisibleSections.length,
                               itemBuilder: (context, index) {
                                 final section = userVisibleSections[index];
                                 final modulesCount = section.modules.length;
                                 final hasSummary =
-                                    section.summary.trim().length != 0;
-                                int lastModified_asInt = 0;
+                                    section.summary.trim().isNotEmpty;
+                                int lastmodifiedAsint = 0;
                                 for (var module in section.modules) {
                                   for (var content in module.contents ??
                                       <_MoodleCourseModuleContent>[]) {
                                     if ((content.timeModified ?? 0) >
-                                        lastModified_asInt) {
+                                        lastmodifiedAsint) {
                                       // timeModified can't be null, bc then it wouldn't pass above "if greater as lastModified_asInt(== 0)"
-                                      lastModified_asInt =
+                                      lastmodifiedAsint =
                                           content.timeModified!;
                                     }
                                   }
                                 }
-                                final lastModified = lastModified_asInt == 0
+                                final lastModified = lastmodifiedAsint == 0
                                     ? null
                                     : DateTime.fromMillisecondsSinceEpoch(
-                                        lastModified_asInt * 1000);
+                                        lastmodifiedAsint * 1000);
 
                                 return ListTile(
                                     isThreeLine: true,
@@ -127,7 +127,7 @@ class _MainBottomSectionsBarState extends State<_MainBottomSectionsBar>
                                                     ),
                                                   ))));
                                     },
-                                    trailing: Opacity(
+                                    trailing: const Opacity(
                                         opacity: 0.87,
                                         child:
                                             Icon(Icons.keyboard_arrow_right)),

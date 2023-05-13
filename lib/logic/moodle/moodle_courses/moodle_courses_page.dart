@@ -27,12 +27,12 @@ class _MoodleCoursesPageState extends State<MoodleCoursesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Jenaer Schulmoodle")),
-      body: ListView(padding: EdgeInsets.all(8), children: [
+      appBar: AppBar(title: const Text("Jenaer Schulmoodle")),
+      body: ListView(padding: const EdgeInsets.all(8), children: [
         if (courses != null)
           MasonryGridView.extent(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             maxCrossAxisExtent: 400,
             itemBuilder: (context, index) => _MoodleCourseCard(courses![index]),
             itemCount: courses!.length,
@@ -43,7 +43,7 @@ class _MoodleCoursesPageState extends State<MoodleCoursesPage> {
 }
 
 class _MoodleCourseCard extends StatelessWidget {
-  const _MoodleCourseCard(this.course, {super.key});
+  const _MoodleCourseCard(this.course);
 
   final _MoodleCourse course;
 
@@ -60,9 +60,9 @@ class _MoodleCourseCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(course.displayname, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(course.displayname, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               if (course.progress != null) ...[
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

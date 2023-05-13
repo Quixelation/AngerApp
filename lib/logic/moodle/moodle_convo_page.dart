@@ -59,7 +59,7 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
         body: Stack(
           alignment: Alignment.center,
           children: [
-            Container(
+            SizedBox(
               height: double.infinity,
               width: double.infinity,
               child: ColorFiltered(
@@ -67,7 +67,7 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                   "assets/school_trans.png",
                   scale: 1.25,
                   repeat: ImageRepeat.repeat,
-                  opacity: AlwaysStoppedAnimation(0.25),
+                  opacity: const AlwaysStoppedAnimation(0.25),
                 ),
                 colorFilter: Theme.of(context).brightness == Brightness.light
                     ? const ColorFilter.mode(Colors.transparent, BlendMode.overlay)
@@ -197,7 +197,7 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                                     },
                                   ),
                                 ] else
-                                  Text("Nachrichten in Gruppen-Chats noch in Arbeit")
+                                  const Text("Nachrichten in Gruppen-Chats noch in Arbeit")
                               ],
                             ),
                           ),

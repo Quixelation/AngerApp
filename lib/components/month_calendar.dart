@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MonthCalendar extends StatefulWidget {
@@ -11,7 +10,7 @@ class MonthCalendar extends StatefulWidget {
 class _MonthCalendarState extends State<MonthCalendar> {
   @override
   Widget build(BuildContext context) {
-    return Flex(
+    return const Flex(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.max,
       direction: Axis.vertical,
@@ -26,27 +25,12 @@ class _MonthCalendarState extends State<MonthCalendar> {
                     flex: 1,
                     child: Flex(
                       direction: Axis.vertical,
-                      children: const [
+                      children: [
                         Card(
                           child: Text('Card 1'),
                         ),
                       ],
                     )),
-                const Flexible(flex: 1, child: FlutterLogo()),
-                const Flexible(flex: 1, child: FlutterLogo()),
-                const Flexible(flex: 1, child: FlutterLogo()),
-                const Flexible(flex: 1, child: FlutterLogo()),
-                const Flexible(flex: 1, child: FlutterLogo()),
-                const Flexible(flex: 1, child: FlutterLogo()),
-              ],
-            )),
-        Flexible(
-            flex: 1,
-            child: Flex(
-              mainAxisSize: MainAxisSize.max,
-              direction: Axis.horizontal,
-              children: const [
-                Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
@@ -60,7 +44,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
             child: Flex(
               mainAxisSize: MainAxisSize.max,
               direction: Axis.horizontal,
-              children: const [
+              children: [
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
@@ -75,7 +59,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
             child: Flex(
               mainAxisSize: MainAxisSize.max,
               direction: Axis.horizontal,
-              children: const [
+              children: [
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
@@ -90,7 +74,7 @@ class _MonthCalendarState extends State<MonthCalendar> {
             child: Flex(
               mainAxisSize: MainAxisSize.max,
               direction: Axis.horizontal,
-              children: const [
+              children: [
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
@@ -105,7 +89,22 @@ class _MonthCalendarState extends State<MonthCalendar> {
             child: Flex(
               mainAxisSize: MainAxisSize.max,
               direction: Axis.horizontal,
-              children: const [
+              children: [
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+                Flexible(flex: 1, child: FlutterLogo()),
+              ],
+            )),
+        Flexible(
+            flex: 1,
+            child: Flex(
+              mainAxisSize: MainAxisSize.max,
+              direction: Axis.horizontal,
+              children: [
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),
                 Flexible(flex: 1, child: FlutterLogo()),

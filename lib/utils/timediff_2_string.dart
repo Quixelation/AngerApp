@@ -1,10 +1,9 @@
-import 'package:anger_buddy/utils/logger.dart';
 
 String timediff2string(DateTime dateTime, {bool maxDays = false}) {
   DateTime now = DateTime.now();
   bool timeNegative = dateTime.difference(now).isNegative;
 
-  var timeDiff;
+  Object timeDiff;
   String suffix = "<EINHEIT>";
 
   if (dateTime.difference(now).inHours.abs() <= 24) {

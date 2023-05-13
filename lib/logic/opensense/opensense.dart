@@ -14,10 +14,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
 
-import 'package:intl/number_symbols_data.dart';
 import 'package:rxdart/subjects.dart';
 import "package:anger_buddy/extensions.dart";
-import 'package:sembast/timestamp.dart';
 
 part 'opensense_types.dart';
 part 'opensense_homepage.dart';

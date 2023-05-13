@@ -6,7 +6,6 @@ import 'package:anger_buddy/logic/hip/hip.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
-import 'package:anger_buddy/logic/mail/mail.dart';
 import 'package:anger_buddy/logic/schuelerrat/schuelerrat.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
@@ -18,7 +17,6 @@ import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/logic/whatsnew/whatsnew.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import "package:flutter_dotenv/flutter_dotenv.dart";
 
 class _ServicesManager {
   /* -- Funktions-Seiten -- */
@@ -59,7 +57,7 @@ class _ServicesManager {
       homepage.init(),
       whatsnew.init(),
 
-      localNotifications.initialize(InitializationSettings(
+      localNotifications.initialize(const InitializationSettings(
         android: AndroidInitializationSettings("background"),
         iOS: DarwinInitializationSettings(),
       ))

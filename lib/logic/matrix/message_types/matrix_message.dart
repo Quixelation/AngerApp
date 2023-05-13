@@ -246,14 +246,14 @@ class _MatrixMessage extends StatelessWidget {
           child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: RichText(
-                  text: TextSpan(style: Theme.of(context).textTheme.bodyText2, children: [
+                  text: TextSpan(style: Theme.of(context).textTheme.bodyMedium, children: [
                 TextSpan(style: const TextStyle(fontWeight: FontWeight.bold), text: displayEvent.sender.calcDisplayname() + ": "),
                 TextSpan(text: displayEvent.type + " (" + displayEvent.messageType + ")")
               ]))),
         ),
       );
     } else {
-      return SizedBox();
+      return const SizedBox();
     }
   }
 }

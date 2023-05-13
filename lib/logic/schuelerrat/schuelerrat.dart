@@ -8,11 +8,9 @@ import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:sembast/sembast.dart';
 import "package:http/http.dart" as http;
-import 'package:universal_html/js.dart';
 
 /// Placeholder for when i get around to actually convert these things...
 class StringDate {

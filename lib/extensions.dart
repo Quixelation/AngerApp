@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 extension MapWithIndex<E> on List {
   List<T> mapWithIndex<T, E>(T Function(E element, int index) cb) {
     List<T> mapList = [];
-    for (var i = 0; i < this.length; i++) {
+    for (var i = 0; i < length; i++) {
       mapList.add(cb(this[i], i));
     }
     return mapList;

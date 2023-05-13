@@ -162,7 +162,7 @@ class _ToDownloadsBtn extends StatelessWidget {
           padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 16, vertical: 12))),
       child: const Text("Zu den Downloads"),
       onPressed: () {
-        DefaultTabController.of(context)?.animateTo(1);
+        DefaultTabController.of(context).animateTo(1);
       },
     );
   }

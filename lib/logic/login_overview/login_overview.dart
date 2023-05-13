@@ -1,7 +1,6 @@
 library login_overview;
 
 import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/network/mailkontaktlist.dart';
 import 'package:flutter/material.dart';
 
@@ -104,12 +103,12 @@ class _InformationPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return const Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         child: Opacity(
           opacity: 0.87,
-          child: Row(children: const [
+          child: Row(children: [
             Icon(Icons.lock),
             SizedBox(
               width: 12,

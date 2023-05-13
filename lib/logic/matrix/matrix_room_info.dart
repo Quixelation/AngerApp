@@ -143,8 +143,8 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                   onPressed: () {
                     //TODO: Implement
                   },
-                  icon: Icon(Icons.save),
-                  label: Text("Änderungen speichern")),
+                  icon: const Icon(Icons.save),
+                  label: const Text("Änderungen speichern")),
             const Divider(
               height: 48,
             ),
@@ -156,11 +156,11 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                 onPressed: () {
                   //TODO: implement via global page function
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.exit_to_app,
                   color: Colors.red,
                 ),
-                label: Text(
+                label: const Text(
                   "Chat verlassen",
                   style: TextStyle(color: Colors.red),
                 ))
@@ -251,8 +251,8 @@ class ParticipantTile extends StatelessWidget {
                       const Divider(),
                       if (participant.canChangePowerLevel)
                         ListTile(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                          leading: Icon(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          leading: const Icon(
                             Icons.bolt,
                           ),
                           onTap: () async {
@@ -265,21 +265,21 @@ class ParticipantTile extends StatelessWidget {
                               participant.setPower(newLevel);
                             }
                           },
-                          title: Text(
+                          title: const Text(
                             "Power-Level ändern",
                           ),
-                          trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+                          trailing: const Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
                         ),
                       ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                        leading: Icon(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        leading: const Icon(
                           Icons.how_to_reg,
                         ),
                         onTap: () async {},
-                        title: Text(
+                        title: const Text(
                           "Verifizieren",
                         ),
-                        trailing: Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+                        trailing: const Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
                       ),
                       const Divider(),
                       if (!userIsSelf)
@@ -429,7 +429,7 @@ class _ParticipantsListState extends State<_ParticipantsList> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (builder) => Scaffold(
                             appBar: AppBar(
-                              title: Text("Alle Teilnehmer"),
+                              title: const Text("Alle Teilnehmer"),
                             ),
                             body: ListView.builder(
                               itemBuilder: (context, index) {
@@ -442,7 +442,7 @@ class _ParticipantsListState extends State<_ParticipantsList> {
                             ),
                           )));
                 },
-                child: Text("Alle anzeigen")),
+                child: const Text("Alle anzeigen")),
           ),
         if (widget.room.canInvite)
           ListTile(

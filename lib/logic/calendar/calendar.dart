@@ -4,13 +4,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/components/month_calendar.dart';
-import 'package:anger_buddy/logic/current_class/current_class.dart';
 import 'package:anger_buddy/logic/data_manager.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
-import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
-import 'package:anger_buddy/logic/ferien/ferien.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
@@ -59,7 +55,7 @@ class EventData {
       this.dateTo,
       required this.title,
       required this.desc,
-      this.type = null,
+      this.type,
       required this.allDay,
       this.klassen = const [],
       this.info = const {}});

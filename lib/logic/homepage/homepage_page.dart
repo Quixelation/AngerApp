@@ -49,7 +49,7 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
             : null,
         body: TabBarView(
           controller: _tabController,
-          children: [const _HomePageContent(), const MessagesListPage()],
+          children: const [_HomePageContent(), MessagesListPage()],
         ));
   }
 }
@@ -143,10 +143,10 @@ class _HomePageContent extends StatelessWidget {
 
             /// -> kleine Bildschirmgröße: 1 Spalte
             if (MediaQuery.of(context).size.width < 1080)
-              Flex(
+              const Flex(
                   direction: Axis.vertical,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     // SchwarzesBrettHome(),
                     WhatsnewHomepageWidget(),
                     FerienHomepageWidget(),
@@ -168,14 +168,14 @@ class _HomePageContent extends StatelessWidget {
             /// TODO: Add Schwarzes Brett zu mittel und groß
             /// -> mittlere Bildschirmgröße: 2 Spalten
             else if (MediaQuery.of(context).size.width < 1600)
-              Flex(
+              const Flex(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           WhatsnewHomepageWidget(),
                           FerienHomepageWidget(),
                           EventsThisWeek(),
@@ -188,7 +188,7 @@ class _HomePageContent extends StatelessWidget {
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           MatrixHomepageQuicklook(),
                           VpWidget(),
                           AushangHomepageWidget(),
@@ -204,14 +204,14 @@ class _HomePageContent extends StatelessWidget {
 
             /// -> große Bildschirmgröße: 3 Spalten
             else
-              Flex(
+              const Flex(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           FerienHomepageWidget(),
                           NewsHomepageWidget(),
                         ],
@@ -222,7 +222,7 @@ class _HomePageContent extends StatelessWidget {
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           MatrixHomepageQuicklook(),
                           VpWidget(),
                           AushangHomepageWidget(),
@@ -351,7 +351,7 @@ class _WelcomeTextState extends State<WelcomeText> {
                         const TextSpan(text: "."),
                       ])),
           ),
-          Opacity(
+          const Opacity(
             opacity: 0.87,
             child: SenseboxOutdoorTempTextHomepage(),
           )

@@ -95,7 +95,7 @@ Future<_MoodleResponse<dynamic>> _moodleRequest<E>({
 
   var uri = Uri.https(
       AppManager.moodleSiteHost,
-      (customPath != null ? customPath : AppManager.moodleApiPath),
+      (customPath ?? AppManager.moodleApiPath),
       {...mapToEncode, ...(parameters ?? {})});
 
   logger.v(uri);

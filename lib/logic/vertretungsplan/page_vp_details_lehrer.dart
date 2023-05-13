@@ -22,7 +22,7 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
       dotAll: true,
     );
 
-    Set lehrer = Set();
+    Set lehrer = {};
     for (var element in widget.detailData.tableRows) {
       List<String> names = [
         ...lehrerNameRegEx
@@ -68,16 +68,16 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
               children: [
                 Text(
                   e.klasse,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 RichText(
                     softWrap: true,
                     text: TextSpan(
                         style: TextStyle(
                             fontSize: 16,
                             color:
-                                Theme.of(context).textTheme.bodyText1!.color),
+                                Theme.of(context).textTheme.bodyLarge!.color),
                         children: [
                           TextSpan(
                               text: e.fach.content,
@@ -182,7 +182,7 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-            appBar: AppBar(title: Text("Lehrer-Ansicht")),
+            appBar: AppBar(title: const Text("Lehrer-Ansicht")),
             body: Flex(
               direction: Axis.vertical,
               children: [
@@ -273,7 +273,7 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
                       autocorrect: false,
                       controller: searchController,
                       decoration: InputDecoration(
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           labelText: "Suche / Filter",
                           hintText:
                               "Tipp: Versuche es ohne \"Herr\" oder \"Frau\"",

@@ -27,7 +27,7 @@ class _WeekViewState extends State<WeekView> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Wochen-Ansicht"),
+        title: const Text("Wochen-Ansicht"),
       ),
       floatingActionButton: Card(
         color: Theme.of(context).colorScheme.primary,
@@ -40,14 +40,14 @@ class _WeekViewState extends State<WeekView> {
                   weekViewFontSizeBehavSub
                       .add(weekViewFontSizeBehavSub.valueWrapper!.value + 0.5);
                 },
-                icon: Icon(Icons.zoom_in)),
+                icon: const Icon(Icons.zoom_in)),
             IconButton(
                 color: Theme.of(context).colorScheme.onPrimary,
                 onPressed: () {
                   weekViewFontSizeBehavSub
                       .add(weekViewFontSizeBehavSub.valueWrapper!.value - 0.5);
                 },
-                icon: Icon(Icons.zoom_out))
+                icon: const Icon(Icons.zoom_out))
           ],
         ),
       ),
@@ -95,7 +95,7 @@ Widget buildWeekViewRow(WeekViewCalendar cal, int index, BuildContext context,
             flex: 7,
             child: Container(
               padding: const EdgeInsets.all(1),
-              child: SizedBox(height: 20),
+              child: const SizedBox(height: 20),
             ))
       ]));
 
@@ -109,7 +109,7 @@ Widget buildWeekViewRow(WeekViewCalendar cal, int index, BuildContext context,
           }
         : null,
     child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: 100),
+        constraints: const BoxConstraints(minHeight: 100),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -200,7 +200,7 @@ class __WeekViewEventContainerState extends State<_WeekViewEventContainer> {
               ? Colors.transparent
               : (color ?? Theme.of(context).colorScheme.primary),
           borderRadius: BorderRadius.circular(2)),
-      padding: EdgeInsets.all(2),
+      padding: const EdgeInsets.all(2),
       child: Text(
         (widget.entry.isEmptySpace ? "" : widget.entry.event!.title),
         style: TextStyle(

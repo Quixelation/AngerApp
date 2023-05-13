@@ -83,7 +83,7 @@ class _RoomPageState extends State<RoomPage> {
       ),
       body: Stack(
         children: [
-          Container(
+          SizedBox(
             height: double.infinity,
             width: double.infinity,
             child: ColorFiltered(
@@ -91,7 +91,7 @@ class _RoomPageState extends State<RoomPage> {
                 "assets/school_trans.png",
                 scale: 1.25,
                 repeat: ImageRepeat.repeat,
-                opacity: AlwaysStoppedAnimation(0.25),
+                opacity: const AlwaysStoppedAnimation(0.25),
               ),
               colorFilter: Theme.of(context).brightness == Brightness.light
                   ? const ColorFilter.mode(Colors.transparent, BlendMode.overlay)

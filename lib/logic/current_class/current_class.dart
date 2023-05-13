@@ -1,7 +1,6 @@
 library current_class;
 
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/main.dart';
@@ -27,7 +26,7 @@ part "current_class_info.pageengine.dart";
 // }
 
 class CurrentClassManager {
-  static var _subject = BehaviorSubject<int?>();
+  static final _subject = BehaviorSubject<int?>();
   static init(Database db) async {
     var dbRecord = await AppManager.stores.data.record("currentclass").get(db);
     if (dbRecord != null && dbRecord["value"] != null) {

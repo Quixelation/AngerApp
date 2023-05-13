@@ -19,7 +19,7 @@ class _PageVpState extends State<PageVp> {
       printInDebug("Creds $creds");
       if (mounted) {
         setState(() {
-          this.credsAvailable =
+          credsAvailable =
               Credentials.vertretungsplan.credentialsAvailable;
         });
       } else {

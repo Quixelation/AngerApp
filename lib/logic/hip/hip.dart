@@ -1,7 +1,6 @@
 library hip;
 
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/extensions.dart';
@@ -11,11 +10,7 @@ import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
-import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import "package:flutter_inappwebview/flutter_inappwebview.dart";
-import "package:flutter_inappwebview/flutter_inappwebview.dart" as webview;
 import 'package:html/parser.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:webview_flutter/platform_interface.dart';
@@ -86,14 +81,14 @@ class HipService {
     if (_phpSessId == null) {
       logger.e("Could not get PHPSESSID");
     }
-    this.phpSessId = _phpSessId ?? "";
+    phpSessId = _phpSessId ?? "";
     return _phpSessId ?? "";
   }
 
   Future<void> logout() async {
     // ! Inlucde PHPSESSID in the request
     var phpSessId = await getPHPSESSID();
-    logger.w("Logging out HIP with ${phpSessId}");
+    logger.w("Logging out HIP with $phpSessId");
     var result = await http.get(Uri.parse(logoutUrl), headers: {
       "Cookie": phpSessId,
     });
@@ -106,7 +101,7 @@ class HipService {
   Future<bool> login(String username, String password,
       {BuildContext? context}) async {
     var phpSessId = await getPHPSESSID();
-    logger.w("Loading login HIP with ${phpSessId} and $username and $password");
+    logger.w("Loading login HIP with $phpSessId and $username and $password");
     // Send Body as form data
     var body = {
       "username": username,
@@ -132,20 +127,20 @@ class HipService {
               return AlertDialog(
                 actions: [
                   ElevatedButton.icon(
-                      icon: Icon(Icons.delete_forever),
+                      icon: const Icon(Icons.delete_forever),
                       onPressed: () {
                         Navigator.of(context2).pop(true);
                       },
-                      label: Text("Login-Daten löschen")),
+                      label: const Text("Login-Daten löschen")),
                   FilledButton.icon(
-                      icon: Icon(Icons.check),
+                      icon: const Icon(Icons.check),
                       onPressed: () {
                         Navigator.of(context2).pop(true);
                       },
-                      label: Text("Ok"))
+                      label: const Text("Ok"))
                 ],
-                title: Text("Mögliches Server Problem"),
-                content: Text(
+                title: const Text("Mögliches Server Problem"),
+                content: const Text(
                     "Die Login-Daten wurden als falsch angezeigt. Dies könnte am Server liegen, welcher sich zwischen 13:00 und 13:10 immer aktualisiert. Probiere es später am besten nochmal."),
               );
             });
@@ -168,7 +163,7 @@ class HipService {
   /// um zu schauen, ob der Benutzer,
   /// HIP überhaupt aufrufen darf und kann.
   Future<String> loadDefault() async {
-    logger.w("Loading default HIP with ${phpSessId}");
+    logger.w("Loading default HIP with $phpSessId");
 
     var result =
         await http.get(Uri.parse(homeUrl), headers: {"Cookie": phpSessId});
@@ -189,7 +184,7 @@ class HipService {
 
   //getdata
   Future<String> getData() async {
-    logger.w("Loading getData HIP with ${phpSessId}");
+    logger.w("Loading getData HIP with $phpSessId");
 
     var result =
         await http.get(Uri.parse(getDataUrl), headers: {"Cookie": phpSessId});

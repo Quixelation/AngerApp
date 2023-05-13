@@ -8,9 +8,6 @@ import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class SchuelerratMainPage extends StatefulWidget {
@@ -26,8 +23,8 @@ class _SchuelerratMainPageState extends State<SchuelerratMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Schülerrat")),
-      body: [_SrInfoPage(), _SrNewsPage()][selectedIndex],
+      appBar: AppBar(title: const Text("Schülerrat")),
+      body: [const _SrInfoPage(), const _SrNewsPage()][selectedIndex],
       bottomNavigationBar: NavigationBar(
           selectedIndex: selectedIndex,
           onDestinationSelected: (value) {
@@ -35,7 +32,7 @@ class _SchuelerratMainPageState extends State<SchuelerratMainPage> {
               selectedIndex = value;
             });
           },
-          destinations: [
+          destinations: const [
             NavigationDestination(icon: Icon(Icons.info_outline), label: "Information"),
             NavigationDestination(icon: Icon(Icons.newspaper_outlined), label: "Nachrichten"),
           ]),
@@ -60,9 +57,9 @@ class __SrInfoPageState extends State<_SrInfoPage> {
           children: [
             Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            Divider(),
+            const Divider(),
             Text(
               text,
               style: TextStyle(height: 1.25, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.9)),
@@ -76,14 +73,14 @@ class __SrInfoPageState extends State<_SrInfoPage> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       children: [
         Card(
           child: InkWell(
             onTap: () {
               launchURL("https://www.instagram.com/_schuelerrat_angergymnasium_/", context);
             },
-            child: Padding(
+            child: const Padding(
               padding: EdgeInsets.all(16),
               child: Row(children: [
                 Opacity(opacity: 0.87, child: Icon(Icons.follow_the_signs)),
@@ -110,16 +107,16 @@ class __SrInfoPageState extends State<_SrInfoPage> {
             ),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         buildInfoCard("Allgemein",
             "Der Schülerrat hat sich im Jahr 2005 gegründet. Der Anlass dafür war, dass Schüler am Angergymnasium Jena mehr Mitspracherecht gefordert haben. Über die Jahre hat sich der Schülerrat als feste Größe am Angergymnasium etabliert. Unsere Eigenverantwortung wuchs. Der Schülerrat besteht aus ca. 20 Schülern der Klassenstufen 8 - 12. Wir treffen uns wöchentlich."),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         buildInfoCard("Aufgabengebiete",
             "Mitarbeit in der Schulkonferenz, Wöchentliche Absprachen mit der Schulleitung, Vorbereitung und Durchführung von Wahlen, Vorbereitung und Durchführung von verschiedenen Events, Organisation im Schulalltag, Mitwirken im Schülercafé"),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         buildInfoCard("Wahlen",
             "Jedes Jahr führt der Schülerrat die Wahl des Vertrauenslehrers durch. Außerdem wählen die Klassen nach einem vom Schülerrat entwickelten Leitfaden ihre Klassen- und Kurssprecher. Alle zwei Jahre findet auch die Wahl der Schülersprecher/in und die Wahl der Vertreter im Jugendparlament statt, welche vom Schülerrat durchgeführt wird."),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         buildInfoCard("Du im Schülerrat",
             "Du brauchst mehr Mitspracherecht an deiner Schule? Komm doch einfach mal vorbei! Du findest und in der obersten Etage im Schülerratsbüro. Du kannst zuerst dabei sein und Vorschläge machen und sobald du in den Schülerrat aufgenommen wurdest auch am Abstimmungen teilnehmen."),
       ],
@@ -171,19 +168,19 @@ class __SrNewsPageState extends State<_SrNewsPage> {
       children: newsElems != null
           ? newsElems!.data
               .map((e) => ListTile(
-                    trailing: Icon(Icons.keyboard_arrow_right),
+                    trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchuelerratNachrichtPage(id: e.id)));
                     },
                     title: Text(
                       e.title,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Html(
                       data: e.content,
                       style: {
                         '#': Style(
-                          padding: EdgeInsets.all(0),
+                          padding: const EdgeInsets.all(0),
                           margin: Margins.all(0),
                           maxLines: 2,
                           color: Theme.of(context).colorScheme.onSurface.withAlpha(187),
@@ -194,7 +191,7 @@ class __SrNewsPageState extends State<_SrNewsPage> {
                   ))
               .toList()
           : [
-              NoConnectionColumn(
+              const NoConnectionColumn(
                 title: "Keine Inhalte",
               )
             ],
@@ -237,19 +234,19 @@ class _SchuelerratNachrichtPageState extends State<SchuelerratNachrichtPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: newsElem == null ? Text("Lädt") : null),
-      body: ListView(padding: EdgeInsets.all(16), children: [
-        SizedBox(height: 6),
+      appBar: AppBar(title: newsElem == null ? const Text("Lädt") : null),
+      body: ListView(padding: const EdgeInsets.all(16), children: [
+        const SizedBox(height: 6),
         Text(
           newsElem!.title,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Opacity(
           opacity: 0.87,
           child: Text(
             newsElem!.dateCreated.realDate != null ? time2string(newsElem!.dateCreated.realDate!) : newsElem!.dateCreated.date,
-            style: TextStyle(fontSize: 15),
+            style: const TextStyle(fontSize: 15),
           ),
         ),
         if (newsElem!.dateUpdated != null)
@@ -257,12 +254,12 @@ class _SchuelerratNachrichtPageState extends State<SchuelerratNachrichtPage> {
             opacity: 0.87,
             child: Text(
               "Geändert: " + (newsElem!.dateUpdated?.realDate != null ? time2string(newsElem!.dateUpdated!.realDate!) : newsElem!.dateUpdated!.date),
-              style: TextStyle(fontSize: 15),
+              style: const TextStyle(fontSize: 15),
             ),
           ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         Card(
-            margin: EdgeInsets.all(0),
+            margin: const EdgeInsets.all(0),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Html(data: newsElem!.content),

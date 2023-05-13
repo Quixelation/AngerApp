@@ -22,7 +22,7 @@ class _HipLoginPageState extends State<HipLoginPage> {
       child: Scaffold(
           appBar: AppBar(title: const Text("Noten")),
           body: ListView(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             children: [
               const SizedBox(height: 32),
               Text(
@@ -50,25 +50,25 @@ class _HipLoginPageState extends State<HipLoginPage> {
                 children: [
                   TextFormField(
                     controller: usernameController,
-                    autofillHints: [AutofillHints.username],
+                    autofillHints: const [AutofillHints.username],
                     decoration: InputDecoration(
                         errorText: loginAttempt == false
                             ? "Falscher Benutzername oder Passwort"
                             : null,
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                         labelText: "Benutzername"),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: passwordController,
-                    autofillHints: [AutofillHints.password],
+                    autofillHints: const [AutofillHints.password],
                     obscureText: true,
                     decoration: InputDecoration(
                       errorText: loginAttempt == false
                           ? "Falscher Benutzername oder Passwort"
                           : null,
                       labelText: "Passwort",
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ],

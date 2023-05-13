@@ -1,7 +1,7 @@
 part of matrix;
 
 class _MatrixSettingsSecurity extends StatefulWidget {
-  const _MatrixSettingsSecurity({super.key});
+  const _MatrixSettingsSecurity();
 
   @override
   State<_MatrixSettingsSecurity> createState() => __MatrixSettingsSecurityState();
@@ -11,20 +11,20 @@ class __MatrixSettingsSecurityState extends State<_MatrixSettingsSecurity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Sicherheit")),
+        appBar: AppBar(title: const Text("Sicherheit")),
         body: ListView(
           children: [
             ListTile(
-              title: Text("Verschlüsselung aktiviert"),
+              title: const Text("Verschlüsselung aktiviert"),
               trailing: Icon(AngerApp.matrix.client.encryption?.enabled ?? false ? Icons.check : Icons.close),
             ),
             ListTile(
-              title: Text("CrossSigning aktiviert"),
+              title: const Text("CrossSigning aktiviert"),
               trailing: Icon(AngerApp.matrix.client.encryption?.crossSigning.enabled ?? false ? Icons.check : Icons.close),
             ),
-            ListTile(title: Text("SSSS defaultKeyId"), subtitle: Text(AngerApp.matrix.client.encryption?.ssss.defaultKeyId ?? "<none>")),
+            ListTile(title: const Text("SSSS defaultKeyId"), subtitle: Text(AngerApp.matrix.client.encryption?.ssss.defaultKeyId ?? "<none>")),
             ListTile(
-              title: Text("SSSS Schlüssel erstellen"),
+              title: const Text("SSSS Schlüssel erstellen"),
               onTap: () async {
                 final _textController = TextEditingController();
                 await showDialog(
@@ -33,14 +33,14 @@ class __MatrixSettingsSecurityState extends State<_MatrixSettingsSecurity> {
                     return AlertDialog(
                         actions: [
                           TextButton(
-                              child: Text("ok"),
+                              child: const Text("ok"),
                               onPressed: () {
                                 Navigator.of(context2).pop();
                               }),
                         ],
                         content: TextField(
                           controller: _textController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: "Passwort",
                           ),
                         ));

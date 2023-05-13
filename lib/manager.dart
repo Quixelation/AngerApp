@@ -1,7 +1,4 @@
-import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
-import 'package:anger_buddy/logic/feedback/feedback.dart';
-import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/network/serverstatus.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:calendar_view/calendar_view.dart';

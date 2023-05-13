@@ -49,22 +49,22 @@ class _HipDataPageState extends State<HipDataPage>
                       context: context,
                       builder: (context2) {
                         return AlertDialog(
-                          title: Text("Ausloggen"),
-                          content: Text(
+                          title: const Text("Ausloggen"),
+                          content: const Text(
                               "Willst du dich wirklich von cevex Home.InfoPoint ausloggen? Wenn nur du die App verwendest ist das nicht nötig."),
                           actions: [
                             ElevatedButton.icon(
                                 onPressed: () {
                                   Navigator.pop(context2, false);
                                 },
-                                icon: Icon(Icons.close),
-                                label: Text("Abbrechen")),
+                                icon: const Icon(Icons.close),
+                                label: const Text("Abbrechen")),
                             FilledButton.icon(
                                 onPressed: () {
                                   Navigator.pop(context2, true);
                                 },
-                                icon: Icon(Icons.logout),
-                                label: Text("Ausloggen"))
+                                icon: const Icon(Icons.logout),
+                                label: const Text("Ausloggen"))
                           ],
                         );
                       });
@@ -76,7 +76,7 @@ class _HipDataPageState extends State<HipDataPage>
               onPressed: () {
                 launchURL(AngerApp.hip.homeUrl, context);
               },
-              icon: Icon(Icons.open_in_new),
+              icon: const Icon(Icons.open_in_new),
               tooltip: "In Browser öffnen",
             )
           ],
@@ -89,23 +89,23 @@ class _HipDataPageState extends State<HipDataPage>
                 selectedIndex = index;
               });
             },
-            destinations: [
+            destinations: const [
               NavigationDestination(icon: Icon(Icons.web), label: "Webseite"),
               NavigationDestination(
                   icon: Icon(Icons.lightbulb_outline), label: "Inteligent"),
             ]),
         body: (htmlData == null)
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : TabBarView(
                 physics: const NeverScrollableScrollPhysics(),
                 controller: tabController,
                 children: [
                     _HipBrowserView(),
                     if (hipData == null)
-                      Center(child: CircularProgressIndicator())
+                      const Center(child: CircularProgressIndicator())
                     else
                       ListView(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         children: [
                           ...hipData!.faecher.map((e) => HipNotenCard(e))
                         ],
@@ -115,7 +115,7 @@ class _HipDataPageState extends State<HipDataPage>
 }
 
 class _HipBrowserView extends StatelessWidget {
-  _HipBrowserView({super.key});
+  _HipBrowserView();
 
   final Completer<web.WebViewController> _controller =
       Completer<web.WebViewController>();
@@ -195,21 +195,21 @@ class _HipNotenCardState extends State<HipNotenCard> {
                         widget.hipFach.name,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         widget.hipFach.teacher,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Opacity(
                     opacity: 0.87,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Icon(Icons.keyboard_arrow_down),
-                        SizedBox(height: 4),
+                        const Icon(Icons.keyboard_arrow_down),
+                        const SizedBox(height: 4),
                         Text(
                           "${widget.hipFach.noten.length} Noten",
                           style: Theme.of(context).textTheme.bodySmall,
@@ -237,7 +237,7 @@ class _HipNotenCardState extends State<HipNotenCard> {
                                   e.note.toString(),
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 16,
                                 ),
                                 Expanded(
@@ -266,14 +266,14 @@ class _HipNotenCardState extends State<HipNotenCard> {
                                   e.semester.toString(),
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 16,
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             if (index != (widget.hipFach.noten.length - 1))
-                              Divider(height: 2)
+                              const Divider(height: 2)
                           ],
                         ),
                       ))

@@ -93,10 +93,10 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text("Lehrer-Ansicht"),
-                              SizedBox(width: 8),
+                              const Text("Lehrer-Ansicht"),
+                              const SizedBox(width: 8),
                               Chip(
-                                label: Opacity(
+                                label: const Opacity(
                                   opacity: 0.87,
                                   child: Text(
                                     "BETA",
@@ -106,13 +106,13 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
                               )
                             ],
                           ),
-                          leading: Icon(Icons.person),
+                          leading: const Icon(Icons.person),
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => _VpLehrerDateils(detailData!.details!)));
                           },
                           trailing: Icon(Icons.adaptive.arrow_forward),
                         ),
-                        Divider(),
+                        const Divider(),
                       ],
                       if (widget.vpItem.downloaded) downloadedCard(),
                       ...(() {
@@ -440,7 +440,7 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
             opacity: 0.87,
             child: RichText(
                 softWrap: true,
-                text: TextSpan(style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyText1!.color), children: [
+                text: TextSpan(style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge!.color), children: [
                   TextSpan(text: e.fach.content, style: TextStyle(fontWeight: FontWeight.bold, color: e.fach.changed ? Colors.red : null)),
                   const TextSpan(),
                   (() {

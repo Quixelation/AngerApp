@@ -42,8 +42,8 @@ class _WpImagesPageState extends State<WpImagesPage> {
         showDialog(
             context: context,
             builder: (context2) => AlertDialog(
-                  title: Text("Fehler"),
-                  content: Text("Es gab einen Fehler beim Laden der Bilder"),
+                  title: const Text("Fehler"),
+                  content: const Text("Es gab einen Fehler beim Laden der Bilder"),
                   actions: [
                     TextButton.icon(
                         onPressed: () {
@@ -51,13 +51,13 @@ class _WpImagesPageState extends State<WpImagesPage> {
                           Navigator.of(context).pop();
                         },
                         icon: Icon(Icons.adaptive.arrow_back),
-                        label: Text("Zurück")),
+                        label: const Text("Zurück")),
                     TextButton.icon(
                         onPressed: () {
                           Navigator.of(context2).pop();
                         },
-                        icon: Icon(Icons.check_circle_outline),
-                        label: Text("ok"))
+                        icon: const Icon(Icons.check_circle_outline),
+                        label: const Text("ok"))
                   ],
                 ));
         setState(() {
@@ -136,7 +136,7 @@ class _WpImagesPageState extends State<WpImagesPage> {
                   "Größe: ${imageGridSize / 100}",
                   style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
               ],
             ),
             color: Theme.of(context).colorScheme.primary),
@@ -171,7 +171,7 @@ class _WpImagesPageState extends State<WpImagesPage> {
                               imageUrl: images[index].mediaDetails!.sizes?.thumbnail.sourceUrl ?? images[index].sourceUrl,
                               progressIndicatorBuilder: (context, url, downloadProgress) =>
                                   Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-                              errorWidget: (context, url, error) => Icon(
+                              errorWidget: (context, url, error) => const Icon(
                                     Icons.broken_image,
                                     color: Colors.red,
                                   )),

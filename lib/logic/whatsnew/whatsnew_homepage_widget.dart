@@ -38,7 +38,7 @@ class _WhatsnewHomepageWidgetState extends State<WhatsnewHomepageWidget> {
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => _WhatsnewPage(AngerApp.whatsnew.currentVersion)));
                 },
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: ShaderMask(
                     blendMode: BlendMode.srcIn,
                     shaderCallback: (bounds) => LinearGradient(
@@ -52,24 +52,24 @@ class _WhatsnewHomepageWidgetState extends State<WhatsnewHomepageWidget> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(Icons.new_releases_outlined),
-                        SizedBox(width: 16),
+                        const Icon(Icons.new_releases_outlined),
+                        const SizedBox(width: 16),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
+                            const Text(
                               "AngerApp wurde geupdatet!",
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 4,
                             ),
                             Text("Sieh dir an, was in v${AngerApp.whatsnew.pkgInfo.version} neu ist.")
                           ],
                         ),
                         Expanded(child: Container()),
-                        Icon(Icons.keyboard_arrow_right)
+                        const Icon(Icons.keyboard_arrow_right)
                       ],
                     ),
                   ),

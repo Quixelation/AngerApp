@@ -13,7 +13,7 @@ class MessagingChatNotice extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         child: InkWell(
           onTap: ((getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) && matrixEvent != null)
               ? () {
@@ -29,7 +29,7 @@ class MessagingChatNotice extends StatelessWidget {
               : null,
           child: Card(
               child: Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Opacity(
               opacity: 0.67,
               child: Row(

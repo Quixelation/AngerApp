@@ -78,7 +78,7 @@ class PageAbout extends StatelessWidget {
           const Divider(),
           ListTile(
               title: const Text("Das Team"),
-              leading: Icon(Icons.group),
+              leading: const Icon(Icons.group),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
                 Navigator.push(context,
@@ -86,7 +86,7 @@ class PageAbout extends StatelessWidget {
               }),
           ListTile(
               title: const Text("Änderungsverlauf"),
-              leading: Icon(Icons.history),
+              leading: const Icon(Icons.history),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
                 Navigator.push(
@@ -96,10 +96,10 @@ class PageAbout extends StatelessWidget {
               }),
           ListTile(
             title: const Text("Datenbank-Einsicht"),
-            trailing: Icon(
+            trailing: const Icon(
               Icons.keyboard_arrow_right,
             ),
-            leading: Icon(
+            leading: const Icon(
               Icons.table_rows,
             ),
             onTap: () {
@@ -111,7 +111,7 @@ class PageAbout extends StatelessWidget {
           ),
           ListTile(
               title: const Text("Lizensen"),
-              leading: Icon(Icons.policy),
+              leading: const Icon(Icons.policy),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () async {
                 PackageInfo packageInfo = await PackageInfo.fromPlatform();

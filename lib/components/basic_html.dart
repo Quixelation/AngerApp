@@ -1,5 +1,4 @@
 import 'package:anger_buddy/utils/url.dart';
-import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_html/flutter_html.dart';
 

@@ -1,4 +1,3 @@
-import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/jsp/jsp.dart';
 import 'package:flutter/material.dart';
 
@@ -39,14 +38,14 @@ class _JspLoginPageState extends State<JspLoginPage> {
                 const SizedBox(
                   height: 75,
                 ),
-                Card(
+                const Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: EdgeInsets.all(12.0),
                     child: Opacity(
                       opacity: 0.87,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
+                        children: [
                           Icon(Icons.lightbulb_outline),
                           SizedBox(height: 8),
                           Text("Die folgende Seite erfordert eine Anmeldung beim Jenaer Schulportal."),

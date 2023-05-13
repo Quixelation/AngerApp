@@ -31,13 +31,13 @@ class _OpenSensePageState extends State<OpenSensePage> {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
-                content: Text("Es gab einen Fehler beim Laden der Daten"),
+                content: const Text("Es gab einen Fehler beim Laden der Daten"),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: Text("Ok"))
+                      child: const Text("Ok"))
                 ],
               ));
       setState(() {
@@ -47,14 +47,14 @@ class _OpenSensePageState extends State<OpenSensePage> {
   }
 
   final List<Map<String, dynamic>> timespans = [
-    {"date_start": DateTime.now().subtract(Duration(days: 7)), "title": "7D"},
-    {"date_start": DateTime.now().subtract(Duration(days: 30)), "title": "1M"},
+    {"date_start": DateTime.now().subtract(const Duration(days: 7)), "title": "7D"},
+    {"date_start": DateTime.now().subtract(const Duration(days: 30)), "title": "1M"},
     {
-      "date_start": DateTime.now().subtract(Duration(days: 30 * 3)),
+      "date_start": DateTime.now().subtract(const Duration(days: 30 * 3)),
       "title": "3M"
     },
     {
-      "date_start": DateTime.now().subtract(Duration(days: 30 * 12)),
+      "date_start": DateTime.now().subtract(const Duration(days: 30 * 12)),
       "title": "1J"
     },
   ];
@@ -64,24 +64,24 @@ class _OpenSensePageState extends State<OpenSensePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("openSense-Box"),
+          title: const Text("openSense-Box"),
           actions: [
             IconButton(
                 onPressed: () {
                   Services.openSense.init();
                 },
-                icon: Icon(Icons.refresh))
+                icon: const Icon(Icons.refresh))
           ],
         ),
         body: ListView(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
+            const Padding(
+              padding: EdgeInsets.only(
                   top: 24.0, left: 16, right: 16, bottom: 8),
               child: Opacity(
                 opacity: 0.87,
                 child: Row(
-                  children: const [
+                  children: [
                     Icon(Icons.lightbulb_outline),
                     SizedBox(width: 12),
                     Flexible(
@@ -160,7 +160,7 @@ class _OpenSensePageState extends State<OpenSensePage> {
               )
             else if (dataForSensor != null)
               Padding(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: Card(
                     child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -182,17 +182,17 @@ class _OpenSensePageState extends State<OpenSensePage> {
                       Opacity(
                           opacity: 0.87,
                           child: Text(
-                              "Erstes Datum: ${(time2string(dataForSensor!.first.createdAt as DateTime, includeTime: false, includeWeekday: false, useStringMonth: true))} ")),
+                              "Erstes Datum: ${(time2string(dataForSensor!.first.createdAt, includeTime: false, includeWeekday: false, useStringMonth: true))} ")),
                       const SizedBox(height: 4),
                       Opacity(
                           opacity: 0.87,
                           child: Text(
-                              "Letztes Datum: ${(time2string(dataForSensor!.last.createdAt as DateTime, includeTime: false, includeWeekday: false, useStringMonth: true))} "))
+                              "Letztes Datum: ${(time2string(dataForSensor!.last.createdAt, includeTime: false, includeWeekday: false, useStringMonth: true))} "))
                     ],
                   ),
                 )),
               ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: OutlinedButton.icon(
@@ -201,8 +201,8 @@ class _OpenSensePageState extends State<OpenSensePage> {
                       "https://opensensemap.org/explore/61dad928bfd633001c618c6a",
                       context);
                 },
-                label: Text("Zur Webseite"),
-                icon: Icon(Icons.open_in_new),
+                label: const Text("Zur Webseite"),
+                icon: const Icon(Icons.open_in_new),
               ),
             )
           ],
