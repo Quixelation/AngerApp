@@ -43,6 +43,8 @@ class JspFilesClient {
           ? NextcloudClient(
               'https://nextcloud.jsp.jena.de',
               appType: AppType.nextcloud,
+              loginName: username,
+              userAgentOverride: "AngerApp<angerapp@robertstuendl.com>",
               username: username,
               password: password,
             )
@@ -77,16 +79,18 @@ class JspFilesClient {
         throw ErrorDescription("no WebDavClient");
       }
 
-      // var list = await client!.webdav
-      //     .ls(dir, props: {WebDavProps.ocFileId.name, WebDavProps.ncHasPreview.name, WebDavProps.ocId.name, WebDavProps.davContentType.name});
+      //  .ls(dir, props: {WebDavProps.ocFileId.name, WebDavProps.ncHasPreview.name, WebDavProps.ocId.name, WebDavProps.davContentType.name});
 
-      // list.forEach((f) {
-      //   logger.d('${f.name} ${f.path}');
-      // });
+      var list = await client!.webdav
+          .ls(dir, prop: WebDavPropfindProp(davgetcontenttype: ["name"], ocid: ["name"], nchaspreview: ["name"], ocfileid: ["name"]));
 
-      // return list;
+      var files = list.toWebDavFiles(client!.webdav);
 
-      return [];
+      files.forEach((f) {
+        logger.d('${f.name} ${f.path}');
+      });
+
+      return files;
     } catch (err) {
       logger.e(err);
       rethrow;

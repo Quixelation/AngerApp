@@ -40,9 +40,7 @@ class _FileExplorerState extends State<FileExplorer> {
       appBar: AppBar(
         title: Text(widget.dir == "/"
             ? "JSP-Cloud"
-            : widget.dir
-                .substring(0, widget.dir.length - 1)
-                .substring(widget.dir.substring(0, widget.dir.length - 1).lastIndexOf("/"))),
+            : widget.dir.substring(0, widget.dir.length - 1).substring(widget.dir.substring(0, widget.dir.length - 1).lastIndexOf("/"))),
       ),
       floatingActionButton: widget.dir != "/"
           ? FloatingActionButton(
@@ -81,7 +79,7 @@ class _FileExplorerState extends State<FileExplorer> {
   }
 
   List<Widget> emptyStateManager() {
-    List<Widget> items = (files ?? []).map((e) => _FileListTile(e)).toList();
+    List<Widget> items = (files ?? []).map((e) => _FileListTile(e) as Widget).toList();
     if (items.isEmpty) {
       items.add(const Padding(
         padding: EdgeInsets.only(top: 8.0),
@@ -111,8 +109,7 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
       logger.w("No FIle Preview");
       return;
     }
-    logger.d(
-        "Loading Preview ${widget.file!.path} :: ${widget.file?.id} :: ${widget.file?.fileId} :: ${widget.file?.etag}");
+    logger.d("Loading Preview ${widget.file!.path} :: ${widget.file?.id} :: ${widget.file?.fileId} :: ${widget.file?.etag}");
 
     var _preview = await Services.files.getPreview(widget.file!);
 
@@ -214,8 +211,7 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
           ? null
           : (widget.file?.isDirectory ?? false)
               ? () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => FileExplorer(widget.file?.path ?? "/")));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileExplorer(widget.file?.path ?? "/")));
                 }
               : () async {
                   showModalBottomSheet(
