@@ -24,6 +24,8 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import "package:sembast/sembast.dart";
 import "package:sembast/sembast.dart" as sb;
+import 'package:tinycolor2/tinycolor2.dart';
+import "./../../components/mini_webview.dart";
 
 part 'package:anger_buddy/logic/vertretungsplan/vp_types.dart';
 part 'package:anger_buddy/logic/vertretungsplan/vp_utils.dart';
@@ -61,7 +63,7 @@ class VertretungsplanManager {
 
   Future<VpDetailsFetchResponse> fetchDetailsApi(VertretungsPlanItem vp) async {
     logger.d("Fetching details for ${vp.uniqueName}");
-    var response = await http.get(Uri.parse(AppManager.urls.vpdetail(vp.contentUrl.toString())), headers: {
+    var response = await http.get(Uri.parse(AppManager.urls.vpdetail(vp.contentUrl.toString().replaceAll("&device=mobile", ""))), headers: {
       "encoding": "utf-8",
     });
 
@@ -232,7 +234,6 @@ class _VpDatabaseManager {
       return;
     } catch (e) {
       //TODO: give user information about error
-
     }
   }
 }

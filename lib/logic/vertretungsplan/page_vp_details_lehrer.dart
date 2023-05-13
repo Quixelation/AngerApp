@@ -25,14 +25,8 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
     Set lehrer = {};
     for (var element in widget.detailData.tableRows) {
       List<String> names = [
-        ...lehrerNameRegEx
-            .allMatches(element.lehrer.content)
-            .map((e) => element.lehrer.content.substring(e.start, e.end))
-            .toList(),
-        ...lehrerNameRegEx
-            .allMatches(element.info.content)
-            .map((e) => element.info.content.substring(e.start, e.end))
-            .toList()
+        ...lehrerNameRegEx.allMatches(element.lehrer.content).map((e) => element.lehrer.content.substring(e.start, e.end)).toList(),
+        ...lehrerNameRegEx.allMatches(element.info.content).map((e) => element.info.content.substring(e.start, e.end)).toList()
       ];
       for (var name in names) {
         if (data[name] == null) {
@@ -51,8 +45,7 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
             children: [
               Text(
                 e.stunde.content,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.right,
               ),
             ],
@@ -73,72 +66,43 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
                 const SizedBox(height: 2),
                 RichText(
                     softWrap: true,
-                    text: TextSpan(
-                        style: TextStyle(
-                            fontSize: 16,
-                            color:
-                                Theme.of(context).textTheme.bodyLarge!.color),
-                        children: [
-                          TextSpan(
-                              text: e.fach.content,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: e.fach.changed ? Colors.red : null)),
-                          const TextSpan(),
-                          (() {
-                            if (e.lehrer.content.trim() != "") {
-                              return TextSpan(children: [
-                                const TextSpan(text: " mit "),
-                                TextSpan(
-                                    text: e.lehrer.content,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: e.lehrer.changed
-                                            ? Colors.red
-                                            : null)),
-                              ]);
-                            } else {
-                              return const TextSpan();
-                            }
-                          }()),
-                          (() {
-                            if (e.fach.content.trim() == "---") {
-                              return const TextSpan();
-                            } else if (e.raum.content.trim() == "") {
-                              return TextSpan(children: [
-                                TextSpan(
-                                  text: " (kein Raum)",
-                                  style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      color:
-                                          e.raum.changed ? Colors.red : null),
-                                ),
-                              ]);
-                            } else if ((int.tryParse(e.raum.content)) != null) {
-                              return TextSpan(children: [
-                                const TextSpan(text: " in Raum "),
-                                TextSpan(
-                                    text: e.raum.content,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: e.raum.changed
-                                            ? Colors.red
-                                            : null)),
-                              ]);
-                            } else {
-                              return TextSpan(children: [
-                                const TextSpan(text: " in "),
-                                TextSpan(
-                                    text: e.raum.content,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: e.raum.changed
-                                            ? Colors.red
-                                            : null)),
-                              ]);
-                            }
-                          }()),
-                        ]))
+                    text: TextSpan(style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge!.color), children: [
+                      TextSpan(text: e.fach.content, style: TextStyle(fontWeight: FontWeight.bold, color: e.fach.changed ? Colors.red : null)),
+                      const TextSpan(),
+                      (() {
+                        if (e.lehrer.content.trim() != "") {
+                          return TextSpan(children: [
+                            const TextSpan(text: " mit "),
+                            TextSpan(
+                                text: e.lehrer.content, style: TextStyle(fontWeight: FontWeight.bold, color: e.lehrer.changed ? Colors.red : null)),
+                          ]);
+                        } else {
+                          return const TextSpan();
+                        }
+                      }()),
+                      (() {
+                        if (e.fach.content.trim() == "---") {
+                          return const TextSpan();
+                        } else if (e.raum.content.trim() == "") {
+                          return TextSpan(children: [
+                            TextSpan(
+                              text: " (kein Raum)",
+                              style: TextStyle(fontStyle: FontStyle.italic, color: e.raum.changed ? Colors.red : null),
+                            ),
+                          ]);
+                        } else if ((int.tryParse(e.raum.content)) != null) {
+                          return TextSpan(children: [
+                            const TextSpan(text: " in Raum "),
+                            TextSpan(text: e.raum.content, style: TextStyle(fontWeight: FontWeight.bold, color: e.raum.changed ? Colors.red : null)),
+                          ]);
+                        } else {
+                          return TextSpan(children: [
+                            const TextSpan(text: " in "),
+                            TextSpan(text: e.raum.content, style: TextStyle(fontWeight: FontWeight.bold, color: e.raum.changed ? Colors.red : null)),
+                          ]);
+                        }
+                      }()),
+                    ]))
               ],
             ),
           ),
@@ -149,12 +113,8 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
   List<Widget> generateVpCardList(int dataIndex, BuildContext context) {
     var sortedList = data.values.toList()[dataIndex];
     sortedList.sort((a, b) =>
-        ((int.tryParse(a.stunde.content) ??
-                int.tryParse(a.stunde.content.substring(0, 1))) ??
-            0) -
-        ((int.tryParse(b.stunde.content) ??
-                int.tryParse(b.stunde.content.substring(0, 1))) ??
-            0));
+        ((int.tryParse(a.stunde.content) ?? int.tryParse(a.stunde.content.substring(0, 1))) ?? 0) -
+        ((int.tryParse(b.stunde.content) ?? int.tryParse(b.stunde.content.substring(0, 1))) ?? 0));
 
     List<Widget> list = [];
     for (var i = 0; i < (data.values.toList()[dataIndex].length * 2); i++) {
@@ -190,16 +150,13 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
                   child: ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (context, index) {
-                      if (searchController.text.trim() != "" &&
-                          !lowerCased.toList()[index].contains(
-                              searchController.text.trim().toLowerCase())) {
+                      if (searchController.text.trim() != "" && !lowerCased.toList()[index].contains(searchController.text.trim().toLowerCase())) {
                         return Container();
                       }
                       return ExpandableNotifier(
                           child: ScrollOnExpand(
                               child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                         child: Card(
                           child: Expandable(
                             collapsed: ExpandableButton(
@@ -208,48 +165,31 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
                                 trailing: const Icon(Icons.navigate_next),
                               ),
                             ),
-                            expanded: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10.0, bottom: 8),
-                                    child: ExpandableButton(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8),
-                                            child: Icon(Icons.navigate_before),
-                                          ),
-                                          Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    "Vertretung (${data.values.toList()[index].length} ${data.values.toList()[index].length == 1 ? 'Eintrag' : 'Einträge'})"),
-                                                Text(data.keys.toList()[index],
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .secondary,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 20)),
-                                              ])
-                                        ],
+                            expanded: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10.0, bottom: 8),
+                                child: ExpandableButton(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 8),
+                                        child: Icon(Icons.navigate_before),
                                       ),
-                                    ),
+                                      Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                        Text(
+                                            "Vertretung (${data.values.toList()[index].length} ${data.values.toList()[index].length == 1 ? 'Eintrag' : 'Einträge'})"),
+                                        Text(data.keys.toList()[index],
+                                            style:
+                                                TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold, fontSize: 20)),
+                                      ])
+                                    ],
                                   ),
-                                  ...generateVpCardList(index, context)
-                                ]),
+                                ),
+                              ),
+                              ...generateVpCardList(index, context)
+                            ]),
                           ),
                         ),
                       )));
@@ -257,28 +197,28 @@ class _VpLehrerDateilsState extends State<_VpLehrerDateils> {
                   ),
                 ),
                 Card(
+                  color: Theme.of(context).colorScheme.primary.shade(10),
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16)),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
                   ),
                   margin: const EdgeInsets.all(0),
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16, right: 16, top: 16, bottom: 32),
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32),
                     child: TextFormField(
                       onChanged: (value) {
                         setState(() {});
                       },
                       autocorrect: false,
                       controller: searchController,
+                      style: TextStyle(color: Colors.blueGrey.shade50),
                       decoration: InputDecoration(
                           border: const OutlineInputBorder(),
+                          labelStyle: TextStyle(color: Colors.blueGrey.shade50),
                           labelText: "Suche / Filter",
-                          hintText:
-                              "Tipp: Versuche es ohne \"Herr\" oder \"Frau\"",
-                          prefixIcon: Icon(Icons.search,
-                              color: Theme.of(context).colorScheme.primary)),
+                          prefixIconColor: Colors.blueGrey.shade200,
+                          hintStyle: TextStyle(color: Colors.blueGrey.shade200),
+                          hintText: "Tipp: Versuche es ohne \"Herr\" oder \"Frau\"",
+                          prefixIcon: Icon(Icons.search, color: Colors.blueGrey.shade200)),
                     ),
                   ),
                 ),

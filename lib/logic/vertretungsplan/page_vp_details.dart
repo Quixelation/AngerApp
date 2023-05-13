@@ -251,42 +251,46 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
               : const Center(child: CircularProgressIndicator.adaptive()),
           detailData == null
               ? const Center(child: CircularProgressIndicator.adaptive())
-              : InteractiveViewer(
-                  constrained: false,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 500),
-                    child: Html(
-                      shrinkWrap: true,
+              : MiniWebView(
+                  htmlString: detailData!.details?.html ?? detailData!.html ?? "KEINE DATEN",
+                )
+          // InteractiveViewer(
+          //     constrained: false,
+          //     child: ConstrainedBox(
+          //         constraints: const BoxConstraints(maxWidth: 500),
+          //         child:
+          // Html(
+          //   shrinkWrap: true,
 
-                      data: detailData!.details?.html ?? detailData!.html,
-                      // from the official styling of the vp
-                      style: {
-                        "*": Style(
-                            backgroundColor: Colors.white,
-                            //TODO: Thats too small
-                            fontSize: FontSize(14, Unit.px)),
-                        ".changed": Style(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        "h1": Style(fontSize: FontSize(130, Unit.percent)),
-                        "h2": Style(fontSize: FontSize(120, Unit.percent)),
-                        "tr": Style(),
-                        "td": Style(
-                            padding: const EdgeInsets.all(10),
-                            backgroundColor: const Color(0xFFe8edff),
-                            border: const Border(bottom: BorderSide(width: 1, color: Colors.white))),
-                        "th": Style(
-                            fontWeight: FontWeight.bold,
-                            padding: const EdgeInsets.all(8),
-                            color: const Color(0xffe8edff),
-                            backgroundColor: const Color(0xFF678FAF),
-                            border: const Border(
-                                top: BorderSide(width: 2, color: Color(0xff5586AF)), bottom: BorderSide(width: 2, color: Color(0xff3A5063))))
-                      },
-                    ),
-                  ),
-                ),
+          //   data: detailData!.details?.html ?? detailData!.html,
+          //   // from the official styling of the vp
+          //   style: {
+          //     "*": Style(
+          //         backgroundColor: Colors.white,
+          //         //TODO: Thats too small
+          //         fontSize: FontSize(14, Unit.px)),
+          //     ".changed": Style(
+          //       color: Colors.red,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //     "h1": Style(fontSize: FontSize(130, Unit.percent)),
+          //     "h2": Style(fontSize: FontSize(120, Unit.percent)),
+          //     "tr": Style(),
+          //     "td": Style(
+          //         padding: const EdgeInsets.all(10),
+          //         backgroundColor: const Color(0xFFe8edff),
+          //         border: const Border(bottom: BorderSide(width: 1, color: Colors.white))),
+          //     "th": Style(
+          //         fontWeight: FontWeight.bold,
+          //         padding: const EdgeInsets.all(8),
+          //         color: const Color(0xffe8edff),
+          //         backgroundColor: const Color(0xFF678FAF),
+          //         border: const Border(
+          //             top: BorderSide(width: 2, color: Color(0xff5586AF)), bottom: BorderSide(width: 2, color: Color(0xff3A5063))))
+          //   },
+          // ),
+          //       ),
+          // ),
         ]),
       ),
     );
