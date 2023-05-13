@@ -139,6 +139,7 @@ final List<_WhatsnewUpdate> _whatsnewUpdates = [
     _WhatsnewEntry(_ChangeType.improvement,
         "**Homepage-Bottomnav:** Auf der Homepage ist nun eine Navigationsleiste um schnell zu den Chats zu gelangen. Diese kann in den Einstellungen deaktiviert werden"),
     _WhatsnewEntry(_ChangeType.cosmetic, "**Einstellungen & \"Über\":** Ein kleines Design-Update mit Icons"),
+    _WhatsnewEntry(_ChangeType.cosmetic, "Die AngerApp wurde nun teilweise auf das neue Material 3 Design von Google/Flutter umgestellt"),
     _WhatsnewEntry(_ChangeType.improvement, "**Homepage:** Keine komischen Abstände zwischen den Widgets mehr!")
   ])
 ];
