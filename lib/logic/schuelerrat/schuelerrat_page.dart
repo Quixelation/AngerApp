@@ -184,7 +184,7 @@ class __SrNewsPageState extends State<_SrNewsPage> {
                       style: {
                         '#': Style(
                           padding: EdgeInsets.all(0),
-                          margin: EdgeInsets.all(0),
+                          margin: Margins.all(0),
                           maxLines: 2,
                           color: Theme.of(context).colorScheme.onSurface.withAlpha(187),
                           textOverflow: TextOverflow.ellipsis,

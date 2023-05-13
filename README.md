@@ -9,31 +9,30 @@
  
 ---
 
-Die App für Schüler*innen am Angergymnasium Jena.
+Die App für Schüler\*innen am Angergymnasium Jena.
 
-> Die AngerApp bietet Schüler*innen des Angergymnasium Jena einen schnellen und intuitiven Zugriff zu vielen wichtigen, den Schulalltag betreffende, Informationen.
-
-
-
-
+> Die AngerApp bietet Schüler\*innen des Angergymnasium Jena einen schnellen und intuitiven Zugriff zu vielen wichtigen, den Schulalltag betreffende, Informationen.
 
 ## Installation / Benutzung
 
-Android|IOS|Web
----|---|---
-Coming Soon | Web-App benutzen | [Web-App (keine Installation erforderlich)](https://angergymapp.robertstuendl.com) 
+| Android     | IOS              | Web                                                                                |
+| ----------- | ---------------- | ---------------------------------------------------------------------------------- |
+| Coming Soon | Web-App benutzen | [Web-App (keine Installation erforderlich)](https://angergymapp.robertstuendl.com) |
 
-    
 ## Screenshots
-<img width="960" alt="AngerAppUnbenannt" src="https://user-images.githubusercontent.com/58915890/158062097-03f55944-699a-453d-80b8-3849e052bf81.png">
 
+<img width="960" alt="AngerAppUnbenannt" src="https://user-images.githubusercontent.com/58915890/158062097-03f55944-699a-453d-80b8-3849e052bf81.png">
 
 ## Support
 
 Für Fragen oder Support kann man mich mit einer E-Mail an angerapp@robertstuendl.com erreichen.
 
+## Dev
+
+Projekt benutzt Flutter 3.7.0
+
+https://fvm.app/docs/guides/running_flutter
 
 ## License
 
 [GNU General Public License v3.0](LICENSE)
-

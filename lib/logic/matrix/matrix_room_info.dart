@@ -72,44 +72,47 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                       child: InkWell(
                         onTap: widget.room.ownPowerLevel >= widget.room.powerForChangingStateEvent("m.room.avatar")
                             ? () async {
-                                final bytes = await _getCroppedLibraryImage(context);
-                                if (bytes == null) return;
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(content: Text("Bitte benutze die Webseite, um das Avatar zu ändern.")));
 
-                                try {
-                                  await widget.room.setAvatar(MatrixFile(bytes: bytes, name: const uuid.Uuid().v4()));
-                                  showDialog(
-                                      context: context,
-                                      builder: (context2) => AlertDialog(
-                                            title: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: const [Text("Erfolgreich"), SizedBox(width: 4), Icon(Icons.check)],
-                                            ),
-                                            content: const Text("Es könnte einen Augenblick dauern, bis die Änderung erkennbar ist."),
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context2).pop();
-                                                  },
-                                                  child: const Text("ok"))
-                                            ],
-                                          ));
-                                } catch (err) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context2) => AlertDialog(
-                                      title: const Text("Fehler"),
-                                      content: Text(err.toString()),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context2).pop();
-                                            },
-                                            child: const Text("ok"))
-                                      ],
-                                    ),
-                                  );
-                                }
+                                // final bytes = await _getCroppedLibraryImage(context);
+                                // if (bytes == null) return;
+
+                                // try {
+                                //   await widget.room.setAvatar(MatrixFile(bytes: bytes, name: const uuid.Uuid().v4()));
+                                //   showDialog(
+                                //       context: context,
+                                //       builder: (context2) => AlertDialog(
+                                //             title: Row(
+                                //               mainAxisSize: MainAxisSize.min,
+                                //               crossAxisAlignment: CrossAxisAlignment.center,
+                                //               children: const [Text("Erfolgreich"), SizedBox(width: 4), Icon(Icons.check)],
+                                //             ),
+                                //             content: const Text("Es könnte einen Augenblick dauern, bis die Änderung erkennbar ist."),
+                                //             actions: [
+                                //               TextButton(
+                                //                   onPressed: () {
+                                //                     Navigator.of(context2).pop();
+                                //                   },
+                                //                   child: const Text("ok"))
+                                //             ],
+                                //           ));
+                                // } catch (err) {
+                                //   showDialog(
+                                //     context: context,
+                                //     builder: (context2) => AlertDialog(
+                                //       title: const Text("Fehler"),
+                                //       content: Text(err.toString()),
+                                //       actions: [
+                                //         TextButton(
+                                //             onPressed: () {
+                                //               Navigator.of(context2).pop();
+                                //             },
+                                //             child: const Text("ok"))
+                                //       ],
+                                //     ),
+                                //   );
+                                // }
                               }
                             : null,
                         child: AngerApp.matrix.buildAvatar(context, widget.room.avatar, showLogo: false, room: widget.room),

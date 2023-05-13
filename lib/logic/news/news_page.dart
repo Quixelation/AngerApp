@@ -218,7 +218,7 @@ class _PageNewsListState extends State<PageNewsList> {
                           style: {
                             '#': Style(
                               padding: EdgeInsets.all(0),
-                              margin: EdgeInsets.all(0),
+                              margin: Margins.all(0),
                               maxLines: 3,
                               color: Theme.of(context).colorScheme.onSurface.withAlpha(187),
                               textOverflow: TextOverflow.ellipsis,
@@ -396,7 +396,7 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
                       data: widget.data.content!,
                       style: {
                         "p": Style(
-                          fontSize: FontSize.rem(1.05),
+                          fontSize: FontSize(1.05, Unit.rem),
                           // fontSize: FontSize.larger,
                           lineHeight: LineHeight.number(1.1),
                           color:
@@ -404,28 +404,28 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
                               Theme.of(context).textTheme.bodyText1!.color!.withAlpha(222),
                         ),
                       },
-                      customRender: {
-                        "div": (RenderContext rcontext, Widget child) {
-                          if (rcontext.tree.elementClasses.contains("wp-block-file")) {
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: OutlinedButton.icon(
-                                    onPressed: () {
-                                      var hrefChild = findChild(rcontext.tree.element, "href");
-                                      if (hrefChild != null) {
-                                        launchURL(hrefChild.attributes["href"]!, context);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.download),
-                                    label: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
-                                      child: Text("Download\n${rcontext.tree.element!.text}"),
-                                    )),
-                              ),
-                            );
-                          }
-                        },
+                      customRenders: {
+                        (RenderContext renderContext) {
+                          return renderContext.tree.element?.localName == "div" && renderContext.tree.elementClasses.contains("wp-block-file");
+                        }: CustomRender.widget(widget: (rcontext, buildChildren) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: OutlinedButton.icon(
+                                  onPressed: () {
+                                    var hrefChild = findChild(rcontext.tree.element, "href");
+                                    if (hrefChild != null) {
+                                      launchURL(hrefChild.attributes["href"]!, context);
+                                    }
+                                  },
+                                  icon: const Icon(Icons.download),
+                                  label: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: Text("Download\n${rcontext.tree.element!.text}"),
+                                  )),
+                            ),
+                          );
+                        })
                       },
                       tagsList: Html.tags..addAll(["bird", "flutter"]),
                       onLinkTap: (String? url, RenderContext rcontext, Map<String, String> attributes, dom.Element? element) {

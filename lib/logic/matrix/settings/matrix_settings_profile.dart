@@ -77,10 +77,13 @@ class __MatrixSettingsProfileState extends State<_MatrixSettingsProfile> {
                                     title: Text("Bild von Gallerie auswählen"),
                                     leading: Icon(Icons.image),
                                     onTap: () async {
-                                      final bytes = await _getCroppedLibraryImage(context);
-                                      Navigator.of(context2).pop();
-                                      if (bytes == null) return;
-                                      AngerApp.matrix.client.setAvatar(MatrixFile(bytes: bytes, name: uuid.Uuid().v4()));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(content: Text("Bitte benutze die Webseite, um das Avatar zu ändern.")));
+
+                                      // final bytes = await _getCroppedLibraryImage(context);
+                                      // Navigator.of(context2).pop();
+                                      // if (bytes == null) return;
+                                      // AngerApp.matrix.client.setAvatar(MatrixFile(bytes: bytes, name: uuid.Uuid().v4()));
                                     }),
                               ],
                             ));

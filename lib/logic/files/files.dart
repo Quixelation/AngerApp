@@ -64,7 +64,7 @@ class JspFilesClient {
   Future<Uint8List> getPreview(WebDavFile file) async {
     if (!_previewCache.containsKey(file.fileId)) {
       var resp = await http.get(Uri.parse("https://nextcloud.jsp.jena.de/core/preview?fileId=${file!.fileId!}&x=32&y=32&a=0&forceIcon=0"),
-          headers: client!.authentication!.headers);
+          headers: client!.authentications.first.headers);
 
       var bodyBytes = resp.bodyBytes;
 
@@ -81,14 +81,16 @@ class JspFilesClient {
         throw ErrorDescription("no WebDavClient");
       }
 
-      var list = await client!.webdav
-          .ls(dir, props: {WebDavProps.ocFileId.name, WebDavProps.ncHasPreview.name, WebDavProps.ocId.name, WebDavProps.davContentType.name});
+      // var list = await client!.webdav
+      //     .ls(dir, props: {WebDavProps.ocFileId.name, WebDavProps.ncHasPreview.name, WebDavProps.ocId.name, WebDavProps.davContentType.name});
 
-      list.forEach((f) {
-        logger.d('${f.name} ${f.path}');
-      });
+      // list.forEach((f) {
+      //   logger.d('${f.name} ${f.path}');
+      // });
 
-      return list;
+      // return list;
+
+      return [];
     } catch (err) {
       logger.e(err);
       rethrow;

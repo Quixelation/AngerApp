@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
@@ -35,7 +37,6 @@ import 'package:anger_buddy/utils/devtools.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
 
 class MainDrawer extends StatelessWidget {
   final ScrollController _scrollController = ScrollController();
@@ -60,10 +61,7 @@ class MainDrawer extends StatelessWidget {
                 Positioned(
                   child: Text(
                     "AngerApp",
-                    style: TextStyle(
-                        fontSize: 40,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700),
+                    style: TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.w700),
                   ),
                   bottom: 0010,
                   left: 20,
@@ -77,16 +75,11 @@ class MainDrawer extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: snapshot.hasData ? 1 : 2.5,
-                  shadowColor: snapshot.hasData
-                      ? null
-                      : Theme.of(context).colorScheme.primary,
+                  shadowColor: snapshot.hasData ? null : Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                     side: BorderSide(
-                        color: snapshot.hasData
-                            ? Colors.grey[700]!
-                            : Theme.of(context).colorScheme.primary,
-                        width: snapshot.hasData ? 1 : 2.5),
+                        color: snapshot.hasData ? Colors.grey[700]! : Theme.of(context).colorScheme.primary, width: snapshot.hasData ? 1 : 2.5),
                   ),
                   child: InkWell(
                     onTap: () {
@@ -99,13 +92,10 @@ class MainDrawer extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: ListTile(
                           title: Text(
-                            snapshot.hasData
-                                ? "Klasse ${snapshot.data}"
-                                : "Klasse einstellen",
+                            snapshot.hasData ? "Klasse ${snapshot.data}" : "Klasse einstellen",
                           ),
                           trailing: Icon(Icons.adaptive.arrow_forward),
-                          subtitle: const Text(
-                              "Die App passt sich deiner Klassenstufe an."),
+                          subtitle: const Text("Die App passt sich deiner Klassenstufe an."),
                         )),
                   ),
                 ),
@@ -201,7 +191,8 @@ class MainDrawer extends StatelessWidget {
             _DrawerLink(
               title: "Downloads",
               icon: Icons.download_outlined,
-              page: PageDownloads(),
+              /*page: PageDownloads()*/
+              wip: true,
             ),
             _DrawerLink(
               title: "openSense",
@@ -216,29 +207,16 @@ class MainDrawer extends StatelessWidget {
               icon: Icons.folder_outlined,
               page: JspPassthroughPage(child: FileExplorer("/")),
             ),
-            const _DrawerLink(
-                title: "Links", icon: Icons.link, page: UniventionLinksPage()),
-            const _DrawerLink(
-                title: "Status",
-                icon: Icons.dns_outlined,
-                page: StatuspagePage()),
-            const _DrawerExternalLink(
-                title: "Mail",
-                url: "https://jsp.jena.de/appsuite/",
-                icon: Icons.mail_outline),
+            const _DrawerLink(title: "Links", icon: Icons.link, page: UniventionLinksPage()),
+            const _DrawerLink(title: "Status", icon: Icons.dns_outlined, page: StatuspagePage()),
+            const _DrawerExternalLink(title: "Mail", url: "https://jsp.jena.de/appsuite/", icon: Icons.mail_outline),
             const _DrawerExternalLink(
               title: "Hilfe",
               icon: Icons.help_outline,
               url: "https://faq.jsp.jena.de/",
             ),
-            const _DrawerExternalLink(
-                title: "WLAN Einrichtung",
-                icon: Icons.wifi_outlined,
-                url: "https://faq.jsp.jena.de/faq/wlan/jsp"),
-            const _DrawerExternalLink(
-                title: "JSP-Startseite",
-                url: "https://jsp.jena.de/",
-                icon: Icons.home_outlined),
+            const _DrawerExternalLink(title: "WLAN Einrichtung", icon: Icons.wifi_outlined, url: "https://faq.jsp.jena.de/faq/wlan/jsp"),
+            const _DrawerExternalLink(title: "JSP-Startseite", url: "https://jsp.jena.de/", icon: Icons.home_outlined),
           ]),
           const Divider(),
           _Category("Informationen", [
@@ -288,10 +266,7 @@ class MainDrawer extends StatelessWidget {
                 page: parsePage(() {
                   return oberstufePage;
                 }),
-                footerWidgets: const [
-                  Text(
-                      "Hier erscheinen später Informationen zu der Oberstufe: Notensystem, Kurse, usw.")
-                ],
+                footerWidgets: const [Text("Hier erscheinen später Informationen zu der Oberstufe: Notensystem, Kurse, usw.")],
               ),
             ),
             const _DrawerLink(
@@ -299,9 +274,7 @@ class MainDrawer extends StatelessWidget {
               title: "Seminarfach",
               icon: Icons.info_outline,
               page: PageTempUnderConstruction(
-                footerWidgets: [
-                  Text("Hier erscheinen später Informationen zum Seminarfach")
-                ],
+                footerWidgets: [Text("Hier erscheinen später Informationen zum Seminarfach")],
               ),
             ),
             const _DrawerLink(
@@ -309,22 +282,14 @@ class MainDrawer extends StatelessWidget {
               title: "Abitur",
               icon: Icons.info_outline,
               page: PageTempUnderConstruction(
-                footerWidgets: [
-                  Text("Hier erscheinen später Informationen zum Abitur")
-                ],
+                footerWidgets: [Text("Hier erscheinen später Informationen zum Abitur")],
               ),
             ),
           ]),
           const Divider(),
           const _Category("Links", [
-            _DrawerExternalLink(
-                title: "Moodle",
-                url: "https://moodle.jsp.jena.de",
-                icon: Icons.auto_stories_outlined),
-            _DrawerExternalLink(
-                title: "Noten",
-                url: "https://homeinfopoint.de/angergymjena/default.php",
-                icon: Icons.format_list_numbered),
+            _DrawerExternalLink(title: "Moodle", url: "https://moodle.jsp.jena.de", icon: Icons.auto_stories_outlined),
+            _DrawerExternalLink(title: "Noten", url: "https://homeinfopoint.de/angergymjena/default.php", icon: Icons.format_list_numbered),
           ]),
           const Divider(),
           _Category(
@@ -358,13 +323,8 @@ class MainDrawer extends StatelessWidget {
                   page: PageFeedback(),
                 ),
                 const _DrawerExternalLink(
-                    title: "Nutzung/Datenschutz",
-                    url: "https://angergymapp.robertstuendl.com/terms.html",
-                    icon: Icons.shield_outlined),
-                const _DrawerExternalLink(
-                    title: "Code (GitHub)",
-                    url: "https://github.com/Quixelation/AngerApp",
-                    icon: Icons.code),
+                    title: "Nutzung/Datenschutz", url: "https://angergymapp.robertstuendl.com/terms.html", icon: Icons.shield_outlined),
+                const _DrawerExternalLink(title: "Code (GitHub)", url: "https://github.com/Quixelation/AngerApp", icon: Icons.code),
               ].where((element) => element != null).toList()),
         ],
       ),
@@ -386,11 +346,7 @@ class _Category extends StatelessWidget {
               child: _CategoryHeader(title: header, open: false)),
           expanded:*/
         Column(
-      children: [
-        /*ExpandableButton(child:*/ _CategoryHeader(
-            title: header, open: true) /*)*/,
-        ...links
-      ],
+      children: [/*ExpandableButton(child:*/ _CategoryHeader(title: header, open: true) /*)*/, ...links],
     )
         /*,),
       ),
@@ -402,8 +358,7 @@ class _Category extends StatelessWidget {
 class _CategoryHeader extends StatelessWidget {
   final String title;
   final bool open;
-  const _CategoryHeader({Key? key, required this.title, this.open = true})
-      : super(key: key);
+  const _CategoryHeader({Key? key, required this.title, this.open = true}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -436,14 +391,7 @@ class _DrawerLink extends StatelessWidget {
   final IconData? icon;
   final bool wip;
   final String? subtitle;
-  const _DrawerLink(
-      {Key? key,
-      required this.title,
-      this.subtitle,
-      this.page,
-      required this.icon,
-      this.wip = false})
-      : super(key: key);
+  const _DrawerLink({Key? key, required this.title, this.subtitle, this.page, required this.icon, this.wip = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -480,9 +428,7 @@ class _DrawerExternalLink extends StatelessWidget {
   final String url;
   final IconData icon;
 
-  const _DrawerExternalLink(
-      {Key? key, required this.title, required this.url, required this.icon})
-      : super(key: key);
+  const _DrawerExternalLink({Key? key, required this.title, required this.url, required this.icon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -505,8 +451,7 @@ class _ImageBanner extends StatefulWidget {
   __ImageBannerState createState() => __ImageBannerState();
 }
 
-class __ImageBannerState extends State<_ImageBanner>
-    with AutomaticKeepAliveClientMixin<_ImageBanner> {
+class __ImageBannerState extends State<_ImageBanner> with AutomaticKeepAliveClientMixin<_ImageBanner> {
   ImageProvider logo = const AssetImage("assets/AngerWiki.jpg");
 
   @override
@@ -518,13 +463,10 @@ class __ImageBannerState extends State<_ImageBanner>
     return kIsWeb
         ? Container()
         : ImageFiltered(
-            imageFilter: ImageFilter.blur(
-                sigmaX: 1.25, sigmaY: 1.25, tileMode: TileMode.mirror),
+            imageFilter: ImageFilter.blur(sigmaX: 1.25, sigmaY: 1.25, tileMode: TileMode.mirror),
             child: ColorFiltered(
               key: UniqueKey(),
-              colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.primary.withAlpha(240),
-                  BlendMode.multiply),
+              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary.withAlpha(240), BlendMode.multiply),
               child: Image(
                 image: logo,
                 fit: BoxFit.fitWidth,
