@@ -1,3 +1,8 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 extension MapWithIndex<E> on List {
   List<T> mapWithIndex<T, E>(T Function(E element, int index) cb) {
     List<T> mapList = [];
@@ -25,5 +30,22 @@ extension DateExt on DateTime {
 
   bool isSameDay(DateTime date2) {
     return year == date2.year && month == date2.month && day == date2.day;
+  }
+}
+
+extension Bright on Brightness {
+  bool get isDark {
+    return this == Brightness.dark;
+  }
+}
+
+/// https://stackoverflow.com/questions/72219123/format-file-size-in-dart
+extension FileFormatter on num {
+  String readableFileSize({bool base1024 = true}) {
+    final base = base1024 ? 1024 : 1000;
+    if (this <= 0) return "0";
+    final units = ["B", "kB", "MB", "GB", "TB"];
+    int digitGroups = (log(this) / log(base)).round();
+    return NumberFormat("#,##0.#").format(this / pow(base, digitGroups)) + " " + units[digitGroups];
   }
 }

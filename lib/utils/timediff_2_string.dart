@@ -1,6 +1,6 @@
 import 'package:anger_buddy/utils/logger.dart';
 
-String timediff2string(DateTime dateTime) {
+String timediff2string(DateTime dateTime, {bool maxDays = false}) {
   DateTime now = DateTime.now();
   bool timeNegative = dateTime.difference(now).isNegative;
 
@@ -12,7 +12,7 @@ String timediff2string(DateTime dateTime) {
     suffix = timeDiff == 1 ? "Stunde" : "Stunden";
   }
   // Falls mehr als 24 Stunden übrig sind, soll es in Tagen angezeigt werden.
-  else if (dateTime.difference(now).inDays.abs() < 45) {
+  else if (maxDays || (dateTime.difference(now).inDays.abs() < 45)) {
     timeDiff = dateTime.difference(now).inDays.abs();
     suffix = timeDiff == 1 ? "Tag" : "Tagen";
   }

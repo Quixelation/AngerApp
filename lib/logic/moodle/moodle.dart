@@ -5,12 +5,15 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/components/animated_cliprect.dart';
+import 'package:anger_buddy/components/basic_html.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
 import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:anger_buddy/utils/timediff_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -20,13 +23,16 @@ import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import "package:http/http.dart" as http;
 import 'package:motion/motion.dart';
 import 'package:rxdart/subjects.dart';
 import "package:sembast/sembast.dart";
 import "package:anger_buddy/extensions.dart";
-import "package:anger_buddy/extensions.dart";
+import 'package:tinycolor2/tinycolor2.dart';
+import 'package:sembast/sembast.dart';
 
 part "moodle_types.dart";
 part "moodle_login_page.dart";
@@ -35,12 +41,18 @@ part "moodle_creds.dart";
 part "moodle_convo_page.dart";
 part "moodle_contacts.dart";
 part "moodle_create_chat.dart";
+part 'moodle_courses/moodle_courses.dart';
+part "moodle_courses/moodle_courses_page.dart";
+part "moodle_courses/moodle_course_detail_page.dart";
+part "moodle_courses/moodle_course_assign.dart";
+part "moodle_courses/bottom_sections_bar.dart";
 part "settings/moodle_settings.dart";
 
 class Moodle {
   late final _MoodleLogin login;
   late final _MoodleMessaging messaging;
   late final _MoodleContacts contacts;
+  final courses = _MoodleCoursesManager();
 
   Moodle() {
     var _login = _MoodleLogin();

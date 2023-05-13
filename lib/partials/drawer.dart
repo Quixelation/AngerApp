@@ -14,6 +14,7 @@ import 'package:anger_buddy/logic/login_overview/login_overview.dart';
 import 'package:anger_buddy/logic/mail/mail.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/messages/messages.dart';
+import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/logic/schuelerrat/schuelerrat_page.dart';
@@ -138,11 +139,6 @@ class MainDrawer extends StatelessWidget {
               icon: Icons.home,
             )
           ],
-          _DrawerLink(
-            title: "Messenger",
-            icon: Icons.messenger_outline,
-            page: PageTempUnderConstruction(page: MessagesListPage()),
-          ),
           const _Category("Aktuelles", [
             _DrawerLink(
               title: "Nachrichten",
@@ -164,6 +160,12 @@ class MainDrawer extends StatelessWidget {
               title: "Vertretungsplan",
               icon: Icons.switch_account_outlined,
               page: PageVp(),
+            ),
+            _DrawerLink(
+              title: "Moodle",
+              subtitle: "(Experimentell)",
+              icon: Icons.school,
+              page: MoodleCoursesPage(),
             ),
             _DrawerLink(
               title: "Noten",

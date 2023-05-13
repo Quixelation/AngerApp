@@ -40,8 +40,10 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                   });
                 },
                 destinations: const [
-                  NavigationDestination(icon: Icon(Icons.home_outlined), label: "App"),
-                  NavigationDestination(icon: Icon(Icons.messenger_outline), label: "Chats")
+                  NavigationDestination(
+                      icon: Icon(Icons.home_outlined), label: "App"),
+                  NavigationDestination(
+                      icon: Icon(Icons.messenger_outline), label: "Chats")
                 ],
               )
             : null,
@@ -77,7 +79,11 @@ class _HomePageContent extends StatelessWidget {
                     iconSize: 26,
                     icon: const Icon(Icons.menu),
                     onPressed: () {
-                      getIt.get<AppManager>().mainScaffoldState.currentState!.openDrawer();
+                      getIt
+                          .get<AppManager>()
+                          .mainScaffoldState
+                          .currentState!
+                          .openDrawer();
                     },
                   ),
             actions: [
@@ -89,14 +95,18 @@ class _HomePageContent extends StatelessWidget {
                       context,
                       kIsWeb
                           ? PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => const PageNotificationSettings(),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      const PageNotificationSettings(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
                                 // const begin = Offset(0.0, 1.0);
                                 const begin = Offset.zero;
                                 const end = Offset.zero;
                                 const curve = Curves.ease;
 
-                                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                var tween = Tween(begin: begin, end: end)
+                                    .chain(CurveTween(curve: curve));
 
                                 return SlideTransition(
                                   position: animation.drive(tween),
@@ -104,7 +114,9 @@ class _HomePageContent extends StatelessWidget {
                                 );
                               },
                             )
-                          : MaterialPageRoute(builder: (context) => const PageNotificationSettings()));
+                          : MaterialPageRoute(
+                              builder: (context) =>
+                                  const PageNotificationSettings()));
                 },
               ),
             ],
@@ -117,7 +129,8 @@ class _HomePageContent extends StatelessWidget {
               // collapseMode: CollapseMode.pin,
               title: Text(
                 "Anger",
-                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground),
               ),
             ),
             expandedHeight: 150,
@@ -130,24 +143,27 @@ class _HomePageContent extends StatelessWidget {
 
             /// -> kleine Bildschirmgröße: 1 Spalte
             if (MediaQuery.of(context).size.width < 1080)
-              Flex(direction: Axis.vertical, crossAxisAlignment: CrossAxisAlignment.start, children: const [
-                // SchwarzesBrettHome(),
-                WhatsnewHomepageWidget(),
-                FerienHomepageWidget(),
-                MatrixHomepageQuicklook(),
-                VpWidget(),
-                AushangHomepageWidget(),
-                KlausurenHomepageWidget(),
-                EventsThisWeek(),
-                NewsHomepageWidget(),
-                OpenSenseOverviewWidget(),
-                /*
+              Flex(
+                  direction: Axis.vertical,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    // SchwarzesBrettHome(),
+                    WhatsnewHomepageWidget(),
+                    FerienHomepageWidget(),
+                    MatrixHomepageQuicklook(),
+                    VpWidget(),
+                    AushangHomepageWidget(),
+                    KlausurenHomepageWidget(),
+                    EventsThisWeek(),
+                    NewsHomepageWidget(),
+                    OpenSenseOverviewWidget(),
+                    /*
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                       child: const _ServerStatusWidget(),
                     ),*/
-              ])
+                  ])
 
             /// TODO: Add Schwarzes Brett zu mittel und groß
             /// -> mittlere Bildschirmgröße: 2 Spalten
@@ -177,9 +193,7 @@ class _HomePageContent extends StatelessWidget {
                           VpWidget(),
                           AushangHomepageWidget(),
                           KlausurenHomepageWidget(),
-
                           OpenSenseOverviewWidget(),
-
                           // SchwarzesBrettHome(),
                         ],
                         direction: Axis.vertical,
@@ -222,7 +236,10 @@ class _HomePageContent extends StatelessWidget {
                       flex: 1,
                       child: Flex(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [WhatsnewHomepageWidget(), OpenSenseOverviewWidget()],
+                        children: [
+                          WhatsnewHomepageWidget(),
+                          OpenSenseOverviewWidget()
+                        ],
                         direction: Axis.vertical,
                       ),
                     ),
@@ -296,32 +313,43 @@ class _WelcomeTextState extends State<WelcomeText> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Willkommen", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600)),
+          const Text("Willkommen",
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600)),
           const SizedBox(height: 5),
           Opacity(
             opacity: 0.87,
             child: newVersion
                 ? const Text("Neue Version der App verfügbar")
                 : RichText(
-                    text: TextSpan(style: DefaultTextStyle.of(context).style, children: [
-                    const TextSpan(text: "Heute ist "),
-                    TextSpan(
-                        text: intToDayString(DateTime.now().weekday),
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
-                    const TextSpan(text: ", der "),
-                    TextSpan(
-                        text: DateTime.now().day.toString(),
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
-                    const TextSpan(text: ". "),
-                    TextSpan(
-                        text: intToMonthString(DateTime.now().month),
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
-                    const TextSpan(text: " "),
-                    TextSpan(
-                        text: DateTime.now().year.toString(),
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
-                    const TextSpan(text: "."),
-                  ])),
+                    text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: [
+                        const TextSpan(text: "Heute ist "),
+                        TextSpan(
+                            text: intToDayString(DateTime.now().weekday),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold)),
+                        const TextSpan(text: ", der "),
+                        TextSpan(
+                            text: DateTime.now().day.toString(),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold)),
+                        const TextSpan(text: ". "),
+                        TextSpan(
+                            text: intToMonthString(DateTime.now().month),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold)),
+                        const TextSpan(text: " "),
+                        TextSpan(
+                            text: DateTime.now().year.toString(),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold)),
+                        const TextSpan(text: "."),
+                      ])),
           ),
           Opacity(
             opacity: 0.87,

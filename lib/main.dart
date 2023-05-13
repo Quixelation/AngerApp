@@ -6,8 +6,9 @@ import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/partials/drawer.dart';
-import 'package:anger_buddy/partials/introduction_screen.dart';
+
 import 'package:anger_buddy/theme.dart';
+
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -241,17 +242,7 @@ class _IntroductionScreenSwitcherState extends State<_IntroductionScreenSwitcher
 
   @override
   Widget build(BuildContext context) {
-    return _needToShowIntroScreen == null
-        ? const Center(
-            child: CircularProgressIndicator.adaptive(),
-          )
-        : (_needToShowIntroScreen == true
-            ? AngerAppIntroductionScreen(() {
-                setState(() {
-                  _needToShowIntroScreen = false;
-                });
-              })
-            : const MyHomePage());
+    return const MyHomePage();
   }
 }
 
