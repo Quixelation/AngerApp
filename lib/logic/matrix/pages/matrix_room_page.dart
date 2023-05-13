@@ -168,41 +168,54 @@ class _RoomPageState extends State<RoomPage> {
                     },
                   ),
                 ),
-                const Divider(height: 1),
-                ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3, tileMode: TileMode.clamp),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => _MatrixCreatePollPage(
-                                          room: widget.room,
-                                        )));
-                              },
-                              icon: const Icon(Icons.ballot_outlined)),
-                          IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
-                          Expanded(
+                // const Divider(height: 1),
+                Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Material(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Theme.of(context).brightness == Brightness.light ? Colors.grey.shade200 : Colors.grey.shade800,
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => _MatrixCreatePollPage(
+                                            room: widget.room,
+                                          )));
+                                },
+                                icon: const Icon(Icons.ballot_outlined)),
+                            IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
+                            Expanded(
+                                child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
                               child: TextField(
-                            maxLines: 8,
-                            minLines: 1,
-                            controller: _sendController,
-                            decoration: const InputDecoration(
-                              hintText: 'Nachricht senden',
+                                maxLines: 8,
+                                minLines: 1,
+                                controller: _sendController,
+                                decoration: InputDecoration(
+                                  fillColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.grey.shade800,
+                                  filled: true,
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(7),
+                                    borderSide: BorderSide.none,
+                                    gapPadding: 0,
+                                  ),
+                                  hintText: 'Nachricht senden',
+                                ),
+                              ),
+                            )),
+                            IconButton(
+                              icon: const Icon(Icons.send_outlined),
+                              onPressed: _send,
                             ),
-                          )),
-                          IconButton(
-                            icon: const Icon(Icons.send_outlined),
-                            onPressed: _send,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                )
+                    ))
               ],
             ),
           ),
