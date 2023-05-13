@@ -7,6 +7,7 @@ import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/partials/drawer.dart';
 import 'package:anger_buddy/partials/introduction_screen.dart';
+import 'package:anger_buddy/theme.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
+import 'package:tinycolor2/tinycolor2.dart';
 import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
 import "package:universal_html/html.dart" as html;
@@ -166,23 +168,37 @@ class _MainAppState extends State<MainApp> {
       },
     );
 
+    var appBarTheme = AppBarTheme(
+      backgroundColor: mainColor.color,
+      foregroundColor: Colors.white,
+    );
+
+    var cardTheme = CardTheme(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+    );
+
     return MaterialApp(
       title: 'AngerApp',
       theme: lightTheme.copyWith(
         textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
+        useMaterial3: true,
         primaryTextTheme: lightTheme.textTheme.apply(
           fontFamily: fontFamily,
         ),
-        tabBarTheme: const TabBarTheme(labelColor: Colors.white),
-        useMaterial3: false,
+        appBarTheme: appBarTheme,
+        tabBarTheme: const TabBarTheme(labelColor: Colors.white, unselectedLabelColor: Colors.white70),
         pageTransitionsTheme: defaultPageTrans,
+        navigationBarTheme: NavigationBarThemeData(backgroundColor: lightTheme.colorScheme.primaryContainer.lighten(45)),
+        cardTheme: cardTheme,
       ),
       darkTheme: darkTheme.copyWith(
-        useMaterial3: false,
         drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF232323)),
+        appBarTheme: appBarTheme,
+        useMaterial3: true,
         textTheme: darkTheme.textTheme.apply(
           fontFamily: fontFamily,
         ),
+        cardTheme: cardTheme,
         primaryTextTheme: darkTheme.textTheme.apply(
           fontFamily: fontFamily,
         ),

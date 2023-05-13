@@ -385,6 +385,8 @@ class _CategoryHeader extends StatelessWidget {
   }
 }
 
+final _drawerLinkColor = Colors.blueGrey.shade900;
+
 class _DrawerLink extends StatelessWidget {
   final String title;
   final Widget? page;
@@ -398,10 +400,13 @@ class _DrawerLink extends StatelessWidget {
     return Opacity(
       opacity: wip ? 0.5 : 1,
       child: ListTile(
-        title: Text(title),
+        title: Text(
+          title,
+          style: TextStyle(color: _drawerLinkColor),
+        ),
         subtitle: subtitle != null ? Text(subtitle!) : null,
 
-        leading: Icon(icon),
+        leading: Icon(icon, color: _drawerLinkColor),
         onTap: () {
           _navigate(page, context);
         },
@@ -433,8 +438,11 @@ class _DrawerExternalLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(title),
-      leading: Icon(icon),
+      title: Text(
+        title,
+        style: TextStyle(color: _drawerLinkColor),
+      ),
+      leading: Icon(icon, color: _drawerLinkColor),
       trailing: const Icon(Icons.open_in_new),
       onTap: () {
         launchURL(url, context);
