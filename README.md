@@ -27,11 +27,7 @@ Die App für Schüler\*innen am Angergymnasium Jena.
 
 Für Fragen oder Support kann man mich mit einer E-Mail an angerapp@robertstuendl.com erreichen.
 
-## Dev
 
-Projekt benutzt Flutter 3.7.0
-
-https://fvm.app/docs/guides/running_flutter
 
 ## License
 
