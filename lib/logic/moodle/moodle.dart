@@ -49,7 +49,7 @@ class Moodle {
   final courses = _MoodleCoursesManager();
 
   Moodle() {
-    var _login = _MoodleLogin();
+    var _login = _MoodleLogin(moodle: this);
     login = _login;
     messaging = _MoodleMessaging(login: login);
     contacts = _MoodleContacts(login: login);
@@ -59,9 +59,14 @@ class Moodle {
 class _MoodleLogin {
   final creds = _MoodleCredsManager();
 
+    final Moodle moodle;
+_MoodleLogin({required this.moodle});
+
+    
   ///TODO
   void logout() {
     creds.removeCredentials();
+this.moodle.messaging.subject.add([]);
   }
 
   Future<void> login({required String username, required String password}) async {

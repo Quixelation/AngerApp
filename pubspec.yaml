@@ -5,7 +5,7 @@ description: Die offizielle App des Angergymnasium Jena
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 2022.12.29+19
+version: 2023.06.27+23
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -38,7 +38,9 @@ dependencies:
   rxdart: ^0.26.0
   http: ^0.13.5
   # Or flutter_html_all: ^3.0.0-alpha.5 to include table, video, audio, iframe...
-  flutter_html: ^3.0.0-alpha.5
+  flutter_html: 3.0.0-beta.2
+## TODO: Migrate to extension with the new beta
+  flutter_html_table: 3.0.0-beta.2 
   firebase_core: ^2.12.0
   firebase_messaging: ^14.6.0
   firebase_messaging_web: ^3.5.0
@@ -64,6 +66,7 @@ dependencies:
   nextcloud:
     git:
       url: https://github.com/provokateurin/nextcloud-neon
+      commit: 68624545e6ef45e6c4d07bf76addade067479683
       path: packages/nextcloud
   dynamite_runtime:
     git:
@@ -84,7 +87,7 @@ dependencies:
   # for all others
   flutter_chat_bubble: ^2.0.0
   flutter_polls: ^0.1.1
-  flutter_typeahead: ^4.1.1
+  flutter_typeahead: ^4.6.0
   dismissible_page: ^1.0.2
   easy_image_viewer: ^1.2.0
   flutter_slidable: ^2.0.0
@@ -104,11 +107,12 @@ dependencies:
   # charts_painter: ^3.0.0
   # flutter_echarts: ^2.3.0
   # graphic: ^0.6.2
+  feature_flags: ^0.1.4
 
 dependency_overrides:
   xml: "^6.1.0"
   intl:
-  flutter_launcher_icons:
+  icons_launcher: ^2.1.0
   flutter_math_fork: ^0.7.0
   flutter_svg:
   image:
@@ -180,6 +184,19 @@ flutter_icons:
   ios: true
   image_path: "icons/angerlogo1.png"
 
+
+icons_launcher:
+  image_path: "icons/angerlogo1.png"
+  platforms:
+    android:
+      enable: true
+      adaptive_background_color: "#001e36"
+      adaptive_foreground_image: "icons/angerlogo1.png"
+      adaptive_monochrome_image: "icons/angerlogo1.png"
+      apdative_round_image: "icons/angerlogo1.png"
+    ios:
+      enable: true
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -201,6 +218,7 @@ flutter:
     - assets/markdown/legal.md
     - assets/mainLogo.png
     - assets/s3aa-Logo.png
+    - assets/angerlogo1.png
     - assets/MoodleTools.png
     - assets/school_trans.png
     - chat.env

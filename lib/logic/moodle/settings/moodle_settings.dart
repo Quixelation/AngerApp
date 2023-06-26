@@ -11,8 +11,10 @@ class MoodleSettingsPage extends StatelessWidget {
         children: [
           ListTile(
             title: const Text("Ausloggen"),
+                        leading: const Icon(Icons.logout),
             onTap: () async {
-              AngerApp.moodle.login.logout();
+               AngerApp.moodle.login.logout();
+              Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
           )

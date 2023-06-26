@@ -42,11 +42,9 @@ VertretungsplanDetails _convertXmlVp(String xml) {
     if (row.children[0].text == "Klasse/Kurs") continue;
 
     var entry = VertretungsplanEntry(
-      stunde:
-          _VertretungsplanValue(content: row.children[1].text, changed: row.children[1].classes.contains("changed")),
+      stunde: _VertretungsplanValue(content: row.children[1].text, changed: row.children[1].classes.contains("changed")),
       fach: _VertretungsplanValue(content: row.children[2].text, changed: row.children[2].classes.contains("changed")),
-      lehrer:
-          _VertretungsplanValue(content: row.children[3].text, changed: row.children[3].classes.contains("changed")),
+      lehrer: _VertretungsplanValue(content: row.children[3].text, changed: row.children[3].classes.contains("changed")),
       raum: _VertretungsplanValue(content: row.children[4].text, changed: row.children[4].classes.contains("changed")),
       info: _VertretungsplanValue(content: row.children[5].text, changed: row.children[5].classes.contains("changed")),
     );
@@ -69,6 +67,7 @@ VertretungsplanDetails _convertXmlVp(String xml) {
   return VertretungsplanDetails(
       vertretung: klassen,
       verbose: verbose,
+      dateStr: document.querySelector("h1")?.text ?? "Nichts, 1. Januar 2000",
       date: _extractTitleDate(document.querySelector("h1")?.text ?? "Nichts, 1. Januar 2000"),
       lastChanged: _extractLastChangedDate(document.querySelector("p")?.text ?? "Nichts, 1. Januar 2000"),
       //TODO: Really extract the infos from the page, not just fake it

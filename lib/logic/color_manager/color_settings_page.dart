@@ -9,7 +9,7 @@ class PageColorManagerSettings extends StatefulWidget {
 
 class _PageColorManagerSettingsState extends State<PageColorManagerSettings> {
   var _selectedColor = colorSubject.valueWrapper!.value;
-  final List<_AngerAppColor> _colors = _AngerAppColor.colors;
+  final List<AngerAppColor> _colors = AngerAppColor.colors;
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +61,7 @@ class _ColorItem extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              border: Border.fromBorderSide(
-                  BorderSide(color: Colors.black, width: selected ? 3 : 1, style: BorderStyle.solid)),
+              border: Border.fromBorderSide(BorderSide(color: Colors.black, width: selected ? 3 : 1, style: BorderStyle.solid)),
               color: color,
               borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),

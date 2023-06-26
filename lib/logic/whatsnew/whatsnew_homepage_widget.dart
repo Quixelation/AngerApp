@@ -35,14 +35,29 @@ class _WhatsnewHomepageWidgetState extends State<WhatsnewHomepageWidget> {
         builder: (context) => Card(
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => _WhatsnewPage(AngerApp.whatsnew.currentVersion)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          _WhatsnewPage(AngerApp.whatsnew.currentVersion)));
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: ShaderMask(
                     blendMode: BlendMode.srcIn,
                     shaderCallback: (bounds) => LinearGradient(
-                            colors: Colors.primaries.map((e) => TinyColor.fromColor(e.shade500).lighten(25).saturate().toColor()).toList(),
+                            colors: Colors.accents
+                                .map((e) => TinyColor.fromColor(e.shade400)
+                                    .lighten(
+                                        Theme.of(context).brightness.name ==
+                                                "dark"
+                                            ? 25
+                                            : 0)
+                                    .darken(Theme.of(context).brightness.name ==
+                                            "light"
+                                        ? 22
+                                        : 0)
+                                    .saturate()
+                                    .toColor())
+                                .toList(),
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight)
                         .createShader(
@@ -60,12 +75,14 @@ class _WhatsnewHomepageWidgetState extends State<WhatsnewHomepageWidget> {
                           children: [
                             const Text(
                               "AngerApp wurde geupdatet!",
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             const SizedBox(
                               height: 4,
                             ),
-                            Text("Sieh dir an, was in v${AngerApp.whatsnew.pkgInfo.version} neu ist.")
+                            Text(
+                                "Sieh dir an, was in v${AngerApp.whatsnew.pkgInfo.version} neu ist.")
                           ],
                         ),
                         Expanded(child: Container()),

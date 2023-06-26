@@ -180,7 +180,7 @@ class __SrNewsPageState extends State<_SrNewsPage> {
                       data: e.content,
                       style: {
                         '#': Style(
-                          padding: const EdgeInsets.all(0),
+                          padding:HtmlPaddings.all(0), 
                           margin: Margins.all(0),
                           maxLines: 2,
                           color: Theme.of(context).colorScheme.onSurface.withAlpha(187),

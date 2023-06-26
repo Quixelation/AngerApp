@@ -44,9 +44,16 @@ class EventData {
 
   bool get isMultiDay {
     if (dateTo == null) return false;
-    return !(dateFrom.day == dateTo!.day &&
-        dateFrom.month == dateTo!.month &&
-        dateFrom.year == dateTo!.year);
+    //TODO: Fix this
+    // Quick and Dirty solution, wenn das Event bis 0:00 des nächsten Tages geht, dass das Event nicht für den nächsten Tag noch angezeigt wird
+    var tempDateTo = dateTo!.subtract(Duration(minutes: 5));
+
+    bool result = !(dateFrom.day == tempDateTo.day &&
+        dateFrom.month == tempDateTo.month &&
+        dateFrom.year == tempDateTo.year);
+
+    logger.v("[MultiDay] $title");
+    return result;
   }
 
   EventData(
@@ -164,20 +171,20 @@ class CalendarManager extends DataManager<EventData> {
   fetchFromServer() async {
     try {
       Future<List<EventData>> createErrorSafeFutureWrapper(
-          Future<List<EventData>> Function() T) async {
+          Future<List<EventData>> Function() T, String name) async {
         try {
           return await T();
         } catch (e) {
           logger.e(
-              "[Calendar] Could not load EventData from server\n$e\n${(e as Error).stackTrace}");
+              "[Calendar] Could not load EventData ($name) from server\n$e\n${(e as Error).stackTrace}");
 
           return [];
         }
       }
 
       var eventFutures = await Future.wait<List<EventData>>([
-        createErrorSafeFutureWrapper(_fetchGcalendarData),
-        createErrorSafeFutureWrapper(_fetchCmsCal)
+        createErrorSafeFutureWrapper(_fetchGcalendarData, "GCalendar"),
+        createErrorSafeFutureWrapper(_fetchCmsCal, "CmsCal")
       ]);
       List<EventData> events = [];
       for (var future in eventFutures) {
@@ -200,8 +207,23 @@ class CalendarManager extends DataManager<EventData> {
     List<EventData> events = [];
     for (var currentEvent in iCal.data) {
       if (currentEvent["type"] != "VEVENT") continue;
-      final tempCalData = EventData.fromIcalJson(currentEvent);
-      events.add(tempCalData);
+      try {
+        DateTime fromDate =
+            DateTime.tryParse(currentEvent["dtstart"]?.dt ?? "")?.toLocal() ??
+                DateTime.fromMicrosecondsSinceEpoch(0);
+
+        //skip events, that are too old (or too new), to save ressources
+        if (fromDate.difference(DateTime.now()).abs() > Duration(days: 365)) {
+          continue;
+        }
+        logger.d("[Calendar] Event: ${currentEvent}");
+
+        final tempCalData = EventData.fromIcalJson(currentEvent);
+        events.add(tempCalData);
+      } catch (err) {
+        logger.e(
+            "[Calendar] Error parsing event $currentEvent with error: ${err}");
+      }
     }
     return events;
   }
@@ -221,21 +243,25 @@ class CalendarManager extends DataManager<EventData> {
     var data = json["data"] as List;
     List<EventData> eventList = [];
     for (var item in data) {
-      eventList.add(EventData(
-          allDay: item["allday"],
-          id: item["id"],
-          dateFrom: DateTime.parse(item["date_start"]),
-          title: item["titel"],
-          dateTo: item["date_end"] != null
-              ? DateTime.parse(item["date_end"])
-              : null,
-          klassen: item["klassen"] != null
-              ? (item["klassen"] as List<dynamic>)
-                  .map((e) => int.parse(e))
-                  .toList()
-              : [],
-          //TODO: ADD desc to CMS
-          desc: ""));
+      try {
+        eventList.add(EventData(
+            allDay: item["allday"],
+            id: item["id"],
+            dateFrom: DateTime.parse(item["date_start"]),
+            title: item["titel"],
+            dateTo: item["date_end"] != null
+                ? DateTime.parse(item["date_end"])
+                : null,
+            klassen: item["klassen"] != null
+                ? (item["klassen"] as List<dynamic>)
+                    .map((e) => int.parse(e))
+                    .toList()
+                : [],
+            //TODO: ADD desc to CMS
+            desc: ""));
+      } catch (err) {
+        logger.e(err);
+      }
     }
     return eventList;
   }

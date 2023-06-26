@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
@@ -33,8 +34,10 @@ import 'package:anger_buddy/pages/stundenzeiten.pageengine.dart';
 import 'package:anger_buddy/pages/under_construction.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:anger_buddy/utils/url.dart';
+import 'package:feature_flags/feature_flags.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MainDrawer extends StatelessWidget {
   final ScrollController _scrollController = ScrollController();
@@ -46,286 +49,423 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        addAutomaticKeepAlives: true,
+    return Scaffold(
+      body: Scrollbar(
         controller: _scrollController,
-        children: [
-          const SizedBox(
-            height: kIsWeb ? 0 : 202.6,
-            child: Stack(
-              children: [
-                _ImageBanner(),
-                Positioned(
-                  child: Text(
-                    "AngerApp",
-                    style: TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.w700),
-                  ),
-                  bottom: 0010,
-                  left: 20,
-                )
-              ],
-            ),
-          ),
-          StreamBuilder(
-            builder: (context, snapshot) {
-              return Padding(
+        thumbVisibility: true,
+        child: ListView(
+          addAutomaticKeepAlives: true,
+          controller: _scrollController,
+          children: [
+            if (Features.isFeatureEnabled(context, FeatureFlags.USE_NEW_DRAWER))
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
-                  elevation: snapshot.hasData ? 1 : 2.5,
-                  shadowColor: snapshot.hasData ? null : Theme.of(context).colorScheme.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(
-                        color: snapshot.hasData ? Colors.grey[700]! : Theme.of(context).colorScheme.primary, width: snapshot.hasData ? 1 : 2.5),
-                  ),
+                  color: Theme.of(context).colorScheme.primaryVariant,
                   child: InkWell(
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const PageCurrentClass(),
-                      );
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => PageAbout()));
                     },
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: ListTile(
-                          title: Text(
-                            snapshot.hasData ? "Klasse ${snapshot.data}" : "Klasse einstellen",
-                          ),
-                          trailing: Icon(Icons.adaptive.arrow_forward),
-                          subtitle: const Text("Die App passt sich deiner Klassenstufe an."),
-                        )),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(child: _ImageBanner()),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Flex(
+                              direction: AngerApp.shouldShowFixedDrawer(context)
+                                  ? Axis.vertical
+                                  : Axis.horizontal,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Visibility(
+                                    maintainAnimation: true,
+                                    maintainSize: true,
+                                    maintainState: true,
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.asset(
+                                          "assets/s3aa-Logo.png",
+                                          height: 100,
+                                        )),
+                                    visible: !AngerApp.shouldShowFixedDrawer(
+                                        context)),
+                                SizedBox(width: 16),
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "AngerApp",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 40,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text("Version ${AngerApp.version}",
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                    ])
+                              ]),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              );
-            },
-            stream: Services.currentClass.subject,
-          ),
-          StreamBuilder(
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data == true) {
-                return const _DrawerLink(
-                  title: "Entwickler",
-                  icon: Icons.developer_mode,
-                  page: PageDevTools(),
+              )
+            else
+              const SizedBox(
+                height: kIsWeb ? 0 : 202.6,
+                child: Stack(
+                  children: [
+                    _ImageBanner(),
+                    Positioned(
+                      child: Text(
+                        "AngerApp",
+                        style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      bottom: 0010,
+                      left: 20,
+                    )
+                  ],
+                ),
+              ),
+            StreamBuilder(
+              builder: (context, snapshot) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: snapshot.hasData ? 1 : 2.5,
+                    shadowColor: snapshot.hasData
+                        ? null
+                        : Theme.of(context).colorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                          color: snapshot.hasData
+                              ? Colors.grey[700]!
+                              : Theme.of(context).colorScheme.primary,
+                          width: snapshot.hasData ? 1 : 2.5),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const PageCurrentClass(),
+                        );
+                      },
+                      child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: ListTile(
+                            title: Text(
+                              snapshot.hasData
+                                  ? "Klasse ${snapshot.data}"
+                                  : "Klasse einstellen",
+                            ),
+                            trailing: Icon(Icons.adaptive.arrow_forward),
+                            subtitle: const Text(
+                                "Die App passt sich deiner Klassenstufe an."),
+                          )),
+                    ),
+                  ),
                 );
-              } else {
-                return Container();
-              }
-            },
-            stream: getIt.get<AppManager>().devtools,
-          ),
-          StreamBuilder(
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data == true) {
-                return const _DrawerLink(
+              },
+              stream: Services.currentClass.subject,
+            ),
+            StreamBuilder(
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data == true) {
+                  return _Category("Entwickler", [
+                    _DrawerLink(
+                      title: "Entwickler",
+                      icon: Icons.developer_mode,
+                      page: PageDevTools(),
+                    ),
+                    _DrawerLink(
+                        title: "FeatureFlags",
+                        icon: Icons.flag_outlined,
+                        page: DebugFeatures(availableFeatures: [
+                          Feature(FeatureFlags.USE_NEW_DRAWER,
+                              name: "Neue Seitenleiste"),
+                          Feature(FeatureFlags.MOODLE_ENABLED, name: "Moodle"),
+                          Feature(FeatureFlags.MOODLE_PAGE_ENABLED,
+                              name: "Moodle-Seite anzeigen"),
+                          Feature(FeatureFlags.MATRIX_SHOW_DEBUG,
+                              name: "Matrix Debug Nachrichten anzeigen"),
+                          Feature(FeatureFlags.MATRIX_SHOW_CREATE_ROOM,
+                              name: "Matrix Raum erstellen FAB anzeigen"),
+                          Feature(FeatureFlags.MATRIX_SHOW_DEV_SETTINGS,
+                              name:
+                                  "Matrix: Entwickler-Einstellungen anzeigen"),
+                          Feature(FeatureFlags.MATRIX_ENABLE_SENDING_POLLS,
+                              name: "Matrix: Umfrage senden Btn anzeigen"),
+                          Feature(FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED,
+                              name: "Intelligente Noten-Ansicht")
+                        ]))
+                  ]);
+                } else {
+                  return Container();
+                }
+              },
+              stream: getIt.get<AppManager>().devtools,
+            ),
+            /*
+            StreamBuilder(
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data == true) {
+                  return const _DrawerLink(
+                    title: "Mail",
+                    icon: Icons.mail,
+                    page: JspMailMainPage(),
+                  );
+                } else {
+                  return Container();
+                }
+              },
+              stream: getIt.get<AppManager>().devtools,
+            ),*/
+            if (showHomeLink) ...[
+              const SizedBox(height: 25),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: const _DrawerLink(
+                  title: "Startseite",
+                  icon: Icons.home,
+                ),
+              )
+            ],
+            _Category("Aktuelles", [
+              const _DrawerLink(
+                title: "Nachrichten",
+                icon: Icons.article_outlined,
+                page: PageNewsList(),
+              ),
+              const _DrawerLink(
+                title: "Kalender",
+                icon: Icons.calendar_today_outlined,
+                page: PageCalendar(),
+              ),
+              _DrawerLink(
+                title: "Wochen-Ansicht",
+                subtitle: "(Experimentell)",
+                icon: Icons.view_week_outlined,
+                page: WeekView(),
+              ),
+              _DrawerLink(
+                title: "Vertretungsplan",
+                icon: Icons.switch_account_outlined,
+                page: PageVp(),
+              ),
+              if (Features.isFeatureEnabled(
+                      context, FeatureFlags.MOODLE_PAGE_ENABLED) &&
+                  Features.isFeatureEnabled(
+                      context, FeatureFlags.MOODLE_ENABLED))
+                _DrawerLink(
+                  title: "Moodle",
+                  subtitle: "(Experimentell)",
+                  icon: Icons.school,
+                  page: MoodleCoursesPage(),
+                ),
+              _DrawerLink(
+                title: "Noten",
+                badge: "NEU",
+                icon: Icons.grade_outlined,
+                page: HipPage(),
+              ),
+              _DrawerLink(
+                title: "Aushänge",
+                icon: Icons.file_copy_outlined,
+                page: PageAushangList(),
+              ),
+            ]),
+            const Divider(),
+            const _Category("Schule", [
+              _DrawerLink(
+                title: "Prüfungen",
+                icon: Icons.label_important_outline,
+                page: PageKlausuren(),
+              ),
+              _DrawerLink(
+                title: "Lehrer-Mails",
+                icon: Icons.mail_outline,
+                page: PageMailKontakt(),
+              ),
+              _DrawerLink(
+                title: "Downloads",
+                subtitle: "Wartungsarbeiten",
+                icon: Icons.download_outlined,
+                /*page: PageDownloads()*/
+                wip: true,
+              ),
+              _DrawerLink(
+                title: "openSense",
+                icon: Icons.sensors_outlined,
+                page: OpenSensePage(),
+              )
+            ]),
+            const Divider(),
+            const _Category("Jenaer-Schulportal", [
+              _DrawerLink(
+                title: "Dateien / Cloud",
+                icon: Icons.folder_outlined,
+                page: JspPassthroughPage(child: FileExplorer("/")),
+              ),
+              _DrawerLink(
+                  title: "Links",
+                  icon: Icons.link,
+                  wip: true,
+                  page: UniventionLinksPage()),
+              _DrawerLink(
+                  title: "Status",
+                  icon: Icons.dns_outlined,
+                  page: StatuspagePage()),
+              _DrawerExternalLink(
                   title: "Mail",
-                  icon: Icons.mail,
-                  page: JspMailMainPage(),
-                );
-              } else {
-                return Container();
-              }
-            },
-            stream: getIt.get<AppManager>().devtools,
-          ),
-          if (showHomeLink) ...[
-            const SizedBox(height: 25),
-            const _DrawerLink(
-              title: "Startseite",
-              icon: Icons.home,
-            )
-          ],
-          const _Category("Aktuelles", [
-            _DrawerLink(
-              title: "Nachrichten",
-              icon: Icons.article_outlined,
-              page: PageNewsList(),
-            ),
-            _DrawerLink(
-              title: "Kalender",
-              icon: Icons.calendar_today_outlined,
-              page: PageCalendar(),
-            ),
-            _DrawerLink(
-              title: "Wochen-Ansicht",
-              subtitle: "(Experimentell)",
-              icon: Icons.view_week_outlined,
-              page: WeekView(),
-            ),
-            _DrawerLink(
-              title: "Vertretungsplan",
-              icon: Icons.switch_account_outlined,
-              page: PageVp(),
-            ),
-            _DrawerLink(
-              title: "Moodle",
-              subtitle: "(Experimentell)",
-              icon: Icons.school,
-              page: MoodleCoursesPage(),
-            ),
-            _DrawerLink(
-              title: "Noten",
-              icon: Icons.grade_outlined,
-              page: HipPage(),
-            ),
-            _DrawerLink(
-              title: "Aushänge",
-              icon: Icons.file_copy_outlined,
-              page: PageAushangList(),
-            ),
-          ]),
-          const Divider(),
-          const _Category("Schule", [
-            _DrawerLink(
-              title: "Prüfungen",
-              icon: Icons.label_important_outline,
-              page: PageKlausuren(),
-            ),
-            _DrawerLink(
-              title: "Lehrer-Mails",
-              icon: Icons.mail_outline,
-              page: PageMailKontakt(),
-            ),
-            _DrawerLink(
-              title: "Downloads",
-              icon: Icons.download_outlined,
-              /*page: PageDownloads()*/
-              wip: true,
-            ),
-            _DrawerLink(
-              title: "openSense",
-              icon: Icons.sensors_outlined,
-              page: OpenSensePage(),
-            )
-          ]),
-          const Divider(),
-          const _Category("Jenaer-Schulportal", [
-            _DrawerLink(
-              title: "Dateien / Cloud",
-              icon: Icons.folder_outlined,
-              page: JspPassthroughPage(child: FileExplorer("/")),
-            ),
-            _DrawerLink(title: "Links", icon: Icons.link, page: UniventionLinksPage()),
-            _DrawerLink(title: "Status", icon: Icons.dns_outlined, page: StatuspagePage()),
-            _DrawerExternalLink(title: "Mail", url: "https://jsp.jena.de/appsuite/", icon: Icons.mail_outline),
-            _DrawerExternalLink(
-              title: "Hilfe",
-              icon: Icons.help_outline,
-              url: "https://faq.jsp.jena.de/",
-            ),
-            _DrawerExternalLink(title: "WLAN Einrichtung", icon: Icons.wifi_outlined, url: "https://faq.jsp.jena.de/faq/wlan/jsp"),
-            _DrawerExternalLink(title: "JSP-Startseite", url: "https://jsp.jena.de/", icon: Icons.home_outlined),
-          ]),
-          const Divider(),
-          _Category("Informationen", [
-            const _DrawerLink(
-              title: "Schülerrat",
-              icon: Icons.groups_outlined,
-              page: SchuelerratMainPage(),
-            ),
-            const _DrawerLink(
-              title: "Bilder",
-              icon: Icons.perm_media_outlined,
-              page: WpImagesPage(),
-            ),
-            _DrawerLink(
-              title: "Stundenzeiten",
-              icon: Icons.access_time_outlined,
-              page: parsePage(() => stundenzeitenPage),
-            ),
-            _DrawerLink(
-              title: "SchuSo",
-              icon: Icons.person_outline,
-              page: parsePage(() {
-                return schuSoPage;
-              }),
-            ),
-            const _DrawerLink(
-              title: "AGs",
-              wip: true,
-              icon: Icons.widgets_outlined,
-              page: PageTempUnderConstruction(
-                page: PageAgs(),
+                  url: "https://jsp.jena.de/appsuite/",
+                  icon: Icons.mail_outline),
+              _DrawerExternalLink(
+                title: "Hilfe",
+                icon: Icons.help_outline,
+                url: "https://faq.jsp.jena.de/",
               ),
-            ),
-            // const _DrawerLink(
-            //   title: "Chor/Orchester",
-            //   icon: Icons.piano,
-            //   page: PageChorOrchester(),
-            // ),
-          ]),
-          const Divider(),
-          _Category("Oberstufe", [
-            _DrawerLink(
-              wip: true,
-              title: "Oberstufe",
-              icon: Icons.info_outline,
-              page: PageTempUnderConstruction(
+              _DrawerExternalLink(
+                  title: "WLAN",
+                  icon: Icons.wifi_outlined,
+                  url: "https://faq.jsp.jena.de/faq/wlan/jsp"),
+              _DrawerExternalLink(
+                  title: "JSP-Startseite",
+                  url: "https://jsp.jena.de/",
+                  icon: Icons.home_outlined),
+            ]),
+            const Divider(),
+            _Category("Informationen", [
+              const _DrawerLink(
+                title: "Schülerrat",
+                icon: Icons.groups_outlined,
+                page: SchuelerratMainPage(),
+              ),
+              const _DrawerLink(
+                title: "Bilder",
+                badge: "NEU",
+                icon: Icons.perm_media_outlined,
+                page: WpImagesPage(),
+              ),
+              _DrawerLink(
+                title: "Stundenzeiten",
+                icon: Icons.access_time_outlined,
+                page: parsePage(() => stundenzeitenPage),
+              ),
+              _DrawerLink(
+                title: "SchuSo",
+                icon: Icons.person_outline,
                 page: parsePage(() {
-                  return oberstufePage;
+                  return schuSoPage;
                 }),
-                footerWidgets: const [Text("Hier erscheinen später Informationen zu der Oberstufe: Notensystem, Kurse, usw.")],
               ),
-            ),
-            const _DrawerLink(
-              wip: true,
-              title: "Seminarfach",
-              icon: Icons.info_outline,
-              page: PageTempUnderConstruction(
-                footerWidgets: [Text("Hier erscheinen später Informationen zum Seminarfach")],
+//              const _DrawerLink(
+//                title: "AGs",
+//                subtitle: "Siehe Downloads",
+//                wip: true,
+//                icon: Icons.widgets_outlined,
+//                page: PageTempUnderConstruction(
+//                  page: PageAgs(),
+//                ),
+//              ),
+              // const _DrawerLink(
+              //   title: "Chor/Orchester",
+              //   icon: Icons.piano,
+              //   page: PageChorOrchesteR(),
+              // ),
+            ]),
+
+            /*
+            const Divider(),
+            _Category("Oberstufe", [
+              _DrawerLink(
+                wip: true,
+                title: "Oberstufe",
+                icon: Icons.info_outline,
+                page: PageTempUnderConstruction(
+                  page: parsePage(() {
+                    return oberstufePage;
+                  }),
+                  footerWidgets: const [
+                    Text(
+                        "Hier erscheinen später Informationen zu der Oberstufe: Notensystem, Kurse, usw.")
+                  ],
+                ),
               ),
-            ),
-            const _DrawerLink(
-              wip: true,
-              title: "Abitur",
-              icon: Icons.info_outline,
-              page: PageTempUnderConstruction(
-                footerWidgets: [Text("Hier erscheinen später Informationen zum Abitur")],
+              const _DrawerLink(
+                wip: true,
+                title: "Seminarfach",
+                icon: Icons.info_outline,
+                page: PageTempUnderConstruction(
+                  footerWidgets: [
+                    Text("Hier erscheinen später Informationen zum Seminarfach")
+                  ],
+                ),
               ),
-            ),
-          ]),
-          const Divider(),
-          const _Category("Links", [
-            _DrawerExternalLink(title: "Moodle", url: "https://moodle.jsp.jena.de", icon: Icons.auto_stories_outlined),
-            _DrawerExternalLink(title: "Noten", url: "https://homeinfopoint.de/angergymjena/default.php", icon: Icons.format_list_numbered),
-          ]),
-          const Divider(),
-          _Category(
-              "App",
-              [
-                kIsWeb
-                    ? const _DrawerExternalLink(
-                        title: "Android App",
-                        url:
-                            "https://play.google.com/store/apps/details?id=debug.robertstuendl.angergymapp&referrer=utm_source%3DAngerApp%26utm_medium%3DDrawer%26utm_campaign%3DAndroidApp_link",
-                        icon: Icons.get_app_outlined)
-                    : Container(),
-                const _DrawerLink(
-                  title: "Einstellungen",
-                  icon: Icons.settings_outlined,
-                  page: PageSettings(),
+              const _DrawerLink(
+                wip: true,
+                title: "Abitur",
+                icon: Icons.info_outline,
+                page: PageTempUnderConstruction(
+                  footerWidgets: [
+                    Text("Hier erscheinen später Informationen zum Abitur")
+                  ],
                 ),
-                const _DrawerLink(
-                  title: "Logins",
-                  icon: Icons.key_outlined,
-                  page: LoginOverviewPage(),
-                ),
-                const _DrawerLink(
-                  title: "Über",
-                  icon: Icons.info_outline,
-                  page: PageAbout(),
-                ),
-                const _DrawerLink(
-                  title: "Feedback / Problem",
-                  icon: Icons.feedback_outlined,
-                  page: PageFeedback(),
-                ),
-                const _DrawerExternalLink(
-                    title: "Nutzung/Datenschutz", url: "https://angergymapp.robertstuendl.com/terms.html", icon: Icons.shield_outlined),
-                const _DrawerExternalLink(title: "Code (GitHub)", url: "https://github.com/Quixelation/AngerApp", icon: Icons.code),
-              ].where((element) => element != null).toList()),
-        ],
+              ),
+            ]),*/
+            const Divider(),
+            const _Category("Links", [
+              _DrawerExternalLink(
+                  title: "Moodle",
+                  url: "https://moodle.jsp.jena.de",
+                  icon: Icons.auto_stories_outlined),
+              _DrawerExternalLink(
+                  title: "Noten",
+                  url: "https://homeinfopoint.de/angergymjena/default.php",
+                  icon: Icons.format_list_numbered),
+            ]),
+            const Divider(),
+            _Category(
+                "App",
+                [
+                  const _DrawerLink(
+                    title: "Einstellungen",
+                    icon: Icons.settings_outlined,
+                    page: PageSettings(),
+                  ),
+                  const _DrawerLink(
+                    title: "Logins",
+                    icon: Icons.key_outlined,
+                    page: LoginOverviewPage(),
+                  ),
+                  const _DrawerLink(
+                    title: "Über",
+                    icon: Icons.info_outline,
+                    page: PageAbout(),
+                  ),
+                  const _DrawerLink(
+                    title: "Feedback",
+                    icon: Icons.feedback_outlined,
+                    page: PageFeedback(),
+                  ),
+                  const _DrawerExternalLink(
+                      title: "Datenschutz",
+                      url: "https://angergymapp.robertstuendl.com/terms.html",
+                      icon: Icons.shield_outlined),
+                  const _DrawerExternalLink(
+                      title: "Code (GitHub)",
+                      url: "https://github.com/Quixelation/AngerApp",
+                      icon: Icons.code),
+                ].where((element) => element != null).toList()),
+          ],
+        ),
       ),
     );
   }
@@ -338,6 +478,29 @@ class _Category extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (Features.isFeatureEnabled(context, FeatureFlags.USE_NEW_DRAWER)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CategoryHeader(title: header, open: true),
+          AlignedGridView.extent(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+            ),
+            maxCrossAxisExtent: 175,
+            itemCount: links.length,
+            itemBuilder: (context, index) {
+              return links[index];
+            },
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+          ),
+          SizedBox(height: 16),
+        ],
+      );
+    }
+
     return /*ExpandableNotifier(
       child: ScrollOnExpand(
         child: Expandable(
@@ -345,7 +508,11 @@ class _Category extends StatelessWidget {
               child: _CategoryHeader(title: header, open: false)),
           expanded:*/
         Column(
-      children: [/*ExpandableButton(child:*/ _CategoryHeader(title: header, open: true) /*)*/, ...links],
+      children: [
+        /*ExpandableButton(child:*/ _CategoryHeader(
+            title: header, open: true) /*)*/,
+        ...links
+      ],
     )
         /*,),
       ),
@@ -357,7 +524,8 @@ class _Category extends StatelessWidget {
 class _CategoryHeader extends StatelessWidget {
   final String title;
   final bool open;
-  const _CategoryHeader({Key? key, required this.title, this.open = true}) : super(key: key);
+  const _CategoryHeader({Key? key, required this.title, this.open = true})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -384,28 +552,76 @@ class _CategoryHeader extends StatelessWidget {
   }
 }
 
-final _drawerLinkColor = Colors.blueGrey.shade900;
+Color _drawerLinkColor(BuildContext context) {
+  return Theme.of(context).brightness == Brightness.light
+      ? Colors.blueGrey.shade900
+      : Colors.white.withOpacity(0.8);
+}
 
 class _DrawerLink extends StatelessWidget {
   final String title;
   final Widget? page;
   final IconData? icon;
   final bool wip;
+  final String? badge;
   final String? subtitle;
-  const _DrawerLink({Key? key, required this.title, this.subtitle, this.page, required this.icon, this.wip = false}) : super(key: key);
+  const _DrawerLink(
+      {Key? key,
+      required this.title,
+      this.subtitle,
+      this.page,
+      required this.icon,
+      this.badge,
+      this.wip = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (Features.isFeatureEnabled(context, FeatureFlags.USE_NEW_DRAWER)) {
+      /// NEW CARD DESIGN
+      return InkWell(
+        onTap: wip != true
+            ? () {
+                _navigate(page, context);
+              }
+            : null,
+        child: Badge(
+          label: Text(badge ?? ""),
+          isLabelVisible: badge != null,
+          alignment: Alignment.topRight,
+          offset: const Offset(-15, 0),
+          child: Opacity(
+            opacity: wip ? 0.5 : 1,
+            child: Card(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(icon, color: _drawerLinkColor(context)),
+                    SizedBox(height: 8),
+                    Text(title,
+                        style: TextStyle(color: _drawerLinkColor(context)))
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                ),
+              ),
+            )),
+          ),
+        ),
+      );
+    }
     return Opacity(
       opacity: wip ? 0.5 : 1,
       child: ListTile(
         title: Text(
           title,
-          style: TextStyle(color: _drawerLinkColor),
+          style: TextStyle(color: _drawerLinkColor(context)),
         ),
         subtitle: subtitle != null ? Text(subtitle!) : null,
 
-        leading: Icon(icon, color: _drawerLinkColor),
+        leading: Icon(icon, color: _drawerLinkColor(context)),
         onTap: () {
           _navigate(page, context);
         },
@@ -432,16 +648,53 @@ class _DrawerExternalLink extends StatelessWidget {
   final String url;
   final IconData icon;
 
-  const _DrawerExternalLink({Key? key, required this.title, required this.url, required this.icon}) : super(key: key);
+  const _DrawerExternalLink(
+      {Key? key, required this.title, required this.url, required this.icon})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (Features.isFeatureEnabled(context, FeatureFlags.USE_NEW_DRAWER)) {
+      return InkWell(
+        onTap: () {
+          launchURL(url, context);
+        },
+        child: Card(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Stack(
+              children: [
+                Align(
+                    alignment: Alignment.topRight,
+                    child: Opacity(
+                        opacity: 0.5,
+                        child: Icon(Icons.open_in_new, size: 16))),
+                Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: [
+                        Icon(icon, color: _drawerLinkColor(context)),
+                        SizedBox(height: 8),
+                        Text(title,
+                            style: TextStyle(color: _drawerLinkColor(context)))
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                    )),
+              ],
+            ),
+          ),
+        )),
+      );
+    }
+
     return ListTile(
       title: Text(
         title,
-        style: TextStyle(color: _drawerLinkColor),
+        style: TextStyle(color: _drawerLinkColor(context)),
       ),
-      leading: Icon(icon, color: _drawerLinkColor),
+      leading: Icon(icon, color: _drawerLinkColor(context)),
       trailing: const Icon(Icons.open_in_new),
       onTap: () {
         launchURL(url, context);
@@ -458,7 +711,8 @@ class _ImageBanner extends StatefulWidget {
   __ImageBannerState createState() => __ImageBannerState();
 }
 
-class __ImageBannerState extends State<_ImageBanner> with AutomaticKeepAliveClientMixin<_ImageBanner> {
+class __ImageBannerState extends State<_ImageBanner>
+    with AutomaticKeepAliveClientMixin<_ImageBanner> {
   ImageProvider logo = const AssetImage("assets/AngerWiki.jpg");
 
   @override
@@ -470,11 +724,19 @@ class __ImageBannerState extends State<_ImageBanner> with AutomaticKeepAliveClie
     return kIsWeb
         ? Container()
         : ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 1.25, sigmaY: 1.25, tileMode: TileMode.mirror),
+            imageFilter:
+                Features.isFeatureEnabled(context, FeatureFlags.USE_NEW_DRAWER)
+                    ? ImageFilter.blur(
+                        sigmaX: 2.5, sigmaY: 2.5, tileMode: TileMode.decal)
+                    : ImageFilter.blur(
+                        sigmaX: 1.25, sigmaY: 1.25, tileMode: TileMode.mirror),
             child: ColorFiltered(
               key: UniqueKey(),
-              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary.withAlpha(240), BlendMode.multiply),
+              colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.primary.withAlpha(240),
+                  BlendMode.multiply),
               child: Image(
+                width: double.infinity,
                 image: logo,
                 fit: BoxFit.fitWidth,
               ),

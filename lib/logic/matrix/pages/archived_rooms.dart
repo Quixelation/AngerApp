@@ -1,0 +1,34 @@
+part of matrix;
+
+class MatrixArchivedRoomsPage extends StatefulWidget {
+  const MatrixArchivedRoomsPage({super.key});
+
+  @override
+  State<MatrixArchivedRoomsPage> createState() => _MatrixArchivedRoomsPageState();
+}
+
+class _MatrixArchivedRoomsPageState extends State<MatrixArchivedRoomsPage> {
+  List<Room>? _archivedRooms;
+
+  @override
+  void initState() {
+    super.initState();
+    AngerApp.matrix.client.loadArchive().then((value) {
+      setState(() {
+        _archivedRooms = value;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: Text("Archivierte Räume")),
+        body: _archivedRooms == null
+            ? Center(child: CircularProgressIndicator.adaptive())
+            : ListView.builder(
+                itemCount: _archivedRooms!.length,
+                itemBuilder: (context, index) => AngerApp.matrix.buildListTile(context, _archivedRooms![index], showLogo: true),
+              ));
+  }
+}

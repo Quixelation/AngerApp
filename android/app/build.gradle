@@ -55,7 +55,7 @@ android {
 
     defaultConfig {
       
-        applicationId "debug.robertstuendl.angergymapp"
+        applicationId "com.robertstuendl.angergymapp"
         minSdkVersion 21
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()

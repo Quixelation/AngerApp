@@ -29,14 +29,6 @@ class _PageSettingsState extends State<PageSettings> {
       ),
       body: ListView(children: [
         ListTile(
-          title: const Text("Startseite"),
-          leading: Icon(Icons.home_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const HomepageSettingsPage()));
-          },
-        ),
-        ListTile(
           title: const Text("Vertretungsplan"),
           leading: Icon(Icons.switch_account_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),

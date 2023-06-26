@@ -11,7 +11,8 @@ class VpWidget extends StatefulWidget {
 
 class _VpWidgetState extends State<VpWidget> {
   List<VertretungsPlanItem>? _vertretungsplanListe;
-  late final StreamSubscription<dynamic>? sub;
+  late final StreamSubscription<dynamic>? downloadNotiSub;
+  StreamSubscription? vpListSub;
   Map<String, bool> _isNew = {};
 
   Future<void> _checkIfNew(List<VertretungsPlanItem>? value) async {
@@ -20,7 +21,8 @@ class _VpWidgetState extends State<VpWidget> {
     Map<String, bool> isNewTemp = {};
 
     for (var val in value) {
-      isNewTemp[val.uniqueId] = await checkIfUniqueIdIsNew(val.uniqueId, val.changedDate);
+      isNewTemp[val.uniqueId] =
+          await checkIfUniqueIdIsNew(val.uniqueId, val.changedDate);
     }
     setState(() {
       _isNew = isNewTemp;
@@ -29,7 +31,11 @@ class _VpWidgetState extends State<VpWidget> {
 
   Future<void> _loadData() async {
     if (widget.overrideResponseData == null) {
-      Services.vp.vpList.listen((value) async {
+      vpListSub = Services.vp.vpList.listen((value) async {
+        if (!mounted) {
+          vpListSub?.cancel();
+          return;
+        }
         await _checkIfNew(value);
         setState(() {
           _vertretungsplanListe = value;
@@ -45,11 +51,12 @@ class _VpWidgetState extends State<VpWidget> {
   @override
   void initState() {
     super.initState();
+    //TODO: Check if this implementation is correct - it looks weird
     _loadData().then((value) {
       setState(() {
-        sub = _vpDownloadedNotifier.listen((value) {
+        downloadNotiSub = _vpDownloadedNotifier.listen((value) {
           if (!mounted) {
-            sub?.cancel();
+            downloadNotiSub?.cancel();
           }
           _checkIfNew(null);
         });
@@ -60,7 +67,8 @@ class _VpWidgetState extends State<VpWidget> {
   @override
   void dispose() {
     super.dispose();
-    sub?.cancel();
+    downloadNotiSub?.cancel();
+    vpListSub?.cancel();
   }
 
   @override
@@ -68,8 +76,8 @@ class _VpWidgetState extends State<VpWidget> {
     bool showCard = ((_vertretungsplanListe?.isNotEmpty ?? false) &&
             ((widget.overrideResponseData?.data.result ?? true) == true) &&
             widget.overrideResponseData?.error != true) &&
-        (Services.vp.settings.subject.value?.loadListOnStart ?? Services.vp.settings.defaultSettings.loadListOnStart);
-
+        (Services.vp.settings.subject.value?.loadListOnStart ??
+            Services.vp.settings.defaultSettings.loadListOnStart);
     return HomepageWidget(
         builder: (context) => Card(
               child: Padding(
@@ -83,29 +91,89 @@ class _VpWidgetState extends State<VpWidget> {
                         padding: EdgeInsets.only(left: 16, top: 12),
                         child: Text(
                           "Vertretungspläne",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                       ),
-                      ...(_vertretungsplanListe!
-                          .map((value) => ListTile(
-                              leading: Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.center, children: [
-                                _isNew[value.uniqueId] ?? true
-                                    ? const Icon(Icons.new_releases, color: Colors.red)
-                                    : const Icon(
-                                        Icons.download_done,
-                                      )
-                              ]),
-                              title: Text(time2string(value.date, includeWeekday: true, useStringMonth: false)),
-                              subtitle: Text("Zuletzt geändert: ${time2string(value.changedDate, includeTime: true, useStringMonth: false)}"),
-                              trailing: const Icon(Icons.keyboard_arrow_right),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => _PageVertretungsplanDetail(value)))
-                                    .then((value) => _checkIfNew(null));
-                              }))
-                          .toList())
+                      if (Credentials.vertretungsplan.subject.value == null)
+                        Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Column(
+                                children: [
+                                  OutlinedButton.icon(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const PageVp()));
+                                    },
+                                    label: Text("Anmelden"),
+                                    icon: Icon(Icons.login),
+                                  ),
+                                  Text(
+                                      "Bitte melde dich an, um die Vertretungspläne zu sehen."),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      else if (_vertretungsplanListe == null)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(width: 32),
+                              OutlinedButton(
+                                  child: Text("Seite öffnen"),
+                                  onPressed: () {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            const PageVp()));
+                                  })
+                            ],
+                          )),
+                        )
+                      else
+                        ...(_vertretungsplanListe!
+                            .map((value) => ListTile(
+                                leading: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      _isNew[value.uniqueId] ?? true
+                                          ? const Icon(Icons.new_releases,
+                                              color: Colors.red)
+                                          : const Icon(
+                                              Icons.download_done,
+                                            )
+                                    ]),
+                                title: Text(time2string(value.date,
+                                    includeWeekday: true,
+                                    useStringMonth: false)),
+                                subtitle: Text(
+                                    "Zuletzt geändert: ${time2string(value.changedDate, includeTime: true, useStringMonth: false)}"),
+                                trailing:
+                                    const Icon(Icons.keyboard_arrow_right),
+                                onTap: () {
+                                  Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  _PageVertretungsplanDetail(
+                                                      value)))
+                                      .then((value) => _checkIfNew(null));
+                                }))
+                            .toList())
                     ]),
               ),
             ),
-        show: showCard);
+        show: Services.vp.settings.defaultSettings.loadListOnStart);
   }
 }

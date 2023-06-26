@@ -2,6 +2,7 @@ library news;
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:anger_buddy/components/basic_html.dart';
 import 'package:anger_buddy/logic/data_manager.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
@@ -10,6 +11,7 @@ import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:http/http.dart' as http;
 import 'package:sembast/sembast.dart';
 import 'package:xml/xml.dart';
@@ -25,6 +27,7 @@ import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/flutter_html.dart' as html;
 import 'package:html/dom.dart' as dom;
 
 part "news_page.dart";

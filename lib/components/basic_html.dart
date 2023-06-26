@@ -12,7 +12,7 @@ class BasicHtml extends StatelessWidget {
     return Html(
       data: data,
       style: {"*": Style(fontSize: FontSize(1.1, Unit.rem))},
-      onLinkTap: (url, rcontext, attributes, element) {
+      onLinkTap: (url,  attributes, element) {
         if (url != null) {
           launchURL(url, context);
         }

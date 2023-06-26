@@ -111,8 +111,7 @@ class VertretungsplanEntry {
   final _VertretungsplanValue raum;
   final _VertretungsplanValue info;
 
-  VertretungsplanEntry(
-      {required this.stunde, required this.fach, required this.lehrer, required this.raum, required this.info});
+  VertretungsplanEntry({required this.stunde, required this.fach, required this.lehrer, required this.raum, required this.info});
 
   @override
   String toString() {
@@ -153,6 +152,7 @@ class VertretungsplanRow extends VertretungsplanEntry {
 class VertretungsplanDetails {
   final Map<String, List<String>> verbose;
   final VertretungMap vertretung;
+  final String dateStr;
   final DateTime date;
   final DateTime lastChanged;
 
@@ -164,6 +164,7 @@ class VertretungsplanDetails {
 
   VertretungsplanDetails(
       {required this.vertretung,
+      required this.dateStr,
       required this.date,
       required this.lastChanged,
       required this.verbose,

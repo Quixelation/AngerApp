@@ -2,6 +2,7 @@ library messages;
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/jsp/jsp_loginpage.dart';
 import 'package:anger_buddy/logic/matrix/matrix.dart';
@@ -10,11 +11,15 @@ import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:anger_buddy/utils/url.dart';
+import 'package:feature_flags/feature_flags.dart';
 import 'package:flutter/material.dart';
 import "package:anger_buddy/extensions.dart";
 import 'package:flutter_html/flutter_html.dart';
 import 'package:matrix/matrix.dart';
 import 'package:tinycolor2/tinycolor2.dart';
+import 'package:anger_buddy/FeatureFlags.dart';
+import "package:anger_buddy/utils/url.dart";
 
 part "messages_page.dart";
 part "messages_settings.dart";
@@ -72,31 +77,34 @@ class DefaultMessageListTile extends StatelessWidget {
                 ),
               )
             : null,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              sender,
-              style: TextStyle(fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400),
-            ),
-            Opacity(
-              opacity: 0.57,
-              child: Text(
-                datetime == null
-                    ? ""
-                    : (datetime!.millisecondsSinceEpoch > DateTime.now().at0.subtract(const Duration(seconds: 1)).millisecondsSinceEpoch
-                        ? time2string(datetime!, onlyTime: true)
-                        : (DateTime.now().at0.difference(datetime!).inDays <= 6
-                            ? time2string(datetime!, includeTime: false, onlyWeekday: true)
-                            : time2string(
-                                datetime!,
-                                includeTime: false,
-                                useStringMonth: false,
-                              ))),
-                style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+        title: Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                sender,
+                style: TextStyle(fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400),
               ),
-            )
-          ],
+              Opacity(
+                opacity: 0.57,
+                child: Text(
+                  datetime == null
+                      ? ""
+                      : (datetime!.millisecondsSinceEpoch > DateTime.now().at0.subtract(const Duration(seconds: 1)).millisecondsSinceEpoch
+                          ? time2string(datetime!, onlyTime: true)
+                          : (DateTime.now().at0.difference(datetime!).inDays <= 6
+                              ? time2string(datetime!, includeTime: false, onlyWeekday: true)
+                              : time2string(
+                                  datetime!,
+                                  includeTime: false,
+                                  useStringMonth: false,
+                                ))),
+                  style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+              )
+            ],
+          ),
         ),
         subtitle: Opacity(
           opacity: 0.67,
@@ -105,10 +113,10 @@ class DefaultMessageListTile extends StatelessWidget {
             style: {
               '#': Style(
                 fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
-                padding: const EdgeInsets.all(0),
+                padding: HtmlPaddings.all(0),
                 margin: Margins.all(0),
                 maxLines: 2,
-                textOverflow: TextOverflow.ellipsis,
+                textOverflow: TextOverflow.ellipsis, 
               ),
             },
           ),

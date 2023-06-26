@@ -13,12 +13,16 @@ class _RoomPageState extends State<RoomPage> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   int _count = 0;
 
+  bool canSendMsg = false;
+
   @override
   void initState() {
     Timeline? timeline;
     _timelineFuture = widget.room.getTimeline(onChange: (i) {
       // print('on change! $i');
-      _listKey.currentState?.setState(() {});
+      _listKey.currentState?.setState(() {
+        canSendMsg = widget.room.canSendDefaultMessages;
+      });
     }, onInsert: (i) {
       // print('on insert! $i');
       _listKey.currentState?.insertItem(i);
@@ -35,12 +39,16 @@ class _RoomPageState extends State<RoomPage> {
     _timelineFuture.then((value) {
       timeline = value;
       // widget.room.setReadMarker(value.events.last.eventId);
+      setState(() {
+        canSendMsg = widget.room.canSendDefaultMessages;
+      });
       value.setReadMarker();
       widget.room.postReceipt(value.events.last.eventId);
     });
 
     _scrollCtrl.addListener(() {
-      if (_scrollCtrl.position.extentAfter < 200 && !(timeline?.isRequestingHistory ?? true)) {
+      if (_scrollCtrl.position.extentAfter < 200 &&
+          !(timeline?.isRequestingHistory ?? true)) {
         timeline?.requestHistory(historyCount: Room.defaultHistoryCount * 2);
       }
     });
@@ -71,13 +79,15 @@ class _RoomPageState extends State<RoomPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AngerApp.matrix.buildAvatar(context, widget.room.avatar, showLogo: false, room: widget.room),
+              AngerApp.matrix.buildAvatar(context, widget.room.avatar,
+                  showLogo: false, room: widget.room),
               const SizedBox(width: 8),
               Text(widget.room.displayname)
             ],
           ),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MatrixRoomInfo(widget.room)));
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => _MatrixRoomInfo(widget.room)));
           },
         ),
       ),
@@ -94,7 +104,8 @@ class _RoomPageState extends State<RoomPage> {
                 opacity: const AlwaysStoppedAnimation(0.25),
               ),
               colorFilter: Theme.of(context).brightness == Brightness.light
-                  ? const ColorFilter.mode(Colors.transparent, BlendMode.overlay)
+                  ? const ColorFilter.mode(
+                      Colors.transparent, BlendMode.overlay)
                   : const ColorFilter.matrix(
                       //Invert
                       [
@@ -121,8 +132,17 @@ class _RoomPageState extends State<RoomPage> {
                         );
                       }
                       _count = timeline.events.length;
-                      var isDevMode = getIt.get<AppManager>().devtools.valueWrapper?.value ?? false;
-                      final eventsToBeRendered = timeline.events.where((element) => element.shouldRender(overwrite: isDevMode));
+
+                      // Steuert hauptsächlich, ob auch Nachrichten, welche sonst nicht angezeigt werden, jetzt angezeigt werden sollen
+                      var isDevMode = getIt
+                              .get<AppManager>()
+                              .devtools
+                              .valueWrapper
+                              ?.value ??
+                          false;
+                      final eventsToBeRendered = timeline.events.where(
+                          (element) =>
+                              element.shouldRender(overwrite: isDevMode));
 
                       return Column(
                         children: [
@@ -139,19 +159,30 @@ class _RoomPageState extends State<RoomPage> {
                               itemBuilder: (context, i, animation) {
                                 var sameDay = true;
                                 if (i != 0) {
-                                  sameDay = timeline.events[i].originServerTs.isSameDay(timeline.events[i - 1].originServerTs);
+                                  sameDay = timeline.events[i].originServerTs
+                                      .isSameDay(timeline
+                                          .events[i - 1].originServerTs);
                                   if (!sameDay) {
                                     logger.d("Day Switch between");
                                   }
                                 }
-                                return (timeline.events[i].relationshipEventId != null) && timeline.events[i].type != "m.room.message" && false
+                                return (timeline.events[i]
+                                                .relationshipEventId !=
+                                            null) &&
+                                        timeline.events[i].type !=
+                                            "m.room.message" &&
+                                        false
                                     ? Container()
                                     : Column(
                                         mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
-                                          if (!sameDay) MessagingChatDateNotice(timeline.events[i].originServerTs),
+                                          if (!sameDay)
+                                            MessagingChatDateNotice(timeline
+                                                .events[i].originServerTs),
                                           _MatrixMessage(
                                             timeline: timeline,
                                             event: timeline.events[i],
@@ -169,53 +200,86 @@ class _RoomPageState extends State<RoomPage> {
                   ),
                 ),
                 // const Divider(height: 1),
-                Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Material(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Theme.of(context).brightness == Brightness.light ? Colors.grey.shade200 : Colors.grey.shade800,
-                      elevation: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Row(
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => _MatrixCreatePollPage(
-                                            room: widget.room,
-                                          )));
-                                },
-                                icon: const Icon(Icons.ballot_outlined)),
-                            IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: TextField(
-                                maxLines: 8,
-                                minLines: 1,
-                                controller: _sendController,
-                                decoration: InputDecoration(
-                                  fillColor: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.grey.shade800,
-                                  filled: true,
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(7),
-                                    borderSide: BorderSide.none,
-                                    gapPadding: 0,
+                if (widget.room.canSendDefaultMessages)
+                  Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Material(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey.shade200
+                            : Colors.grey.shade800,
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(
+                            children: [
+                              if (Features.isFeatureEnabled(context,
+                                  FeatureFlags.MATRIX_ENABLE_SENDING_POLLS))
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  _MatrixCreatePollPage(
+                                                    room: widget.room,
+                                                  )));
+                                    },
+                                    icon: const Icon(Icons.ballot_outlined)),
+                              IconButton(
+                                  onPressed: () async {
+                                    var fileResult = await FilePicker.platform
+                                        .pickFiles(withData: true);
+
+                                    if (fileResult == null) return;
+
+                                    for (var file in fileResult.files) {
+                                      if (file.bytes == null) {
+                                        logger.w("File bytes are empty");
+                                        continue;
+                                      }
+                                      logger.i("Sending File ${file.name}");
+                                      await widget.room.sendFileEvent(
+                                          MatrixFile(
+                                              name: file.name,
+                                              bytes: file.bytes!));
+                                    }
+                                  },
+                                  icon: const Icon(Icons.attach_file)),
+                              Expanded(
+                                  child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                child: TextField(
+                                  maxLines: 8,
+                                  minLines: 1,
+                                  controller: _sendController,
+                                  decoration: InputDecoration(
+                                    fillColor: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.white
+                                        : Colors.grey.shade800,
+                                    filled: true,
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 2),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(7),
+                                      borderSide: BorderSide.none,
+                                      gapPadding: 0,
+                                    ),
+                                    hintText: 'Nachricht senden',
                                   ),
-                                  hintText: 'Nachricht senden',
                                 ),
+                              )),
+                              IconButton(
+                                icon: const Icon(Icons.send_outlined),
+                                onPressed: _send,
                               ),
-                            )),
-                            IconButton(
-                              icon: const Icon(Icons.send_outlined),
-                              onPressed: _send,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ))
+                      ))
+                else
+                  const SizedBox(height: 16)
               ],
             ),
           ),

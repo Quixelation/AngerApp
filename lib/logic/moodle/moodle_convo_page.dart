@@ -130,13 +130,13 @@ class _MoodleConvoPageState extends State<MoodleConvoPage> {
                                           ],
                                           Html(
                                             data: currentMessage.text,
-                                            onLinkTap: (url, rcontext, attributes, element) {
+                                            onLinkTap: (url,  attributes, element) {
                                               if (url != null) {
                                                 launchURL(url, context);
                                               }
                                             },
                                             style: {
-                                              '#': Style(padding: const EdgeInsets.all(0), margin: Margins.all(0), color: textColor),
+                                              '#': Style(padding: HtmlPaddings.all(0), margin: Margins.all(0), color: textColor),
                                             },
                                           ),
                                           const SizedBox(height: 4),

@@ -9,6 +9,7 @@ class MatrixCreatePage extends StatefulWidget {
 
 class _MatrixCreatePageState extends State<MatrixCreatePage> {
   var groupNameController = TextEditingController();
+  _UserSelectorController _userSelectorController = _UserSelectorController();
   List<Profile> usersToAdd = [];
 
   void addUserToUsersToAdd(Profile user) {
@@ -25,7 +26,7 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
         enableEncryption: true,
         groupName: groupNameController.text.trim(),
         visibility: matrix.Visibility.private,
-        invite: usersToAdd.map((e) => e.userId).toList(),
+        invite: _userSelectorController.selectedUsers.map((e) => e.userId).toList(),
       );
 
       Navigator.of(context).pushReplacement(
@@ -35,10 +36,12 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
           context: context,
           builder: (context2) => AlertDialog(
                 title: const Text("Es gab einen Fehler"),
+                content: Text(err.toString()),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(context2).pop();
+                        Navigator.of(context).pop();
                       },
                       child: const Text("ok"))
                 ],
@@ -60,38 +63,42 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
           const SizedBox(
             height: 32,
           ),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Teilnehmer:",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                  _MatrixUserTypeAhead(onSelect: addUserToUsersToAdd),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  ...usersToAdd.map((e) => ListTile(
-                      leading: CircleAvatar(
-                        foregroundImage: e.avatarUrl == null
-                            ? null
-                            : NetworkImage(e.avatarUrl!
-                                .getThumbnail(
-                                  AngerApp.matrix.client,
-                                  width: 56,
-                                  height: 56,
-                                )
-                                .toString()),
-                      ),
-                      title: Text(e.displayName ?? e.userId),
-                      subtitle: e.displayName == null ? null : Text(e.userId)))
-                ],
-              ),
-            ),
-          ),
+          // Card(
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(12.0),
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         const Text(
+          //           "Teilnehmer:",
+          //           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          //         ),
+          //         _MatrixUserTypeAhead(onSelect: addUserToUsersToAdd),
+          //         const SizedBox(
+          //           height: 8,
+          //         ),
+          //         ...usersToAdd.map((e) => ListTile(
+          //             leading: CircleAvatar(
+          //               foregroundImage: e.avatarUrl == null
+          //                   ? null
+          //                   : NetworkImage(e.avatarUrl!
+          //                       .getThumbnail(
+          //                         AngerApp.matrix.client,
+          //                         width: 56,
+          //                         height: 56,
+          //                       )
+          //                       .toString()),
+          //             ),
+          //             title: Text(e.displayName ?? e.userId),
+          //             subtitle: e.displayName == null ? null : Text(e.userId)))
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          Divider(),
+          SizedBox(height: 8),
+          Text("Mitglieder:", style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500)),
+          _UserSelector(controller: _userSelectorController),
           const SizedBox(height: 32),
           OutlinedButton.icon(
               onPressed: () {

@@ -1,7 +1,13 @@
 part of matrix;
 
 class _MatrixMessage extends StatelessWidget {
-  const _MatrixMessage({Key? key, required this.animation, required this.event, required this.timeline, required this.room}) : super(key: key);
+  const _MatrixMessage(
+      {Key? key,
+      required this.animation,
+      required this.event,
+      required this.timeline,
+      required this.room})
+      : super(key: key);
 
   final Animation<double> animation;
   final Event event;
@@ -18,13 +24,15 @@ class _MatrixMessage extends StatelessWidget {
 
     final displayEvent = event.getDisplayEvent(timeline);
 
-    final relatedEvents = timeline.events.where((element) => element.relationshipEventId == displayEvent.eventId);
+    final relatedEvents = timeline.events.where(
+        (element) => element.relationshipEventId == displayEvent.eventId);
 
     logger.d(relatedEvents);
 
     final msgColors = DefaultMessagingColors(context);
     final Color textColor = msgColors.textColor;
-    final Color bgColor = isSender ? msgColors.messageSent : msgColors.messageRecieved;
+    final Color bgColor =
+        isSender ? msgColors.messageSent : msgColors.messageRecieved;
 
     if ((displayEvent.type == "m.room.message" ||
             displayEvent.type == "m.room.encrypted" ||
@@ -49,7 +57,8 @@ class _MatrixMessage extends StatelessWidget {
                               showDialog(
                                   context: context,
                                   builder: (context2) => AlertDialog(
-                                        title: const Text("Fehler beim Löschen"),
+                                        title:
+                                            const Text("Fehler beim Löschen"),
                                         content: Text(err),
                                         actions: [
                                           TextButton(
@@ -74,9 +83,12 @@ class _MatrixMessage extends StatelessWidget {
                           showDialog(
                             context: context,
                             builder: (context) {
-                              var encoder = const JsonEncoder.withIndent("     ");
+                              var encoder =
+                                  const JsonEncoder.withIndent("     ");
                               var text = encoder.convert(displayEvent.toJson());
-                              return Material(child: SingleChildScrollView(child: Text(text)));
+                              return Material(
+                                  child:
+                                      SingleChildScrollView(child: Text(text)));
                             },
                           );
                         },
@@ -91,15 +103,36 @@ class _MatrixMessage extends StatelessWidget {
           child: Opacity(
             opacity: event.status.isSent ? 1 : 0.5,
             child: ChatBubble(
-                margin: EdgeInsets.only(top: 4, bottom: 4, left: isSender ? 64 : 8, right: !isSender ? 64 : 8),
+                margin: EdgeInsets.only(
+                    top: 4,
+                    bottom: 4,
+                    left: isSender ? 64 : 8,
+                    right: !isSender ? 64 : 8),
                 backGroundColor: bgColor,
-                shadowColor: isSender ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.shadow,
+                shadowColor: isSender
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.shadow,
                 alignment: isSender ? Alignment.topRight : Alignment.topLeft,
-                clipper: ChatBubbleClipper4(type: isSender ? BubbleType.sendBubble : BubbleType.receiverBubble),
+                clipper: ChatBubbleClipper4(
+                    type: isSender
+                        ? BubbleType.sendBubble
+                        : BubbleType.receiverBubble),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (displayEvent.status.isError) ...[
+                      Row(
+                        children: [
+                          const Icon(Icons.error, color: Colors.red),
+                          const SizedBox(width: 4),
+                          Text("Nachricht konnte nicht gesendet werden",
+                              style: TextStyle(color: Colors.red)),
+                        ],
+                      ),
+                      Divider(),
+                    ],
+
                     if (!isSender) ...[
                       Text(
                         /*event.type +
@@ -107,7 +140,8 @@ class _MatrixMessage extends StatelessWidget {
                                   displayEvent.messageType +
                                   " " + */
                         (displayEvent.sender.displayName ?? event.senderId),
-                        style: TextStyle(fontWeight: FontWeight.w500, color: textColor),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, color: textColor),
                       ),
                       const SizedBox(height: 4),
                     ],
@@ -137,8 +171,15 @@ class _MatrixMessage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text("Nachricht gelöscht"),
-                                    if (displayEvent.redactedBecause?.content["reason"] != null)
-                                      Opacity(opacity: 0.67, child: Text("(" + displayEvent.redactedBecause!.content["reason"] + ")"))
+                                    if (displayEvent.redactedBecause
+                                            ?.content["reason"] !=
+                                        null)
+                                      Opacity(
+                                          opacity: 0.67,
+                                          child: Text("(" +
+                                              displayEvent.redactedBecause!
+                                                  .content["reason"] +
+                                              ")"))
                                   ],
                                 ),
                               ],
@@ -157,23 +198,30 @@ class _MatrixMessage extends StatelessWidget {
                                 case "m.image":
                                   return ChatBubbleImageRenderer(displayEvent);
                                 case "m.file":
-                                  return ChatBubbleFileRenderer(displayEvent, timeline, room);
+                                  return ChatBubbleFileRenderer(
+                                      displayEvent, timeline, room);
                                 case "m.location":
-                                  return ChatBubbleLocationRenderer(displayEvent);
+                                  return ChatBubbleLocationRenderer(
+                                      displayEvent);
                                 case "m.key.verification.request":
-                                  return _MatrixVerifictionMessageRenderer(displayEvent);
+                                  return _MatrixVerifictionMessageRenderer(
+                                      displayEvent);
                                 default:
                                   return Text(displayEvent.body);
                               }
                             case "m.room.encrypted":
                               return const Text(
                                 "Verschlüsselte Nachricht",
-                                style: TextStyle(color: Colors.pink, fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                    color: Colors.pink,
+                                    fontWeight: FontWeight.w500),
                               );
                             case "org.matrix.msc3381.poll.start":
-                              return ChatBubblePollRendererV2(displayEvent, timeline, room);
+                              return ChatBubblePollRendererV2(
+                                  displayEvent, timeline, room);
                             case "m.poll.start":
-                              return ChatBubblePollRendererV2(displayEvent, timeline, room);
+                              return ChatBubblePollRendererV2(
+                                  displayEvent, timeline, room);
                             default:
                               return Text(displayEvent.type);
                           }
@@ -182,31 +230,42 @@ class _MatrixMessage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     IntrinsicWidth(
-                      child: Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [
-                        Text(
-                          time2string(event.originServerTs, onlyTime: true),
-                          style: TextStyle(fontSize: 10, color: textColor.withAlpha(200)),
-                          textAlign: TextAlign.right,
-                        ),
-                        if (relatedEvents.where((element) {
-                          logger.d(element.relationshipEventId.toString() +
-                              " (${element.body}) " +
-                              " zu " +
-                              displayEvent.eventId +
-                              " (" +
-                              displayEvent.body +
-                              ")");
-                          return (element.relationshipType ?? "") == "m.replace";
-                        }).isNotEmpty) ...[
-                          const SizedBox(width: 4),
-                          Text("(bearbeitet)", style: TextStyle(fontSize: 10, color: textColor.withAlpha(200)))
-                        ],
-                      ]),
+                      child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              time2string(event.originServerTs, onlyTime: true),
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: textColor.withAlpha(200)),
+                              textAlign: TextAlign.right,
+                            ),
+                            if (relatedEvents.where((element) {
+                              logger.d(element.relationshipEventId.toString() +
+                                  " (${element.body}) " +
+                                  " zu " +
+                                  displayEvent.eventId +
+                                  " (" +
+                                  displayEvent.body +
+                                  ")");
+                              return (element.relationshipType ?? "") ==
+                                  "m.replace";
+                            }).isNotEmpty) ...[
+                              const SizedBox(width: 4),
+                              Text("(bearbeitet)",
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: textColor.withAlpha(200)))
+                            ],
+                          ]),
                     ),
                     if (relatedEvents.isNotEmpty)
                       Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: relatedEvents.where((element) => element.type == "m.reaction").map((e) {
+                        children: relatedEvents
+                            .where((element) => element.type == "m.reaction")
+                            .map((e) {
                           logger.d(e.toJson());
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -228,7 +287,8 @@ class _MatrixMessage extends StatelessWidget {
       );
     } else if (displayEvent.chatNotice.shouldRender) {
       return displayEvent.chatNotice.renderChatNotice();
-    } else if (getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) {
+    } else if (Features.isFeatureEnabled(
+        context, FeatureFlags.MATRIX_SHOW_DEBUG)) {
       return InkWell(
         onTap: () {
           showDialog(
@@ -242,14 +302,24 @@ class _MatrixMessage extends StatelessWidget {
         },
         child: Container(
           // width: double.infinity,
-          color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.blueGrey.shade900 : Colors.blueGrey.shade100,
+          color: MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.blueGrey.shade900
+              : Colors.blueGrey.shade100,
           child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: RichText(
-                  text: TextSpan(style: Theme.of(context).textTheme.bodyMedium, children: [
-                TextSpan(style: const TextStyle(fontWeight: FontWeight.bold), text: displayEvent.sender.calcDisplayname() + ": "),
-                TextSpan(text: displayEvent.type + " (" + displayEvent.messageType + ")")
-              ]))),
+                  text: TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: [
+                    TextSpan(
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        text: displayEvent.sender.calcDisplayname() + ": "),
+                    TextSpan(
+                        text: displayEvent.type +
+                            " (" +
+                            displayEvent.messageType +
+                            ")")
+                  ]))),
         ),
       );
     } else {

@@ -27,7 +27,7 @@ class JspFilesClient {
 
     if (manualUsername != null || manualPassword != null) {
       assert(manualPassword != null && manualUsername != null);
-      client = NextcloudClient(nextcloudUrl, username: manualUsername!, password: manualPassword!);
+      client = NextcloudClient(nextcloudUrl, username: manualUsername!, password: manualPassword!, loginName: manualUsername);
       return;
     }
 

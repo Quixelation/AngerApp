@@ -2,6 +2,7 @@ library hip;
 
 import 'dart:async';
 
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/extensions.dart';
 
@@ -10,27 +11,34 @@ import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:html/parser.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:webview_flutter/platform_interface.dart';
 import "package:webview_flutter/webview_flutter.dart" as web;
 import "package:http/http.dart" as http;
+import "package:feature_flags/feature_flags.dart";
 
 part "hip_page.dart";
 part "hip_login_page.dart";
 part "hip_data_page.dart";
 part "hip_analyzer.dart";
+part "hip_charts.dart";
+part "hip_intelli_page.dart";
 
 class _HipCreds {
   final usernameSecureStorageKey = "hip_username";
   final passwordSecureStorageKey = "hip_password";
 
-  BehaviorSubject<_HipLoginData> subject = BehaviorSubject<_HipLoginData>();
+  /// DO NOT USE FOR CREDENTIALS, ONLY FOR LISTENING TO CHANGES TO THE CREDENTIALS
+  BehaviorSubject<_HipLoginData?> subject = BehaviorSubject<_HipLoginData?>();
 
   Future<void> _saveLoginData(String username, String password) async {
     await secureStorage.write(key: usernameSecureStorageKey, value: username);
     await secureStorage.write(key: passwordSecureStorageKey, value: password);
+    subject.add(_HipLoginData(username, password));
   }
 
   Future<_HipLoginData> _getLoginData() async {
@@ -41,7 +49,7 @@ class _HipCreds {
 
   /// Checks if there is login data stored in the secure storage
   /// Does not check if the data is valid (if login works)
-  Future<bool> hasLoginData() async {
+  Future<bool> hasLoginDataStoredInSecureStorage() async {
     var username = await secureStorage.read(key: usernameSecureStorageKey);
     var password = await secureStorage.read(key: passwordSecureStorageKey);
     return username != null && password != null;
@@ -50,6 +58,7 @@ class _HipCreds {
   Future<void> _removeLoginData() async {
     await secureStorage.delete(key: usernameSecureStorageKey);
     await secureStorage.delete(key: passwordSecureStorageKey);
+    subject.add(null);
   }
 }
 
@@ -156,7 +165,8 @@ class HipService {
 
   Future<bool> loginWithSavedLogin(BuildContext context) async {
     var loginData = await creds._getLoginData();
-    return login(loginData.username, loginData.password, context: context);
+    // this can't be null, bc of the specific implementation of _getLoginData
+    return login(loginData.username!, loginData.password!, context: context);
   }
 
   /// Diese Funktion muss einmal am Anfang von hip-page.dart aufgerufen werden,

@@ -22,11 +22,13 @@ class DataFach {
   String shortCode;
   String name;
   List<DataNote> noten;
+  List<DataMean> means;
   String teacher;
   DataFach(
       {required this.shortCode,
       required this.name,
       required this.noten,
+      required this.means,
       required this.teacher});
 
   @override
@@ -54,6 +56,18 @@ class DataNote {
   @override
   String toString() {
     return "DataNote {date: $date; note: $note; desc: $desc; tw: $tw; semester: $semester}";
+  }
+}
+
+class DataMean {
+  int semester;
+  double? note;
+  String desc;
+  DataMean({required this.semester, required this.desc, this.note});
+
+  @override
+  String toString() {
+    return "DataMean {semester: $semester; note: $note; desc: $desc}";
   }
 }
 
@@ -85,7 +99,17 @@ Future<ApiDataComplete> htmlToHipData(String html) async {
         .trim();
     print(fachNamenArray);
 
+    // # NOTEN
     List<DataNote> noten = [];
+
+        // Sanitized die Note für int.parse
+String convertNote(String stringNote){
+if(stringNote.contains("+") || stringNote.contains("-")){
+                return stringNote.substring(0, 1);
+            }
+return stringNote;
+        }
+
 
     try {
       var dataRows = element.children[0].children;
@@ -107,8 +131,34 @@ Future<ApiDataComplete> htmlToHipData(String html) async {
     }
     print(noten);
 
+// # Durchschnitt
+
+    List<DataMean> means = [];
+    try {
+      var meanTableBody =
+          element.nextElementSibling?.nextElementSibling?.children[0];
+      for (var i = 1; i < (meanTableBody?.children?.length ?? 0); i++) {
+        var currentRow = meanTableBody!.children[i];
+        var halbjahr = currentRow.children[0].text.trim();
+        var mean = currentRow.children[1].text.trim();
+        var desc = currentRow.children[2].text.trim();
+        means.add(DataMean(
+            semester: int.parse(halbjahr.substring(0, 1)),
+            desc: desc,
+            note: double.tryParse(mean.replaceAll(",", "."))));
+        print(means.last.note);
+      }
+    } catch (err) {
+      print("Error in mean table");
+      print(err);
+    }
+
     faecher.add(DataFach(
-        name: fachName, shortCode: shortCode, noten: noten, teacher: teacher));
+        name: fachName,
+        shortCode: shortCode,
+        noten: noten,
+        means: means,
+        teacher: teacher));
   });
 
   logger.w(faecher);

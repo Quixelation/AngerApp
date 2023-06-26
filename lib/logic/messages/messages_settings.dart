@@ -22,14 +22,15 @@ class _MessageSettingsState extends State<MessageSettings> {
                 builder: (context) => const MatrixSettings()));
           },
         ),
-        ListTile(
-          title: const Text("Moodle"),
-          trailing: const Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const MoodleSettingsPage()));
-          },
-        )
+        if (Features.isFeatureEnabled(context, FeatureFlags.MOODLE_ENABLED))
+          ListTile(
+            title: const Text("Moodle"),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const MoodleSettingsPage()));
+            },
+          )
       ]),
     );
   }

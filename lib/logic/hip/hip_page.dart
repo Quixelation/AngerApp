@@ -17,10 +17,14 @@ class _HipPageState extends State<HipPage> {
   bool? hasLoginData;
   bool? isLoggedIn;
 
+  /// schaut z.B. ob eine Internetverbindung besteht, bzw. der HIP-Server erreichbar ist
   bool? canAccessHip;
 
-  void loadLoginData() async {
+  StreamSubscription? _hipLoginSubscription;
+
+  void initLogin() async {
     try {
+      // Check if Server can be reached
       await AngerApp.hip.loadDefault();
     } catch (err) {
       logger.e("Error while loading default: $err");
@@ -29,10 +33,12 @@ class _HipPageState extends State<HipPage> {
       });
     }
 
-    var _hasLoginData = await AngerApp.hip.creds.hasLoginData();
+    var _hasLoginData =
+        await AngerApp.hip.creds.hasLoginDataStoredInSecureStorage();
 
     setState(() {
       hasLoginData = _hasLoginData;
+      logger.i("Set hasLoginData to $hasLoginData");
     });
 
     if (hasLoginData == true) {
@@ -43,28 +49,56 @@ class _HipPageState extends State<HipPage> {
         isLoggedIn = result;
       });
     }
+
+    _hipLoginSubscription = AngerApp.hip.creds.subject.listen((value) async {
+      if (!mounted) {
+        _hipLoginSubscription?.cancel();
+        return;
+      }
+      logger.d("Login data changed: $value");
+      setState(() {
+        hasLoginData = value != null;
+        // This is automatially set, bc if there is login data, the user is logged in
+        isLoggedIn = value != null;
+      });
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    loadLoginData();
+    initLogin();
+  }
+
+  @override
+  void dispose() {
+    _hipLoginSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        useMaterial3: true,
       ),
       child: canAccessHip != false
+          // Can Access HIP
           ? (hasLoginData == null
+              // Login Data not loaded yet
               ? const _LoadingPage()
+              // Login Data loaded
               : hasLoginData == true
                   ? (isLoggedIn == null
+                      // Login not tried yet
                       ? const _LoadingPage()
-                      : (isLoggedIn == true ? const HipDataPage() : const HipLoginPage()))
+                      : (isLoggedIn == true
+                          // Logged in
+                          ? const HipDataPage()
+                          // Not logged in
+                          : const HipLoginPage()))
                   : const HipLoginPage())
+
+          // Can't Access HIP
           : const _NoHipAccess(),
     );
   }

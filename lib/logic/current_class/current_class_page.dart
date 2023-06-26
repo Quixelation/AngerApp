@@ -11,13 +11,13 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
   int? selectedClass = Services.currentClass.subject.value;
 
   Widget selectClassBtn(int? classS) {
-    var text = classS != null ? "$classS." : "Keine Klasse";
+    var text = classS != null ? "$classS" : "Keine Klasse";
     return Expanded(
         child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       // abc is used so that "null" isn't shown as selected
       child: ((classS ?? "abc") == selectedClass)
-          ? ElevatedButton(
+          ? FilledButton(
               onPressed: () {
                 setState(() {
                   selectedClass = null;

@@ -11,6 +11,16 @@ extension MapWithIndex<E> on List {
     }
     return mapList;
   }
+
+
+
+  List<T> mapWithIndexAndLength<T, E>(T Function(E element, int index, int length) cb) {
+    List<T> mapList = [];
+    for (var i = 0; i < length; i++) {
+      mapList.add(cb(this[i], i, length));
+    }
+    return mapList;
+  }
 }
 
 extension DateExt on DateTime {
@@ -49,3 +59,4 @@ extension FileFormatter on num {
     return NumberFormat("#,##0.#").format(this / pow(base, digitGroups)) + " " + units[digitGroups];
   }
 }
+

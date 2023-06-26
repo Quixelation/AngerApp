@@ -172,7 +172,7 @@ class _PageTeam extends StatelessWidget {
         ),
         SizedBox(height: 4),
         ListTile(
-          title: Text("Paul Loth"),
+          title: Text("Paul Loth (2021)"),
           subtitle: Text("Tester"),
           isThreeLine: true,
           leading: Icon(Icons.person),
@@ -181,7 +181,7 @@ class _PageTeam extends StatelessWidget {
         ),
         ListTile(
           title: Text("Dich :)"),
-          subtitle: Text("nette Person"),
+          subtitle: Text("nette Person (email: bugs.angerapp@robertstuendl.com)"),
           isThreeLine: true,
           leading: Icon(Icons.person),
           onTap: null,

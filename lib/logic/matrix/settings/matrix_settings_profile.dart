@@ -1,13 +1,13 @@
 part of matrix;
 
-class _MatrixSettingsProfile extends StatefulWidget {
-  const _MatrixSettingsProfile({Key? key}) : super(key: key);
+class _MatrixProfileColumn extends StatefulWidget {
+  const _MatrixProfileColumn({Key? key}) : super(key: key);
 
   @override
-  State<_MatrixSettingsProfile> createState() => __MatrixSettingsProfileState();
+  State<_MatrixProfileColumn> createState() => _MatrixProfileColumnState();
 }
 
-class __MatrixSettingsProfileState extends State<_MatrixSettingsProfile> {
+class _MatrixProfileColumnState extends State<_MatrixProfileColumn> {
   final nameController = TextEditingController();
   ProfileInformation? userInfo;
 

@@ -1,3 +1,4 @@
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
@@ -10,6 +11,7 @@ import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/partials/bottom_appbar.dart';
 import 'package:anger_buddy/utils/logger.dart';
+import 'package:feature_flags/feature_flags.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -28,7 +30,7 @@ class PageDevTools extends StatelessWidget {
         ),
         body: Scaffold(
             body: ListView(children: [
-          const MainBottomAppBar(),
+          // const MainBottomAppBar(),
           SelectableText(AngerApp.moodle.login.creds.token ?? "<NoToken>"),
           ElevatedButton(
               onPressed: () async {

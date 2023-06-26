@@ -139,20 +139,21 @@ class _PageCalendarState extends State<PageCalendar>
       ...(ferienEvents ?? []),
     ];
     if (MediaQuery.of(context).size.width > 600) {
-      for (var e in AppManager.calController.events) {
-        AppManager.calController.remove(e);
-      }
-      AppManager.calController.addAll(eventList
-          .map((e) => CalendarEventData(
-              title: e.title,
-              date: e.dateFrom,
-              endDate: e.dateTo,
-              color: e.type == eventType.klausur
-                  ? Colors.redAccent
-                  : e.type == eventType.ferien
-                      ? Colors.yellow.shade800
-                      : Theme.of(context).primaryColor))
-          .toList());
+            //TODO: remove entire callcontroller setup, idk why it's still here, (and remove enough mail while youre at it)
+//      for (var e in AppManager.calController.events) {
+//        AppManager.calController.remove(e);
+//      }
+//      AppManager.calController.addAll(eventList
+//          .map((e) => CalendarEventData(
+//              title: e.title,
+//              date: e.dateFrom,
+//              endDate: e.dateTo,
+//              color: e.type == eventType.klausur
+//                  ? Colors.redAccent
+//                  : e.type == eventType.ferien
+//                      ? Colors.yellow.shade800
+//                      : Theme.of(context).primaryColor))
+//          .toList());
     }
     return Scaffold(
         appBar: AppBar(

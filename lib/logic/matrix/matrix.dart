@@ -2,17 +2,23 @@ library matrix;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
+import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:anger_buddy/utils/timediff_2_string.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:feature_flags/feature_flags.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'dart:ui';
 import 'package:flutter_polls/flutter_polls.dart';
@@ -24,6 +30,7 @@ import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart' as matrix;
 import 'package:matrix/matrix.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import "package:anger_buddy/extensions.dart";
 import "package:device_info_plus/device_info_plus.dart";
 import "package:dismissible_page/dismissible_page.dart";
@@ -33,8 +40,9 @@ import "package:path/path.dart";
 import 'package:tinycolor2/tinycolor2.dart';
 import "package:uuid/uuid.dart" as uuid;
 import "package:flutter_dotenv/flutter_dotenv.dart";
+import "package:matrix/src/utils/uri_extension.dart";
 
-part "matrix_create_chat.dart";
+part "pages/matrix_create_chat.dart";
 part "matrix_create_poll_page.dart";
 part "matrix_homepage_quicklook.dart";
 part 'pages/matrix_invite_user.dart';
@@ -55,6 +63,8 @@ part "settings/matrix_settings_devices.dart";
 part "settings/matrix_settings_privacy.dart";
 part "settings/matrix_settings_security.dart";
 part "message_types/verification_message.dart";
+part "components/user_selection.dart";
+part "pages/archived_rooms.dart";
 
 DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
@@ -83,15 +93,21 @@ class JspMatrix {
   JspMatrix() {
     client.onLoginStateChanged.stream.listen((matrix.LoginState loginState) {
       logger.w("LoginState: ${loginState.toString()}");
+
     });
 
     client.onEvent.stream.listen((matrix.EventUpdate eventUpdate) {
       logger.w("New event update !  ${eventUpdate.type}::${eventUpdate.content}");
+    }).onError((error, stackTrace) {
+      logger.e("Error in event update stream: $error");
     });
 
     // client!.onRoomUpdate.stream.listen((matrix.RoomsUpdate eventUpdate) {
     //   print("New room update!");
     // });
+
+
+
 
     client.onAssertedIdentityReceived.stream.listen((event) {
       logger.w("Asserted Id recieved");
@@ -128,27 +144,50 @@ class JspMatrix {
     await client.login(
       matrix.LoginType.mLoginPassword,
       identifier: matrix.AuthenticationUserIdentifier(user: Credentials.jsp.subject.valueWrapper?.value?.username ?? ""),
-      initialDeviceDisplayName: "AngerApp",
+      initialDeviceDisplayName: "AngerApp: ${await getDeviceNameString()}",
       password: (Credentials.jsp.subject.valueWrapper?.value?.password ?? ""),
     );
+    await setPusher();
+  }
 
-    // await client.postPusher(Pusher(
-    //   appId: "com.robertstuendl.angergymapp",
-    //   //TODO
-    //   pushkey: uuid.Uuid().v4(),
-    //   appDisplayName: "AngerApp",
-    //   data: PusherData(),
-    //   //TODO:
-    //   deviceDisplayName: "Samsung",
-    //   kind: "http",
-    //   lang: "de",
-    // ));
+  Future<void> setPusher({bool removePusher = false}) async {
+    logger.d("[Matrix] setPusher()");
+    var fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken != null) {
+      logger.i("Set Pusherr for Matrix");
+
+      Pusher pusher = Pusher(
+        appId: "com.robertstuendl.angergymapp",
+        pushkey: fcmToken,
+        appDisplayName: "AngerApp",
+        data: PusherData(
+          url: Uri.parse("https://angerapp-api.robertstuendl.com/_matrix/push/v1/notify"),
+          format: "event_id_only",
+        ),
+        deviceDisplayName: await getDeviceNameString(),
+        kind: "http",
+        lang: "de",
+      );
+
+      if (removePusher) {
+        await client.postPusher(pusher);
+      } else {
+        await client.deletePusher(pusher);
+      }
+    } else {
+      logger.w("No Pusher bc no fcm token");
+    }
+
+    var pushers = await client.getPushers();
+    logger.d("Pushers: ${pushers?.map((e) => e.toJson())}");
   }
 
   Future<void> init() async {
     logger.v("[Matrix] init");
+
     await olm.init();
     await client.init();
+
     AngerApp.credentials.jsp.subject.listen((value) {
       if (AngerApp.credentials.jsp.credentialsAvailable && !client.isLogged()) {
         logger.d("[Matrix] Subject change to login()");
@@ -270,8 +309,10 @@ class JspMatrix {
         ),
         child: DefaultMessageListTile(
           avatar: buildAvatar(context, room.avatar, showLogo: showLogo, room: room),
-          datetime: room.lastEvent!.originServerTs,
-          messageText: (room.isDirectChat ? "" : "${room.lastEvent!.sender.calcDisplayname()}: ") + room.lastEvent!.calcBodyPreview(),
+          datetime: room.lastEvent?.originServerTs,
+          messageText: room.lastEvent == null
+              ? ""
+              : (room.isDirectChat ? "" : "${room.lastEvent?.sender.calcDisplayname()}: ") + (room.lastEvent?.calcBodyPreview() ?? ""),
           hasUnread: room.isUnreadOrInvited,
           unreadCount: room.notificationCount,
           onTap: () async {
@@ -288,6 +329,8 @@ class JspMatrix {
           sender: room.displayname,
         ));
   }
+
+  Map<String, Uint8List> imageCacheMap = {};
 }
 
 extension body on matrix.Event {

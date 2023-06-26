@@ -91,7 +91,7 @@ class _LoginOverviewPageState extends State<LoginOverviewPage> {
                   : Icons.pending_outlined),
             );
           },
-          future: AngerApp.hip.creds.hasLoginData(),
+          future: AngerApp.hip.creds.hasLoginDataStoredInSecureStorage(),
         ),
       ]),
     );

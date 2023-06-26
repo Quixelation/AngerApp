@@ -10,13 +10,45 @@ class ChatBubbleImageRenderer extends StatefulWidget {
 }
 
 class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
+
+    Uint8List? bytes;
+
+
+    void initState(){
+        super.initState();
+        loadImg();
+    }
+
+    void loadImg() async {
+        logger.i(widget.event.attachmentMxcUrl.toString());
+        var cachedData = AngerApp.matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString() ?? ""];
+        logger.i("Cached Image: $cachedData");
+        if(cachedData != null){
+            setState(() {
+                bytes = cachedData;
+            }); 
+            return;
+        }
+        if(await widget.event.isAttachmentInLocalStore() && widget.event.attachmentMxcUrl != null){
+            // Wir können hier database! schreiben, weil isAttachmentInLocalStore bereit sicherstellt, dass database != null ist.
+            var data = (await AngerApp.matrix.client!.database!.getFile(widget.event.attachmentMxcUrl!))!;
+            setState((){
+                bytes = data;
+            });
+            AngerApp.matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString()] = data;
+        }
+        var data = (await widget.event.downloadAndDecryptAttachment()).bytes;
+        setState((){
+            bytes = data;
+        });
+            AngerApp.matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString()] = data;
+
+    }
+
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<MatrixFile>(
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
-        } else if (!snapshot.hasData) {
+              if (bytes == null) {
           return Center(
             child: CircularProgressIndicator.adaptive(
               valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.onPrimaryContainer),
@@ -25,20 +57,17 @@ class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
         } else {
           return GestureDetector(
               onTap: () {
-                showImageViewer(context, Image.memory(snapshot.data!.bytes).image, doubleTapZoomable: true, swipeDismissible: true, immersive: false);
+                showImageViewer(context, Image.memory(bytes!).image, doubleTapZoomable: true, swipeDismissible: true, immersive: false);
                 // context.pushTransparentRoute(_DismissableImage(
                 //     snapshot.data!.bytes, widget.event.eventId));
               },
-              child: Hero(tag: widget.event.eventId, child: Image.memory(snapshot.data!.bytes)));
+              child: Hero(tag: widget.event.eventId, child: Image.memory(bytes!)));
         }
-      },
-      future: widget.event.downloadAndDecryptAttachment(),
-    );
   }
 }
 
-class _DismissableImage extends StatelessWidget {
-  const _DismissableImage(this.bytes, this.id);
+class DismissableImage extends StatelessWidget {
+  const DismissableImage(this.bytes, this.id);
 
   final Uint8List bytes;
   final String id;

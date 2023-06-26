@@ -26,7 +26,8 @@ class QuickInfo {
   final QuickInfoType type;
   final String? title;
   final String content;
-  QuickInfo({required this.id, required this.type, required this.title, required this.content});
+    final String? externalLink;
+  QuickInfo({required this.id, required this.type, this.externalLink, required this.title, required this.content});
   QuickInfo.fromCmsJson(Map<String, dynamic> json)
       : id = json["id"],
         type = (() {
@@ -44,6 +45,7 @@ class QuickInfo {
           }
         })(),
         title = json['title'],
+        externalLink = json['external_link'],
         content = json['content'];
 }
 

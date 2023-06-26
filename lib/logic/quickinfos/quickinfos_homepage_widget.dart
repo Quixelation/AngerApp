@@ -4,7 +4,8 @@ class QuickInfoHomepageWidget extends StatefulWidget {
   const QuickInfoHomepageWidget({Key? key}) : super(key: key);
 
   @override
-  _QuickInfoHomepageWidgetState createState() => _QuickInfoHomepageWidgetState();
+  _QuickInfoHomepageWidgetState createState() =>
+      _QuickInfoHomepageWidgetState();
 }
 
 class _QuickInfoHomepageWidgetState extends State<QuickInfoHomepageWidget> {
@@ -30,7 +31,8 @@ class _QuickInfoHomepageWidgetState extends State<QuickInfoHomepageWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: _quickInfos!.data.map((e) => _QuickInfo(e)).toList())
           : Container(),
-      if (_quickInfos?.loadingAction == AsyncDataResponseLoadingAction.currentlyLoading)
+      if (_quickInfos?.loadingAction ==
+          AsyncDataResponseLoadingAction.currentlyLoading)
         const Positioned(
           child: LinearProgressIndicator(),
           top: 0,
@@ -92,22 +94,72 @@ class _QuickInfo extends StatelessWidget {
             width: 16,
           ),
           Flexible(
-            child: Opacity(
-              opacity: 0.87,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ((quickInfo.title?.trim() == "") || (quickInfo.title == null))
-                      ? Container()
-                      : Text(quickInfo.title!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  MarkdownBody(
-                    data: quickInfo.content,
-                    onTapLink: (String text, String? href, String title) {
-                      linkOnTapHandler(context, text, href, title);
-                    },
-                    styleSheet: MarkdownStyleSheet(p: const TextStyle(fontSize: 15)),
-                  ),
-                ],
+            child: InkWell(
+              onTap: quickInfo.externalLink != null
+                  ? () async {
+                      var wantsToFollow = await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text("Externer Link"),
+                                content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          "Möchtest du den externen Link öffnen?"),
+                                      SizedBox(height: 8),
+                                      Text(quickInfo.externalLink!,
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.italic))
+                                    ]),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: Text("Nein")),
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      child: Text("Ja")),
+                                ],
+                              ));
+                      if (wantsToFollow == true) {
+                        launchURL(quickInfo.externalLink!, context);
+                      }
+                    }
+                  : null,
+              child: Opacity(
+                opacity: 0.87,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ((quickInfo.title?.trim() == "") ||
+                                (quickInfo.title == null))
+                            ? Container()
+                            : Text(quickInfo.title!,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                        MarkdownBody(
+                          data: quickInfo.content,
+                          onTapLink: (String text, String? href, String title) {
+                            linkOnTapHandler(context, text, href, title);
+                          },
+                          styleSheet: MarkdownStyleSheet(
+                              p: const TextStyle(fontSize: 15)),
+                        ),
+                      ],
+                    ),
+                    if (quickInfo.externalLink != null) ...[
+                      SizedBox(width: 16),
+                      Icon(Icons.open_in_new)
+                    ]
+                  ],
+                ),
               ),
             ),
           )
@@ -124,11 +176,14 @@ class _QuickInfo extends StatelessWidget {
   ) async {
     showDialog<Widget>(
       context: context,
-      builder: (BuildContext context) => _createDialog(context, text, href, title),
+      builder: (BuildContext context) =>
+          _createDialog(context, text, href, title),
     );
   }
 
-  Widget _createDialog(BuildContext context, String text, String? href, String title) => AlertDialog(
+  Widget _createDialog(
+          BuildContext context, String text, String? href, String title) =>
+      AlertDialog(
         title: const Text('Link öffnen?'),
         content: SingleChildScrollView(
           child: ListBody(
@@ -148,7 +203,9 @@ class _QuickInfo extends StatelessWidget {
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Abbrechen', style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+            child: Text('Abbrechen',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary)),
           ),
           ElevatedButton(
               onPressed: () {

@@ -153,8 +153,31 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
               height: 48,
             ),
             OutlinedButton.icon(
-                onPressed: () {
-                  //TODO: implement via global page function
+                onPressed: () async {
+                  var result = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: Text("Chat verlassen"),
+                            content: Text("Möchtest du den Chat wirklich verlassen?"),
+                            actions: [
+                              OutlinedButton.icon(
+                                  icon: const Icon(Icons.exit_to_app),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  label: const Text("Verlassen")),
+                              OutlinedButton.icon(
+                                  icon: const Icon(Icons.cancel_outlined),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  label: const Text("Abbrechen"))
+                            ],
+                          ));
+                  if (result == true) {
+                    await widget.room.leave();
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Chat verlassen")));
+                  }
                 },
                 icon: const Icon(
                   Icons.exit_to_app,

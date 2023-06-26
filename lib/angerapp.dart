@@ -16,7 +16,11 @@ import 'package:anger_buddy/logic/ferien/ferien.dart';
 import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/logic/whatsnew/whatsnew.dart';
+import 'package:anger_buddy/utils/mini_utils.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class _ServicesManager {
   /* -- Funktions-Seiten -- */
@@ -42,8 +46,11 @@ class _ServicesManager {
   final hip = HipService();
   /* -- Plugins -- */
   final localNotifications = FlutterLocalNotificationsPlugin();
+  late final String version;
+  late final deviceName;
 
   Future<void> init() async {
+    this.deviceName = await getDeviceNameString();
     await Future.wait([
       news.init(),
       aushang.init(),
@@ -54,15 +61,22 @@ class _ServicesManager {
       vp.init(),
       matrix.init(),
       moodle.login.creds.init(),
+      (() async {
+        this.version = (await PackageInfo.fromPlatform()).version;
+      })(),
       homepage.init(),
       whatsnew.init(),
-
-      localNotifications.initialize(const InitializationSettings(
-        android: AndroidInitializationSettings("background"),
-        iOS: DarwinInitializationSettings(),
-      ))
+      if (kDebugMode)
+        localNotifications.initialize(const InitializationSettings(
+          android: AndroidInitializationSettings("background"),
+          iOS: DarwinInitializationSettings(),
+        ))
       // mail.init(),
     ]);
+  }
+
+  bool shouldShowFixedDrawer(BuildContext context) {
+    return MediaQuery.of(context).size.width > 900;
   }
 }
 

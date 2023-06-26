@@ -127,19 +127,27 @@ class _WhatsnewUpdate {
 
 final List<_WhatsnewUpdate> _whatsnewUpdates = [
   //TODO: Change version
-  _WhatsnewUpdate("2022.12.3", [
+  _WhatsnewUpdate("2023.06.26", [
     _WhatsnewEntry(_ChangeType.newFeature, "**Bilder-Seite:** Entdecke nun alle Bilder der Homepage in einer Bilder-Galerie!"),
+    _WhatsnewEntry(_ChangeType.improvement, "**Lehrer-VP:** Der Vertretungsplan kann nun nach Lehrern gefiltert werden!"),
+    _WhatsnewEntry(_ChangeType.improvement, "**Vertretungsplan:** Das Datum wird nun (endlich) mit angezeigt!"),
     _WhatsnewEntry(_ChangeType.newFeature,
         "**Schülerrats-Seite:** Erhalte Informationen über den Schülerrat und bleibe immer auf dem laufenden mit den Schülerrats-Nachrichten"),
     _WhatsnewEntry(_ChangeType.newFeature,
-        "**Chats-Seite:** Kommuniziere mit Lehrern über den Messenger-Dienst vom Jenaer Schulportal, aber auch über Moodle (und das alles innerhalb der AngerApp)!"),
+        "**[*BETA*]::Chats-Seite:** Kommuniziere mit Lehrern über den Messenger-Dienst vom Jenaer Schulportal, aber auch über Moodle (und das alles innerhalb der AngerApp)!"),
     _WhatsnewEntry(_ChangeType.newFeature, "**WhatsNew:** Diese Seite ist übrigens auch neu :)."),
+    _WhatsnewEntry(_ChangeType.newFeature, "**Noten:** Die Noten können nun direkt in der AngerApp eingesehen werden!"),
+        _WhatsnewEntry(_ChangeType.critical, "**Fehler:** Du hast einen Fehler gefunden, hast eine Idee oder möchtest einfach nur Feedback geben? Dann schreibe mir doch einfach eine E-Mail an angerapp@robertstuendl.com . Keine Formalitäten notwendig, schieß einfach los ;)"),
     _WhatsnewEntry(_ChangeType.improvement,
         "**Nachrichten:** Die Nachrichten-Seite zeigt nun Nachrichten von der Webseite, als auch vom Schülerrat an. (+ das Veröffentlichungs-Datum)"),
     _WhatsnewEntry(_ChangeType.improvement,
         "**Homepage-Bottomnav:** Auf der Homepage ist nun eine Navigationsleiste um schnell zu den Chats zu gelangen. Diese kann in den Einstellungen deaktiviert werden"),
+        _WhatsnewEntry(_ChangeType.bugfix, "**Kalender:** Der Kalender funktioniert nun wieder! (Danke an alle, die den Fehler gemeldet haben!)"),
+        _WhatsnewEntry(_ChangeType.bugfix, "**Kalender:** Ganztagige Events werden nun nicht mehr über 2 Tage angezeigt (hoffentlich)"),
     _WhatsnewEntry(_ChangeType.cosmetic, "**Einstellungen & \"Über\":** Ein kleines Design-Update mit Icons"),
-    _WhatsnewEntry(_ChangeType.cosmetic, "Die AngerApp wurde nun teilweise auf das neue Material 3 Design von Google/Flutter umgestellt"),
-    _WhatsnewEntry(_ChangeType.improvement, "**Homepage:** Keine komischen Abstände zwischen den Widgets mehr!")
+        _WhatsnewEntry(_ChangeType.improvement, "**Vertretungsplan:** Das Widget auf der Startseite wird nun immer angezeigt und die Vertretungsplan-Seite wurde für den Offline-Betrieb optimiert. "),
+    _WhatsnewEntry(_ChangeType.improvement, "**Homepage:** Keine komischen Abstände zwischen den Widgets mehr!"),
+        _WhatsnewEntry(_ChangeType.cosmetic, "**Seitenleite:** Die Seitenleiste ist nun eine eigene Seite und hat ein neues Design bekommen."),
+        _WhatsnewEntry(_ChangeType.cosmetic, "Die App-Navigation funktioniert nun über eine Bottom-Navigation-Bar."),
   ])
 ];

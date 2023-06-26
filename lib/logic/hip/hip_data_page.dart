@@ -11,19 +11,14 @@ class _HipDataPageState extends State<HipDataPage>
     with TickerProviderStateMixin {
   String? htmlData;
   late TabController tabController;
-  int selectedIndex = 0;
+  int selectedIndex = 1;
 
-  ApiDataComplete? hipData;
+  bool usedEmergBackAlready = false;
 
   void getData() async {
     var data = await AngerApp.hip.getData();
     setState(() {
       htmlData = data;
-    });
-
-    var _hipData = await htmlToHipData(htmlData!);
-    setState(() {
-      hipData = _hipData;
     });
   }
 
@@ -81,19 +76,24 @@ class _HipDataPageState extends State<HipDataPage>
             )
           ],
         ),
-        bottomNavigationBar: NavigationBar(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (int index) {
-              tabController.animateTo(index);
-              setState(() {
-                selectedIndex = index;
-              });
-            },
-            destinations: const [
-              NavigationDestination(icon: Icon(Icons.web), label: "Webseite"),
-              NavigationDestination(
-                  icon: Icon(Icons.lightbulb_outline), label: "Inteligent"),
-            ]),
+        bottomNavigationBar: (Features.isFeatureEnabled(
+                context, FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED))
+            ? NavigationBar(
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (int index) {
+                  tabController.animateTo(index);
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                destinations: const [
+                    NavigationDestination(
+                        icon: Icon(Icons.web), label: "Webseite"),
+                    NavigationDestination(
+                        icon: Icon(Icons.lightbulb_outline),
+                        label: "Inteligent"),
+                  ])
+            : null,
         body: (htmlData == null)
             ? const Center(child: CircularProgressIndicator())
             : TabBarView(
@@ -101,15 +101,25 @@ class _HipDataPageState extends State<HipDataPage>
                 controller: tabController,
                 children: [
                     _HipBrowserView(),
-                    if (hipData == null)
-                      const Center(child: CircularProgressIndicator())
-                    else
-                      ListView(
-                        padding: const EdgeInsets.all(8),
-                        children: [
-                          ...hipData!.faecher.map((e) => HipNotenCard(e))
-                        ],
-                      )
+                    _HipIntelliPage(
+                        onToNormalView: ({bool? emerg}) {
+                          logger.d("intelliback " + emerg.toString());
+                          logger.d("used already " +
+                              usedEmergBackAlready.toString());
+                          if ((emerg == true &&
+                                  usedEmergBackAlready == false) ||
+                              (emerg == null || emerg == false)) {
+                            tabController.animateTo(0);
+                            setState(() {
+                              selectedIndex = 0;
+                                    if(emerg == true){
+                                        usedEmergBackAlready = true;
+                                    }
+                            });
+
+                          }
+                        },
+                        htmlData: htmlData),
                   ]));
   }
 }
@@ -154,131 +164,5 @@ class _HipBrowserView extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class HipNotenCard extends StatefulWidget {
-  const HipNotenCard(
-    this.hipFach, {
-    super.key,
-  });
-
-  final DataFach hipFach;
-
-  @override
-  State<HipNotenCard> createState() => _HipNotenCardState();
-}
-
-class _HipNotenCardState extends State<HipNotenCard> {
-  bool isExpanded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        color: Theme.of(context).colorScheme.surfaceVariant,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            InkWell(
-              onTap: () {
-                setState(() {
-                  isExpanded = !isExpanded;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.hipFach.name,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        widget.hipFach.teacher,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Opacity(
-                    opacity: 0.87,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Icon(Icons.keyboard_arrow_down),
-                        const SizedBox(height: 4),
-                        Text(
-                          "${widget.hipFach.noten.length} Noten",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  )
-                ]),
-              ),
-            ),
-            if (isExpanded) ...[
-              Divider(
-                height: 0,
-                color: Colors.grey.withOpacity(0.67),
-              ),
-              ...widget.hipFach.noten
-                  .mapWithIndex<Widget, DataNote>((e, index) => Padding(
-                        padding:
-                            const EdgeInsets.only(left: 24, right: 16, top: 10),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  e.note.toString(),
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                const SizedBox(
-                                  width: 16,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        time2string(e.date),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        e.desc.trim().isEmpty ? "---" : e.desc,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  e.semester.toString(),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                const SizedBox(
-                                  width: 16,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            if (index != (widget.hipFach.noten.length - 1))
-                              const Divider(height: 2)
-                          ],
-                        ),
-                      ))
-            ]
-          ],
-        ));
   }
 }

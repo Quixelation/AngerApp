@@ -87,31 +87,27 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
               ? ((detailData!.error == false)
                   ? ListView(children: [
                       if (detailData!.details != null) ...[
-                        ListTile(
-                          title: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Text("Lehrer-Ansicht"),
-                              const SizedBox(width: 8),
-                              Chip(
-                                label: const Opacity(
-                                  opacity: 0.87,
-                                  child: Text(
-                                    "BETA",
-                                  ),
+                        _VpDateCard(details: detailData!.details!),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: OutlinedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => _VpLehrerDateils(detailData!.details!)));
+                              },
+                              icon: Icon(Icons.person),
+                              label: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                child: Row(
+                                  children: [
+                                    Text("Lehrer-Ansicht    [BETA]"),
+                                    Expanded(child: Container()),
+                                    Icon(Icons.adaptive.arrow_forward)
+                                  ],
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                 ),
-                                backgroundColor: Colors.purple.withAlpha(100),
-                              )
-                            ],
-                          ),
-                          leading: const Icon(Icons.person),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => _VpLehrerDateils(detailData!.details!)));
-                          },
-                          trailing: Icon(Icons.adaptive.arrow_forward),
+                              )),
                         ),
+                        const SizedBox(height: 16),
                         const Divider(),
                       ],
                       if (widget.vpItem.downloaded) downloadedCard(),
@@ -251,9 +247,10 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
               : const Center(child: CircularProgressIndicator.adaptive()),
           detailData == null
               ? const Center(child: CircularProgressIndicator.adaptive())
-              : MiniWebView(
-                  htmlString: detailData!.details?.html ?? detailData!.html ?? "KEINE DATEN",
-                )
+              : 
+
+Html(data: detailData!.details?.html ?? detailData!.html ?? "KEINE DATEN", extensions: [TableHtmlExtension()]),
+
           // InteractiveViewer(
           //     constrained: false,
           //     child: ConstrainedBox(
@@ -483,5 +480,28 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
           ),
           subtitle: Text(e.info.content)),
     );
+  }
+}
+
+class _VpDateCard extends StatefulWidget {
+  const _VpDateCard({super.key, required this.details});
+
+  final VertretungsplanDetails details;
+
+  @override
+  State<_VpDateCard> createState() => __VpDateCardState();
+}
+
+class __VpDateCardState extends State<_VpDateCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 16),
+        child: Text("${widget.details.dateStr}",
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context)
+                    .colorScheme
+                    .tertiary)));
   }
 }

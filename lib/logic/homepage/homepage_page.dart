@@ -8,48 +8,99 @@ class PageHome extends StatefulWidget {
 }
 
 class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
-  int selectedPageIndex = 0;
+  int selectedPageIndex = 1;
 
   late final TabController _tabController;
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
-
-    _tabController.addListener(() {
-      setState(() {
-        selectedPageIndex = _tabController.index;
-      });
-    });
     super.initState();
   }
 
+  // this is a substitute for initialIndex, bc we need context for shouldShowFixedDrawer
+  bool alreadySetIndex = false;
+
   @override
   Widget build(BuildContext context) {
+    final shouldRenderFixedDrawer = AngerApp.shouldShowFixedDrawer(context);
+    if (alreadySetIndex == false) {
+            selectedPageIndex = shouldRenderFixedDrawer ? 0 : 1;
+      _tabController = TabController(
+        length: shouldRenderFixedDrawer ? 2 : 3,
+        vsync: this,
+        initialIndex: shouldRenderFixedDrawer ? 0 : 1,
+      );
+
+      _tabController.addListener(() {
+        setState(() {
+          selectedPageIndex = _tabController.index;
+        });
+      });
+
+      alreadySetIndex = true;
+    }
     return Scaffold(
-        bottomNavigationBar: AngerApp.homepage.settings.useNavBar
-            ? NavigationBar(
-                // backgroundColor: Theme.of(context).colorScheme.primaryContainer.withAlpha(25),
-                // surfaceTintColor: Colors.red,
-                // elevation: 25,
-                selectedIndex: selectedPageIndex,
-                onDestinationSelected: (value) {
-                  setState(() {
-                    _tabController.animateTo(value);
-                    selectedPageIndex = value;
-                  });
-                },
-                destinations: const [
-                  NavigationDestination(
-                      icon: Icon(Icons.home_outlined), label: "App"),
-                  NavigationDestination(
-                      icon: Icon(Icons.messenger_outline), label: "Chats")
-                ],
-              )
-            : null,
+        bottomNavigationBar: NavigationBar(
+          // backgroundColor: Theme.of(context).colorScheme.primaryContainer.withAlpha(25),
+          // surfaceTintColor: Colors.red,
+          // elevation: 25,
+          selectedIndex: selectedPageIndex,
+          onDestinationSelected: (value) {
+            setState(() {
+              _tabController.animateTo(value);
+              selectedPageIndex = value;
+            });
+          },
+          destinations: [
+            if (shouldRenderFixedDrawer == false)
+              NavigationDestination(
+                  icon: ShaderMask(
+                      blendMode: BlendMode.srcIn,
+                      shaderCallback: (Rect bounds) => LinearGradient(
+                              transform: GradientRotation(2),
+                              colors: selectedPageIndex != 0
+                                  ? [
+                                      Colors.orange.shade300,
+                                      Colors.redAccent.shade200,
+                                    ]
+                                  : [
+                                      Colors.orange.shade100,
+                                      Colors.redAccent.shade100,
+                                    ])
+                          .createShader(bounds),
+                      child: Icon(Icons.menu)),
+                  label: "Funktionen"),
+            NavigationDestination(
+                icon: Icon(Icons.home_outlined), label: "Start"),
+            NavigationDestination(
+                icon: ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: (Rect bounds) => LinearGradient(
+                            transform: GradientRotation(2),
+                            colors: selectedPageIndex !=
+                                    (shouldRenderFixedDrawer ? 1 : 2)
+                                ? [
+                                    Colors.blue.shade400,
+                                    Colors.indigo.shade400,
+                                    Colors.purple.shade400
+                                  ]
+                                : [
+                                    Colors.blue.shade100,
+                                    Colors.indigo.shade100,
+                                    Colors.purple.shade100
+                                  ])
+                        .createShader(bounds),
+                    child: Icon(Icons.messenger_outline)),
+                label: "Chats (BETA)"),
+          ],
+        ),
         body: TabBarView(
           controller: _tabController,
-          children: const [_HomePageContent(), MessagesListPage()],
+          children: [
+            if (shouldRenderFixedDrawer == false) MainDrawer(),
+            _HomePageContent(),
+            MessagesListPage(),
+          ],
         ));
   }
 }
@@ -73,20 +124,31 @@ class _HomePageContent extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: kIsWeb && MediaQuery.of(context).size.width > 900
-                ? null
-                : IconButton(
-                    iconSize: 26,
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {
-                      getIt
-                          .get<AppManager>()
-                          .mainScaffoldState
-                          .currentState!
-                          .openDrawer();
-                    },
-                  ),
+//            leading: kIsWeb && MediaQuery.of(context).size.width > 900
+//                ? null
+//                : IconButton(
+//                    iconSize: 26,
+//                    icon: const Icon(Icons.menu),
+//                    onPressed: () {
+//                      getIt
+//                          .get<AppManager>()
+//                          .mainScaffoldState
+//                          .currentState!
+//                          .openDrawer();
+//                    },
+//                  ),
             actions: [
+              IconButton(
+                  iconSize: 26,
+                  icon: const Icon(
+                    Icons.feedback,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PageFeedback()));
+                  }),
               IconButton(
                 iconSize: 26,
                 icon: const Icon(Icons.notifications),
