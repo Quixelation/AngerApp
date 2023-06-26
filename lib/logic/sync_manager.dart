@@ -1,7 +1,6 @@
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
-import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:sembast/sembast.dart';
 

@@ -44,7 +44,7 @@ class _JspPassthroughPageState extends State<JspPassthroughPage> {
     if ((loggedIn ?? false) == true) {
       return widget.child;
     } else {
-      return JspLoginPage();
+      return const JspLoginPage();
     }
   }
 }

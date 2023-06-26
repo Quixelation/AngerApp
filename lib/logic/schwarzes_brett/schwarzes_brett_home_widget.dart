@@ -64,7 +64,7 @@ class _SchwarzesBrettHomeState extends State<SchwarzesBrettHome> {
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold))
                     : const SizedBox(),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(zettel.text,
                     softWrap: true,
                     maxLines: 4,
@@ -75,21 +75,21 @@ class _SchwarzesBrettHomeState extends State<SchwarzesBrettHome> {
           )),
       itemBuilder: (context) {
         return [
-          PopupMenuItem(
+          const PopupMenuItem(
             value: 1,
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
+                children: [
                   Icon(Icons.read_more),
                   SizedBox(width: 10),
                   Text("Weiterlesen")
                 ]),
           ),
-          PopupMenuItem(
+          const PopupMenuItem(
             value: 2,
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
+                children: [
                   Icon(
                     Icons.visibility_off,
                   ),

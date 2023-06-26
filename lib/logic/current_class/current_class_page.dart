@@ -11,13 +11,13 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
   int? selectedClass = Services.currentClass.subject.value;
 
   Widget selectClassBtn(int? classS) {
-    var text = classS != null ? "$classS." : "Keine Klasse";
+    var text = classS != null ? "$classS" : "Keine Klasse";
     return Expanded(
         child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       // abc is used so that "null" isn't shown as selected
       child: ((classS ?? "abc") == selectedClass)
-          ? ElevatedButton(
+          ? FilledButton(
               onPressed: () {
                 setState(() {
                   selectedClass = null;
@@ -40,7 +40,7 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(title: Text("Klassenstufe"), children: [
+    return SimpleDialog(title: const Text("Klassenstufe"), children: [
       Row(
         children: [
           selectClassBtn(5),
@@ -68,21 +68,21 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
         height: 32,
       ),
       Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 24,
         ),
         child: OutlinedButton(
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => parsePage(() => _infoPage)));
           },
-          child: Opacity(
+          child: const Opacity(
             child: Text("Was wird angepasst?", style: TextStyle()),
             opacity: 1,
           ),
         ),
       ),
-      SizedBox(height: 8),
-      Padding(
+      const SizedBox(height: 8),
+      const Padding(
           padding: EdgeInsets.symmetric(
             horizontal: 24,
           ),

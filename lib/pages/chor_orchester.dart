@@ -9,13 +9,13 @@ class PageChorOrchester extends StatelessWidget {
         appBar: AppBar(
           title: const Text(''),
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+        body: const SingleChildScrollView(
+          padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
-              const Opacity(
+              SizedBox(height: 8),
+              Opacity(
                 opacity: 0.6,
                 child: Text(
                   "Musikkultur am Angergymnasium",
@@ -25,22 +25,22 @@ class PageChorOrchester extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
-              const Text(
+              SizedBox(height: 4),
+              Text(
                 "Chor / Orchester",
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 64),
-              const Text("Wo sind wir präsent?",
+              SizedBox(height: 64),
+              Text("Wo sind wir präsent?",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(
+              SizedBox(
                 height: 15,
               ),
               Opacity(
                 opacity: 0.87,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text("Weihnachtskonzerte", style: TextStyle(fontSize: 18)),
                     SizedBox(
                       height: 3,

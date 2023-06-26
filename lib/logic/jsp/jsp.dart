@@ -4,8 +4,6 @@ import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
 import 'package:anger_buddy/logic/files/files.dart';
 import 'package:anger_buddy/logic/secure_storage/secure_storage.dart';
-import 'package:anger_buddy/main.dart';
-import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import "package:rxdart/subjects.dart";
 
@@ -16,7 +14,7 @@ Future<bool> loginToJsp({required String username, required String password}) as
   try {
     await JspFilesClient(manualUsername: username, manualPassword: password).getWebDavFiles("/");
   } catch (e) {
-    logger.e("WebDav failed to check login");
+    logger.e("WebDav failed to check login", e, (e as Error).stackTrace);
     return false;
   }
 
@@ -76,16 +74,21 @@ class JspCredsManager implements CredentialsManager<JspCreds> {
 
   @override
   fetchFromDatabase() async {
-    var username = await secureStorage.read(key: secureStorageUsernameKey);
-    var password = await secureStorage.read(key: secureStoragePasswordKey);
+    try {
+      var username = await secureStorage.read(key: secureStorageUsernameKey);
+      var password = await secureStorage.read(key: secureStoragePasswordKey);
 
-    if (username == null || username.trim() == "" || password == null || password.trim() == "") {
-      removeCredentials(withDatabaseEntry: false);
-      return null;
-    } else {
-      var creds = JspCreds(username, password);
-      setCredentials(creds, withDatabaseEntry: false);
-      return creds;
+      if (username == null || username.trim() == "" || password == null || password.trim() == "") {
+        removeCredentials(withDatabaseEntry: false);
+        return null;
+      } else {
+        var creds = JspCreds(username, password);
+        setCredentials(creds, withDatabaseEntry: false);
+        return creds;
+      }
+    } catch (err) {
+      logger.e(err);
     }
+    return null;
   }
 }

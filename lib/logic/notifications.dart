@@ -1,6 +1,5 @@
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sembast/sembast.dart';

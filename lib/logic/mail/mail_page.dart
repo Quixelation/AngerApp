@@ -25,19 +25,19 @@ class _JspMailMainPageState extends State<JspMailMainPage> {
 
   Widget getMailboxIcon(Mailbox mb) {
     if (mb.isInbox) {
-      return Icon(Icons.mail_outline);
+      return const Icon(Icons.mail_outline);
     } else if (mb.isArchive) {
-      return Icon(Icons.archive_outlined);
+      return const Icon(Icons.archive_outlined);
     } else if (mb.isJunk) {
-      return Icon(Icons.warning_amber_outlined);
+      return const Icon(Icons.warning_amber_outlined);
     } else if (mb.isTrash) {
-      return Icon(Icons.delete_outline);
+      return const Icon(Icons.delete_outline);
     } else if (mb.isSent) {
-      return Icon(Icons.send_outlined);
+      return const Icon(Icons.send_outlined);
     } else if (mb.isDrafts) {
-      return Icon(Icons.drafts_outlined);
+      return const Icon(Icons.drafts_outlined);
     } else {
-      return SizedBox(
+      return const SizedBox(
         width: 0,
       );
     }
@@ -46,9 +46,9 @@ class _JspMailMainPageState extends State<JspMailMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("JspMail")),
+        appBar: AppBar(title: const Text("JspMail")),
         body: mailboxes == null
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator.adaptive(),
               )
             : ListView(
@@ -99,11 +99,11 @@ class __JspMailboxState extends State<_JspMailbox> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.mailbox.name)),
       body: messages == null
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator.adaptive(),
             )
           : ListView.separated(
-              separatorBuilder: (context, index) => Divider(),
+              separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, nr) {
                 var e = messages![nr];
                 return ListTile(

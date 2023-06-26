@@ -44,6 +44,7 @@ class __PageGiveFeedbackState extends State<_PageGiveFeedback> {
                 if (str == null || str == "") {
                   return "Feedback darf nicht leer sein";
                 }
+                return null;
               },
               decoration: const InputDecoration(
                 hintText: "Feedback",

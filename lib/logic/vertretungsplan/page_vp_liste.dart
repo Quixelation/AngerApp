@@ -9,19 +9,20 @@ class _PageVertretungsplanListe extends StatefulWidget {
 }
 
 class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
-  AsyncDataResponse<_VpListResponse>? _vertretungsplanListe;
-  late final StreamSubscription<dynamic>? sub;
+  List<VertretungsPlanItem>? _vertretungsplanListe;
+  AsyncDataResponse<_VpListResponse>? _vertretungsplanResponseData;
+  late final StreamSubscription<dynamic>? downloadSub;
+  StreamSubscription? vpListSub;
   Map<String, bool> _isNew = {};
 
-  Future<void> _checkIfNew(AsyncDataResponse<_VpListResponse>? value) async {
-    value ??= _vertretungsplanListe!;
+  Future<void> _checkIfNew(List<VertretungsPlanItem>? value) async {
+    value ??= (_vertretungsplanListe ?? []);
 
     Map<String, bool> isNewTemp = {};
 
-    if (!value.data.result || value.data.data == null) return;
-    for (var val in value.data.data!) {
+    for (var val in value) {
       isNewTemp[val.uniqueId] =
-          await checkIfVpIsNew(val.uniqueId, val.changedDate);
+          await checkIfUniqueIdIsNew(val.uniqueId, val.changedDate);
     }
     setState(() {
       _isNew = isNewTemp;
@@ -29,11 +30,24 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
   }
 
   Future<void> _loadData() async {
-    var vpListApiData = await fetchVertretungsListApiData();
+    vpListSub = Services.vp.vpList.listen((value) async {
+      if (!mounted) {
+        vpListSub?.cancel();
+        return;
+      }
+      await _checkIfNew(value);
+      setState(() {
+        _vertretungsplanListe = value;
+      });
+    });
 
-    await _checkIfNew(vpListApiData);
+    var responseData = await Services.vp.fetchListApi();
     setState(() {
-      _vertretungsplanListe = vpListApiData;
+      _vertretungsplanResponseData = responseData;
+      if (responseData.error == true) {
+        //So that the error is shown
+        _vertretungsplanListe = [];
+      }
     });
 
     return;
@@ -44,9 +58,9 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
     super.initState();
     _loadData().then((value) {
       setState(() {
-        sub = _vpDownloadedNotifier.listen((value) {
+        downloadSub = _vpDownloadedNotifier.listen((value) {
           if (!mounted) {
-            sub?.cancel();
+            downloadSub?.cancel();
           }
           _checkIfNew(null);
         });
@@ -57,7 +71,8 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
   @override
   void dispose() {
     super.dispose();
-    sub?.cancel();
+    downloadSub?.cancel();
+    vpListSub?.cancel();
   }
 
   @override
@@ -67,6 +82,15 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
       child: Scaffold(
           appBar: AppBar(
             title: const Text('Vertretung'),
+            actions: [
+              IconButton(
+                  icon: Icon(Icons.open_in_new),
+                  onPressed: () {
+                    launchURL(
+                        "https://newspointweb.de/mobile/?client=${Credentials.vertretungsplan.subject.valueWrapper?.value ?? ""}",
+                        context);
+                  })
+            ],
             bottom: const TabBar(tabs: [
               Tab(text: "Aktuell", icon: Icon(Icons.list)),
               Tab(
@@ -84,18 +108,46 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
                     child: _LoggedInAs(),
                   ),
                   ...(_vertretungsplanListe != null
-                      ? _vertretungsplanListe!.error == true
+                      ? _vertretungsplanResponseData?.error == true
                           ? [
-                              const NoConnectionColumn(
+                              NoConnectionColumn(
                                 footerWidgets: [
                                   Center(
+                                      child: OutlinedButton.icon(
+                                          icon: Icon(Icons.refresh_outlined),
+                                          label: Text("Erneut versuchen"),
+                                          onPressed: () async {
+                                            setState(() {
+                                              this._vertretungsplanListe = null;
+                                              this._vertretungsplanResponseData =
+                                                  null;
+                                              _loadData();
+                                            });
+                                            await Services.vp.fetchListApi();
+                                          })),
+                                  SizedBox(height: 4),
+                                  Center(
                                     child: _ToDownloadsBtn(),
-                                  )
+                                  ),
+                                  SizedBox(height: 4),
+                                  Center(
+                                    child: OutlinedButton.icon(
+                                        icon: Icon(Icons.open_in_new),
+                                        label: Text("Im Browser öffnen"),
+                                        onPressed: () {
+                                          launchURL(
+                                              "https://newspointweb.de/mobile/?client=${Credentials.vertretungsplan.subject.valueWrapper?.value ?? ""}",
+                                              context);
+                                        }),
+                                  ),
                                 ],
                               ),
                             ]
-                          : (_vertretungsplanListe!.data.result == true
-                              ? _vertretungsplanListe!.data.data!
+                          : ((_vertretungsplanListe?.isNotEmpty ?? false) &&
+                                  ((_vertretungsplanResponseData?.data.result ??
+                                          true) ==
+                                      true)
+                              ? _vertretungsplanListe!
                                   .map((value) => ListTile(
                                       leading: Column(
                                           mainAxisSize: MainAxisSize.max,
@@ -130,7 +182,7 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
                                   NoConnectionColumn(
                                       showImage: true,
                                       title: "Keine Daten",
-                                      subtitle: _vertretungsplanListe!
+                                      subtitle: _vertretungsplanResponseData!
                                               .data.msg ??
                                           "Bitte die Login-Daten überprüfen")
                                 ])
@@ -157,14 +209,11 @@ class _ToDownloadsBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      style: ButtonStyle(
-          visualDensity: VisualDensity.standard,
-          padding: MaterialStateProperty.all(
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12))),
-      child: const Text("Zu den Downloads"),
+    return OutlinedButton.icon(
+      icon: Icon(Icons.download_for_offline_outlined),
+      label: const Text("Zu den Downloads"),
       onPressed: () {
-        DefaultTabController.of(context)?.animateTo(1);
+        DefaultTabController.of(context).animateTo(1);
       },
     );
   }
@@ -201,7 +250,7 @@ class __TabDownloadedVpsState extends State<_TabDownloadedVps>
   List<VertretungsplanDownloadItem>? _items;
   late final StreamSubscription<dynamic> sub;
   void _getDownloaded() {
-    getAllDownloadedVp().then((value) => setState(() {
+    AngerApp.vp.downloads.getAll().then((value) => setState(() {
           _items = value;
         }));
   }
@@ -266,17 +315,18 @@ class __TabDownloadedVpsState extends State<_TabDownloadedVps>
           )
         else ...[
           ListTile(
-              title: vpSettings.valueWrapper?.value.autoSave == true
+              title: AngerApp.vp.settings.subject.value?.autoSave == true
                   ? Text(
                       "Download-Zeitraum: ${(() {
                         switch (
-                            vpSettings.valueWrapper?.value.saveDuration ?? 0) {
+                            AngerApp.vp.settings.subject.value?.saveDuration ??
+                                0) {
                           case 0:
                             return "Solange auf Server";
                           case 1:
                             return "1 Tag";
                           default:
-                            return "${vpSettings.valueWrapper?.value.saveDuration ?? '{FEHLER}'} Tage";
+                            return "${AngerApp.vp.settings.subject.value?.saveDuration ?? '{FEHLER}'} Tage";
                         }
                       })()}",
                       style: const TextStyle(fontWeight: FontWeight.bold),
@@ -333,7 +383,8 @@ class __TabDownloadedVpsState extends State<_TabDownloadedVps>
                                   child: ElevatedButton(
                                     child: const Text("Löschen"),
                                     onPressed: () {
-                                      _removeVpFromDb(downloadedVp.uniqueId);
+                                      AngerApp.vp.downloads
+                                          .removeFromDb(downloadedVp.uniqueId);
                                       Navigator.pop(ctx);
                                     },
                                   ),

@@ -1,18 +1,20 @@
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/database.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
+import 'package:anger_buddy/logic/matrix/matrix.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
-import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
-import 'package:anger_buddy/logic/opensense/opensense.dart';
-import 'package:anger_buddy/partials/introduction_screen.dart';
+import 'package:anger_buddy/partials/bottom_appbar.dart';
 import 'package:anger_buddy/utils/logger.dart';
+import 'package:feature_flags/feature_flags.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger_flutter_viewer/logger_flutter_viewer.dart';
 import "package:sembast/sembast.dart";
 import "package:sembast/sembast.dart" as sb;
@@ -28,38 +30,98 @@ class PageDevTools extends StatelessWidget {
         ),
         body: Scaffold(
             body: ListView(children: [
+          // const MainBottomAppBar(),
+          SelectableText(AngerApp.moodle.login.creds.token ?? "<NoToken>"),
+          ElevatedButton(
+              onPressed: () async {
+                await AngerApp.localNotifications.show(
+                    666,
+                    "Hello",
+                    "Test",
+                    const NotificationDetails(
+                        android: AndroidNotificationDetails("testchannel",
+                            "Entiwckler-Test-Benachrichtigungen")));
+              },
+              child: const Text("[Notificatiosn] send test noti")),
+          ElevatedButton(
+              onPressed: () async {
+                await AngerApp.whatsnew.removeLastCheckedFromDatabase();
+              },
+              child: const Text("[WhatsNew] remove lastchecked")),
+          ElevatedButton(
+              onPressed: () async {
+                await AngerApp.moodle.login.creds.init();
+              },
+              child: const Text("[MoodleMessaging] load creds")),
           ElevatedButton(
               onPressed: () async {
                 await Services.portalLinks.fetchFromServer();
               },
-              child: Text("Univention Portal Linke")),
+              child: const Text("Univention Portal Linke")),
           ElevatedButton(
               onPressed: () async {
                 // await Services.mail.init();
 
                 print("[[Connected]]");
               },
-              child: Text("MAIL: Init and Connext")),
+              child: const Text("MAIL: Init and Connext")),
           ElevatedButton(
               onPressed: () async {
                 // logger.d(Services.mail.imapClient);
               },
-              child: Text("Test if Mail init")),
-          SizedBox(height: 8),
+              child: const Text("Test if Mail init")),
+          const SizedBox(height: 8),
+          ElevatedButton(
+              onPressed: () async {
+                await DEVONLYdeleteAushangReadStateForAllAushange();
+              },
+              child: const Text("[Aushang] Delete Read State")),
+          ElevatedButton(
+              onPressed: () async {
+                await Services.matrix.client.init();
+              },
+              child: const Text("[Matrix] client init")),
+          ElevatedButton(
+              onPressed: () async {
+                await Services.matrix.login();
+              },
+              child: const Text("[Matrix] login")),
+          ElevatedButton(
+              onPressed: () async {
+                await JspMatrix().init();
+              },
+              child: const Text("JustCallJspMatrix&init")),
+          ElevatedButton(
+              onPressed: () async {
+                var matric = JspMatrix();
+                await matric.init();
+                logger.d(matric.client.accountData);
+              },
+              child: const Text("JustCallJspMatrix::AccountData")),
+          ElevatedButton(
+              onPressed: () async {
+                var matric = JspMatrix();
+                await matric.init();
+                var rooms = await matric.client.getJoinedRooms();
+                logger.d("[Matrix] joined Rooms");
+                logger.d(rooms);
+              },
+              child: const Text("Aushänge DELETE READ")),
+          const SizedBox(height: 8),
           ElevatedButton(
               onPressed: () {
                 var week = WeekViewCalendar(events: [
                   EventData(
                       id: "id1",
                       dateFrom: DateTime.now(),
-                      dateTo: DateTime.now().add(Duration(days: 3)),
+                      dateTo: DateTime.now().add(const Duration(days: 3)),
                       title: "title1",
                       desc: "desc",
                       allDay: true),
                   EventData(
                       id: "id1",
-                      dateFrom: DateTime.now().add(Duration(days: 1)),
-                      dateTo: DateTime.now().add(Duration(days: 4)),
+                      dateFrom: DateTime.now().add(const Duration(days: 1)),
+                      dateTo: DateTime.now().add(const Duration(days: 4)),
                       title: "title1",
                       desc: "desc",
                       allDay: true)
@@ -68,14 +130,14 @@ class PageDevTools extends StatelessWidget {
                 logger.i(week);
                 week.toStructuredWeekEntryData();
               },
-              child: Text("GenWeek")),
-          SizedBox(height: 16),
+              child: const Text("GenWeek")),
+          const SizedBox(height: 16),
           ElevatedButton(
               onPressed: () {
                 Credentials.jsp.removeCredentials();
               },
               child: const Text("LogOut JSP")),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
               onPressed: () {
                 LogConsole.open(context, dark: false);
@@ -102,7 +164,9 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                AppManager.stores.data.record("wp-mail-cookie").delete(getIt.get<AppManager>().db);
+                AppManager.stores.data
+                    .record("wp-mail-cookie")
+                    .delete(getIt.get<AppManager>().db);
               },
               child: const Text("Mail Kontakt Login löschen")),
           const SizedBox(
@@ -135,15 +199,8 @@ class PageDevTools extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                toggleSeenIntroductionScreen(false);
-              },
-              child: const Text("IntroScreen Seen false")),
-          const SizedBox(
-            height: 25,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                enforceDefaultFcmSubscriptions(enforceEvenWhenValueAlreadySet: true);
+                enforceDefaultFcmSubscriptions(
+                    enforceEvenWhenValueAlreadySet: true);
               },
               child: const Text("Enforce Default Notification Subscriptions")),
           const SizedBox(
@@ -186,5 +243,7 @@ Future<bool> getDevToolsActiveFromDB(sb.Database db) async {
 Future<void> toogleDevtools(bool state) async {
   getIt.get<AppManager>().devtools.add(state);
   var db = getIt.get<AppManager>().db;
-  await AppManager.stores.data.record("devtoolsactive").put(db, {"value": state ? "TRUE" : "FALSE"});
+  await AppManager.stores.data
+      .record("devtoolsactive")
+      .put(db, {"value": state ? "TRUE" : "FALSE"});
 }

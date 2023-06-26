@@ -2,17 +2,26 @@ library klausuren;
 
 import 'dart:convert';
 
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/data_manager.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
+import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
+import 'package:anger_buddy/utils/time_2_string.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
+import 'dart:async';
 import 'package:sembast/sembast.dart';
+
+part "klausuren_page.dart";
+part "klausuren_homepage_widget.dart";
 
 class Klausur {
   final String id;
@@ -22,8 +31,7 @@ class Klausur {
   final int klassenstufe;
   final String? infos;
 
-  Klausur(
-      {required this.id, required this.name, this.zeit, required this.date, required this.klassenstufe, this.infos});
+  Klausur({required this.id, required this.name, this.zeit, required this.date, required this.klassenstufe, this.infos});
 
   EventData toEventData() {
     return EventData(
@@ -68,12 +76,8 @@ Future<List<Klausur>?> getPinnedKlausuren() async {
       var dbKlausur = await AppManager.stores.klausuren.record(id).get(db);
 
       if (dbKlausur != null) {
-        printInDebug(
-            "DT DIF ${DateTime.fromMillisecondsSinceEpoch(int.parse(dbKlausur["date"].toString())).difference(DateTime.now()).inDays}");
-        if (DateTime.fromMillisecondsSinceEpoch(int.parse(dbKlausur["date"].toString()))
-                .difference(DateTime.now())
-                .inDays <
-            0) {
+        printInDebug("DT DIF ${DateTime.fromMillisecondsSinceEpoch(int.parse(dbKlausur["date"].toString())).difference(DateTime.now()).inDays}");
+        if (DateTime.fromMillisecondsSinceEpoch(int.parse(dbKlausur["date"].toString())).difference(DateTime.now()).inDays < 0) {
           // Klausuren, welche in der Vergangenheit liegen, überspringen
           continue;
         }

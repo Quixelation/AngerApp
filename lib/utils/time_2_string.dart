@@ -1,7 +1,16 @@
 String time2string(DateTime dateTime,
     {bool includeWeekday = false,
     bool useStringMonth = true,
-    bool includeTime = false}) {
+    bool onlyTime = false,
+    bool onlyWeekday = false,
+    bool includeTime = false,
+    bool showSeconds = false}) {
+  if (onlyWeekday) {
+    assert(onlyTime == false);
+  } else if (onlyTime) {
+    assert(onlyWeekday == false);
+  }
+
   String day = "<TAG>";
   switch (dateTime.weekday) {
     case DateTime.monday:
@@ -27,6 +36,9 @@ String time2string(DateTime dateTime,
       break;
   }
 
+  if (onlyWeekday) {
+    return day;
+  }
   int date = dateTime.day;
 
   String month = "<MONAT>";
@@ -51,7 +63,7 @@ String time2string(DateTime dateTime,
         month = "Juni";
         break;
       case DateTime.july:
-        month = "July";
+        month = "Juli";
         break;
       case DateTime.august:
         month = "August";
@@ -82,39 +94,24 @@ String time2string(DateTime dateTime,
   String weekDayString = includeWeekday ? "$day, " : "";
 
   var timeString = "";
-  if (includeTime) {
-    timeString =
-        " ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}";
+  if (includeTime || onlyTime) {
+    timeString = " ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, "0")}";
+    if (showSeconds) {
+      timeString += ":${dateTime.second.toString().padLeft(2, "0")}";
+    }
   }
 
-  return "$weekDayString$date.$month$year$timeString";
+  if (onlyTime) {
+    return timeString.trim();
+  } else {
+    return "$weekDayString$date.$month$year$timeString";
+  }
 }
 
 String intToMonthString(int month) {
-  return [
-    "Januar",
-    "Februar",
-    "März",
-    "April",
-    "Mai",
-    "Juni",
-    "Juli",
-    "August",
-    "September",
-    "Oktober",
-    "November",
-    "Dezember"
-  ][month - 1];
+  return ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"][month - 1];
 }
 
 String intToDayString(int day) {
-  return [
-    "Montag",
-    "Dienstag",
-    "Mittwoch",
-    "Donnerstag",
-    "Freitag",
-    "Samstag",
-    "Sonntag"
-  ][day - 1];
+  return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"][day - 1];
 }

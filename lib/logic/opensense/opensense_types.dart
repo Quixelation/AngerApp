@@ -8,8 +8,9 @@ class _OpenSenseSensor {
   late final String unit;
 
   _OpenSenseSensor.fromApiMap(Map<String, dynamic> apiData) {
-    this.id = apiData["_id"];
-    lastMeasurement = _OpenSenseLastMeasurement.fromApiMap(apiData["lastMeasurement"]);
+    id = apiData["_id"];
+    lastMeasurement =
+        _OpenSenseLastMeasurement.fromApiMap(apiData["lastMeasurement"]);
     sensorType = apiData["sensorType"];
     title = apiData["title"];
     unit = apiData["unit"];
@@ -41,10 +42,13 @@ class _OpenSenseFullData {
     createdAt = DateTime.parse(apiData["createdAt"]);
     updatedAt = DateTime.parse(apiData["updatedAt"]);
     lastMeasurementAt = DateTime.parse(apiData["lastMeasurementAt"]);
-    currentLocation = _OpenSenseCurrentLocation.fromApiMap(apiData["currentLocation"]);
+    currentLocation =
+        _OpenSenseCurrentLocation.fromApiMap(apiData["currentLocation"]);
     exposure = apiData["exposure"];
     model = apiData["model"];
-    sensors = (apiData["sensors"] as List<dynamic>).map((e) => _OpenSenseSensor.fromApiMap(e)).toList();
+    sensors = (apiData["sensors"] as List<dynamic>)
+        .map((e) => _OpenSenseSensor.fromApiMap(e))
+        .toList();
     name = apiData["name"];
   }
 }
@@ -55,9 +59,11 @@ class _OpenSenseCurrentLocation {
   late final String type;
   _OpenSenseCurrentLocation.fromApiMap(Map<String, dynamic> apiData) {
     timestamp = DateTime.parse(apiData["timestamp"]);
-    print(apiData);
 
-    coordinates = [apiData["coordinates"][0] as double, apiData["coordinates"][1] as double];
+    coordinates = [
+      apiData["coordinates"][0] as double,
+      apiData["coordinates"][1] as double
+    ];
     type = apiData["type"];
   }
 }
@@ -68,7 +74,10 @@ class _OpenSenseHistoricalData {
   late final DateTime createdAt;
   _OpenSenseHistoricalData.fromApiMap(Map<String, dynamic> apiData) {
     value = double.parse(apiData["value"]);
-    location = [apiData["location"][0] as double, apiData["location"][1] as double];
+    location = [
+      apiData["location"][0] as double,
+      apiData["location"][1] as double
+    ];
     createdAt = DateTime.parse(apiData["createdAt"]);
   }
 }

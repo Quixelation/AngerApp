@@ -49,7 +49,7 @@ List<Fach> faecher = [
 class _InputType {
   final String name;
   Fach? fach;
-  _InputType(this.name, {this.fach});
+  _InputType(this.name);
 }
 
 Future<Fach?> _showFaecherSheet(context) async {

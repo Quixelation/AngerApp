@@ -20,7 +20,9 @@ class _OpenSensePageState extends State<OpenSensePage> {
     });
     try {
       var data = await Services.openSense.getSensorHistory(selectedSensorId!,
-          dateStart: selectedTimeSpan != null ? (timespans[selectedTimeSpan!]["date_start"] as DateTime) : null);
+          dateStart: selectedTimeSpan != null
+              ? (timespans[selectedTimeSpan!]["date_start"] as DateTime)
+              : null);
       setState(() {
         dataForSensor = data.reversed.toList();
         dataLoading = false;
@@ -29,13 +31,13 @@ class _OpenSensePageState extends State<OpenSensePage> {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
-                content: Text("Es gab einen Fehler beim Laden der Daten"),
+                content: const Text("Es gab einen Fehler beim Laden der Daten"),
                 actions: [
                   TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: Text("Ok"))
+                      child: const Text("Ok"))
                 ],
               ));
       setState(() {
@@ -45,10 +47,16 @@ class _OpenSensePageState extends State<OpenSensePage> {
   }
 
   final List<Map<String, dynamic>> timespans = [
-    {"date_start": DateTime.now().subtract(Duration(days: 7)), "title": "7D"},
-    {"date_start": DateTime.now().subtract(Duration(days: 30)), "title": "1M"},
-    {"date_start": DateTime.now().subtract(Duration(days: 30 * 3)), "title": "3M"},
-    {"date_start": DateTime.now().subtract(Duration(days: 30 * 12)), "title": "1J"},
+    {"date_start": DateTime.now().subtract(const Duration(days: 7)), "title": "7D"},
+    {"date_start": DateTime.now().subtract(const Duration(days: 30)), "title": "1M"},
+    {
+      "date_start": DateTime.now().subtract(const Duration(days: 30 * 3)),
+      "title": "3M"
+    },
+    {
+      "date_start": DateTime.now().subtract(const Duration(days: 30 * 12)),
+      "title": "1J"
+    },
   ];
   int? selectedTimeSpan;
 
@@ -56,23 +64,24 @@ class _OpenSensePageState extends State<OpenSensePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("openSense-Box"),
+          title: const Text("openSense-Box"),
           actions: [
             IconButton(
                 onPressed: () {
                   Services.openSense.init();
                 },
-                icon: Icon(Icons.refresh))
+                icon: const Icon(Icons.refresh))
           ],
         ),
         body: ListView(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 24.0, left: 16, right: 16, bottom: 8),
+            const Padding(
+              padding: EdgeInsets.only(
+                  top: 24.0, left: 16, right: 16, bottom: 8),
               child: Opacity(
                 opacity: 0.87,
                 child: Row(
-                  children: const [
+                  children: [
                     Icon(Icons.lightbulb_outline),
                     SizedBox(width: 12),
                     Flexible(
@@ -113,8 +122,11 @@ class _OpenSensePageState extends State<OpenSensePage> {
                         ),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: timespans.reversed.toList().mapWithIndex<Widget>((value, index) {
-                              var realIndex = (index - timespans.length + 1).abs();
+                            children: timespans.reversed
+                                .toList()
+                                .mapWithIndex<Widget, dynamic>((value, index) {
+                              var realIndex =
+                                  (index - timespans.length + 1).abs();
 
                               if (realIndex == selectedTimeSpan) {
                                 return ElevatedButton(
@@ -148,7 +160,7 @@ class _OpenSensePageState extends State<OpenSensePage> {
               )
             else if (dataForSensor != null)
               Padding(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: Card(
                     child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -157,32 +169,40 @@ class _OpenSensePageState extends State<OpenSensePage> {
                     children: [
                       _OpenSenseChart(dataForSensor!),
                       const SizedBox(height: 16),
-                      Opacity(opacity: 0.87, child: Text("Höchster Wert: ${_getLargetDatapoint(dataForSensor!)}")),
-                      const SizedBox(height: 4),
-                      Opacity(opacity: 0.87, child: Text("Niedrigster Wert: ${_getSmallestDatapoint(dataForSensor!)}")),
+                      Opacity(
+                          opacity: 0.87,
+                          child: Text(
+                              "Höchster Wert: ${_getLargetDatapoint(dataForSensor!)}")),
                       const SizedBox(height: 4),
                       Opacity(
                           opacity: 0.87,
                           child: Text(
-                              "Erstes Datum: ${(time2string(dataForSensor!.first.createdAt as DateTime, includeTime: false, includeWeekday: false, useStringMonth: true))} ")),
+                              "Niedrigster Wert: ${_getSmallestDatapoint(dataForSensor!)}")),
                       const SizedBox(height: 4),
                       Opacity(
                           opacity: 0.87,
                           child: Text(
-                              "Letztes Datum: ${(time2string(dataForSensor!.last.createdAt as DateTime, includeTime: false, includeWeekday: false, useStringMonth: true))} "))
+                              "Erstes Datum: ${(time2string(dataForSensor!.first.createdAt, includeTime: false, includeWeekday: false, useStringMonth: true))} ")),
+                      const SizedBox(height: 4),
+                      Opacity(
+                          opacity: 0.87,
+                          child: Text(
+                              "Letztes Datum: ${(time2string(dataForSensor!.last.createdAt, includeTime: false, includeWeekday: false, useStringMonth: true))} "))
                     ],
                   ),
                 )),
               ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: OutlinedButton.icon(
                 onPressed: () {
-                  launchURL("https://opensensemap.org/explore/61dad928bfd633001c618c6a", context);
+                  launchURL(
+                      "https://opensensemap.org/explore/61dad928bfd633001c618c6a",
+                      context);
                 },
-                label: Text("Zur Webseite"),
-                icon: Icon(Icons.open_in_new),
+                label: const Text("Zur Webseite"),
+                icon: const Icon(Icons.open_in_new),
               ),
             )
           ],
@@ -201,18 +221,24 @@ class _OpenSenseChart extends StatelessWidget {
       height: 200,
       child: LineChart(
         LineChartData(
-            lineTouchData: LineTouchData(touchTooltipData: LineTouchTooltipData()),
+            lineTouchData:
+                LineTouchData(touchTooltipData: LineTouchTooltipData()),
             titlesData: FlTitlesData(
                 show: true,
-                bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                bottomTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 topTitles: AxisTitles(
                     sideTitles: SideTitles(
                   showTitles: false,
                 )),
-                leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false))),
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false))),
             lineBarsData: [
               LineChartBarData(
-                spots: data.map((e) => FlSpot(e.createdAt.millisecondsSinceEpoch.toDouble(), e.value)).toList(),
+                spots: data
+                    .map((e) => FlSpot(
+                        e.createdAt.millisecondsSinceEpoch.toDouble(), e.value))
+                    .toList(),
                 isCurved: false,
                 color: Theme.of(context).colorScheme.secondary,
                 dotData: FlDotData(

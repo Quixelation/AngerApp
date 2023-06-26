@@ -27,20 +27,47 @@ class _LoginOverviewPageState extends State<LoginOverviewPage> {
         ListTile(
           title: const Text("VP / Aushang"),
           subtitle: const Text("Vertretungsplan & Aushang"),
-          leading: Icon(Credentials.vertretungsplan.credentialsAvailable ? Icons.check : Icons.close),
+          leading: Icon(Credentials.vertretungsplan.credentialsAvailable
+              ? Icons.check
+              : Icons.close),
         ),
         ListTile(
           title: const Text("JSP"),
-          subtitle: const Text("Jenaer Schulportal (Dateien-Cloud, Mails, ...)"),
-          leading: Icon(Credentials.jsp.credentialsAvailable ? Icons.check : Icons.close),
+          subtitle:
+              const Text("Jenaer Schulportal (Dateien-Cloud, Mails, ...)"),
+          leading: Icon(
+              Credentials.jsp.credentialsAvailable ? Icons.check : Icons.close),
+        ),
+        ListTile(
+          title: const Text("Messenger (Matrix)"),
+          subtitle: const Text(
+              "(mit den Anmeldedaten von \"JSP\" (siehe oben) verbunden)"),
+          leading: Icon(
+              Services.matrix.client.isLogged() ? Icons.check : Icons.close),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        ListTile(
+          title: const Text("Moodle-Integration"),
+          subtitle: const Text(
+              "Nachrichten von Moodle in der AngerApp über den Messenger"),
+          leading: Icon(AngerApp.moodle.login.creds.credentialsAvailable
+              ? Icons.check
+              : Icons.close),
+        ),
+        const SizedBox(
+          height: 4,
         ),
         FutureBuilder<MailListResponse>(
           builder: (context, snapshot) {
             return ListTile(
               title: const Text("Lehrer-Mails"),
-              subtitle: const Text("Hier wird nicht der Login, sondern der generierte Cookie gespeichert."),
+              subtitle: const Text(
+                  "Hier wird nicht der Login, sondern der generierte Cookie gespeichert."),
               leading: Icon(snapshot.hasData
-                  ? (snapshot.data!.status == mailListResponseStatus.loginRequired
+                  ? (snapshot.data!.status ==
+                          mailListResponseStatus.loginRequired
                       ? Icons.close
                       : (snapshot.data!.status == mailListResponseStatus.success
                           ? Icons.check
@@ -49,6 +76,22 @@ class _LoginOverviewPageState extends State<LoginOverviewPage> {
             );
           },
           future: fetchMailList(),
+        ),
+        FutureBuilder<bool>(
+          builder: (context, snapshot) {
+            return ListTile(
+              title: const Text("Noten"),
+              subtitle: const Text("Zugang zu dem Cevex Home.InfoPoint."),
+              leading: Icon(snapshot.hasData
+                  ? (snapshot.data! == false
+                      ? Icons.close
+                      : (snapshot.data! == true
+                          ? Icons.check
+                          : Icons.warning_amber_outlined))
+                  : Icons.pending_outlined),
+            );
+          },
+          future: AngerApp.hip.creds.hasLoginDataStoredInSecureStorage(),
         ),
       ]),
     );
@@ -60,12 +103,12 @@ class _InformationPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return const Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         child: Opacity(
           opacity: 0.87,
-          child: Row(children: const [
+          child: Row(children: [
             Icon(Icons.lock),
             SizedBox(
               width: 12,

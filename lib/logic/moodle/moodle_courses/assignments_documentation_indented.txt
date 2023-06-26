@@ -1,0 +1,118 @@
+object {
+  courses   //list of courses
+    list of ( 
+      //course information object
+      object {
+        id int   //course id
+        fullname string   //course full name
+        shortname string   //course short name
+        timemodified int   //last time modified
+        assignments   //assignment info
+        list of ( 
+          //assignment information object
+          object {
+            id int   //assignment id
+            cmid int   //course module id
+            course int   //course id
+            name string   //assignment name
+            nosubmissions int   //no submissions
+            submissiondrafts int   //submissions drafts
+            sendnotifications int   //send notifications
+            sendlatenotifications int   //send notifications
+            sendstudentnotifications int   //send student notifications (default)
+            duedate int   //assignment due date
+            allowsubmissionsfromdate int   //allow submissions from date
+            grade int   //grade type
+            timemodified int   //last time assignment was modified
+            completionsubmit int   //if enabled, set activity as complete following submission
+            cutoffdate int   //date after which submission is not accepted without an extension
+            gradingduedate int   //the expected date for marking the submissions
+            teamsubmission int   //if enabled, students submit as a team
+            requireallteammemberssubmit int   //if enabled, all team members must submit
+            teamsubmissiongroupingid int   //the grouping id for the team submission groups
+            blindmarking int   //if enabled, hide identities until reveal identities actioned
+            hidegrader int   //If enabled, hide grader to student
+            revealidentities int   //show identities for a blind marking assignment
+            attemptreopenmethod string   //method used to control opening new attempts
+            maxattempts int   //maximum number of attempts allowed
+            markingworkflow int   //enable marking workflow
+            markingallocation int   //enable marking allocation
+            requiresubmissionstatement int   //student must accept submission statement
+            preventsubmissionnotingroup int  Optional //Prevent submission not in group
+            submissionstatement string  Optional //Submission statement formatted.
+            submissionstatementformat int  Optional //submissionstatement format (1 = HTML, 0 = MOODLE, 2 = PLAIN or 4 = MARKDOWN)
+            configs   //configuration settings
+              list of ( 
+                //assignment configuration object
+                object {
+                  id int  Optional //assign_plugin_config id
+                  assignment int  Optional //assignment id
+                  plugin string   //plugin
+                  subtype string   //subtype
+                  name string   //name
+                  value string   //value
+                } 
+              )
+            intro string  Optional //assignment intro, not allways returned because it deppends on the activity configuration
+            introformat int  Optional //intro format (1 = HTML, 0 = MOODLE, 2 = PLAIN or 4 = MARKDOWN)
+            introfiles  Optional //Files in the introduction text
+              list of ( 
+                //File.
+                object {
+                  filename string  Optional //File name.
+                  filepath string  Optional //File path.
+                  filesize int  Optional //File size.
+                  fileurl string  Optional //Downloadable file url.
+                  timemodified int  Optional //Time modified.
+                  mimetype string  Optional //File mime type.
+                  isexternalfile int  Optional //Whether is an external file.
+                  repositorytype string  Optional //The repository type for external files.
+                } 
+              )
+            introattachments  Optional //intro attachments files
+              list of ( 
+                //File.
+                object {
+                  filename string  Optional //File name.
+                  filepath string  Optional //File path.
+                  filesize int  Optional //File size.
+                  fileurl string  Optional //Downloadable file url.
+                  timemodified int  Optional //Time modified.
+                  mimetype string  Optional //File mime type.
+                  isexternalfile int  Optional //Whether is an external file.
+                  repositorytype string  Optional //The repository type for external files.
+                } 
+              )
+            activity string  Optional //Description of activity
+            activityformat int  Optional //activity format (1 = HTML, 0 = MOODLE, 2 = PLAIN or 4 = MARKDOWN)
+            activityattachments  Optional //Files from activity field
+              list of ( 
+                //File.
+                object {
+                  filename string  Optional //File name.
+                  filepath string  Optional //File path.
+                  filesize int  Optional //File size.
+                  fileurl string  Optional //Downloadable file url.
+                  timemodified int  Optional //Time modified.
+                  mimetype string  Optional //File mime type.
+                  isexternalfile int  Optional //Whether is an external file.
+                  repositorytype string  Optional //The repository type for external files.
+                } 
+              )
+            timelimit int  Optional //Time limit to complete assigment
+            submissionattachments int  Optional //Flag to only show files during submission
+          } 
+        )
+      } 
+    )
+    warnings  Optional //list of warnings
+      list of ( 
+        //warning
+      object {
+        item string  Optional //item can be 'course' (errorcode 1 or 2) or 'module' (errorcode 1)
+        itemid int  Optional //When item is a course then itemid is a course id. When the item is a module then itemid is a module id
+        warningcode string   //errorcode can be 1 (no access rights) or 2 (not enrolled or no permissions)
+        message string   //untranslated english message to explain the warning
+      } 
+    )
+} 

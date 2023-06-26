@@ -112,7 +112,7 @@ class _AGsDay extends StatelessWidget {
                                             child: Text(e.name,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .headline6),
+                                                    .titleLarge),
                                           ),
                                           const SizedBox(
                                             height: 5,

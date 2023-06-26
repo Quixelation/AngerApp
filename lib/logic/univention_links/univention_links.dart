@@ -3,12 +3,8 @@ library univention_links;
 import 'dart:convert';
 
 import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/foundation/key.dart';
 import "package:http/http.dart" as http;
 
 part "univentions_links_page.dart";

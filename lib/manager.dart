@@ -1,7 +1,4 @@
-import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/current_class/current_class.dart';
-import 'package:anger_buddy/logic/feedback/feedback.dart';
-import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/network/serverstatus.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:calendar_view/calendar_view.dart';
@@ -17,6 +14,8 @@ class AppManager {
   late final BehaviorSubject<bool> devtools;
   late final sb.Database db;
 
+  late String dbPath;
+
   AppManager({required this.mainScaffoldState, required sb.Database database}) {
     startServerStatusUpdates();
     db = database;
@@ -26,9 +25,11 @@ class AppManager {
       devtools.add(value);
     });
 
-    initVpSettings(database);
     CurrentClassManager.init(database);
   }
+
+  static String angergymnasiumWebsiteUrl = "https://angergymnasium.jena.de/";
+
   static String directusUrl = (() {
     final isRobertStuendlCom = uhtml.window.location.host.endsWith("robertstuendl.com");
 
@@ -46,6 +47,10 @@ class AppManager {
       return "https://angerapp.angergymnasium.jena.de/cms/";
     }
   })();
+  static String moodleApi = "https://moodle.jsp.jena.de/webservice/rest/server.php";
+  static String moodleApiPath = "/webservice/rest/server.php";
+  static String moodleSiteUrl = "https://moodle.jsp.jena.de/";
+  static String moodleSiteHost = "moodle.jsp.jena.de";
   static String apiUrl = (() {
     final isRobertStuendlCom = uhtml.window.location.host.endsWith("robertstuendl.com");
 
@@ -113,6 +118,8 @@ class _tableNames {
   final String aushaenge = "aushaenge";
   final String aushaengeLastRead = "aushaengeLastRead";
   final String schwarzesBrett = "schwarzesBrett";
+  final String srNews = "srnews";
+  final String moodleModules = "moodlemodules";
 
   List<String> get allTables {
     return [
@@ -129,7 +136,11 @@ class _tableNames {
       quickinfos,
       lessontimes,
       schwarzesBrett,
-      aushaenge
+      aushaenge,
+      aushaengeLastRead,
+      schwarzesBrett,
+      srNews,
+      moodleModules
     ];
   }
 }
@@ -150,6 +161,8 @@ class _stores {
   final aushaenge = stringMapStoreFactory.store(AppManager.tables.aushaenge);
   final aushaengeLastRead = stringMapStoreFactory.store(AppManager.tables.aushaengeLastRead);
   final schwarzesBrett = stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
+  final srNews = stringMapStoreFactory.store(AppManager.tables.srNews);
+  final moodleModules = intMapStoreFactory.store(AppManager.tables.moodleModules);
 
   List<StoreRef> get allStores {
     return [
@@ -166,7 +179,9 @@ class _stores {
       quickinfos,
       lessontimes,
       aushaenge,
-      aushaengeLastRead
+      aushaengeLastRead,
+      schwarzesBrett,
+      srNews
     ];
   }
 }
@@ -191,8 +206,7 @@ class _urlManager {
   String get cal {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/cal",
-        appUrl:
-            "https://calendar.google.com/calendar/ical/6ahlh7g35b4qk7afp96j51iee0%40group.calendar.google.com/public/basic.ics",
+        appUrl: "https://calendar.google.com/calendar/ical/6ahlh7g35b4qk7afp96j51iee0%40group.calendar.google.com/public/basic.ics",
         webDebugUrl: "${AppManager.apiUrl}/webproxy/cal");
   }
 
@@ -241,11 +255,8 @@ class _urlManager {
 
   String vpdetail(String url) {
     var uri = Uri.parse(url);
-    var queryString =
-        "?guid=${uri.queryParameters['guid']}&uniquename=${uri.queryParameters['uniquename']}&client=${uri.queryParameters['client']}";
+    var queryString = "?guid=${uri.queryParameters['guid']}&uniquename=${uri.queryParameters['uniquename']}&client=${uri.queryParameters['client']}";
     return _urlSwitcher(
-        webUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString",
-        appUrl: url,
-        webDebugUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString");
+        webUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString", appUrl: url, webDebugUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString");
   }
 }

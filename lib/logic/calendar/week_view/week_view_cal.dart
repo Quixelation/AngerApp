@@ -3,11 +3,13 @@ library weekview;
 import 'dart:async';
 
 import 'package:anger_buddy/logic/calendar/calendar.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:rxdart/subjects.dart';
+import "package:anger_buddy/extensions.dart";
 
 part "week_view_page.dart";
 
@@ -27,7 +29,8 @@ class WeekViewCalendar {
     return today;
   }
 
-  List<EventData> _getEventsForWeek({required DateTime startDate, required DateTime endDate}) {
+  List<EventData> _getEventsForWeek(
+      {required DateTime startDate, required DateTime endDate}) {
     final List<EventData> resultEvents = [];
 
     startDate = startDate.at0;
@@ -35,25 +38,35 @@ class WeekViewCalendar {
 
     for (var eventData in events) {
       var eventStart = eventData.dateFrom;
-
       var eventEnd = eventData.dateTo;
+
+      //TODO: Fix this
+      // Quick and Dirty solution, wenn das Event bis 0:00 des nächsten Tages geht, dass das Event nicht für den nächsten Tag noch angezeigt wird
+      if (eventEnd != null) eventEnd = eventEnd.subtract(Duration(minutes: 5));
+logger.v(eventData.title + " " + ( eventEnd != null ? time2string(eventEnd, includeTime: true) : ""));
       //TODO: IsAfter und isBefore müssen eigentlich >= statt nur > sein!!
 
       // Datum dazwischen
       var isBetween = eventStart.isSameOrAfterDateAt0(startDate) &&
-          (eventEnd?.isBefore(endDate.add(const Duration(days: 1)).at0) ?? false);
+          (eventEnd?.isBefore(endDate.add(const Duration(days: 1)).at0) ??
+              false);
       // Event geht durch Woche durch
       var isThrough = eventStart.isBefore(startDate) &&
-          (eventEnd?.isSameOrAfterDateAt0(endDate.add(const Duration(days: 1)).at0) ?? false);
+          (eventEnd?.isSameOrAfterDateAt0(
+                  endDate.add(const Duration(days: 1)).at0) ??
+              false);
       // Event endet die Woche
       var isEnding = (eventEnd?.isSameOrAfterDateAt0(startDate) ?? false) &&
-          (eventEnd?.isBefore(endDate.add(const Duration(days: 1)).at0) ?? false);
+          (eventEnd?.isBefore(endDate.add(const Duration(days: 1)).at0) ??
+              false);
       // Event beginnt die Woche
-      var isStarting =
-          eventStart.isSameOrAfterDateAt0(startDate) && eventStart.isBefore(endDate.add(const Duration(days: 1)).at0);
+      var isStarting = eventStart.isSameOrAfterDateAt0(startDate) &&
+          eventStart.isBefore(endDate.add(const Duration(days: 1)).at0);
 
       if (isBetween || isThrough || isStarting || isEnding) {
         resultEvents.add(eventData);
+        logger.d(
+            "Event: ${eventData.title} (${eventStart.toIso8601String()} - ${eventEnd?.toIso8601String()})");
       }
     }
     return resultEvents;
@@ -68,38 +81,49 @@ class WeekViewCalendar {
   }
 
   _Week generateWeek(int offsetFromThisWeek) {
-    var weekStart = getCurrentMonday().add(Duration(days: 7 * offsetFromThisWeek));
+    var weekStart =
+        getCurrentMonday().add(Duration(days: 7 * offsetFromThisWeek));
 
     var weekDays = _generateWeekDayList(monday: weekStart);
     var weekEnd = weekStart.add(const Duration(days: 6));
 
-    var eventsForThisWeek = _getEventsForWeek(startDate: weekStart, endDate: weekEnd);
+    var eventsForThisWeek =
+        _getEventsForWeek(startDate: weekStart, endDate: weekEnd);
 
-    var multiDayEvents = eventsForThisWeek.where((element) => element.isMultiDay).toList();
+    var multiDayEvents =
+        eventsForThisWeek.where((element) => element.isMultiDay).toList();
 
     // Events, die über mehrere Tage gehen, mit Priorität behandeln und zuerst einordnen
     for (var multiDayEventData in multiDayEvents) {
-      eventsForThisWeek.removeWhere((element) => element.id == multiDayEventData.id);
+      eventsForThisWeek
+          .removeWhere((element) => element.id == multiDayEventData.id);
 
-      final eventIsStartingThisWeek = multiDayEventData.dateFrom.isAfter(weekStart);
+      final eventIsStartingThisWeek =
+          multiDayEventData.dateFrom.isAfter(weekStart);
       final eventIsEndingThisWeek = multiDayEventData.dateTo!.isBefore(weekEnd);
 
       int? startPointIndex;
 
       int _startingPointOffset = 0;
 
-      var firstDayOfWeekDayList = eventIsStartingThisWeek ? multiDayEventData.dateFrom.weekday - 1 : 0;
-      var maxEventLengthThisWeek = eventIsEndingThisWeek ? multiDayEventData.dateTo!.weekday : weekDays.length;
+      var firstDayOfWeekDayList =
+          eventIsStartingThisWeek ? multiDayEventData.dateFrom.weekday - 1 : 0;
+      var maxEventLengthThisWeek = eventIsEndingThisWeek
+          ? multiDayEventData.dateTo!.weekday
+          : weekDays.length;
 
       while (startPointIndex == null) {
-        var startingPointFromFirstDay = weekDays[firstDayOfWeekDayList].events.length + _startingPointOffset;
+        var startingPointFromFirstDay =
+            weekDays[firstDayOfWeekDayList].events.length +
+                _startingPointOffset;
 
         bool isAllClear = true;
 
         for (var currentDayOfWeekDayList = firstDayOfWeekDayList;
             currentDayOfWeekDayList < maxEventLengthThisWeek;
             currentDayOfWeekDayList++) {
-          if (weekDays[currentDayOfWeekDayList].events.length > startingPointFromFirstDay) {
+          if (weekDays[currentDayOfWeekDayList].events.length >
+              startingPointFromFirstDay) {
             _startingPointOffset++;
             isAllClear = false;
             break;
@@ -116,17 +140,23 @@ class WeekViewCalendar {
           currentDayOfWeekDayList < maxEventLengthThisWeek;
           currentDayOfWeekDayList++) {
         // This should not be occupied, tested by the code ealier
-        if ((!(weekDays[currentDayOfWeekDayList].events.length < (startPointIndex + 1)))) {
+        if ((!(weekDays[currentDayOfWeekDayList].events.length <
+            (startPointIndex + 1)))) {
           // nested if to prevent errex with invalid range 0
-          if (weekDays[currentDayOfWeekDayList].events[startPointIndex] != null) {
+          if (weekDays[currentDayOfWeekDayList].events[startPointIndex] !=
+              null) {
             logger.e("EventSlot not Empty");
             throw ErrorDescription("EventSlot not Empty");
           }
         }
 
-        weekDays[currentDayOfWeekDayList].events.addAll(
-            List.filled((startPointIndex + 1) - weekDays[currentDayOfWeekDayList].events.length, null, growable: true));
-        weekDays[currentDayOfWeekDayList].events[startPointIndex] = multiDayEventData;
+        weekDays[currentDayOfWeekDayList].events.addAll(List.filled(
+            (startPointIndex + 1) -
+                weekDays[currentDayOfWeekDayList].events.length,
+            null,
+            growable: true));
+        weekDays[currentDayOfWeekDayList].events[startPointIndex] =
+            multiDayEventData;
       }
     }
 
@@ -233,21 +263,5 @@ class _Day {
   @override
   String toString() {
     return "Day(date: $date, events: $events)";
-  }
-}
-
-extension DateExt on DateTime {
-  DateTime get at0 {
-    return DateTime(year, month, day, 0, 0, 0, 0, 0);
-  }
-
-  bool isSameOrAfterDateAt0(DateTime date2) {
-    var datified = date2.at0;
-    return isAtSameMomentAs(datified) || isAfter(datified);
-  }
-
-  bool isSameOrBeforeDateAt0(DateTime date2) {
-    var datified = date2.at0;
-    return isAtSameMomentAs(datified) || isBefore(datified);
   }
 }

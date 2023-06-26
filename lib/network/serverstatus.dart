@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:anger_buddy/manager.dart';
-import 'package:anger_buddy/utils/logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
 

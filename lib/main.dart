@@ -1,26 +1,30 @@
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/database.dart';
-import 'package:anger_buddy/logic/aushang/aushang.dart';
+import 'package:anger_buddy/extensions.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/manager.dart';
-import 'package:anger_buddy/pages/home.dart';
 import 'package:anger_buddy/partials/drawer.dart';
-import 'package:anger_buddy/partials/introduction_screen.dart';
+
 import 'package:anger_buddy/utils/logger.dart';
+import 'package:feature_flags/feature_flags.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sembast/sembast.dart';
+import 'package:tinycolor2/tinycolor2.dart';
+import 'package:workmanager/workmanager.dart';
 import 'firebase_options.dart';
 import "package:universal_html/html.dart" as html;
 
 GetIt getIt = GetIt.instance;
 
-Future<void> initApp() async {
+Future<void> initApp({bool onlyBasic = false}) async {
   logger.v("[AngerApp} Starting...");
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -28,9 +32,10 @@ Future<void> initApp() async {
   try {
     allFutures = await Future.wait([
       openDB(),
-      Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ),
+      if (!onlyBasic)
+        Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        ),
     ]);
   } catch (e) {
     logger.e(e);
@@ -38,37 +43,73 @@ Future<void> initApp() async {
 
   var db = allFutures[0] as Database;
 
-  getIt.registerSingleton<AppManager>(AppManager(mainScaffoldState: GlobalKey(), database: db));
+  getIt.registerSingleton<AppManager>(
+      AppManager(mainScaffoldState: GlobalKey(), database: db));
 
-  toggleSubscribtionToTopic("all", true);
-  enforceDefaultFcmSubscriptions();
-  await Future.wait([initColorSubject(), initializeAllCredentialManagers()]);
+  if (!onlyBasic) {
+    toggleSubscribtionToTopic("all", true);
+    enforceDefaultFcmSubscriptions();
+  }
+  await dotenv.load(fileName: "chat.env");
+
+  await Future.wait(
+      [if (!onlyBasic) initColorSubject(), initializeAllCredentialManagers()]);
   // Services und Credentials müssen getrennt, weil Services aus Credentials beruhen
   await Services.init();
   logger.v("[AngerApp] Initialized");
 }
 
+@pragma(
+    'vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
+void callbackDispatcher() {
+  if (kDebugMode) {
+    Workmanager().executeTask((task, inputData) async {
+      print(
+          "Native called background task: $task"); //simpleTask will be emitted here.
+      await initApp(onlyBasic: true);
+      var notis = await AngerApp.matrix.client.getNotifications();
+      print("client has" +
+          notis.notifications.length.toString() +
+          " notifications");
+      print(
+          "Native ended background task: $task"); //simpleTask will be emitted here.
+      return Future.value(true);
+    });
+  } else {}
+}
+
 void main() async {
   await initApp();
-  runApp(const RestartWidget(child: AngerApp()));
+  Workmanager().initialize(
+      callbackDispatcher, // The top level function, aka callbackDispatcher
+      isInDebugMode:
+          kDebugMode // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+      );
+  if (kDebugMode)
+    Workmanager().registerOneOffTask("bg-noti", "BackgroundNotification");
+  runApp(const RestartWidget(child: MainApp()));
   logger.v("[AngerApp] Running");
 }
 
-class AngerApp extends StatefulWidget {
-  const AngerApp({Key? key}) : super(key: key);
+class MainApp extends StatefulWidget {
+  const MainApp({Key? key}) : super(key: key);
 
   @override
-  State<AngerApp> createState() => _AngerAppState();
+  State<MainApp> createState() => _MainAppState();
 }
 
-class _AngerAppState extends State<AngerApp> {
-  var mainColor;
+var lightBackground =
+    Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5);
+
+class _MainAppState extends State<MainApp> {
+  late AngerAppColor mainColor;
 
 // It is assumed that all messages contain a data field with the key 'type'
   Future<void> setupInteractedMessage() async {
     // Get any messages which caused the application to open from
     // a terminated state.
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
 
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
@@ -95,7 +136,7 @@ class _AngerAppState extends State<AngerApp> {
   void initState() {
     super.initState();
     mainColor = colorSubject.valueWrapper!.value;
-    logger.d("[ColorManager] ${mainColor}");
+    logger.d("[ColorManager] $mainColor");
     colorSubject.listen((value) {
       setState(() {
         mainColor = value;
@@ -111,59 +152,141 @@ class _AngerAppState extends State<AngerApp> {
   Widget build(BuildContext context) {
     precacheImage(const AssetImage("assets/AngerWiki.jpg"), context);
 
-    var fontFamily = kIsWeb && html.window.navigator.userAgent.contains('OS 15_') ? '-apple-system' : null;
+    var fontFamily =
+        kIsWeb && html.window.navigator.userAgent.contains('OS 15_')
+            ? '-apple-system'
+            : null;
 
     var lightTheme = ThemeData.from(
       colorScheme: ColorScheme.fromSwatch(
           primarySwatch: mainColor.color,
           accentColor: mainColor.accentColor,
           primaryColorDark: mainColor.color.shade700,
-          backgroundColor: Color.lerp(Colors.grey.shade200, Colors.grey.shade300, 0.5),
+          backgroundColor: lightBackground,
           brightness: Brightness.light),
     );
 
     var darkTheme = ThemeData.from(
       colorScheme: ColorScheme.fromSwatch(
           primarySwatch: mainColor.color,
-          accentColor: mainColor.accentColor,
-          cardColor: const Color(0xff151515),
+          accentColor: mainColor.accentColor.lighten(10),
+          cardColor: const Color(0xff181819),
           primaryColorDark: mainColor.color.shade700,
           backgroundColor: const Color(0xff121212),
           brightness: Brightness.dark),
     );
 
-    return MaterialApp(
-      title: 'AngerApp',
-      theme: lightTheme.copyWith(
-        textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
-        primaryTextTheme: lightTheme.textTheme.apply(
-          fontFamily: fontFamily,
-        ),
-        tabBarTheme: const TabBarTheme(labelColor: Colors.white),
-        useMaterial3: false,
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
-          },
-        ),
+    var defaultPageTrans = const PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.fuchsia: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+      },
+    );
+
+    double borderRadius = 7;
+
+    var appBarTheme = AppBarTheme(
+      backgroundColor: mainColor.color,
+      foregroundColor: Colors.white,
+    );
+
+    var cardTheme = CardTheme(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius)),
+    );
+
+    var dividerTheme = DividerThemeData(
+      color: mainColor.color.shade700.lighten(20).withOpacity(0.2),
+    );
+
+    var inputDecorationTheme = InputDecorationTheme(
+        outlineBorder:
+            BorderSide(color: mainColor.color.shade700.withOpacity(0.5)),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+            borderSide:
+                BorderSide(color: mainColor.color.shade700.withOpacity(0.5))));
+
+    var buttonStyle = ButtonStyle(
+        foregroundColor: MaterialStatePropertyAll(mainColor.accentColor
+            .lighten(Theme.of(context).brightness.isDark ? 10 : 0)),
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius))));
+    var tabBarTheme = TabBarTheme(
+      labelColor: Colors.white,
+      unselectedLabelColor: Colors.white60,
+    );
+
+    var filledButtonTheme = FilledButtonThemeData(
+        style: buttonStyle.copyWith(
+      foregroundColor: MaterialStateProperty.all(Colors.white),
+    ));
+    var elevatedButtonTheme = ElevatedButtonThemeData(
+        style: buttonStyle.copyWith(
+      foregroundColor: MaterialStateProperty.all(Colors.white),
+    ));
+    var outlinedButtonTheme = OutlinedButtonThemeData(
+        style: buttonStyle.copyWith(
+            side: MaterialStateProperty.all(
+                BorderSide(color: mainColor.color.shade700))));
+
+    return Features(
+      flags: [
+        FeatureFlags.USE_NEW_DRAWER,
+        FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED
+      ],
+      child: MaterialApp(
+        title: 'AngerApp',
+        theme: lightTheme.copyWith(
+            textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
+            useMaterial3: true,
+            primaryTextTheme: lightTheme.textTheme.apply(
+              fontFamily: fontFamily,
+            ),
+            appBarTheme: appBarTheme,
+            tabBarTheme: tabBarTheme,
+            pageTransitionsTheme: defaultPageTrans,
+            navigationBarTheme: NavigationBarThemeData(
+                backgroundColor:
+                    lightTheme.colorScheme.primaryContainer.lighten(45)),
+            outlinedButtonTheme: outlinedButtonTheme,
+            elevatedButtonTheme: elevatedButtonTheme,
+            filledButtonTheme: filledButtonTheme,
+            cardTheme: cardTheme,
+            switchTheme: SwitchThemeData(
+                trackColor: MaterialStateColor.resolveWith(
+                    (states) => mainColor.color.shade700.lighten(20)),
+                trackOutlineColor: MaterialStateColor.resolveWith(
+                    (states) => Colors.transparent)),
+            dividerTheme: dividerTheme),
+        darkTheme: darkTheme.copyWith(
+            drawerTheme:
+                const DrawerThemeData(backgroundColor: Color(0xFF232323)),
+            appBarTheme: appBarTheme,
+            useMaterial3: true,
+            tabBarTheme: tabBarTheme,
+            textTheme: darkTheme.textTheme.apply(
+              fontFamily: fontFamily,
+            ),
+            badgeTheme: BadgeThemeData(textColor: Colors.white),
+            cardTheme: cardTheme,
+            primaryTextTheme: darkTheme.textTheme.apply(
+              fontFamily: fontFamily,
+            ),
+            outlinedButtonTheme: outlinedButtonTheme,
+            elevatedButtonTheme: elevatedButtonTheme,
+            filledButtonTheme: filledButtonTheme,
+            pageTransitionsTheme: defaultPageTrans,
+            dividerTheme: dividerTheme),
+        themeMode: ThemeMode.system,
+        home: const DefaultTextStyle(
+            style: TextStyle(fontFamily: "Montserrat"),
+            child: _IntroductionScreenSwitcher()),
       ),
-      darkTheme: darkTheme.copyWith(
-        useMaterial3: false,
-        drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF232323)),
-        textTheme: darkTheme.textTheme.apply(
-          fontFamily: fontFamily,
-        ),
-        primaryTextTheme: darkTheme.textTheme.apply(
-          fontFamily: fontFamily,
-        ),
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.macOS: FadeUpwardsPageTransitionsBuilder(), // Apply this to every platforms you need.
-          },
-        ),
-      ),
-      themeMode: ThemeMode.system,
-      home: const DefaultTextStyle(style: TextStyle(fontFamily: "Montserrat"), child: _IntroductionScreenSwitcher()),
     );
   }
 }
@@ -179,11 +302,13 @@ class _IntroductionScreenSwitcher extends StatefulWidget {
   const _IntroductionScreenSwitcher({Key? key}) : super(key: key);
 
   @override
-  _IntroductionScreenSwitcherState createState() => _IntroductionScreenSwitcherState();
+  _IntroductionScreenSwitcherState createState() =>
+      _IntroductionScreenSwitcherState();
 }
 
-class _IntroductionScreenSwitcherState extends State<_IntroductionScreenSwitcher> {
-  bool? _needToShowIntroScreen = false;
+class _IntroductionScreenSwitcherState
+    extends State<_IntroductionScreenSwitcher> {
+  final bool? _needToShowIntroScreen = false;
 
   @override
   void initState() {
@@ -199,17 +324,7 @@ class _IntroductionScreenSwitcherState extends State<_IntroductionScreenSwitcher
 
   @override
   Widget build(BuildContext context) {
-    return _needToShowIntroScreen == null
-        ? const Center(
-            child: CircularProgressIndicator.adaptive(),
-          )
-        : (_needToShowIntroScreen == true
-            ? AngerAppIntroductionScreen(() {
-                setState(() {
-                  _needToShowIntroScreen = false;
-                });
-              })
-            : const MyHomePage());
+    return const MyHomePage();
   }
 }
 
@@ -232,9 +347,12 @@ class _HomeNavigator extends StatelessWidget {
       child: Navigator(
           key: homeNavigatorKey,
           initialRoute: "/",
-          onUnknownRoute: (settings) => MaterialPageRoute(builder: (ctx) => const PageHome()),
+          onUnknownRoute: (settings) =>
+              MaterialPageRoute(builder: (ctx) => const PageHome()),
           onGenerateRoute: (settings) =>
-              {"/": MaterialPageRoute(builder: (ctx) => (const PageHome()))}[settings.name] ??
+              {
+                "/": MaterialPageRoute(builder: (ctx) => (const PageHome()))
+              }[settings.name] ??
               MaterialPageRoute(builder: (ctx) => const PageHome())),
     );
   }
@@ -245,22 +363,23 @@ class MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: getIt.get<AppManager>().mainScaffoldState,
-      body: MediaQuery.of(context).size.width > 900
+      body: AngerApp.shouldShowFixedDrawer(context)
           ? Flex(
               direction: Axis.horizontal,
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Flexible(
-                    child: MainDrawer(
-                      showHomeLink: true,
+                    child: Drawer(
+                      child: MainDrawer(
+                        showHomeLink: true,
+                      ),
                     ),
                     flex: 0),
                 const Expanded(child: _HomeNavigator()),
               ],
             )
           : const _HomeNavigator(),
-      drawer: kIsWeb && MediaQuery.of(context).size.width > 900 ? null : MainDrawer(),
 
       //bottomNavigationBar: BottomNavigationBar(
       //  currentIndex: selectedPage,

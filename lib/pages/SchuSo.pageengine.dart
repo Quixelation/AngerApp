@@ -22,9 +22,9 @@ class PageSchuSo extends StatelessWidget {
           Container(
               padding: const EdgeInsets.all(12),
               color: Colors.white,
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                       "Als Schulsozialarbeiterin bin ich, Daniela Schmiemann, Ansprechpartnerin für Schüler*innen, Lehrer*innen und Eltern in Konflikt- und Krisensituationen."),
                   SizedBox(height: 8),
@@ -110,20 +110,20 @@ Weitere Angebote sind:
 Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
             """
           },
-          {
-            "type": "text",
-            "data": """
-**Wo ich zu finden bin...**\n
-Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
-            """
-          },
-          {
-            "type": "text",
-            "data": """
-**Wo ich zu finden bin...**\n
-Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
-            """
-          },
+//           {
+//             "type": "text",
+//             "data": """
+// **Wo ich zu finden bin...**\n
+// Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
+//             """
+//           },
+//           {
+//             "type": "text",
+//             "data": """
+// **Wo ich zu finden bin...**\n
+// Mein Büro befindet sich im Kellergeschoss gegenüber vom Schulercafé.
+//             """
+//           },
         ],
       },
     },

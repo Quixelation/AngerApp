@@ -1,6 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'dart:async';
 
 import 'package:logger/logger.dart';
 import 'package:logger_flutter_viewer/logger_flutter_viewer.dart';
@@ -8,7 +6,12 @@ import 'package:logger_flutter_viewer/logger_flutter_viewer.dart';
 var logger = Logger(
   filter: _CustomLogFilter(),
   printer: PrettyPrinter(
-      printTime: false, methodCount: 0, errorMethodCount: 0, colors: true, printEmojis: true, noBoxingByDefault: true),
+      printTime: false,
+      methodCount: 0,
+      errorMethodCount: 5,
+      colors: true,
+      printEmojis: true,
+      noBoxingByDefault: true),
   output: ScreenOutput(),
 );
 

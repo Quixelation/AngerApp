@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
+import 'package:anger_buddy/logic/homepage/homepage.dart';
+import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -26,35 +29,47 @@ class _PageSettingsState extends State<PageSettings> {
       ),
       body: ListView(children: [
         ListTile(
-          title: const Text("Farben"),
-          trailing: const Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
-          },
-        ),
-        ListTile(
           title: const Text("Vertretungsplan"),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          leading: Icon(Icons.switch_account_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const SettingsPageVertretung()));
           },
         ),
         ListTile(
+          title: const Text("Nachrichten"),
+          leading: Icon(Icons.messenger_outline, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const MessageSettings()));
+          },
+        ),
+        ListTile(
           title: const Text("Benachrichtigungen"),
-          trailing: const Icon(Icons.keyboard_arrow_right),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          leading: Icon(Icons.notifications_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageNotificationSettings()));
           },
         ),
+        ListTile(
+          title: const Text("Farben"),
+          leading: Icon(Icons.color_lens_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
+          },
+        ),
         // ListTile(
         //   title: const Text("Klasse"),
-        //   trailing: const Icon(Icons.keyboard_arrow_right),
+        //   trailing: const Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
         //   onTap: () {
         //     Navigator.push(context,
         //         MaterialPageRoute(builder: (ctx) => const PageCurrentClass()));
         //   },
         // ),
         const Divider(),
+
         SwitchListTile.adaptive(
             value: _devToolsSwitch,
             onChanged: (act) {
@@ -63,7 +78,13 @@ class _PageSettingsState extends State<PageSettings> {
                 _devToolsSwitch = act;
               });
             },
-            title: const Text('Entwickler-Menu')),
+            title: Row(
+              children: [
+                Icon(Icons.developer_mode_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+                const SizedBox(width: 32),
+                const Text('Entwickler-Menu')
+              ],
+            )),
       ]),
     );
   }
@@ -77,17 +98,17 @@ class SettingsPageVertretung extends StatefulWidget {
 }
 
 class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
-  VpSettings? _vpSettings = vpSettings.valueWrapper?.value;
+  VpSettings? _vpSettings = Services.vp.settings.subject.valueWrapper?.value;
   StreamSubscription<VpSettings>? sub;
-  int _sliderValue = vpSettings.valueWrapper?.value.saveDuration ?? 2;
+  int _sliderValue = Services.vp.settings.subject.valueWrapper?.value.saveDuration ?? 2;
 
-  vpViewTypes? vpViewType = vpSettings.valueWrapper?.value.viewType;
+  vpViewTypes? vpViewType = Services.vp.settings.subject.valueWrapper?.value.viewType;
 
   @override
   void initState() {
     super.initState();
 
-    sub = vpSettings.listen((value) {
+    sub = Services.vp.settings.subject.listen((value) {
       if (!mounted) {
         sub?.cancel();
       }
@@ -112,12 +133,21 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
       ),
       body: ListView(children: [
         SwitchListTile.adaptive(
+            value: _vpSettings?.loadListOnStart ?? Services.vp.settings.defaultSettings.loadListOnStart,
+            title: const Text("Vertretungspläne beim Start der App laden (auch benötigt für Aushänge)"),
+            onChanged: _vpSettings == null
+                ? null
+                : (newVal) {
+                    Services.vp.settings.setLoadListOnStart(newVal);
+                  }),
+        const Divider(),
+        SwitchListTile.adaptive(
             value: _vpSettings?.autoSave ?? true,
             title: const Text("Vertretungsplan automatisch speichern"),
             onChanged: _vpSettings == null
                 ? null
                 : (newVal) {
-                    setVpAutoSavePrefs(newVal);
+                    Services.vp.settings.setAutoSave(newVal);
                   }),
         const Divider(),
         ListTile(
@@ -150,7 +180,7 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
           onChangeEnd: _vpSettings == null
               ? null
               : (val) {
-                  setVpSaveDurationPrefs(val.toInt());
+                  Services.vp.settings.setSaveDuration(val.toInt());
                 },
         ),
         const Divider(),
@@ -172,7 +202,7 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
                 vpViewType = val;
               });
               if (val != null) {
-                setVpViewTypePrefs(val.index);
+                Services.vp.settings.setViewType(val.index);
               }
             }),
         RadioListTile(
@@ -188,7 +218,7 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
                 vpViewType = val;
               });
               if (val != null) {
-                setVpViewTypePrefs(val.index);
+                Services.vp.settings.setViewType(val.index);
               }
             })
       ]),
