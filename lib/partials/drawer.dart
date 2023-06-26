@@ -12,7 +12,6 @@ import 'package:anger_buddy/logic/hip/hip.dart';
 import 'package:anger_buddy/logic/jsp/jsp_passthrough_page.dart';
 import 'package:anger_buddy/logic/klausuren/klausuren.dart';
 import 'package:anger_buddy/logic/login_overview/login_overview.dart';
-import 'package:anger_buddy/logic/mail/mail.dart';
 import 'package:anger_buddy/logic/moodle/moodle.dart';
 import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
@@ -26,12 +25,9 @@ import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/page_engine/page_engine.dart';
 import 'package:anger_buddy/pages/SchuSo.pageengine.dart';
 import 'package:anger_buddy/pages/about.dart';
-import 'package:anger_buddy/pages/ags.dart';
 import 'package:anger_buddy/pages/kontakt.dart';
-import 'package:anger_buddy/pages/oberstufe.pageengine.dart';
 import 'package:anger_buddy/pages/settings.dart';
 import 'package:anger_buddy/pages/stundenzeiten.pageengine.dart';
-import 'package:anger_buddy/pages/under_construction.dart';
 import 'package:anger_buddy/utils/devtools.dart';
 import 'package:anger_buddy/utils/url.dart';
 import 'package:feature_flags/feature_flags.dart';
@@ -61,15 +57,15 @@ class MainDrawer extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
-                  color: Theme.of(context).colorScheme.primaryVariant,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => PageAbout()));
+                          MaterialPageRoute(builder: (context) => const PageAbout()));
                     },
                     child: Stack(
                       children: [
-                        Positioned.fill(child: _ImageBanner()),
+                        const Positioned.fill(child: _ImageBanner()),
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Flex(
@@ -90,22 +86,22 @@ class MainDrawer extends StatelessWidget {
                                         )),
                                     visible: !AngerApp.shouldShowFixedDrawer(
                                         context)),
-                                SizedBox(width: 16),
+                                const SizedBox(width: 16),
                                 Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "AngerApp",
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 40,
                                             fontWeight: FontWeight.w700),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text("Version ${AngerApp.version}",
                                           style:
-                                              TextStyle(color: Colors.white)),
+                                              const TextStyle(color: Colors.white)),
                                     ])
                               ]),
                         ),
@@ -179,7 +175,7 @@ class MainDrawer extends StatelessWidget {
             StreamBuilder(
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data == true) {
-                  return _Category("Entwickler", [
+                  return const _Category("Entwickler", [
                     _DrawerLink(
                       title: "Entwickler",
                       icon: Icons.developer_mode,
@@ -230,9 +226,9 @@ class MainDrawer extends StatelessWidget {
             ),*/
             if (showHomeLink) ...[
               const SizedBox(height: 25),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: const _DrawerLink(
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: _DrawerLink(
                   title: "Startseite",
                   icon: Icons.home,
                 ),
@@ -249,13 +245,13 @@ class MainDrawer extends StatelessWidget {
                 icon: Icons.calendar_today_outlined,
                 page: PageCalendar(),
               ),
-              _DrawerLink(
+              const _DrawerLink(
                 title: "Wochen-Ansicht",
                 subtitle: "(Experimentell)",
                 icon: Icons.view_week_outlined,
                 page: WeekView(),
               ),
-              _DrawerLink(
+              const _DrawerLink(
                 title: "Vertretungsplan",
                 icon: Icons.switch_account_outlined,
                 page: PageVp(),
@@ -264,19 +260,19 @@ class MainDrawer extends StatelessWidget {
                       context, FeatureFlags.MOODLE_PAGE_ENABLED) &&
                   Features.isFeatureEnabled(
                       context, FeatureFlags.MOODLE_ENABLED))
-                _DrawerLink(
+                const _DrawerLink(
                   title: "Moodle",
                   subtitle: "(Experimentell)",
                   icon: Icons.school,
                   page: MoodleCoursesPage(),
                 ),
-              _DrawerLink(
+              const _DrawerLink(
                 title: "Noten",
                 badge: "NEU",
                 icon: Icons.grade_outlined,
                 page: HipPage(),
               ),
-              _DrawerLink(
+              const _DrawerLink(
                 title: "Aushänge",
                 icon: Icons.file_copy_outlined,
                 page: PageAushangList(),
@@ -496,7 +492,7 @@ class _Category extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
         ],
       );
     }
@@ -599,7 +595,7 @@ class _DrawerLink extends StatelessWidget {
                 child: Column(
                   children: [
                     Icon(icon, color: _drawerLinkColor(context)),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(title,
                         style: TextStyle(color: _drawerLinkColor(context)))
                   ],
@@ -665,7 +661,7 @@ class _DrawerExternalLink extends StatelessWidget {
           child: Center(
             child: Stack(
               children: [
-                Align(
+                const Align(
                     alignment: Alignment.topRight,
                     child: Opacity(
                         opacity: 0.5,
@@ -675,7 +671,7 @@ class _DrawerExternalLink extends StatelessWidget {
                     child: Column(
                       children: [
                         Icon(icon, color: _drawerLinkColor(context)),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(title,
                             style: TextStyle(color: _drawerLinkColor(context)))
                       ],

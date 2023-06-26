@@ -50,7 +50,7 @@ class _ServicesManager {
   late final deviceName;
 
   Future<void> init() async {
-    this.deviceName = await getDeviceNameString();
+    deviceName = await getDeviceNameString();
     await Future.wait([
       news.init(),
       aushang.init(),
@@ -62,7 +62,7 @@ class _ServicesManager {
       matrix.init(),
       moodle.login.creds.init(),
       (() async {
-        this.version = (await PackageInfo.fromPlatform()).version;
+        version = (await PackageInfo.fromPlatform()).version;
       })(),
       homepage.init(),
       whatsnew.init(),

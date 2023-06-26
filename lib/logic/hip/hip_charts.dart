@@ -1,7 +1,7 @@
 part of hip;
 
 class _NotenCountChart extends StatelessWidget {
-  const _NotenCountChart(this.noten, {super.key});
+  const _NotenCountChart(this.noten);
 
   final List<DataNote> noten;
 
@@ -29,7 +29,7 @@ class _NotenCountChart extends StatelessWidget {
             for (var note = 0; note < notenCount.length; note++)
               BarChartGroupData(x: note, barsSpace: 16, barRods: [
                 BarChartRodData(
-                    toY: (notenCount[note] ?? 0).toDouble(),
+                    toY: (notenCount[note]).toDouble(),
                     color: Theme.of(context).colorScheme.tertiary,
                     borderRadius: const BorderRadius.all(Radius.circular(4)),
                     width: 15)

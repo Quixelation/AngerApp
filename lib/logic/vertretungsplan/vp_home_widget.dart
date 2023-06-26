@@ -97,7 +97,7 @@ class _VpWidgetState extends State<VpWidget> {
                       ),
                       if (Credentials.vertretungsplan.subject.value == null)
                         Padding(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
@@ -111,10 +111,10 @@ class _VpWidgetState extends State<VpWidget> {
                                               builder: (context) =>
                                                   const PageVp()));
                                     },
-                                    label: Text("Anmelden"),
-                                    icon: Icon(Icons.login),
+                                    label: const Text("Anmelden"),
+                                    icon: const Icon(Icons.login),
                                   ),
-                                  Text(
+                                  const Text(
                                       "Bitte melde dich an, um die Vertretungspläne zu sehen."),
                                 ],
                               ),
@@ -128,10 +128,10 @@ class _VpWidgetState extends State<VpWidget> {
                               child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CircularProgressIndicator(),
-                              SizedBox(width: 32),
+                              const CircularProgressIndicator(),
+                              const SizedBox(width: 32),
                               OutlinedButton(
-                                  child: Text("Seite öffnen"),
+                                  child: const Text("Seite öffnen"),
                                   onPressed: () {
                                     Navigator.of(context).push(MaterialPageRoute(
                                         builder: (context) =>

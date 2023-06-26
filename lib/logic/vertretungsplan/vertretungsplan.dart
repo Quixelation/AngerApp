@@ -3,7 +3,6 @@ library vertretungsplan;
 import 'dart:async';
 import 'dart:convert';
 import 'package:anger_buddy/angerapp.dart';
-import 'package:anger_buddy/extensions.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/credentials_manager.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
@@ -28,7 +27,6 @@ import 'package:rxdart/rxdart.dart';
 import "package:sembast/sembast.dart";
 import "package:sembast/sembast.dart" as sb;
 import 'package:tinycolor2/tinycolor2.dart';
-import "./../../components/mini_webview.dart";
 
 part 'package:anger_buddy/logic/vertretungsplan/vp_types.dart';
 part 'package:anger_buddy/logic/vertretungsplan/vp_utils.dart';

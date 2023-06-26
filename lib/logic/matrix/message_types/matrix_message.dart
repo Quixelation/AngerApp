@@ -122,15 +122,15 @@ class _MatrixMessage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (displayEvent.status.isError) ...[
-                      Row(
+                      const Row(
                         children: [
-                          const Icon(Icons.error, color: Colors.red),
-                          const SizedBox(width: 4),
+                          Icon(Icons.error, color: Colors.red),
+                          SizedBox(width: 4),
                           Text("Nachricht konnte nicht gesendet werden",
                               style: TextStyle(color: Colors.red)),
                         ],
                       ),
-                      Divider(),
+                      const Divider(),
                     ],
 
                     if (!isSender) ...[

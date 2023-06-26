@@ -14,7 +14,8 @@ class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
     Uint8List? bytes;
 
 
-    void initState(){
+    @override
+  void initState(){
         super.initState();
         loadImg();
     }
@@ -31,7 +32,7 @@ class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
         }
         if(await widget.event.isAttachmentInLocalStore() && widget.event.attachmentMxcUrl != null){
             // Wir können hier database! schreiben, weil isAttachmentInLocalStore bereit sicherstellt, dass database != null ist.
-            var data = (await AngerApp.matrix.client!.database!.getFile(widget.event.attachmentMxcUrl!))!;
+            var data = (await AngerApp.matrix.client.database!.getFile(widget.event.attachmentMxcUrl!))!;
             setState((){
                 bytes = data;
             });
@@ -67,7 +68,7 @@ class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
 }
 
 class DismissableImage extends StatelessWidget {
-  const DismissableImage(this.bytes, this.id);
+  const DismissableImage(this.bytes, this.id, {super.key});
 
   final Uint8List bytes;
   final String id;

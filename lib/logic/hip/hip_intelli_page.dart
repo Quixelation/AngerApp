@@ -2,7 +2,7 @@ part of hip;
 
 class _HipIntelliPage extends StatefulWidget {
   const _HipIntelliPage(
-      {super.key, required this.htmlData, required this.onToNormalView});
+      {required this.htmlData, required this.onToNormalView});
   final String? htmlData;
   final void Function({bool? emerg}) onToNormalView;
   @override
@@ -37,41 +37,41 @@ class __HipIntelliPageState extends State<_HipIntelliPage> {
     if (error) {
       return Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 60),
-        SizedBox(height: 24),
+        const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 60),
+        const SizedBox(height: 24),
         Text("Fehler beim Auswerten",
             style: Theme.of(context)
                 .textTheme
                 .titleLarge!
                 .copyWith(fontWeight: FontWeight.bold)),
-        SizedBox(height: 24),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+        const SizedBox(height: 24),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32),
           child: Text(
               "Bitte melde diesen Fehler, einschließlich deiner Klassenstufe, an den Entwickler."),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
           child: Opacity(
               opacity: 0.7,
               child: Text(
                 "Leider kann ich hier Fehler aus Datenschutzgründen schwieriger als gewöhnlich beheben. Ich bitte um Verständnis.",
               )),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         OutlinedButton(
-            child: Text("Zur normalen Ansicht"),
+            child: const Text("Zur normalen Ansicht"),
             onPressed: () {
               widget.onToNormalView();
             })
       ]));
-    } else if (hipData == null)
+    } else if (hipData == null) {
       return const Center(child: CircularProgressIndicator());
-    else
+    } else {
       return ListView(
         padding: const EdgeInsets.all(8),
         children: [
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           SizedBox(
             height: 200,
             child: _NotenCountChart(hipData!.faecher
@@ -82,17 +82,18 @@ class __HipIntelliPageState extends State<_HipIntelliPage> {
           AlignedGridView.extent(
               maxCrossAxisExtent: 400,
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return HipNotenCard(hipData!.faecher[index]);
               },
               itemCount: hipData!.faecher.length),
-                        SizedBox(height: 16),
-                        OutlinedButton(child: Text("Zur Webseiten-Ansicht"), onPressed: () {
+                        const SizedBox(height: 16),
+                        OutlinedButton(child: const Text("Zur Webseiten-Ansicht"), onPressed: () {
                           widget.onToNormalView();
                         })
         ],
       );
+    }
   }
 }
 
@@ -164,7 +165,7 @@ class _HipNotenCardState extends State<HipNotenCard> {
                                                           .withOpacity(0.25),
                                                       width: 1)),
                                               child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
+                                                  padding: const EdgeInsets.all(8.0),
                                                   child: Text(e.note == null
                                                       ? "--"
                                                       : e.note.toString()))),
@@ -193,7 +194,7 @@ class _HipNotenCardState extends State<HipNotenCard> {
 
 class _NotenRow extends StatelessWidget {
   final DataNote e;
-  const _NotenRow(this.e, {super.key});
+  const _NotenRow(this.e);
 
   @override
   Widget build(BuildContext context) {
@@ -239,14 +240,14 @@ class _NotenRow extends StatelessWidget {
 class _FachPage extends StatelessWidget {
   final DataFach fach;
 
-  const _FachPage(this.fach, {super.key});
+  const _FachPage(this.fach);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text(fach.name)),
         body: ListView(children: [
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           SizedBox(height: 200, child: _NotenCountChart(fach.noten)),
           ...fach.noten.mapWithIndex<Widget, DataNote>((e, index) =>
               Column(children: [
@@ -290,15 +291,15 @@ class _FachPage extends StatelessWidget {
                                                   .textTheme
                                                   .bodySmall)),
                                     ),
-                                    if (index != length - 1) Divider()
+                                    if (index != length - 1) const Divider()
                                   ],
                                 )
                                 .expand((e) => e),
                           ]),
                         )),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Divider(),
                   )
                 ]

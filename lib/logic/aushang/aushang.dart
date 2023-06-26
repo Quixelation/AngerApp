@@ -111,8 +111,9 @@ class Aushang {
       // load Data from Subject
       var tempAushangValue = subject.value;
       // check that it's not empty
-      if (tempAushangValue == null)
+      if (tempAushangValue == null) {
         throw ErrorDescription("aushangSubject is emtpy somehow...");
+      }
 
       // get the index of the value to edit
       var elemIndex =
@@ -126,8 +127,9 @@ class Aushang {
       var subject = AngerApp.aushang.subject;
       var tempAushangValue = subject.value;
 
-      if (tempAushangValue == null)
+      if (tempAushangValue == null) {
         throw ErrorDescription("aushangSubject is emtpy somehow...");
+      }
 
       var newList =
           tempAushangValue.data.where((element) => element.id != id).toList();

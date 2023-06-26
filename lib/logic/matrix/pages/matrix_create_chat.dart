@@ -9,7 +9,7 @@ class MatrixCreatePage extends StatefulWidget {
 
 class _MatrixCreatePageState extends State<MatrixCreatePage> {
   var groupNameController = TextEditingController();
-  _UserSelectorController _userSelectorController = _UserSelectorController();
+  final _UserSelectorController _userSelectorController = _UserSelectorController();
   List<Profile> usersToAdd = [];
 
   void addUserToUsersToAdd(Profile user) {
@@ -95,8 +95,8 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
           //     ),
           //   ),
           // ),
-          Divider(),
-          SizedBox(height: 8),
+          const Divider(),
+          const SizedBox(height: 8),
           Text("Mitglieder:", style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500)),
           _UserSelector(controller: _userSelectorController),
           const SizedBox(height: 32),

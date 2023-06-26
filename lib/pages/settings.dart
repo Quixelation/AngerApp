@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/logic/color_manager/color_manager.dart';
-import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/messages/messages.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
 import 'package:anger_buddy/main.dart';

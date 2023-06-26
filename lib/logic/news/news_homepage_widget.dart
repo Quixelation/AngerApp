@@ -26,6 +26,7 @@ class _NewsHomepageWidgetState extends State<NewsHomepageWidget> {
     });
   }
 
+  @override
   void dispose() {
     _newsSub?.cancel();
     super.dispose();
@@ -67,7 +68,7 @@ class _NewsHomepageWidgetState extends State<NewsHomepageWidget> {
                                 style:
                                     const TextStyle(height: 1.25, fontSize: 15),
                               )
-                                    : Text("Der Inhalt ist vermutlich ein Bild. Öffne den Artikel um mehr zu sehen.", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15))
+                                    : const Text("Der Inhalt ist vermutlich ein Bild. Öffne den Artikel um mehr zu sehen.", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15))
                       ),
                     ),
                   (newsData!.error == true || newsData!.data.isEmpty)

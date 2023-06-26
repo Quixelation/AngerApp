@@ -23,9 +23,9 @@ class _MatrixArchivedRoomsPageState extends State<MatrixArchivedRoomsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Archivierte Räume")),
+        appBar: AppBar(title: const Text("Archivierte Räume")),
         body: _archivedRooms == null
-            ? Center(child: CircularProgressIndicator.adaptive())
+            ? const Center(child: CircularProgressIndicator.adaptive())
             : ListView.builder(
                 itemCount: _archivedRooms!.length,
                 itemBuilder: (context, index) => AngerApp.matrix.buildListTile(context, _archivedRooms![index], showLogo: true),

@@ -156,7 +156,7 @@ class __LoggedInAsState extends State<_LoggedInAs> {
                 ),
                 Opacity(
                   opacity: 0.87,
-                  child: Text(widget.creds ?? "Kein Login",
+                  child: Text(widget.creds, 
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                 ),
               ]),

@@ -79,7 +79,7 @@ class _JspLoginPageState extends State<JspLoginPage> {
                           labelText: "Benutzername",
                           icon: Icon(Icons.person)),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextFormField(
                                             
                       validator: (value) {

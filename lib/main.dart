@@ -85,8 +85,9 @@ void main() async {
       isInDebugMode:
           kDebugMode // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
       );
-  if (kDebugMode)
+  if (kDebugMode) {
     Workmanager().registerOneOffTask("bg-noti", "BackgroundNotification");
+  }
   runApp(const RestartWidget(child: MainApp()));
   logger.v("[AngerApp] Running");
 }
@@ -216,7 +217,7 @@ class _MainAppState extends State<MainApp> {
             .lighten(Theme.of(context).brightness.isDark ? 10 : 0)),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius))));
-    var tabBarTheme = TabBarTheme(
+    var tabBarTheme = const TabBarTheme(
       labelColor: Colors.white,
       unselectedLabelColor: Colors.white60,
     );
@@ -235,7 +236,7 @@ class _MainAppState extends State<MainApp> {
                 BorderSide(color: mainColor.color.shade700))));
 
     return Features(
-      flags: [
+      flags: const [
         FeatureFlags.USE_NEW_DRAWER,
         FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED
       ],
@@ -272,7 +273,7 @@ class _MainAppState extends State<MainApp> {
             textTheme: darkTheme.textTheme.apply(
               fontFamily: fontFamily,
             ),
-            badgeTheme: BadgeThemeData(textColor: Colors.white),
+            badgeTheme: const BadgeThemeData(textColor: Colors.white),
             cardTheme: cardTheme,
             primaryTextTheme: darkTheme.textTheme.apply(
               fontFamily: fontFamily,

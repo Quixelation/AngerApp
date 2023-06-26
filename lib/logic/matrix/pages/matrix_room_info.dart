@@ -157,8 +157,8 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                   var result = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
-                            title: Text("Chat verlassen"),
-                            content: Text("Möchtest du den Chat wirklich verlassen?"),
+                            title: const Text("Chat verlassen"),
+                            content: const Text("Möchtest du den Chat wirklich verlassen?"),
                             actions: [
                               OutlinedButton.icon(
                                   icon: const Icon(Icons.exit_to_app),

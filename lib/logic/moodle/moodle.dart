@@ -66,7 +66,7 @@ _MoodleLogin({required this.moodle});
   ///TODO
   void logout() {
     creds.removeCredentials();
-this.moodle.messaging.subject.add([]);
+moodle.messaging.subject.add([]);
   }
 
   Future<void> login({required String username, required String password}) async {

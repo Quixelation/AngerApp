@@ -79,7 +79,7 @@ class _FileExplorerState extends State<FileExplorer> {
   }
 
   List<Widget> emptyStateManager() {
-    List<Widget> items = (files ?? []).map((e) => _FileListTile(e) as Widget).toList();
+    List<Widget> items = (files ?? []).map((e) => _FileListTile(e)).toList();
     if (items.isEmpty) {
       items.add(const Padding(
         padding: EdgeInsets.only(top: 8.0),

@@ -57,7 +57,7 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                   icon: ShaderMask(
                       blendMode: BlendMode.srcIn,
                       shaderCallback: (Rect bounds) => LinearGradient(
-                              transform: GradientRotation(2),
+                              transform: const GradientRotation(2),
                               colors: selectedPageIndex != 0
                                   ? [
                                       Colors.orange.shade300,
@@ -68,15 +68,15 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                                       Colors.redAccent.shade100,
                                     ])
                           .createShader(bounds),
-                      child: Icon(Icons.menu)),
+                      child: const Icon(Icons.menu)),
                   label: "Funktionen"),
-            NavigationDestination(
+            const NavigationDestination(
                 icon: Icon(Icons.home_outlined), label: "Start"),
             NavigationDestination(
                 icon: ShaderMask(
                     blendMode: BlendMode.srcIn,
                     shaderCallback: (Rect bounds) => LinearGradient(
-                            transform: GradientRotation(2),
+                            transform: const GradientRotation(2),
                             colors: selectedPageIndex !=
                                     (shouldRenderFixedDrawer ? 1 : 2)
                                 ? [
@@ -90,7 +90,7 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                                     Colors.purple.shade100
                                   ])
                         .createShader(bounds),
-                    child: Icon(Icons.messenger_outline)),
+                    child: const Icon(Icons.messenger_outline)),
                 label: "Chats (BETA)"),
           ],
         ),
@@ -98,8 +98,8 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
           controller: _tabController,
           children: [
             if (shouldRenderFixedDrawer == false) MainDrawer(),
-            _HomePageContent(),
-            MessagesListPage(),
+            const _HomePageContent(),
+            const MessagesListPage(),
           ],
         ));
   }

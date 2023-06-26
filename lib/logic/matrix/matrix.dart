@@ -20,7 +20,6 @@ import 'package:feature_flags/feature_flags.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'dart:ui';
 import 'package:flutter_polls/flutter_polls.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/foundation.dart';
@@ -37,10 +36,8 @@ import "package:dismissible_page/dismissible_page.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:olm/olm.dart" as olm;
 import "package:path/path.dart";
-import 'package:tinycolor2/tinycolor2.dart';
 import "package:uuid/uuid.dart" as uuid;
 import "package:flutter_dotenv/flutter_dotenv.dart";
-import "package:matrix/src/utils/uri_extension.dart";
 
 part "pages/matrix_create_chat.dart";
 part "matrix_create_poll_page.dart";
@@ -413,7 +410,7 @@ class _MatrixEventChatNoticeRenderer {
   }
 
   String get invitationText {
-    return senderDisplayName + " hat " + event.content["displayname"] + " eingeladen";
+    return senderDisplayName + " hat " + event.content["displayname"].toString() + " eingeladen";
   }
 
   String get joinText {

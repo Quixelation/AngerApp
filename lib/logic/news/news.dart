@@ -2,7 +2,6 @@ library news;
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:anger_buddy/components/basic_html.dart';
 import 'package:anger_buddy/logic/data_manager.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';

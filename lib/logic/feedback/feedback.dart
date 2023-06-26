@@ -3,7 +3,6 @@ library feedback;
 import 'dart:convert';
 
 import 'package:anger_buddy/manager.dart';
-import 'package:anger_buddy/pages/no_connection.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
 import 'package:flutter/material.dart';

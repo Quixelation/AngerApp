@@ -137,7 +137,7 @@ return stringNote;
     try {
       var meanTableBody =
           element.nextElementSibling?.nextElementSibling?.children[0];
-      for (var i = 1; i < (meanTableBody?.children?.length ?? 0); i++) {
+      for (var i = 1; i < (meanTableBody?.children.length ?? 0); i++) {
         var currentRow = meanTableBody!.children[i];
         var halbjahr = currentRow.children[0].text.trim();
         var mean = currentRow.children[1].text.trim();

@@ -84,7 +84,7 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
             title: const Text('Vertretung'),
             actions: [
               IconButton(
-                  icon: Icon(Icons.open_in_new),
+                  icon: const Icon(Icons.open_in_new),
                   onPressed: () {
                     launchURL(
                         "https://newspointweb.de/mobile/?client=${Credentials.vertretungsplan.subject.valueWrapper?.value ?? ""}",
@@ -114,26 +114,26 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
                                 footerWidgets: [
                                   Center(
                                       child: OutlinedButton.icon(
-                                          icon: Icon(Icons.refresh_outlined),
-                                          label: Text("Erneut versuchen"),
+                                          icon: const Icon(Icons.refresh_outlined),
+                                          label: const Text("Erneut versuchen"),
                                           onPressed: () async {
                                             setState(() {
-                                              this._vertretungsplanListe = null;
-                                              this._vertretungsplanResponseData =
+                                              _vertretungsplanListe = null;
+                                              _vertretungsplanResponseData =
                                                   null;
                                               _loadData();
                                             });
                                             await Services.vp.fetchListApi();
                                           })),
-                                  SizedBox(height: 4),
-                                  Center(
+                                  const SizedBox(height: 4),
+                                  const Center(
                                     child: _ToDownloadsBtn(),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Center(
                                     child: OutlinedButton.icon(
-                                        icon: Icon(Icons.open_in_new),
-                                        label: Text("Im Browser öffnen"),
+                                        icon: const Icon(Icons.open_in_new),
+                                        label: const Text("Im Browser öffnen"),
                                         onPressed: () {
                                           launchURL(
                                               "https://newspointweb.de/mobile/?client=${Credentials.vertretungsplan.subject.valueWrapper?.value ?? ""}",
@@ -210,7 +210,7 @@ class _ToDownloadsBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
-      icon: Icon(Icons.download_for_offline_outlined),
+      icon: const Icon(Icons.download_for_offline_outlined),
       label: const Text("Zu den Downloads"),
       onPressed: () {
         DefaultTabController.of(context).animateTo(1);

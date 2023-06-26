@@ -166,7 +166,7 @@ class HipService {
   Future<bool> loginWithSavedLogin(BuildContext context) async {
     var loginData = await creds._getLoginData();
     // this can't be null, bc of the specific implementation of _getLoginData
-    return login(loginData.username!, loginData.password!, context: context);
+    return login(loginData.username, loginData.password,  context: context);
   }
 
   /// Diese Funktion muss einmal am Anfang von hip-page.dart aufgerufen werden,

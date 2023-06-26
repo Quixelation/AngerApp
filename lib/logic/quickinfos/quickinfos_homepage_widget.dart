@@ -100,28 +100,28 @@ class _QuickInfo extends StatelessWidget {
                       var wantsToFollow = await showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                                title: Text("Externer Link"),
+                                title: const Text("Externer Link"),
                                 content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
+                                      const Text(
                                           "Möchtest du den externen Link öffnen?"),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Text(quickInfo.externalLink!,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontStyle: FontStyle.italic))
                                     ]),
                                 actions: [
                                   TextButton(
                                       onPressed: () =>
                                           Navigator.pop(context, false),
-                                      child: Text("Nein")),
+                                      child: const Text("Nein")),
                                   TextButton(
                                       onPressed: () =>
                                           Navigator.pop(context, true),
-                                      child: Text("Ja")),
+                                      child: const Text("Ja")),
                                 ],
                               ));
                       if (wantsToFollow == true) {
@@ -155,8 +155,8 @@ class _QuickInfo extends StatelessWidget {
                       ],
                     ),
                     if (quickInfo.externalLink != null) ...[
-                      SizedBox(width: 16),
-                      Icon(Icons.open_in_new)
+                      const SizedBox(width: 16),
+                      const Icon(Icons.open_in_new)
                     ]
                   ],
                 ),

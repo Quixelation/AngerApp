@@ -86,9 +86,9 @@ class JspFilesClient {
 
       var files = list.toWebDavFiles(client!.webdav);
 
-      files.forEach((f) {
+      for (var f in files) {
         logger.d('${f.name} ${f.path}');
-      });
+      }
 
       return files;
     } catch (err) {

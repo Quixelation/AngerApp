@@ -94,12 +94,12 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => _VpLehrerDateils(detailData!.details!)));
                               },
-                              icon: Icon(Icons.person),
+                              icon: const Icon(Icons.person),
                               label: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 6),
                                 child: Row(
                                   children: [
-                                    Text("Lehrer-Ansicht    [BETA]"),
+                                    const Text("Lehrer-Ansicht    [BETA]"),
                                     Expanded(child: Container()),
                                     Icon(Icons.adaptive.arrow_forward)
                                   ],
@@ -249,7 +249,7 @@ class _PageVertretungsplanDetailState extends State<_PageVertretungsplanDetail> 
               ? const Center(child: CircularProgressIndicator.adaptive())
               : 
 
-Html(data: detailData!.details?.html ?? detailData!.html ?? "KEINE DATEN", extensions: [TableHtmlExtension()]),
+Html(data: detailData!.details?.html ?? detailData!.html ?? "KEINE DATEN", extensions: const [TableHtmlExtension()]),
 
           // InteractiveViewer(
           //     constrained: false,
@@ -484,7 +484,7 @@ Html(data: detailData!.details?.html ?? detailData!.html ?? "KEINE DATEN", exten
 }
 
 class _VpDateCard extends StatefulWidget {
-  const _VpDateCard({super.key, required this.details});
+  const _VpDateCard({required this.details});
 
   final VertretungsplanDetails details;
 
@@ -496,8 +496,8 @@ class __VpDateCardState extends State<_VpDateCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 16),
-        child: Text("${widget.details.dateStr}",
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 16),
+        child: Text(widget.details.dateStr,
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context)

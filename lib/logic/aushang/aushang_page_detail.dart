@@ -24,7 +24,7 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
       });
     }).catchError((e) {
       setState(() {
-        this.hasError = true;
+        hasError = true;
       });
     });
   }
@@ -39,7 +39,7 @@ class _PageAushangDetailState extends State<PageAushangDetail> {
               title: Text(widget.aushang.name),
             ),
             body: hasError == true
-                ? Center(child: Text("Es gab einen Fehler"))
+                ? const Center(child: Text("Es gab einen Fehler"))
                 : loading
                     ? const Center(child: CircularProgressIndicator.adaptive())
                     : ListView(children: [

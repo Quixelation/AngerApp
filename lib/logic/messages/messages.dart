@@ -18,8 +18,6 @@ import "package:anger_buddy/extensions.dart";
 import 'package:flutter_html/flutter_html.dart';
 import 'package:matrix/matrix.dart';
 import 'package:tinycolor2/tinycolor2.dart';
-import 'package:anger_buddy/FeatureFlags.dart';
-import "package:anger_buddy/utils/url.dart";
 
 part "messages_page.dart";
 part "messages_settings.dart";

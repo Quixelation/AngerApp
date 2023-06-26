@@ -480,7 +480,7 @@ class _PageNewsDetailsState extends State<PageNewsDetails> {
                             tagsToExtend: {"div"},
                             builder: (extensionContext) {
                               if (extensionContext.element?.classes
-                                      ?.contains("wp-block-file") ??
+                                      .contains("wp-block-file") ??
                                   false) {
                                 return Center(
                                   child: Padding(

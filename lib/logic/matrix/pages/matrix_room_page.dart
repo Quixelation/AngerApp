@@ -202,7 +202,7 @@ class _RoomPageState extends State<RoomPage> {
                 // const Divider(height: 1),
                 if (widget.room.canSendDefaultMessages)
                   Padding(
-                      padding: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       child: Material(
                         borderRadius: BorderRadius.circular(8),
                         color: Theme.of(context).brightness == Brightness.light
@@ -259,7 +259,7 @@ class _RoomPageState extends State<RoomPage> {
                                         ? Colors.white
                                         : Colors.grey.shade800,
                                     filled: true,
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 2),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(7),

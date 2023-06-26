@@ -265,8 +265,8 @@ class _MessagesListPageState extends State<MessagesListPage> {
                       return Opacity(
                         opacity: 0.80,
                         child: ListTile(
-                          leading: Icon(Icons.archive_outlined),
-                          title: Text("Archivierte Räume"),
+                          leading: const Icon(Icons.archive_outlined),
+                          title: const Text("Archivierte Räume"),
                           trailing: const Icon(Icons.keyboard_arrow_right),
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
@@ -301,12 +301,12 @@ class _MessagesListPageState extends State<MessagesListPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 300),
+                        constraints: const BoxConstraints(maxWidth: 300),
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.deepOrange)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
                             child: Text.rich(
                                 TextSpan(children: [
                                   TextSpan(
@@ -322,7 +322,7 @@ class _MessagesListPageState extends State<MessagesListPage> {
                                     color: Colors.deepOrange, fontSize: 15)),
                           ),
                         )),
-                    SizedBox(height: 64),
+                    const SizedBox(height: 64),
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 200),
                       child: Column(
@@ -396,11 +396,11 @@ class _MessagesListPageState extends State<MessagesListPage> {
                                 )
                               ],
                             ),
-                          Divider(height: 48, thickness: 2),
+                          const Divider(height: 48, thickness: 2),
                         ],
                       ),
                     ),
-                    AlternativeClientsInfo(),
+                    const AlternativeClientsInfo(),
                   ],
                 ),
               ));
@@ -413,13 +413,13 @@ class AlternativeClientsInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 200),
+      constraints: const BoxConstraints(maxWidth: 200),
       child: Opacity(
         opacity: 0.87,
         child: Column(children: [
-          Text(
+          const Text(
               "Matrix ist ein offenes Protokoll, welches von vielen Clients unterstützt wird."),
-          Text("Du kannst auch andere Clients für den Schulmessenger nutzen."),
+          const Text("Du kannst auch andere Clients für den Schulmessenger nutzen."),
           TextButton.icon(
               onPressed: () async {
                 var dialogResult = await showDialog<bool>(
@@ -431,22 +431,23 @@ class AlternativeClientsInfo extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.of(context).pop(false);
                                 },
-                                child: Text("Abbrechen")),
+                                child: const Text("Abbrechen")),
                             ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
                                 },
-                                child: Text("Fortfahren"))
+                                child: const Text("Fortfahren"))
                           ],
-                          title: Text("Externe Website"),
-                          content: Text(
+                          title: const Text("Externe Website"),
+                          content: const Text(
                               "Du wirst auf eine externe Website geleitet (https://matrix.org/ecosystem/clients/). Die Informationen auf dieser Website werden weder von dem Entwickler noch dem Angergymnasium kontrolliert oder empfohlen."));
                     });
-                if (dialogResult == true)
+                if (dialogResult == true) {
                   launchURL("https://matrix.org/ecosystem/clients/", context);
+                }
               },
-              icon: Icon(Icons.open_in_new),
-              label: Text("Alternative Clients"))
+              icon: const Icon(Icons.open_in_new),
+              label: const Text("Alternative Clients"))
         ]),
       ),
     );

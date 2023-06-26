@@ -21,12 +21,12 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                   future: AngerApp.matrix.client.fetchOwnProfile(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return CircularProgressIndicator.adaptive();
+                      return const CircularProgressIndicator.adaptive();
                     } else if (snapshot.hasError) {
                       return Text(snapshot.error.toString());
                     }
                     return Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -38,7 +38,7 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                                             width: 200, height: 200)
                                         .toString(),
                                   )),
-                              SizedBox(width: 16),
+                              const SizedBox(width: 16),
                               Text(snapshot.data!.displayName.toString(),
                                   style: Theme.of(context)
                                       .textTheme
@@ -46,7 +46,7 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                                       .copyWith(fontWeight: FontWeight.bold))
                             ]));
                   }),
-              Divider(),
+              const Divider(),
               if (Features.isFeatureEnabled(
                   context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) ...[
                 ListTile(
@@ -78,47 +78,46 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                       builder: (context) => const _MatrixSettingsDevices()));
                 },
               ),
-              _MatrixSettingsPusherSwitch(),
+              const _MatrixSettingsPusherSwitch(),
               ListTile(
                   leading: const Icon(Icons.logout),
-                  title: Text("Abmelden"),
+                  title: const Text("Abmelden"),
                   onTap: () async {
                     var shouldLogout = await showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text("Abmelden"),
-                            content: Text(
+                            title: const Text("Abmelden"),
+                            content: const Text(
                                 "Gesamten JSP-Account abmelden? Dies beinhaltet auch den Zugriff auf Cloud-Dateien innerhalb der AngerApp."),
                             actions: [
                               TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop(false);
                                   },
-                                  child: Text("Abbrechen")),
+                                  child: const Text("Abbrechen")),
                               OutlinedButton.icon(
                                   onPressed: () {
                                     Navigator.of(context).pop(true);
                                   },
-                                  label: Text("Abmelden"),
-                                  icon: Icon(Icons.logout))
+                                  label: const Text("Abmelden"),
+                                  icon: const Icon(Icons.logout))
                             ],
                           );
                         });
                     await AngerApp.matrix.client.logout();
                     await Credentials.jsp.removeCredentials();
                     Navigator.pop(context);
-                    ;
                   }),
             ] else
-              Padding(
-                padding: const EdgeInsets.all(16),
+              const Padding(
+                padding: EdgeInsets.all(16),
                 child: Text(
                     "Kein JSP-Schulmesenger-Account verbunden. Bitte melde dich über den Reiter \"Chats\" auf der Startseite an.",
                     style: TextStyle(fontSize: 16)),
               ),
-                    Divider(height: 64),
-            AlternativeClientsInfo()
+                    const Divider(height: 64),
+            const AlternativeClientsInfo()
           ],
         ));
   }
@@ -153,7 +152,7 @@ class _MatrixSettingsPusherSwitchState
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(Icons.notifications_outlined),
+      leading: const Icon(Icons.notifications_outlined),
       title: const Text("Push-Benachrichtigungen"),
       trailing: Switch(
           value: _pushEnabled ?? false,

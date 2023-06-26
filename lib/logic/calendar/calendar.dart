@@ -10,7 +10,6 @@ import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
-import 'package:calendar_view/calendar_view.dart';
 import 'package:icalendar_parser/icalendar_parser.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -46,7 +45,7 @@ class EventData {
     if (dateTo == null) return false;
     //TODO: Fix this
     // Quick and Dirty solution, wenn das Event bis 0:00 des nächsten Tages geht, dass das Event nicht für den nächsten Tag noch angezeigt wird
-    var tempDateTo = dateTo!.subtract(Duration(minutes: 5));
+    var tempDateTo = dateTo!.subtract(const Duration(minutes: 5));
 
     bool result = !(dateFrom.day == tempDateTo.day &&
         dateFrom.month == tempDateTo.month &&
@@ -213,16 +212,16 @@ class CalendarManager extends DataManager<EventData> {
                 DateTime.fromMicrosecondsSinceEpoch(0);
 
         //skip events, that are too old (or too new), to save ressources
-        if (fromDate.difference(DateTime.now()).abs() > Duration(days: 365)) {
+        if (fromDate.difference(DateTime.now()).abs() > const Duration(days: 365)) {
           continue;
         }
-        logger.d("[Calendar] Event: ${currentEvent}");
+        logger.d("[Calendar] Event: $currentEvent");
 
         final tempCalData = EventData.fromIcalJson(currentEvent);
         events.add(tempCalData);
       } catch (err) {
         logger.e(
-            "[Calendar] Error parsing event $currentEvent with error: ${err}");
+            "[Calendar] Error parsing event $currentEvent with error: $err");
       }
     }
     return events;
