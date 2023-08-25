@@ -12,6 +12,7 @@ class _MessagesListPageState extends State<MessagesListPage> {
   bool _hasMoodleIntegration = false;
   List<MoodleConversation>? _moodleConversations =
       AngerApp.moodle.messaging.subject.valueWrapper?.value;
+  String? error_moodleConversations;
   StreamSubscription? _moodleCredsStreamSub;
   StreamSubscription? _moodleConvoStreamSub;
 
@@ -29,6 +30,12 @@ class _MessagesListPageState extends State<MessagesListPage> {
       setState(() {
         logger.v("[MoodleMatrixSubjectListener] got value " + value.toString());
         _moodleConversations = value;
+        error_moodleConversations = null;
+      });
+    }, onError: (error) {
+      logger.wtf("Moodle error");
+      setState(() {
+        error_moodleConversations = error.toString();
       });
     });
   }
@@ -47,7 +54,10 @@ class _MessagesListPageState extends State<MessagesListPage> {
             _moodleConversations = value;
           });
         }).catchError((err) {
-          logger.e(err);
+          logger.wtf("Moodle Error");
+          setState(() {
+            error_moodleConversations = err.toString();
+          });
         });
         if (isLoggedIn) {
           _startMoodleStreamSub();
@@ -162,13 +172,15 @@ class _MessagesListPageState extends State<MessagesListPage> {
         floatingActionButton:
 
 // Falls das FAB gerade nur für Matrix benutzt wird, die Matrix integration des FABs aber deaktiviert ist
-            (!Features.isFeatureEnabled(
-                    context, FeatureFlags.MATRIX_SHOW_CREATE_ROOM))
-                ? null
-                : FloatingActionButton(
+            (Features.isFeatureEnabled(
+                        context, FeatureFlags.MATRIX_SHOW_CREATE_ROOM) &&
+                    _hasMoodleIntegration)
+                ? FloatingActionButton(
                     child: const Icon(Icons.add_comment_outlined),
                     onPressed: () {
-                      if (numberOfIntegrations > 1) {
+                      if (numberOfIntegrations > 1 &&
+                          Features.isFeatureEnabled(
+                              context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) {
                         showModalBottomSheet(
                             context: context,
                             builder: (context) => Column(
@@ -215,7 +227,9 @@ class _MessagesListPageState extends State<MessagesListPage> {
                                   ],
                                 ));
                       } else {
-                        if (_hasMatrixIntegration) {
+                        if (_hasMatrixIntegration &&
+                            Features.isFeatureEnabled(context,
+                                FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const MatrixCreatePage()));
                         } else if (_hasMoodleIntegration) {
@@ -225,12 +239,17 @@ class _MessagesListPageState extends State<MessagesListPage> {
                         }
                       }
                     },
-                  ),
+                  )
+                : null,
         body: (_hasMatrixIntegration || _hasMoodleIntegration)
             ? ListView.separated(
                 itemCount: combinedList.length +
                     (showServiceIntegrationLogin ? 1 : 0) +
-                    (_hasMatrixIntegration ? 1 : 0),
+                    (_hasMatrixIntegration ? 1 : 0) +
+                    (error_moodleConversations != null &&
+                            AngerApp.moodle.login.creds.credentialsAvailable
+                        ? 1
+                        : 0),
                 itemBuilder: (context, index) {
                   if (showServiceIntegrationLogin) {
                     index -= 1;
@@ -278,6 +297,32 @@ class _MessagesListPageState extends State<MessagesListPage> {
                     }
                   }
 
+                  if (error_moodleConversations != null &&
+                      AngerApp.moodle.login.creds.credentialsAvailable) {
+                    index -= 1;
+                    if (index < 0) {
+                      return Opacity(
+                        opacity: 0.80,
+                        child: ListTile(
+                          leading: const Icon(Icons.error_outline,
+                              color: Colors.red),
+                          title: const Text(
+                              "Moodle Nachrichten konnten nicht geladen werden",
+                              style: TextStyle(color: Colors.red)),
+                          subtitle: Text(error_moodleConversations!,
+                              style: TextStyle(color: Colors.red.shade700)),
+                          trailing: Icon(Icons.refresh),
+                          onTap: () {
+                            setState(() {
+                              error_moodleConversations = null;
+                            });
+                            this._initMoodle();
+                          },
+                        ),
+                      );
+                    }
+                  }
+
                   final e = combinedList[index];
                   if (e is Room) {
                     return AngerApp.matrix.buildListTile(context, e,
@@ -296,112 +341,118 @@ class _MessagesListPageState extends State<MessagesListPage> {
                   );
                 },
               )
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 300),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.deepOrange)),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text.rich(
-                                TextSpan(children: [
-                                  TextSpan(
-                                      text: "BETA-Funktion: ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.deepOrange)),
-                                  TextSpan(
-                                      text:
-                                          "Es kann zu Fehlern oder nicht implementierten Funktionen kommen. Bitte melde alle Fehler an den Entwickler."),
-                                ]),
-                                style: TextStyle(
-                                    color: Colors.deepOrange, fontSize: 15)),
-                          ),
-                        )),
-                    const SizedBox(height: 64),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 200),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            "Keine Konten verbunden",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 16),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Opacity(
-                              opacity: 0.87,
-                              child: Text(
-                                  "Wähle einen Service aus, um dich anzumelden")),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                    style: const ButtonStyle(
-                                        alignment: Alignment.centerLeft),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const JspLoginPage(
-                                                    popOnSuccess: true,
-                                                  )));
-                                    },
-                                    icon: const Text(
-                                      "JSP",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 14),
-                                    ),
-                                    label: const Text("Jenaer Schulportal")),
-                              ),
-                            ],
-                          ),
-                          if (Features.isFeatureEnabled(
-                              context, FeatureFlags.MOODLE_ENABLED))
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton.icon(
-                                      style: const ButtonStyle(
-                                          alignment: Alignment.centerLeft),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const MoodleLoginPage()));
-                                      },
-                                      icon: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 2.25),
-                                        child: Image.asset(
-                                          "assets/MoodleTools.png",
-                                          height: 16,
-                                        ),
-                                      ),
-                                      label: const Text("Moodle")),
-                                )
-                              ],
+            : SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 32),
+                      ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 300),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.deepOrange)),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text.rich(
+                                  TextSpan(children: [
+                                    TextSpan(
+                                        text: "BETA-Funktion: ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.deepOrange)),
+                                    TextSpan(
+                                        text:
+                                            "Es kann zu Fehlern kommen. Bitte melde diese an den Entwickler. Nicht mit Eltern-Chats kompatibel"),
+                                  ]),
+                                  style: TextStyle(
+                                      color: Colors.deepOrange, fontSize: 15)),
                             ),
-                          const Divider(height: 48, thickness: 2),
-                        ],
+                          )),
+                      const SizedBox(height: 64),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 200),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "Keine Konten verbunden",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 16),
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            const Opacity(
+                                opacity: 0.87,
+                                child: Text(
+                                    "Wähle einen Service aus, um dich anzumelden")),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const JspLoginPage(
+                                                        popOnSuccess: true,
+                                                      )));
+                                        },
+                                        icon: const Text(
+                                          "JSP",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 14),
+                                        ),
+                                        label: const Text(
+                                            "Jenaer Schulportal Schulmessenger*")),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (Features.isFeatureEnabled(
+                                context, FeatureFlags.MOODLE_ENABLED))
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                        style: const ButtonStyle(
+                                            alignment: Alignment.centerLeft),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const MoodleLoginPage()));
+                                        },
+                                        icon: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 2.25),
+                                          child: Image.asset(
+                                            "assets/MoodleTools.png",
+                                            height: 16,
+                                          ),
+                                        ),
+                                        label: const Text("Moodle")),
+                                  )
+                                ],
+                              ),
+                            const Divider(height: 48, thickness: 2),
+                          ],
+                        ),
                       ),
-                    ),
-                    const AlternativeClientsInfo(),
-                  ],
+                      const AlternativeClientsInfo(),
+                    ],
+                  ),
                 ),
               ));
   }
@@ -418,8 +469,9 @@ class AlternativeClientsInfo extends StatelessWidget {
         opacity: 0.87,
         child: Column(children: [
           const Text(
-              "Matrix ist ein offenes Protokoll, welches von vielen Clients unterstützt wird."),
-          const Text("Du kannst auch andere Clients für den Schulmessenger nutzen."),
+              "*Matrix ist ein offenes Protokoll, welches von vielen Clients unterstützt wird."),
+          const Text(
+              "Du kannst auch andere Clients für den Schulmessenger nutzen."),
           TextButton.icon(
               onPressed: () async {
                 var dialogResult = await showDialog<bool>(

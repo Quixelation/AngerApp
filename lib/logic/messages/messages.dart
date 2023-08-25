@@ -136,6 +136,6 @@ _DefaultMessagingColors DefaultMessagingColors(BuildContext context) {
       textColor: Theme.of(context).colorScheme.onSurface,
       messageRecieved: (Theme.of(context).brightness == Brightness.dark ? Colors.blueGrey.shade900 : Colors.grey.shade100),
       messageSent: (Theme.of(context).brightness == Brightness.dark
-          ? TinyColor.fromColor(Theme.of(context).colorScheme.secondaryContainer).darken(32).desaturate(55).color
-          : TinyColor.fromColor(Theme.of(context).colorScheme.secondaryContainer).brighten(40).color));
+          ? TinyColor.fromColor(Theme.of(context).colorScheme.primary).darken(32).desaturate(55).color
+          : TinyColor.fromColor(Theme.of(context).colorScheme.primary).brighten(40).color));
 }

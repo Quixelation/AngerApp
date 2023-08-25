@@ -10,4 +10,5 @@ class FeatureFlags {
     static const MATRIX_ENABLE_SENDING_POLLS = "MATRIX_ENABLE_SENDING_POLLS";
 
     static const USE_NEW_DRAWER = "USE_NEW_DRAWER";
+    static const USE_MODERN_CALENDAR = "USE_MODERN_CALENDAR"; 
 }

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/extensions.dart';
 import 'package:anger_buddy/logic/aushang/aushang.dart';
 import 'package:anger_buddy/logic/calendar/calendar.dart';
 import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
@@ -60,8 +61,8 @@ class MainDrawer extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primaryContainer,
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const PageAbout()));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const PageAbout()));
                     },
                     child: Stack(
                       children: [
@@ -100,8 +101,8 @@ class MainDrawer extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 4),
                                       Text("Version ${AngerApp.version}",
-                                          style:
-                                              const TextStyle(color: Colors.white)),
+                                          style: const TextStyle(
+                                              color: Colors.white)),
                                     ])
                               ]),
                         ),
@@ -200,7 +201,9 @@ class MainDrawer extends StatelessWidget {
                           Feature(FeatureFlags.MATRIX_ENABLE_SENDING_POLLS,
                               name: "Matrix: Umfrage senden Btn anzeigen"),
                           Feature(FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED,
-                              name: "Intelligente Noten-Ansicht")
+                              name: "Intelligente Noten-Ansicht"),
+                          Feature(FeatureFlags.USE_MODERN_CALENDAR,
+                              name: "Moderner Start-Kalender")
                         ]))
                   ]);
                 } else {
@@ -246,13 +249,13 @@ class MainDrawer extends StatelessWidget {
                 page: PageCalendar(),
               ),
               const _DrawerLink(
-                title: "Wochen-Ansicht",
+                title: "Wochen",
                 subtitle: "(Experimentell)",
                 icon: Icons.view_week_outlined,
                 page: WeekView(),
               ),
               const _DrawerLink(
-                title: "Vertretungsplan",
+                title: "Vertretung",
                 icon: Icons.switch_account_outlined,
                 page: PageVp(),
               ),
@@ -268,7 +271,7 @@ class MainDrawer extends StatelessWidget {
                 ),
               const _DrawerLink(
                 title: "Noten",
-                badge: "NEU",
+                badge: "BETA",
                 icon: Icons.grade_outlined,
                 page: HipPage(),
               ),
@@ -729,7 +732,12 @@ class __ImageBannerState extends State<_ImageBanner>
             child: ColorFiltered(
               key: UniqueKey(),
               colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.primary.withAlpha(240),
+                  Theme.of(context).brightness.isDark
+                      ? Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withAlpha(230)
+                      : Theme.of(context).colorScheme.primary.withAlpha(230),
                   BlendMode.multiply),
               child: Image(
                 width: double.infinity,

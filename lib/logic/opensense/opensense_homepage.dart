@@ -186,7 +186,7 @@ class Sensebox_OutdoorTempTextStateHomepage extends State<SenseboxOutdoorTempTex
         const TextSpan(text: "Außentemperatur am Anger: "),
         TextSpan(
             text: sensor.lastMeasurement.value.toString().replaceAll(".", ",") + " " + sensor.unit,
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
         const TextSpan(text: ". "),
       ])),
     );

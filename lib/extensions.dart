@@ -60,3 +60,11 @@ extension FileFormatter on num {
   }
 }
 
+
+
+extension Between on DateTime {
+  bool isBetween(DateTime date_start, DateTime date_end) {
+    return this.isSameOrAfterDateAt0(date_start) && this.isSameOrBeforeDateAt0(date_end);
+  }
+}
+

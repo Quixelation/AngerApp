@@ -30,7 +30,7 @@ class _NotenCountChart extends StatelessWidget {
               BarChartGroupData(x: note, barsSpace: 16, barRods: [
                 BarChartRodData(
                     toY: (notenCount[note]).toDouble(),
-                    color: Theme.of(context).colorScheme.tertiary,
+                    color: Theme.of(context).colorScheme.primary,
                     borderRadius: const BorderRadius.all(Radius.circular(4)),
                     width: 15)
               ])

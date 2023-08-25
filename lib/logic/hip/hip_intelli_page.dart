@@ -1,8 +1,7 @@
 part of hip;
 
 class _HipIntelliPage extends StatefulWidget {
-  const _HipIntelliPage(
-      {required this.htmlData, required this.onToNormalView});
+  const _HipIntelliPage({required this.htmlData, required this.onToNormalView});
   final String? htmlData;
   final void Function({bool? emerg}) onToNormalView;
   @override
@@ -87,10 +86,12 @@ class __HipIntelliPageState extends State<_HipIntelliPage> {
                 return HipNotenCard(hipData!.faecher[index]);
               },
               itemCount: hipData!.faecher.length),
-                        const SizedBox(height: 16),
-                        OutlinedButton(child: const Text("Zur Webseiten-Ansicht"), onPressed: () {
-                          widget.onToNormalView();
-                        })
+          const SizedBox(height: 16),
+          OutlinedButton(
+              child: const Text("Zur Webseiten-Ansicht"),
+              onPressed: () {
+                widget.onToNormalView();
+              })
         ],
       );
     }
@@ -115,40 +116,40 @@ class _HipNotenCardState extends State<HipNotenCard> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Card(
-          color: Theme.of(context).colorScheme.surfaceVariant,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => _FachPage(widget.hipFach)));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => _FachPage(widget.hipFach)));
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Hero(
+                            child: Text(
                               widget.hipFach.name,
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              widget.hipFach.teacher,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            const SizedBox(height: 16),
-                            SizedBox(
-                              height: 36,
-                              child: Row(children: [
-                                ...widget.hipFach.means
-                                    .mapWithIndexAndLength<Widget, DataMean>((e,
-                                            i, l) =>
-                                        Padding(
+                            tag: "hipFachName_" + widget.hipFach.name),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.hipFach.teacher,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          height: 36,
+                          child: Row(children: [
+                            ...widget.hipFach.means
+                                .mapWithIndexAndLength<Widget, DataMean>(
+                                    (e, i, l) => Padding(
                                           padding: const EdgeInsets.symmetric(
                                                   horizontal: 4.0)
                                               .copyWith(
@@ -165,29 +166,29 @@ class _HipNotenCardState extends State<HipNotenCard> {
                                                           .withOpacity(0.25),
                                                       width: 1)),
                                               child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
                                                   child: Text(e.note == null
                                                       ? "--"
                                                       : e.note.toString()))),
                                         )),
-                              ]),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "${widget.hipFach.noten.length} Noten",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
                           ]),
-                      const Spacer(),
-                      Opacity(
-                          opacity: 0.87,
-                          child: Icon(Icons.adaptive.arrow_forward))
-                    ],
-                  ),
-                ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "${widget.hipFach.noten.length} Noten",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ]),
+                  const Spacer(),
+                  Opacity(
+                      opacity: 0.87, child: Icon(Icons.adaptive.arrow_forward))
+                ],
               ),
-            ],
-          )),
+            ),
+          ),
+        ],
+      )),
     );
   }
 }
@@ -245,7 +246,11 @@ class _FachPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(fach.name)),
+        appBar: AppBar(
+            title: Hero(
+          child: Text(fach.name),
+          tag: "hipFachName_" + fach.name,
+        )),
         body: ListView(children: [
           const SizedBox(height: 16),
           SizedBox(height: 200, child: _NotenCountChart(fach.noten)),

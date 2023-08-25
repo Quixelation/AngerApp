@@ -11,6 +11,7 @@ import "package:universal_html/html.dart" as uhtml;
 
 class AppManager {
   GlobalKey<ScaffoldState> mainScaffoldState;
+    BuildContext? mainScaffoldContext;
   late final BehaviorSubject<bool> devtools;
   late final sb.Database db;
 

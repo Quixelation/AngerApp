@@ -25,26 +25,43 @@ class __MatrixSettingsDevicesState extends State<_MatrixSettingsDevices> {
                 ),
               );
             } else {
-              var allUnverifiedDevices = AngerApp.matrix.client.unverifiedDevices;
+              var allUnverifiedDevices =
+                  AngerApp.matrix.client.unverifiedDevices;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ...(snapshot.data ?? []).map((device) {
-                    logger.d("Devices length " + snapshot.data!.length.toString());
-                    logger.d("UnverifiedDevices length " + allUnverifiedDevices.length.toString());
+                    logger.d(
+                        "Devices length " + snapshot.data!.length.toString());
+                    logger.d("UnverifiedDevices length " +
+                        allUnverifiedDevices.length.toString());
                     final client = AngerApp.matrix.client;
 
-                    DeviceKeys? deviceKeys = client.userDeviceKeys[client.userID]?.deviceKeys[device.deviceId];
-                    var lastSeen = DateTime.fromMillisecondsSinceEpoch((device.lastSeenTs ?? 0));
+                    DeviceKeys? deviceKeys = client
+                        .userDeviceKeys[client.userID]
+                        ?.deviceKeys[device.deviceId];
+                    var lastSeen = DateTime.fromMillisecondsSinceEpoch(
+                        (device.lastSeenTs ?? 0));
 
                     return ListTile(
-                        title: Text((device.displayName ?? device.deviceId) + (device.deviceId == client.deviceID! ? " (Dieses Gerät)" : "")),
-                        leading: Icon((deviceKeys?.verified ?? false) ? Icons.verified : Icons.devices),
-                        subtitle: Text("${device.deviceId} - ${time2string(lastSeen, onlyTime: lastSeen.isSameDay(DateTime.now()))}"),
-                        trailing: deviceKeys != null ? const Icon(Icons.more_horiz) : const SizedBox(height: 0, width: 0),
+                        title: Text((device.displayName ?? device.deviceId) +
+                            (device.deviceId == client.deviceID!
+                                ? " (Dieses Gerät)"
+                                : "")),
+                        leading: Icon((deviceKeys?.verified ?? false)
+                            ? Icons.verified
+                            : Icons.devices),
+                        subtitle: Text(
+                            "${device.deviceId} - ${time2string(lastSeen, onlyTime: lastSeen.isSameDay(DateTime.now()))}"),
+                        trailing: deviceKeys != null
+                            ? const Icon(Icons.more_horiz)
+                            : const SizedBox(height: 0, width: 0),
                         onTap: () {
-                          showModalBottomSheet(context: context, builder: (context) => _DeviceModalSheet(device, deviceKeys));
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (context) =>
+                                  _DeviceModalSheet(device, deviceKeys));
                         });
                   }).toList(),
                 ],
@@ -85,10 +102,15 @@ class _DeviceModalSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Flexible(
-                      child: Text(device.displayName ?? "<Kein Anzeigename>", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      child: Text(device.displayName ?? "<Kein Anzeigename>",
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold)),
                     ),
-                    const SizedBox(width: 6),
-                    const Opacity(opacity: 0.87, child: Icon(Icons.edit))
+                    if (Features.isFeatureEnabled(
+                        context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) ...[
+                      const SizedBox(width: 6),
+                      const Opacity(opacity: 0.87, child: Icon(Icons.edit))
+                    ]
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -112,7 +134,8 @@ class _DeviceModalSheet extends StatelessWidget {
                           "Letzte Aktivität: ",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(time2string(DateTime.fromMillisecondsSinceEpoch(device.lastSeenTs ?? 0)) +
+                        Text(time2string(DateTime.fromMillisecondsSinceEpoch(
+                                device.lastSeenTs ?? 0)) +
                             " (${timediff2string(DateTime.fromMillisecondsSinceEpoch((device.lastSeenTs ?? 0)))})")
                       ],
                     )),
@@ -153,38 +176,47 @@ class _DeviceModalSheet extends StatelessWidget {
             onTap: () {
               final client = AngerApp.matrix.client;
 
-              AngerApp.matrix.showKeyVerificationDialog(client.userDeviceKeys[client.userID]!.deviceKeys[device.deviceId]!.startVerification());
+              AngerApp.matrix.showKeyVerificationDialog(client
+                  .userDeviceKeys[client.userID]!.deviceKeys[device.deviceId]!
+                  .startVerification());
             },
           ),
-        ListTile(
-          title: const Text("Gerät entfernen (not implemented)", style: TextStyle(color: Colors.red)),
-          leading: const Icon(Icons.delete_forever, color: Colors.red),
-          onTap: true
-              ? null
-              : () {
-                  showDialog(
-                      context: context,
-                      builder: (context2) => AlertDialog(
-                            title: const Text("Gerät entfernen"),
-                            content: const Text("Möchtest du dieses Gerät wirklich entfernen und abmelden?"),
-                            actions: [
-                              OutlinedButton.icon(
-                                  onPressed: () {
-                                    Navigator.of(context2).pop();
-                                  },
-                                  icon: Icon(Icons.adaptive.arrow_back),
-                                  label: const Text("Abbrechen")),
-                              OutlinedButton.icon(
-                                  onPressed: () {
-                                    AngerApp.matrix.client.deleteDevice(device.deviceId);
-                                  },
-                                  icon: const Icon(Icons.delete_forever),
-                                  label: const Text("Abmelden")),
-                            ],
-                          ));
-                },
-        ),
-        deviceKeys != null
+        if (Features.isFeatureEnabled(
+            context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS))
+          ListTile(
+            title: const Text("Gerät entfernen (not implemented)",
+                style: TextStyle(color: Colors.red)),
+            leading: const Icon(Icons.delete_forever, color: Colors.red),
+            onTap: true
+                ? null
+                : () {
+                    showDialog(
+                        context: context,
+                        builder: (context2) => AlertDialog(
+                              title: const Text("Gerät entfernen"),
+                              content: const Text(
+                                  "Möchtest du dieses Gerät wirklich entfernen und abmelden?"),
+                              actions: [
+                                OutlinedButton.icon(
+                                    onPressed: () {
+                                      Navigator.of(context2).pop();
+                                    },
+                                    icon: Icon(Icons.adaptive.arrow_back),
+                                    label: const Text("Abbrechen")),
+                                OutlinedButton.icon(
+                                    onPressed: () {
+                                      AngerApp.matrix.client
+                                          .deleteDevice(device.deviceId);
+                                    },
+                                    icon: const Icon(Icons.delete_forever),
+                                    label: const Text("Abmelden")),
+                              ],
+                            ));
+                  },
+          ),
+        deviceKeys != null &&
+                Features.isFeatureEnabled(
+                    context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)
             ? ListTile(
                 leading: const Icon(Icons.data_object),
                 title: const Text("JSON (unverified)"),
@@ -194,7 +226,8 @@ class _DeviceModalSheet extends StatelessWidget {
                     builder: (context) {
                       var encoder = const JsonEncoder.withIndent("     ");
                       var text = encoder.convert(deviceKeys!.toJson());
-                      return Material(child: SingleChildScrollView(child: Text(text)));
+                      return Material(
+                          child: SingleChildScrollView(child: Text(text)));
                     },
                   );
                 },

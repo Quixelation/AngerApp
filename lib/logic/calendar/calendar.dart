@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/extensions.dart';
+import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
 import 'package:anger_buddy/logic/data_manager.dart';
 import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/sync_manager.dart';
@@ -25,6 +27,7 @@ import 'package:table_calendar/table_calendar.dart' as tcal;
 
 part "calendar_page.dart";
 part "calendar_home.dart";
+part "calendar_modern_home.dart";
 
 enum eventType { normal, klausur, ferien }
 

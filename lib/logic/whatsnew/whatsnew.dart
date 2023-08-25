@@ -127,10 +127,12 @@ class _WhatsnewUpdate {
 
 final List<_WhatsnewUpdate> _whatsnewUpdates = [
   //TODO: Change version
-  _WhatsnewUpdate("2023.06.26", [
+  _WhatsnewUpdate("2023.08.19", [
     _WhatsnewEntry(_ChangeType.newFeature, "**Bilder-Seite:** Entdecke nun alle Bilder der Homepage in einer Bilder-Galerie!"),
     _WhatsnewEntry(_ChangeType.improvement, "**Lehrer-VP:** Der Vertretungsplan kann nun nach Lehrern gefiltert werden!"),
     _WhatsnewEntry(_ChangeType.improvement, "**Vertretungsplan:** Das Datum wird nun (endlich) mit angezeigt!"),
+    _WhatsnewEntry(_ChangeType.bugfix, "**Vertretungsplan:** Ausgewählte Standard-Ansicht wird nun (wieder?) respektiert"),
+    _WhatsnewEntry(_ChangeType.bugfix, "**Vertretungsplan:** Die Tabellen-Ansicht hat nun (wieder?) eine lesbare Größe"),
     _WhatsnewEntry(_ChangeType.newFeature,
         "**Schülerrats-Seite:** Erhalte Informationen über den Schülerrat und bleibe immer auf dem laufenden mit den Schülerrats-Nachrichten"),
     _WhatsnewEntry(_ChangeType.newFeature,

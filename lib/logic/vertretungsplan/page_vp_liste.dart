@@ -42,6 +42,7 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
     });
 
     var responseData = await Services.vp.fetchListApi();
+    logger.w(responseData.data.data);
     setState(() {
       _vertretungsplanResponseData = responseData;
       if (responseData.error == true) {
@@ -114,7 +115,8 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
                                 footerWidgets: [
                                   Center(
                                       child: OutlinedButton.icon(
-                                          icon: const Icon(Icons.refresh_outlined),
+                                          icon: const Icon(
+                                              Icons.refresh_outlined),
                                           label: const Text("Erneut versuchen"),
                                           onPressed: () async {
                                             setState(() {
@@ -147,44 +149,60 @@ class _PageVertretungsplanListeState extends State<_PageVertretungsplanListe> {
                                   ((_vertretungsplanResponseData?.data.result ??
                                           true) ==
                                       true)
-                              ? _vertretungsplanListe!
-                                  .map((value) => ListTile(
-                                      leading: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            _isNew[value.uniqueId] ?? true
-                                                ? const Icon(Icons.new_releases,
-                                                    color: Colors.red)
-                                                : const Icon(
-                                                    Icons.download_done,
-                                                  )
-                                          ]),
-                                      title: Text(time2string(value.date,
-                                          includeWeekday: true,
-                                          useStringMonth: false)),
-                                      subtitle: Text(
-                                          "Zuletzt geändert: ${time2string(value.changedDate, includeTime: true)}"),
-                                      trailing: const Icon(
-                                          Icons.keyboard_arrow_right),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    _PageVertretungsplanDetail(
-                                                        value))).then(
-                                            (value) => _checkIfNew(null));
-                                      }))
-                                  .toList()
+                              ? [
+                                  ..._vertretungsplanListe!
+                                      .map<Widget>((value) => ListTile(
+                                          leading: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                _isNew[value.uniqueId] ?? true
+                                                    ? const Icon(
+                                                        Icons.new_releases,
+                                                        color: Colors.red)
+                                                    : const Icon(
+                                                        Icons.download_done,
+                                                      )
+                                              ]),
+                                          title: Text(time2string(value.date,
+                                              includeWeekday: true,
+                                              useStringMonth: false)),
+                                          subtitle: Text(
+                                              "Zuletzt geändert: ${time2string(value.changedDate, includeTime: true)}"),
+                                          trailing: const Icon(
+                                              Icons.keyboard_arrow_right),
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        _PageVertretungsplanDetail(
+                                                            value))).then(
+                                                (value) => _checkIfNew(null));
+                                          }))
+                                      .toList(),
+                                  SizedBox(height: 48),
+                                  Padding(
+                                    padding: const EdgeInsets.all(32),
+                                    child: OutlinedButton.icon(
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SettingsPageVertretung()));
+                                        },
+                                        icon: Icon(Icons.settings),
+                                        label: Text("Standard-Ansicht ändern")),
+                                  )
+                                ]
                               : [
                                   NoConnectionColumn(
                                       showImage: true,
                                       title: "Keine Daten",
                                       subtitle: _vertretungsplanResponseData!
                                               .data.msg ??
-                                          "Bitte die Login-Daten überprüfen")
+                                          "Keine Vertretungspläne gefunden. Entweder sind keine Pläne auf dem Server oder die Login-Daten sind falsch.")
                                 ])
                       : [
                           const SizedBox(height: 32),

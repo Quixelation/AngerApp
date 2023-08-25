@@ -24,7 +24,7 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final shouldRenderFixedDrawer = AngerApp.shouldShowFixedDrawer(context);
     if (alreadySetIndex == false) {
-            selectedPageIndex = shouldRenderFixedDrawer ? 0 : 1;
+      selectedPageIndex = shouldRenderFixedDrawer ? 0 : 1;
       _tabController = TabController(
         length: shouldRenderFixedDrawer ? 2 : 3,
         vsync: this,
@@ -41,9 +41,10 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
     }
     return Scaffold(
         bottomNavigationBar: NavigationBar(
-          // backgroundColor: Theme.of(context).colorScheme.primaryContainer.withAlpha(25),
+          //backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(200),
           // surfaceTintColor: Colors.red,
-          // elevation: 25,
+
+          elevation: 25,
           selectedIndex: selectedPageIndex,
           onDestinationSelected: (value) {
             setState(() {
@@ -51,6 +52,10 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
               selectedPageIndex = value;
             });
           },
+
+          indicatorColor: Theme.of(context).brightness.isDark
+              ? Theme.of(context).colorScheme.primaryContainer
+              : Theme.of(context).colorScheme.primary,
           destinations: [
             if (shouldRenderFixedDrawer == false)
               NavigationDestination(
@@ -60,18 +65,20 @@ class _PageHomeState extends State<PageHome> with TickerProviderStateMixin {
                               transform: const GradientRotation(2),
                               colors: selectedPageIndex != 0
                                   ? [
-                                      Colors.orange.shade300,
-                                      Colors.redAccent.shade200,
+                                      Colors.orange.shade500,
+                                      Colors.redAccent.shade400,
                                     ]
                                   : [
-                                      Colors.orange.shade100,
-                                      Colors.redAccent.shade100,
+                                      Colors.orange.shade200,
+                                      Colors.redAccent.shade200,
                                     ])
                           .createShader(bounds),
                       child: const Icon(Icons.menu)),
                   label: "Funktionen"),
             const NavigationDestination(
-                icon: Icon(Icons.home_outlined), label: "Start"),
+              icon: Icon(Icons.home_outlined),
+              label: "Start",
+            ),
             NavigationDestination(
                 icon: ShaderMask(
                     blendMode: BlendMode.srcIn,
@@ -137,6 +144,7 @@ class _HomePageContent extends StatelessWidget {
 //                          .openDrawer();
 //                    },
 //                  ),
+
             actions: [
               IconButton(
                   iconSize: 26,
@@ -185,14 +193,20 @@ class _HomePageContent extends StatelessWidget {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [StretchMode.zoomBackground],
-              background: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
+
+              background: Theme.of(context).brightness == Brightness.light
+                  ? Container(
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  : Container(
+                      color: Theme.of(context).colorScheme.primaryContainer),
               // collapseMode: CollapseMode.pin,
               title: Text(
                 "Anger",
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground),
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onPrimaryContainer),
               ),
             ),
             expandedHeight: 150,
@@ -205,7 +219,7 @@ class _HomePageContent extends StatelessWidget {
 
             /// -> kleine Bildschirmgröße: 1 Spalte
             if (MediaQuery.of(context).size.width < 1080)
-              const Flex(
+              Flex(
                   direction: Axis.vertical,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -216,6 +230,9 @@ class _HomePageContent extends StatelessWidget {
                     VpWidget(),
                     AushangHomepageWidget(),
                     KlausurenHomepageWidget(),
+                    if (Features.isFeatureEnabled(
+                        context, FeatureFlags.USE_MODERN_CALENDAR))
+                      ModernHomeCalendar(),
                     EventsThisWeek(),
                     NewsHomepageWidget(),
                     OpenSenseOverviewWidget(),
@@ -390,25 +407,25 @@ class _WelcomeTextState extends State<WelcomeText> {
                         TextSpan(
                             text: intToDayString(DateTime.now().weekday),
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold)),
                         const TextSpan(text: ", der "),
                         TextSpan(
                             text: DateTime.now().day.toString(),
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold)),
                         const TextSpan(text: ". "),
                         TextSpan(
                             text: intToMonthString(DateTime.now().month),
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold)),
                         const TextSpan(text: " "),
                         TextSpan(
                             text: DateTime.now().year.toString(),
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold)),
                         const TextSpan(text: "."),
                       ])),

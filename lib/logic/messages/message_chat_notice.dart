@@ -1,7 +1,9 @@
 part of messages;
 
 class MessagingChatNotice extends StatelessWidget {
-  const MessagingChatNotice({Key? key, required this.child, this.icon, required this.matrixEvent}) : super(key: key);
+  const MessagingChatNotice(
+      {Key? key, required this.child, this.icon, required this.matrixEvent})
+      : super(key: key);
 
   final Widget child;
   final Widget? icon;
@@ -9,20 +11,24 @@ class MessagingChatNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var themeData = Theme.of(context).copyWith(iconTheme: Theme.of(context).iconTheme.copyWith(size: 16));
+    var themeData = Theme.of(context)
+        .copyWith(iconTheme: Theme.of(context).iconTheme.copyWith(size: 16));
 
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         child: InkWell(
-          onTap: ((getIt.get<AppManager>().devtools.valueWrapper?.value ?? false) && matrixEvent != null)
+          onTap: ((Features.isFeatureEnabled(
+                      context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) &&
+                  matrixEvent != null)
               ? () {
                   showDialog(
                     context: context,
                     builder: (context) {
                       var encoder = const JsonEncoder.withIndent("     ");
                       var text = encoder.convert(matrixEvent!.toJson());
-                      return Material(child: SingleChildScrollView(child: Text(text)));
+                      return Material(
+                          child: SingleChildScrollView(child: Text(text)));
                     },
                   );
                 }

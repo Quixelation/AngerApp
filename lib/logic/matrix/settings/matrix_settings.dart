@@ -78,7 +78,7 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                       builder: (context) => const _MatrixSettingsDevices()));
                 },
               ),
-              const _MatrixSettingsPusherSwitch(),
+              // const _MatrixSettingsPusherSwitch(),
               ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text("Abmelden"),
@@ -89,7 +89,7 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                           return AlertDialog(
                             title: const Text("Abmelden"),
                             content: const Text(
-                                "Gesamten JSP-Account abmelden? Dies beinhaltet auch den Zugriff auf Cloud-Dateien innerhalb der AngerApp."),
+                                "Gesamten JSP-Account abmelden? Dies beinhaltet auch den Zugriff auf Cloud-Dateien innerhalb der AngerApp. Chats werden nach dem Logout möglicherweise für kurze Zeit weiterhin angezeigt."),
                             actions: [
                               TextButton(
                                   onPressed: () {
@@ -116,8 +116,16 @@ class _MatrixSettingsState extends State<MatrixSettings> {
                     "Kein JSP-Schulmesenger-Account verbunden. Bitte melde dich über den Reiter \"Chats\" auf der Startseite an.",
                     style: TextStyle(fontSize: 16)),
               ),
-                    const Divider(height: 64),
-            const AlternativeClientsInfo()
+            SizedBox(height: 32),
+            const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: const Text(
+                    "Weitere Funktionen in der Web-Version vom Jenaer Schulportal oder in anderen Clients.", style: TextStyle(fontSize: 14))),
+            const Divider(height: 64),
+            const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: const AlternativeClientsInfo()),
+            const Divider(height: 64),
           ],
         ));
   }

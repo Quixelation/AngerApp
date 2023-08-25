@@ -7,7 +7,6 @@ import 'package:anger_buddy/logic/homepage/homepage.dart';
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/partials/drawer.dart';
-
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:feature_flags/feature_flags.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -59,6 +58,7 @@ Future<void> initApp({bool onlyBasic = false}) async {
   logger.v("[AngerApp] Initialized");
 }
 
+/*
 @pragma(
     'vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
 void callbackDispatcher() {
@@ -77,9 +77,10 @@ void callbackDispatcher() {
     });
   } else {}
 }
-
+*/
 void main() async {
   await initApp();
+  /*
   Workmanager().initialize(
       callbackDispatcher, // The top level function, aka callbackDispatcher
       isInDebugMode:
@@ -87,7 +88,7 @@ void main() async {
       );
   if (kDebugMode) {
     Workmanager().registerOneOffTask("bg-noti", "BackgroundNotification");
-  }
+  }*/
   runApp(const RestartWidget(child: MainApp()));
   logger.v("[AngerApp] Running");
 }
@@ -151,8 +152,11 @@ class _MainAppState extends State<MainApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    getIt.get<AppManager>().mainScaffoldContext = context;
     precacheImage(const AssetImage("assets/AngerWiki.jpg"), context);
 
+    /// Outdated Styles, which i can't be bothered to update'
+    /**
     var fontFamily =
         kIsWeb && html.window.navigator.userAgent.contains('OS 15_')
             ? '-apple-system'
@@ -224,24 +228,46 @@ class _MainAppState extends State<MainApp> {
 
     var filledButtonTheme = FilledButtonThemeData(
         style: buttonStyle.copyWith(
-      foregroundColor: MaterialStateProperty.all(Colors.white),
+      foregroundColor: MaterialStateProperty.all(Colors.black),
     ));
     var elevatedButtonTheme = ElevatedButtonThemeData(
         style: buttonStyle.copyWith(
+      backgroundColor: MaterialStateProperty.all(mainColor.color),
       foregroundColor: MaterialStateProperty.all(Colors.white),
     ));
     var outlinedButtonTheme = OutlinedButtonThemeData(
         style: buttonStyle.copyWith(
             side: MaterialStateProperty.all(
-                BorderSide(color: mainColor.color.shade700))));
+                BorderSide(color: mainColor.color.shade700))));*/
 
     return Features(
       flags: const [
         FeatureFlags.USE_NEW_DRAWER,
-        FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED
+        FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED,
+        FeatureFlags.MOODLE_ENABLED,
+        FeatureFlags.MATRIX_SHOW_CREATE_ROOM,
       ],
       child: MaterialApp(
         title: 'AngerApp',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: mainColor.color,
+          brightness: Brightness.light,
+        ).copyWith(
+          backgroundColor: lightBackground,
+          scaffoldBackgroundColor: lightBackground,
+          tabBarTheme: TabBarTheme(
+              labelColor: Colors.white, unselectedLabelColor: Colors.white60),
+          appBarTheme: AppBarTheme(
+              surfaceTintColor: mainColor.color,
+              color: mainColor.color,
+              foregroundColor: Colors.white),
+        ),
+        darkTheme: ThemeData(
+            useMaterial3: true,
+            colorSchemeSeed: mainColor.color,
+            brightness: Brightness.dark),
+/*
         theme: lightTheme.copyWith(
             textTheme: lightTheme.textTheme.apply(fontFamily: fontFamily),
             useMaterial3: true,
@@ -282,7 +308,7 @@ class _MainAppState extends State<MainApp> {
             elevatedButtonTheme: elevatedButtonTheme,
             filledButtonTheme: filledButtonTheme,
             pageTransitionsTheme: defaultPageTrans,
-            dividerTheme: dividerTheme),
+            dividerTheme: dividerTheme),*/
         themeMode: ThemeMode.system,
         home: const DefaultTextStyle(
             style: TextStyle(fontFamily: "Montserrat"),

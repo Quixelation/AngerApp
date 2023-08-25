@@ -14,8 +14,7 @@ class _MessageSettingsState extends State<MessageSettings> {
       appBar: AppBar(title: const Text("Messenger")),
       body: ListView(children: [
         ListTile(
-          title: const Text("Matrix"),
-          leading: const Text("JSP"),
+          title: const Text("Schulmessenger (Matrix)"),
           trailing: const Icon(Icons.keyboard_arrow_right),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(

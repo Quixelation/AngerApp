@@ -38,7 +38,11 @@ class _MatrixMessage extends StatelessWidget {
             displayEvent.type == "m.room.encrypted" ||
             displayEvent.type == "org.matrix.msc3381.poll.start" ||
             displayEvent.type == "m.poll.start") &&
-        ((displayEvent.relationshipType ?? "") != "m.replace")) {
+        ((displayEvent.relationshipType ?? "") != "m.replace") &&
+        (!displayEvent.status.isError ||
+            (displayEvent.status.isError &&
+                displayEvent.originServerTs.difference(DateTime.now()).abs() <
+                    Duration(minutes: 1)))) {
       return GestureDetector(
         behavior: HitTestBehavior.opaque,
         onLongPress: () {
@@ -78,22 +82,25 @@ class _MatrixMessage extends StatelessWidget {
                             "Löschen",
                             style: TextStyle(color: Colors.red),
                           )),
-                    TextButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              var encoder =
-                                  const JsonEncoder.withIndent("     ");
-                              var text = encoder.convert(displayEvent.toJson());
-                              return Material(
-                                  child:
-                                      SingleChildScrollView(child: Text(text)));
-                            },
-                          );
-                        },
-                        icon: const Icon(Icons.safety_check),
-                        label: const Text("Debug"))
+                    if (Features.isFeatureEnabled(
+                        context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS))
+                      TextButton.icon(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                var encoder =
+                                    const JsonEncoder.withIndent("     ");
+                                var text =
+                                    encoder.convert(displayEvent.toJson());
+                                return Material(
+                                    child: SingleChildScrollView(
+                                        child: Text(text)));
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.safety_check),
+                          label: const Text("Debug"))
                   ],
                 );
               });
@@ -122,13 +129,15 @@ class _MatrixMessage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (displayEvent.status.isError) ...[
-                      const Row(
-                        children: [
-                          Icon(Icons.error, color: Colors.red),
-                          SizedBox(width: 4),
-                          Text("Nachricht konnte nicht gesendet werden",
-                              style: TextStyle(color: Colors.red)),
-                        ],
+                      GestureDetector(
+                        child: const Row(
+                          children: [
+                            Icon(Icons.error, color: Colors.red),
+                            SizedBox(width: 4),
+                            Text("Nachricht konnte nicht gesendet werden",
+                                style: TextStyle(color: Colors.red)),
+                          ],
+                        ),
                       ),
                       const Divider(),
                     ],

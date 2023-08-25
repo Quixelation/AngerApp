@@ -24,6 +24,7 @@ class _MiniWebViewState extends State<MiniWebView> {
         this.controller = controller;
         controller.loadHtmlString(widget.htmlString);
       },
+
       initialUrl: 'about:blank',
       javascriptMode: JavascriptMode.unrestricted,
       gestureNavigationEnabled: false,

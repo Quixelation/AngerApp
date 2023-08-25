@@ -90,11 +90,11 @@ class JspMatrix {
   JspMatrix() {
     client.onLoginStateChanged.stream.listen((matrix.LoginState loginState) {
       logger.w("LoginState: ${loginState.toString()}");
-
     });
 
     client.onEvent.stream.listen((matrix.EventUpdate eventUpdate) {
-      logger.w("New event update !  ${eventUpdate.type}::${eventUpdate.content}");
+      logger
+          .w("New event update !  ${eventUpdate.type}::${eventUpdate.content}");
     }).onError((error, stackTrace) {
       logger.e("Error in event update stream: $error");
     });
@@ -103,9 +103,6 @@ class JspMatrix {
     //   print("New room update!");
     // });
 
-
-
-
     client.onAssertedIdentityReceived.stream.listen((event) {
       logger.w("Asserted Id recieved");
     });
@@ -113,7 +110,8 @@ class JspMatrix {
       logger.w("UIArequest");
     });
 
-    client.onKeyVerificationRequest.stream.listen(_handleKeyVerificationRequest);
+    client.onKeyVerificationRequest.stream
+        .listen(_handleKeyVerificationRequest);
   }
 
   _handleKeyVerificationRequest(KeyVerification event) async {
@@ -126,7 +124,9 @@ class JspMatrix {
   }
 
   Future<void> showKeyVerificationDialog(KeyVerification event) async {
-    return await showDialog<void>(context: getIt.get<AppManager>().mainScaffoldState.currentContext!, builder: (context) => MatrixSasDialog(event));
+    return await showDialog<void>(
+        context: getIt.get<AppManager>().mainScaffoldState.currentContext!,
+        builder: (context) => MatrixSasDialog(event));
   }
 
   login() async {
@@ -140,7 +140,8 @@ class JspMatrix {
 
     await client.login(
       matrix.LoginType.mLoginPassword,
-      identifier: matrix.AuthenticationUserIdentifier(user: Credentials.jsp.subject.valueWrapper?.value?.username ?? ""),
+      identifier: matrix.AuthenticationUserIdentifier(
+          user: Credentials.jsp.subject.valueWrapper?.value?.username ?? ""),
       initialDeviceDisplayName: "AngerApp: ${await getDeviceNameString()}",
       password: (Credentials.jsp.subject.valueWrapper?.value?.password ?? ""),
     );
@@ -158,7 +159,8 @@ class JspMatrix {
         pushkey: fcmToken,
         appDisplayName: "AngerApp",
         data: PusherData(
-          url: Uri.parse("https://angerapp-api.robertstuendl.com/_matrix/push/v1/notify"),
+          url: Uri.parse(
+              "https://angerapp-api.robertstuendl.com/_matrix/push/v1/notify"),
           format: "event_id_only",
         ),
         deviceDisplayName: await getDeviceNameString(),
@@ -193,44 +195,61 @@ class JspMatrix {
     });
   }
 
-  Widget buildAvatar(BuildContext context, Uri? imgUrl, {bool showLogo = true, Widget? customLogo, String? userId, bool? isIgnored, Room? room}) {
+  Widget buildAvatar(BuildContext context, Uri? imgUrl,
+      {bool showLogo = true,
+      Widget? customLogo,
+      String? userId,
+      bool? isIgnored,
+      Room? room}) {
     if (userId != null) assert(room == null);
     if (room != null) assert(userId == null);
 
-    isIgnored = isIgnored ?? (userId != null ? client.ignoredUsers.contains(userId) : (room != null ? _checkIfIgnoredFromRoom(room) : false));
+    isIgnored = isIgnored ??
+        (userId != null
+            ? client.ignoredUsers.contains(userId)
+            : (room != null ? _checkIfIgnoredFromRoom(room) : false));
 
     return Stack(alignment: Alignment.center, children: [
       CircleAvatar(
-        backgroundColor: Colors.grey.shade400.withAlpha(200),
-        child: imgUrl == null
-            ? const Icon(
-                Icons.person,
-                size: 32,
-                color: Colors.white,
-              )
-            : null,
-        backgroundImage: imgUrl == null
-            ? null
-            : CachedNetworkImageProvider(
-                imgUrl
-                    .getThumbnail(
-                      client,
-                      width: 56,
-                      height: 56,
-                    )
-                    .toString(),
-              ),
-      ),
+          radius: 20,
+          backgroundColor: Colors.blueAccent.withAlpha(200),
+          child: CircleAvatar(
+            radius: showLogo ? 17 : 20,
+            backgroundColor: Colors.grey.shade400.withAlpha(200),
+            child: imgUrl == null
+                ? const Icon(
+                    Icons.person,
+                    size: 32,
+                    color: Colors.white,
+                  )
+                : null,
+            backgroundImage: imgUrl == null
+                ? null
+                : CachedNetworkImageProvider(
+                    imgUrl
+                        .getThumbnail(
+                          client,
+                          width: 56,
+                          height: 56,
+                        )
+                        .toString(),
+                  ),
+          )),
+      /*
       if (showLogo)
         Positioned(
           child: customLogo ??
               Text(
                 "JSP",
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11, color: Theme.of(context).colorScheme.tertiary),
+                style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 11,
+                    color: Theme.of(context).colorScheme.tertiary),
               ),
           bottom: 0,
           right: 0,
         ),
+        */
       if (isIgnored) ...[
         Text(
           String.fromCharCode(Icons.block.codePoint),
@@ -266,7 +285,10 @@ class JspMatrix {
       var ignoredIds = client.ignoredUsers;
 
       if (room.isDirectChat && participants.length == 2) {
-        isIgnored = ignoredIds.contains(participants.where((element) => element.id != client.userID).first.id);
+        isIgnored = ignoredIds.contains(participants
+            .where((element) => element.id != client.userID)
+            .first
+            .id);
       }
     } catch (err) {
       logger.e(err, null, (err as Error).stackTrace);
@@ -274,7 +296,8 @@ class JspMatrix {
     return isIgnored;
   }
 
-  Widget buildListTile(BuildContext context, Room room, {bool showLogo = true}) {
+  Widget buildListTile(BuildContext context, Room room,
+      {bool showLogo = true}) {
     return Slidable(
         key: UniqueKey(),
         enabled: false,
@@ -305,11 +328,15 @@ class JspMatrix {
           ],
         ),
         child: DefaultMessageListTile(
-          avatar: buildAvatar(context, room.avatar, showLogo: showLogo, room: room),
+          avatar:
+              buildAvatar(context, room.avatar, showLogo: showLogo, room: room),
           datetime: room.lastEvent?.originServerTs,
           messageText: room.lastEvent == null
               ? ""
-              : (room.isDirectChat ? "" : "${room.lastEvent?.sender.calcDisplayname()}: ") + (room.lastEvent?.calcBodyPreview() ?? ""),
+              : (room.isDirectChat
+                      ? ""
+                      : "${room.lastEvent?.sender.calcDisplayname().split(" ")[0]}: ") +
+                  (room.lastEvent?.calcBodyPreview() ?? ""),
           hasUnread: room.isUnreadOrInvited,
           unreadCount: room.notificationCount,
           onTap: () async {
@@ -347,6 +374,9 @@ extension body on matrix.Event {
             return plaintextBody;
         }
       default:
+        if (type.startsWith("m.room")) {
+          return "[Raum Verwaltung]";
+        }
         return plaintextBody;
     }
   }
@@ -354,12 +384,16 @@ extension body on matrix.Event {
 
 extension Rendering on matrix.Event {
   bool shouldRender({bool overwrite = false}) {
-    if (overwrite || shouldRenderChatBubble || chatNotice.shouldRender) return true;
+    if (overwrite || shouldRenderChatBubble || chatNotice.shouldRender)
+      return true;
     return false;
   }
 
   bool get shouldRenderChatBubble {
-    if ((type == "m.room.message" || type == "m.room.encrypted" || type == "org.matrix.msc3381.poll.start" || type == "m.poll.start") &&
+    if ((type == "m.room.message" ||
+            type == "m.room.encrypted" ||
+            type == "org.matrix.msc3381.poll.start" ||
+            type == "m.poll.start") &&
         ((relationshipType ?? "") != "m.replace")) return true;
 
     return false;
@@ -377,23 +411,34 @@ class _MatrixEventChatNoticeRenderer {
   /* ------------------------------ shouldRender ------------------------------ */
 
   bool get shouldRender {
-    return shouldRenderInvite || shouldRenderJoin || shouldRenderLeaving || shouldRenderRemovingUser || shouldRenderAvatar;
+    return shouldRenderInvite ||
+        shouldRenderJoin ||
+        shouldRenderLeaving ||
+        shouldRenderRemovingUser ||
+        shouldRenderAvatar;
   }
 
   bool get shouldRenderLeaving {
-    return event.type == "m.room.member" && event.content["membership"] == "leave" && event.stateKey == event.senderId;
+    return event.type == "m.room.member" &&
+        event.content["membership"] == "leave" &&
+        event.stateKey == event.senderId;
   }
 
   bool get shouldRenderRemovingUser {
-    return event.type == "m.room.member" && event.content["membership"] == "leave" && event.stateKey != event.senderId;
+    return event.type == "m.room.member" &&
+        event.content["membership"] == "leave" &&
+        event.stateKey != event.senderId;
   }
 
   bool get shouldRenderInvite {
-    return event.type == "m.room.member" && event.content["membership"] == "invite";
+    return event.type == "m.room.member" &&
+        event.content["membership"] == "invite";
   }
 
   bool get shouldRenderJoin {
-    return event.type == "m.room.member" && event.content["membership"] == "join" && event.prevContent?["membership"] == "invite";
+    return event.type == "m.room.member" &&
+        event.content["membership"] == "join" &&
+        event.prevContent?["membership"] == "invite";
   }
 
   bool get shouldRenderAvatar {
@@ -402,15 +447,21 @@ class _MatrixEventChatNoticeRenderer {
 
 /* ---------------------------------- TEXT ---------------------------------- */
   String get stateKeyUserDisplayName {
-    return event.stateKeyUser?.calcDisplayname() ?? event.stateKey ?? "<KeinName>";
+    return event.stateKeyUser?.calcDisplayname() ??
+        event.stateKey ??
+        "<KeinName>";
   }
 
   String get senderDisplayName {
-    return event.senderFromMemoryOrFallback.displayName ?? event.senderFromMemoryOrFallback.id;
+    return event.senderFromMemoryOrFallback.displayName ??
+        event.senderFromMemoryOrFallback.id;
   }
 
   String get invitationText {
-    return senderDisplayName + " hat " + event.content["displayname"].toString() + " eingeladen";
+    return senderDisplayName +
+        " hat " +
+        event.content["displayname"].toString() +
+        " eingeladen";
   }
 
   String get joinText {
@@ -432,17 +483,35 @@ class _MatrixEventChatNoticeRenderer {
   /* --------------------------------- RENDER --------------------------------- */
   Widget renderChatNotice() {
     if (shouldRenderLeaving) {
-      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.directions_walk), child: Text(leaveText));
+      return MessagingChatNotice(
+          matrixEvent: event,
+          icon: const Icon(Icons.directions_walk),
+          child: Text(leaveText));
     } else if (shouldRenderRemovingUser) {
-      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.person_remove), child: Text(removeUserText));
+      return MessagingChatNotice(
+          matrixEvent: event,
+          icon: const Icon(Icons.person_remove),
+          child: Text(removeUserText));
     } else if (shouldRenderJoin) {
-      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.emoji_people), child: Text(joinText));
+      return MessagingChatNotice(
+          matrixEvent: event,
+          icon: const Icon(Icons.emoji_people),
+          child: Text(joinText));
     } else if (shouldRenderInvite) {
-      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.person_add), child: Text(invitationText));
+      return MessagingChatNotice(
+          matrixEvent: event,
+          icon: const Icon(Icons.person_add),
+          child: Text(invitationText));
     } else if (shouldRenderAvatar) {
-      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.image), child: Text(avatarChangeText));
+      return MessagingChatNotice(
+          matrixEvent: event,
+          icon: const Icon(Icons.image),
+          child: Text(avatarChangeText));
     } else {
-      return MessagingChatNotice(matrixEvent: event, icon: const Icon(Icons.error), child: const Text("App-Fehler: Kann Info nicht anzeigen"));
+      return MessagingChatNotice(
+          matrixEvent: event,
+          icon: const Icon(Icons.error),
+          child: const Text("App-Fehler: Kann Info nicht anzeigen"));
     }
   }
 }

@@ -116,6 +116,24 @@ Future<_MoodleResponse<dynamic>> _moodleRequest<E>({
       // Falls der Token der Anfrage nicht mehr gültig war
       if (json["errorcode"] == "invalidtoken") {
         AngerApp.moodle.login.logout();
+        final context = getIt.get<AppManager>().mainScaffoldContext;
+        if (context != null) {
+          showDialog(
+              context: context,
+              builder: (context2) => AlertDialog(
+                    title: Text(" Ungültiger Token"),
+                    content: Text(
+                        "Dein Moodle Token ist ungültig und somit wahrscheinlich abgelaufen. Du wurdest abgemeldet."),
+                    actions: [
+                      TextButton(
+                        child: Text("ok"),
+                        onPressed: () {
+                          Navigator.of(context2).pop();
+                        },
+                      )
+                    ],
+                  ));
+        }
       }
       return _MoodleResponse(
           data: null, hasError: true, error: _MoodleException.fromApi(json));

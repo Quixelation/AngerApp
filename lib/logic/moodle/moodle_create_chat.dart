@@ -10,11 +10,31 @@ class MoodleCreateChatPage extends StatefulWidget {
 class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
   var groupNameController = TextEditingController();
   _MoodleMember? selectedUser;
+  List<_MoodleMember>? _typeaheadUsers = null;
+  TextEditingController searchFieldController = TextEditingController();
 
-  Future<List<_MoodleMember>> searchUser(String search) async {
-    var resp = await AngerApp.moodle.contacts.searchMembersByName(search);
+  void searchUser(String search, BuildContext context) async {
+    logger.d("Search -" + search + "-");
+    if (search.length < 2) {
+      setState(() {
+        _typeaheadUsers = null;
+      });
+      return;
+    }
+    var resp = await AngerApp.moodle.contacts
+        .searchMembersByName(search)
+        .catchError((err) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.black87,
+        content: Text("Verbindung zum Server fehlgeschlagen",
+            style: TextStyle(color: Colors.white)),
+        duration: Duration(milliseconds: 300),
+      ));
+    });
 
-    return resp;
+    setState(() {
+      _typeaheadUsers = resp;
+    });
   }
 
   void create(BuildContext context) async {
@@ -46,8 +66,13 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
 
       Navigator.of(context).pop();
 
-      final existingConvos = AngerApp.moodle.messaging.subject.valueWrapper?.value
-          .where((element) => element.members.length == 1 && element.members.where((element) => element.id == selectedUser!.id).isNotEmpty)
+      final existingConvos = AngerApp
+          .moodle.messaging.subject.valueWrapper?.value
+          .where((element) =>
+              element.members.length == 1 &&
+              element.members
+                  .where((element) => element.id == selectedUser!.id)
+                  .isNotEmpty)
           .toList();
 
       if ((existingConvos ?? []).isNotEmpty) {
@@ -91,34 +116,40 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TypeAheadField<_MoodleMember>(
-                    errorBuilder: (context, error) {
-                      return const Text("Keine Benutzer gefunden");
-                    },
-                    textFieldConfiguration: const TextFieldConfiguration(
-                      decoration: InputDecoration(labelText: "Moodle-Benutzer suchen (max. 1)"),
+                  Column(children: [
+                    TextField(
+                      controller: searchFieldController,
+                      onEditingComplete: () {
+                        searchUser(searchFieldController.text, context);
+                      },
+                      decoration: InputDecoration(
+                          labelText: "Moodle-Benutzer suchen (max. 1)"),
                     ),
-                    minCharsForSuggestions: 2,
-                    debounceDuration: const Duration(seconds: 1),
-                    suggestionsCallback: (pattern) => searchUser(pattern),
-                    itemBuilder: (context, itemData) {
-                      return ListTile(
-                        title: Text(itemData.fullname),
-                      );
-                    },
-                    onSuggestionSelected: (suggestion) {
-                      setState(() {
-                        selectedUser = suggestion;
-                      });
-                    },
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                    SizedBox(height: 16),
+                    _typeaheadUsers == null
+                        ? Text("Beende deine Suche (z.B. durch \"Enter\"), um Vorschläge zu sehen")
+                        : _typeaheadUsers!.length == 0
+                            ? Text("Keine Benutzer gefunden")
+                            : (Column(
+                                children: _typeaheadUsers!
+                                    .map((e) => ListTile(
+                                        title: Text(e.fullname),
+                                        onTap: () {
+                                          setState(() {
+                                            selectedUser = e;
+                                            _typeaheadUsers = null;
+                                            searchFieldController.clear();
+                                          });
+                                        }))
+                                    .toList() as List<Widget>))
+                  ]),
+                  const SizedBox(height: 16),
+                  const Divider(height: 32),
                   if (selectedUser != null)
                     ListTile(
                       leading: CircleAvatar(
-                        foregroundImage: NetworkImage(selectedUser!.profileimageurl),
+                        foregroundImage:
+                            NetworkImage(selectedUser!.profileimageurl),
                       ),
                       title: Text(selectedUser!.fullname),
                     )

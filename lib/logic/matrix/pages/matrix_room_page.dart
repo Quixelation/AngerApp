@@ -238,10 +238,36 @@ class _RoomPageState extends State<RoomPage> {
                                         continue;
                                       }
                                       logger.i("Sending File ${file.name}");
-                                      await widget.room.sendFileEvent(
-                                          MatrixFile(
-                                              name: file.name,
-                                              bytes: file.bytes!));
+                                      try {
+                                        await widget.room.sendFileEvent(
+                                            MatrixFile(
+                                                name: file.name,
+                                                bytes: file.bytes!));
+                                      } catch (err) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context2) {
+                                              return AlertDialog(
+                                                  title: Text(
+                                                      "Fehler beim Senden"),
+                                                  content: Column(
+                                                    children: [
+                                                      Text(
+                                                          "Nachricht konnte nicht gesendet werden. "),
+                                                      SizedBox(height: 8),
+                                                      Text(err.toString())
+                                                    ],
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                        child: Text("ok"),
+                                                        onPressed: () {
+                                                          Navigator.of(context2)
+                                                              .pop();
+                                                        })
+                                                  ]);
+                                            });
+                                      }
                                     }
                                   },
                                   icon: const Icon(Icons.attach_file)),

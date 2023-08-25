@@ -59,17 +59,17 @@ class Moodle {
 class _MoodleLogin {
   final creds = _MoodleCredsManager();
 
-    final Moodle moodle;
-_MoodleLogin({required this.moodle});
+  final Moodle moodle;
+  _MoodleLogin({required this.moodle});
 
-    
   ///TODO
   void logout() {
     creds.removeCredentials();
-moodle.messaging.subject.add([]);
+    moodle.messaging.subject.add([]);
   }
 
-  Future<void> login({required String username, required String password}) async {
+  Future<void> login(
+      {required String username, required String password}) async {
     try {
       final token = await _fetchToken(username: username, password: password);
       final siteInfo = await _fetchSiteInfo(token);
@@ -78,7 +78,8 @@ moodle.messaging.subject.add([]);
         throw ErrorDescription("Fehler beim Anmelden");
       }
 
-      await creds.setCredentials(_MoodleCreds(token: token, userId: siteInfo.userid));
+      await creds
+          .setCredentials(_MoodleCreds(token: token, userId: siteInfo.userid));
       return;
     } catch (err) {
       logger.e(err);
@@ -87,9 +88,14 @@ moodle.messaging.subject.add([]);
     }
   }
 
-  Future<String> _fetchToken({required String username, required String password}) async {
+  Future<String> _fetchToken(
+      {required String username, required String password}) async {
     var response = await _moodleRequest(
-        parameters: {"username": username, "password": password, "service": "moodle_mobile_app"},
+        parameters: {
+          "username": username,
+          "password": password,
+          "service": "moodle_mobile_app"
+        },
         includeToken: false,
         includeUserId: false,
         customPath: "login/token.php");
@@ -105,8 +111,8 @@ moodle.messaging.subject.add([]);
   }
 
   Future<_MoodleSiteInfo> _fetchSiteInfo(String token) async {
-    var response =
-        await http.post(Uri.parse(AppManager.moodleApi + "?wstoken=$token&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json"));
+    var response = await http.post(Uri.parse(AppManager.moodleApi +
+        "?wstoken=$token&wsfunction=core_webservice_get_site_info&moodlewsrestformat=json"));
 
     if (response.statusCode != 200) {
       throw ErrorDescription("Status ain't 200");
@@ -153,15 +159,19 @@ class _MoodleMessaging {
 
   final subject = BehaviorSubject<List<MoodleConversation>>();
 
-  Widget buildListTile(BuildContext context, MoodleConversation convo, {bool showLogo = true}) {
+  Widget buildListTile(BuildContext context, MoodleConversation convo,
+      {bool showLogo = true}) {
     return DefaultMessageListTile(
-      avatar: buildAvatar(convo.members.first.profileimageurl, showLogo: showLogo),
-      datetime: convo.messages.isEmpty ? null : convo.messages.first.timeCreated,
+      avatar:
+          buildAvatar(convo.members.first.profileimageurl, showLogo: showLogo),
+      datetime:
+          convo.messages.isEmpty ? null : convo.messages.first.timeCreated,
       hasUnread: convo.unreadCount != null && convo.unreadCount != 0,
       unreadCount: convo.unreadCount != null ? convo.unreadCount! : 0,
       messageText: convo.messages.isEmpty ? "" : convo.messages.first.text,
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => MoodleConvoPage(convo)));
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => MoodleConvoPage(convo)));
       },
       sender: convo.members.first.fullname,
     );
@@ -170,31 +180,51 @@ class _MoodleMessaging {
   Widget buildAvatar(String? imgUrl, {bool showLogo = true}) {
     return Stack(children: [
       CircleAvatar(
-        backgroundImage: imgUrl == null ? null : CachedNetworkImageProvider(imgUrl),
-      ),
+          radius: 20,
+          backgroundColor: Colors.orange.shade700.withAlpha(200),
+          child: CircleAvatar(
+            radius: showLogo ? 17 : 20,
+            backgroundColor: Colors.grey.shade400.withAlpha(200),
+            child: imgUrl == null
+                ? const Icon(
+                    Icons.person,
+                    size: 32,
+                    color: Colors.white,
+                  )
+                : null,
+            backgroundImage:
+                imgUrl == null ? null : CachedNetworkImageProvider(imgUrl),
+          )),
+      /*
       if (showLogo)
         Positioned(
           child: Image.asset("assets/MoodleTools.png", width: 20),
           bottom: 0,
           right: 0,
         ),
+        */
     ]);
   }
 
   Future<List<MoodleConversation>> getAllConversations() async {
-    var response = await _moodleRequest<List<Map<String, dynamic>>>(function: "core_message_get_conversations");
+    var response = await _moodleRequest<List<Map<String, dynamic>>>(
+        function: "core_message_get_conversations");
 
     if (response.hasError) {
       logger.e(response.error);
-      throw ErrorDescription(response.error!.message ?? response.error!.error ?? "");
+      throw ErrorDescription(
+          response.error!.message ?? response.error!.error ?? "");
     }
 
-    logger.v("[MoodleConvo]" + (response.data!["conversations"]?.length?.toString() ?? "00"));
+    logger.v("[MoodleConvo]" +
+        (response.data!["conversations"]?.length?.toString() ?? "00"));
 
     try {
-      var convosList = List<Map<String, dynamic>>.from(response.data!["conversations"] ?? []);
+      var convosList = List<Map<String, dynamic>>.from(
+          response.data!["conversations"] ?? []);
 
-      final list = convosList.map((e) => MoodleConversation.fromApi(e)).toList();
+      final list =
+          convosList.map((e) => MoodleConversation.fromApi(e)).toList();
 
       //var copy = subject.valueWrapper?.value ?? [];
 
@@ -203,14 +233,19 @@ class _MoodleMessaging {
       return list;
     } catch (err) {
       logger.d(err, null, (err as Error).stackTrace);
-      return [];
+      throw new ErrorDescription("Verbindung mit Server fehlgeschlagen");
     }
   }
 
-  Future<MoodleConversation> getConversationById(int conversationId, {bool markAsRead = false}) async {
+  Future<MoodleConversation> getConversationById(int conversationId,
+      {bool markAsRead = false}) async {
     var response = await _moodleRequest(
         function: "core_message_get_conversation",
-        parameters: {"includecontactrequests": "0", "includeprivacyinfo": "0", "conversationid": conversationId.toString()});
+        parameters: {
+          "includecontactrequests": "0",
+          "includeprivacyinfo": "0",
+          "conversationid": conversationId.toString()
+        });
 
     if (response.hasError) {
       throw ErrorDescription(response.error!.message ?? "");
@@ -252,11 +287,17 @@ class _MoodleMessaging {
   }
 
   /// Only supports instant messages to 1 user!
-  Future<MoodleMessage> sendInstantMessage({required int userId, required String text, bool doSubjectChange = true}) async {
-    var response = await _moodleRequest(includeUserId: false, function: "core_message_send_instant_messages", parameters: {
-      "messages[0][touserid]": userId.toString(),
-      "messages[0][text]": text,
-    });
+  Future<MoodleMessage> sendInstantMessage(
+      {required int userId,
+      required String text,
+      bool doSubjectChange = true}) async {
+    var response = await _moodleRequest(
+        includeUserId: false,
+        function: "core_message_send_instant_messages",
+        parameters: {
+          "messages[0][touserid]": userId.toString(),
+          "messages[0][text]": text,
+        });
 
     if (response.hasError) {
       throw ErrorDescription(response.error!.message ?? "");
@@ -267,12 +308,16 @@ class _MoodleMessaging {
     final sentMsg = MoodleMessage(
         id: data["msgid"],
         text: data["text"],
-        timeCreated: DateTime.fromMillisecondsSinceEpoch(data["timecreated"] * 1000),
+        timeCreated:
+            DateTime.fromMillisecondsSinceEpoch(data["timecreated"] * 1000),
         userIdFrom: data["useridfrom"]);
 
     if (doSubjectChange) {
       var copy = subject.valueWrapper?.value ?? [];
-      copy.firstWhere((element) => element.id == data["conversationid"]).messages.insert(0, sentMsg);
+      copy
+          .firstWhere((element) => element.id == data["conversationid"])
+          .messages
+          .insert(0, sentMsg);
       subject.add(copy);
     }
 

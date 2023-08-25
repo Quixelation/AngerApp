@@ -1,12 +1,15 @@
 library homepage;
 
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
+import 'package:anger_buddy/extensions.dart';
 import 'package:anger_buddy/logic/feedback/feedback.dart';
 import 'package:anger_buddy/logic/whatsnew/whatsnew.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
 import 'package:anger_buddy/partials/drawer.dart';
 import 'package:anger_buddy/utils/logger.dart';
+import 'package:feature_flags/feature_flags.dart';
 import 'package:flutter/material.dart';
 import "package:sembast/sembast.dart";
 import 'dart:async';
@@ -23,6 +26,7 @@ import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/pages/notifications.dart';
 import 'package:anger_buddy/utils/time_2_string.dart';
 import 'package:flutter/foundation.dart';
+import 'package:tinycolor2/tinycolor2.dart';
 
 part "homepage_settings.dart";
 part "homepage_widget.dart";

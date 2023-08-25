@@ -14,7 +14,7 @@ Future<bool> loginToJsp({required String username, required String password}) as
   try {
     await JspFilesClient(manualUsername: username, manualPassword: password).getWebDavFiles("/");
   } catch (e) {
-    logger.e("WebDav failed to check login", e, (e as Error).stackTrace);
+    logger.e("WebDav failed to check login" );
     return false;
   }
 

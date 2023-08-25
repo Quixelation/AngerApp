@@ -40,23 +40,32 @@ class _FileExplorerState extends State<FileExplorer> {
       appBar: AppBar(
         title: Text(widget.dir == "/"
             ? "JSP-Cloud"
-            : widget.dir.substring(0, widget.dir.length - 1).substring(widget.dir.substring(0, widget.dir.length - 1).lastIndexOf("/"))),
+            : widget.dir.substring(0, widget.dir.length - 1).substring(widget
+                .dir
+                .substring(0, widget.dir.length - 1)
+                .lastIndexOf("/"))),
       ),
       floatingActionButton: widget.dir != "/"
           ? FloatingActionButton(
-              child: const Opacity(opacity: 0.57, child: Icon(Icons.upload_file)),
+              child:
+                  const Opacity(opacity: 0.57, child: Icon(Icons.upload_file)),
               onPressed: () {
                 showDialog(
                     context: context,
                     builder: (context) {
                       return AlertDialog(
                         title: const Text("Datei-Upload"),
-                        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Ok"))],
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text("Ok"))
+                        ],
                         content: const Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Diese Funktion kommt in den nächsten Wochen."),
+                            Text(
+                                "Diese Funktion kommt in den nächsten Wochen."),
                             SizedBox(height: 8),
                             Text("Wir bitten um Verständnis"),
                           ],
@@ -72,14 +81,21 @@ class _FileExplorerState extends State<FileExplorer> {
           itemBuilder: (context, nr) => const _FileListTile(null),
         ),
         child: hasError == false
-            ? ListView(children: [if (widget.dir == "/") const _LoggedInAs(), ...emptyStateManager()])
-            : Center(child: Text(error == null ? "Fehler (ohne Info)" : error.toString())),
+            ? ListView(children: [
+                if (widget.dir == "/") const _LoggedInAs(),
+                ...emptyStateManager()
+              ])
+            : Center(
+                child: Text(
+                    error == null ? "Fehler (ohne Info)" : error.toString())),
       ),
     );
   }
 
   List<Widget> emptyStateManager() {
-    List<Widget> items = (files ?? []).map((e) => _FileListTile(e)).toList();
+    //needs to be seperated, bc dart otherwise thinks this list should only contains FileListTile (dumb, ik)
+    List<Widget> items = [];
+    items.addAll((files ?? []).map((e) => _FileListTile(e)).toList());
     if (items.isEmpty) {
       items.add(const Padding(
         padding: EdgeInsets.only(top: 8.0),
@@ -101,7 +117,8 @@ class _FileListTile extends StatefulWidget {
   State<_FileListTile> createState() => _FileListTileState();
 }
 
-class _FileListTileState extends State<_FileListTile> with TickerProviderStateMixin {
+class _FileListTileState extends State<_FileListTile>
+    with TickerProviderStateMixin {
   Uint8List? preview;
 
   void loadPreview() async {
@@ -109,7 +126,8 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
       logger.w("No FIle Preview");
       return;
     }
-    logger.d("Loading Preview ${widget.file!.path} :: ${widget.file?.id} :: ${widget.file?.fileId} :: ${widget.file?.etag}");
+    logger.d(
+        "Loading Preview ${widget.file!.path} :: ${widget.file?.id} :: ${widget.file?.fileId} :: ${widget.file?.etag}");
 
     var _preview = await Services.files.getPreview(widget.file!);
 
@@ -145,7 +163,8 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
             title: const Text("In Browser öffnen"),
             trailing: const Icon(Icons.open_in_new),
             onTap: () {
-              launchURL("${JspFilesClient.nextcloudUrl}/f/${file.fileId}", context);
+              launchURL(
+                  "${JspFilesClient.nextcloudUrl}/f/${file.fileId}", context);
             },
           ),
           ListTile(
@@ -154,7 +173,8 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
             onTap: () async {
               BuildContext? dcontext; //variable for dialog context
               try {
-                var dirPath = await FilePicker.platform.getDirectoryPath(dialogTitle: "Speicherort auswählen");
+                var dirPath = await FilePicker.platform
+                    .getDirectoryPath(dialogTitle: "Speicherort auswählen");
                 if (dirPath == null) return;
                 showDialog(
                     barrierDismissible: false,
@@ -174,7 +194,8 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
                         ),
                       );
                     });
-                var data = await Services.files.client!.webdav.download(file.path);
+                var data =
+                    await Services.files.client!.webdav.download(file.path);
                 await File(path.join(dirPath, file.name)).writeAsBytes(data);
                 if (dcontext != null) {
                   Navigator.pop(dcontext!);
@@ -187,7 +208,8 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
                 showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                          content: Text("Es gab einen Fehler beim Herunterladen von ${file.name}"),
+                          content: Text(
+                              "Es gab einen Fehler beim Herunterladen von ${file.name}"),
                           actions: [
                             TextButton(
                                 onPressed: () {
@@ -211,7 +233,9 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
           ? null
           : (widget.file?.isDirectory ?? false)
               ? () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileExplorer(widget.file?.path ?? "/")));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          FileExplorer(widget.file?.path ?? "/")));
                 }
               : () async {
                   showModalBottomSheet(
@@ -220,15 +244,19 @@ class _FileListTileState extends State<_FileListTile> with TickerProviderStateMi
                       context: context,
                       builder: (context) => BottomSheet(
                           enableDrag: true,
-                          animationController: BottomSheet.createAnimationController(this),
+                          animationController:
+                              BottomSheet.createAnimationController(this),
                           onClosing: () {},
                           builder: (context) => bottomSheet(widget.file!)));
                 },
-      title: widget.file == null ? const SkeletonLine() : Text(widget.file?.name ?? "%KEINNAME%"),
+      title: widget.file == null
+          ? const SkeletonLine()
+          : Text(widget.file?.name ?? "%KEINNAME%"),
       leading: SizedBox(
         child: widget.file == null
             ? SkeletonAvatar(
-                style: SkeletonAvatarStyle(borderRadius: BorderRadius.circular(8)),
+                style:
+                    SkeletonAvatarStyle(borderRadius: BorderRadius.circular(8)),
               )
             : (widget.file?.isDirectory ?? false)
                 ? const Icon(Icons.folder)
@@ -260,19 +288,22 @@ class _LoggedInAs extends StatelessWidget {
                 children: [
                   const Icon(Icons.account_circle_outlined, size: 30),
                   const SizedBox(width: 14),
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text(
-                      "Eingeloggt als:",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    Text(
-                      (Services.files.client!.username ?? "Unbekant"),
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ])
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Eingeloggt als:",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        Text(
+                          (Services.files.client!.username ?? "Unbekant"),
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ])
                 ],
               ),
               const SizedBox(height: 8),

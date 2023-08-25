@@ -16,7 +16,11 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
     setState(() {
       _loading = true;
     });
-    await AngerApp.moodle.login.login(username: _usernameController.text.trim(), password: _passwordController.text.trim()).catchError((err) {
+    await AngerApp.moodle.login
+        .login(
+            username: _usernameController.text.trim(),
+            password: _passwordController.text.trim())
+        .catchError((err) {
       logger.e(err, null, StackTrace.current);
     });
     setState(() {
@@ -30,7 +34,8 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
           context: context,
           builder: (context2) => AlertDialog(
                 title: const Text("Es gab einen Fehler"),
-                content: const Text("Der Login ist fehlgeschlagen. Bitte überprüfe deine Internetverbindung und deine Login-Daten"),
+                content: const Text(
+                    "Der Login ist fehlgeschlagen. Bitte überprüfe deine Internetverbindung und deine Login-Daten"),
                 actions: [
                   TextButton(
                       onPressed: () {
@@ -46,7 +51,7 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Moodle Login"),
+          title: const Text("Schulmoodle Login"),
         ),
         body: Form(
           child: ListView(
@@ -69,14 +74,16 @@ class _MoodleLoginPageState extends State<MoodleLoginPage> {
               TextFormField(
                 enabled: !_loading,
                 controller: _usernameController,
-                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Benutzername"),
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(), labelText: "Benutzername"),
               ),
               const SizedBox(height: 8),
               TextFormField(
                 enabled: !_loading,
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Passwort"),
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(), labelText: "Passwort"),
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
@@ -142,16 +149,22 @@ class _MoodleLoginInfoField extends StatelessWidget {
                       trailing: Icon(Icons.keyboard_arrow_down),
                       title: Text(
                         "Was wir speichern",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
                       )),
                 ),
+                tile(
+                    saving: false,
+                    title: "Deine Nachrichten",
+                    subtitle: "(Nur solange die App geöffnet ist)"),
                 tile(saving: false, title: "Dein Benutzername"),
                 tile(saving: false, title: "Dein Passwort"),
                 tile(saving: false, title: "Cookies"),
                 tile(
                     saving: true,
                     title: "Den von Moodle zufällig generierten Token",
-                    subtitle: "(Der Token wird für die zukünfigte Authentifizierung mit dem Moodle-Server benötigt)"),
+                    subtitle:
+                        "(Der Token wird für die zukünfigte Authentifizierung mit dem Moodle-Server benötigt)"),
                 tile(
                     saving: true,
                     title: "Die von Moodle generierte Benutzer-ID",

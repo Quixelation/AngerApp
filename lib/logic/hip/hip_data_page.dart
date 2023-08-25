@@ -112,11 +112,10 @@ class _HipDataPageState extends State<HipDataPage>
                             tabController.animateTo(0);
                             setState(() {
                               selectedIndex = 0;
-                                    if(emerg == true){
-                                        usedEmergBackAlready = true;
-                                    }
+                              if (emerg == true) {
+                                usedEmergBackAlready = true;
+                              }
                             });
-
                           }
                         },
                         htmlData: htmlData),
@@ -139,25 +138,33 @@ class _HipBrowserView extends StatelessWidget {
       value: (hipCookie).split("=")[1],
       domain: "homeinfopoint.de",
     );
+    logger.v(cookie);
     return FutureBuilder<web.WebViewController>(
       future: _controller.future,
       builder: (context, snapshot) {
         return web.WebView(
-          initialUrl: AngerApp.hip.getDataUrl,
           initialCookies: [cookie],
           userAgent: "AngerApp <angerapp@robertstuendl.com>",
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (webViewController) {
             _controller.complete(webViewController);
+            webViewController.loadUrl(AngerApp.hip.getDataUrl,
+                headers: {"Cookie": hipCookie});
           },
           onPageFinished: (url) {
             if (snapshot.hasData) {
               snapshot.data!.runJavascript("""
-            // Logout-Knopf entfernen
-            document.querySelector("a[href*='logout.php']").remove()
+              try{
 
-            // Drucken-Knopf entfernen
-            document.querySelector("a[href*='print']").remove()
+                  // Logout-Knopf entfernen
+                  document.querySelector("a[href*='logout.php']").remove()
+
+                  // Drucken-Knopf entfernen
+                  document.querySelector("a[href*='print']").remove()
+
+              } catch(err){
+                  console.log(err);
+              }
           """);
             }
           },

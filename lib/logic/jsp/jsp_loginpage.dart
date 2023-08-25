@@ -81,7 +81,6 @@ class _JspLoginPageState extends State<JspLoginPage> {
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                                            
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Bitte ein Kennwort eingeben';
@@ -108,10 +107,12 @@ class _JspLoginPageState extends State<JspLoginPage> {
                                 setState(() {
                                   loginStatus = _loginStatus.checking;
                                 });
-
-                                var credsValid = await loginToJsp(
-                                    username: usernameController.text,
-                                    password: passwordController.text);
+                                var credsValid = false;
+                                try {
+                                  credsValid = await loginToJsp(
+                                      username: usernameController.text,
+                                      password: passwordController.text);
+                                } catch (err) {}
                                 if (!credsValid) {
                                   // Creds are invalid
                                   showDialog(
