@@ -1,3 +1,10 @@
+> [!IMPORTANT]  
+> Aus zeitlichen Gründen, stellt der Code in diesem Repository nicht immer die neueste Version dar.
+> 
+> Du bist Schüler*in des Angergymnasium Jena, kennst dich mit Dart/Flutter aus und möchtest mithelfen? --> angerapp.help.gh@robertstuendl.com
+
+
+
 <p align="center">
   <img src="https://angerapp-api.robertstuendl.com/assets/mainLogo.png" height="200" />
   <h1 align="center">Angergymnasium App</h1>
