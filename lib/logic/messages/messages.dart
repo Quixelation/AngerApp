@@ -23,6 +23,7 @@ part "messages_page.dart";
 part "messages_settings.dart";
 part "message_chat_notice.dart";
 part "message_chat_date_notice.dart";
+part "messages_login_page.dart";
 
 abstract class MessageService<M extends Message, C extends Conversation> {
   abstract final String name;

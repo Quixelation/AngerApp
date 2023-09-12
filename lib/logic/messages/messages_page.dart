@@ -12,6 +12,10 @@ class _MessagesListPageState extends State<MessagesListPage> {
   bool _hasMoodleIntegration = false;
   List<MoodleConversation>? _moodleConversations =
       AngerApp.moodle.messaging.subject.valueWrapper?.value;
+  bool get moodleConversationsAreLoading =>
+      _moodleConversations == null &&
+      _hasMoodleIntegration &&
+      error_moodleConversations == null;
   String? error_moodleConversations;
   StreamSubscription? _moodleCredsStreamSub;
   StreamSubscription? _moodleConvoStreamSub;
@@ -44,9 +48,9 @@ class _MessagesListPageState extends State<MessagesListPage> {
     _moodleCredsStreamSub = AngerApp.moodle.login.creds.subject.listen(
       (value) {
         var isLoggedIn = value != null;
-        logger.w("Moodle is logged in: $isLoggedIn");
         setState(() {
           _hasMoodleIntegration = isLoggedIn;
+          logger.w("Moodle is logged in: $_hasMoodleIntegration");
         });
         AngerApp.moodle.messaging.getAllConversations().then((value) {
           setState(() {
@@ -90,14 +94,6 @@ class _MessagesListPageState extends State<MessagesListPage> {
     super.dispose();
   }
 
-  bool get showServiceIntegrationLogin {
-    // Wenn die FeatureFlag disabled ist,
-    var _moodleIntegrationOrDisabled = _hasMoodleIntegration ||
-        !Features.isFeatureEnabled(context, FeatureFlags.MOODLE_ENABLED);
-    return (_hasMatrixIntegration && !_moodleIntegrationOrDisabled) ||
-        (!_hasMatrixIntegration && _moodleIntegrationOrDisabled);
-  }
-
   @override
   Widget build(BuildContext context) {
     List<dynamic> combinedList = [
@@ -135,326 +131,199 @@ class _MessagesListPageState extends State<MessagesListPage> {
         .where((elem) => elem == true)
         .length;
 
+    List<Widget>? _listviewItems = [
+      if (!_hasMatrixIntegration)
+        const _ServicePromoCard(
+            serviceTitle: "Matrix",
+            serviceLogo: Text(
+              "JSP",
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+            ),
+            loginPage: JspLoginPage()),
+      if (!_hasMoodleIntegration)
+        _ServicePromoCard(
+          serviceTitle: "Moodle",
+          serviceLogo: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.25),
+            child: Image.asset(
+              "assets/MoodleTools.png",
+              height: 16,
+            ),
+          ),
+          loginPage: const MoodleLoginPage(),
+        ),
+      if (error_moodleConversations != null &&
+          AngerApp.moodle.login.creds.credentialsAvailable)
+        Opacity(
+          opacity: 0.80,
+          child: ListTile(
+            leading: const Icon(Icons.error_outline, color: Colors.red),
+            title: const Text("Moodle Nachrichten konnten nicht geladen werden",
+                style: TextStyle(color: Colors.red)),
+            subtitle: Text(error_moodleConversations!,
+                style: TextStyle(color: Colors.red.shade700)),
+            trailing: const Icon(Icons.refresh),
+            onTap: () {
+              setState(() {
+                error_moodleConversations = null;
+              });
+              _initMoodle();
+            },
+          ),
+        ),
+      if (moodleConversationsAreLoading)
+        const Opacity(
+          opacity: 0.80,
+          child: ListTile(
+            leading: CircularProgressIndicator(),
+            title: Text("Lade Moodle Nachrichten..."),
+          ),
+        ),
+      if (_hasMatrixIntegration)
+        Opacity(
+          opacity: 0.80,
+          child: ListTile(
+            leading: const Icon(Icons.archive_outlined),
+            title: const Text("Archivierte Räume"),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const MatrixArchivedRoomsPage()));
+            },
+          ),
+        ),
+      ...combinedList.map((e) {
+        if (e is Room) {
+          return AngerApp.matrix
+              .buildListTile(context, e, showLogo: numberOfIntegrations > 1);
+        } else if (e is MoodleConversation) {
+          return AngerApp.moodle.messaging
+              .buildListTile(context, e, showLogo: numberOfIntegrations > 1);
+        } else {
+          return Container();
+        }
+      }).toList()
+    ];
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Chats"),
-          actions: [
-            if (numberOfIntegrations > 0)
-              IconButton(
-                  onPressed: () {
-                    // Je nach dem, welche Integrationen der Benutzer eingerichtet hat,
-                    // soll er entweder direkt zu der jeweilligen Einstellung-Seite kommen,
-                    // oder zuerst zu einer Seite, wo er die Integration auswählen kann,
-                    // dessen Einstellungen er bearbeiten möchte
-                    if (numberOfIntegrations > 1) {
+      appBar: AppBar(
+        title: const Text("Chats"),
+        actions: [
+          if (numberOfIntegrations > 0)
+            IconButton(
+                onPressed: () {
+                  // Je nach dem, welche Integrationen der Benutzer eingerichtet hat,
+                  // soll er entweder direkt zu der jeweilligen Einstellung-Seite kommen,
+                  // oder zuerst zu einer Seite, wo er die Integration auswählen kann,
+                  // dessen Einstellungen er bearbeiten möchte
+                  if (numberOfIntegrations > 1) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MessageSettings()));
+                  } else {
+                    if (_hasMatrixIntegration) {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const MessageSettings()));
+                              builder: (context) => const MatrixSettings()));
+                    } else if (_hasMoodleIntegration) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const MoodleSettingsPage()));
+                    }
+                  }
+                },
+                icon: const Icon(Icons.settings))
+        ],
+      ),
+      body: (_hasMatrixIntegration || _hasMoodleIntegration)
+          ? ListView.separated(
+              itemCount: _listviewItems.length,
+              itemBuilder: (context, index) => _listviewItems[index],
+              separatorBuilder: (context, index) {
+                return const Divider(
+                  thickness: 0.5,
+                  height: 8,
+                );
+              },
+            )
+          : const _MessagesLoginFrontpage(),
+      floatingActionButton:
+
+// Falls das FAB gerade nur für Matrix benutzt wird, die Matrix integration des FABs aber deaktiviert ist
+          (Features.isFeatureEnabled(
+                      context, FeatureFlags.MATRIX_SHOW_CREATE_ROOM) &&
+                  _hasMoodleIntegration)
+              ? FloatingActionButton(
+                  child: const Icon(Icons.add_comment_outlined),
+                  onPressed: () {
+                    if (numberOfIntegrations > 1 &&
+                        Features.isFeatureEnabled(
+                            context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(height: 16),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Text(
+                                      "Wähle einen Service aus",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  //TODO: Only show enabled Services
+                                  if (AngerApp.matrix.client.isLogged())
+                                    ListTile(
+                                      title: const Text("JSP-Matrix"),
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const MatrixCreatePage()));
+                                      },
+                                    ),
+                                  if (AngerApp
+                                      .moodle.login.creds.credentialsAvailable)
+                                    ListTile(
+                                      title: const Text("Moodle"),
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const MoodleCreateChatPage()));
+                                      },
+                                    ),
+                                ],
+                              ));
                     } else {
-                      if (_hasMatrixIntegration) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const MatrixSettings()));
+                      if (_hasMatrixIntegration &&
+                          Features.isFeatureEnabled(
+                              context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const MatrixCreatePage()));
                       } else if (_hasMoodleIntegration) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const MoodleSettingsPage()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                const MoodleCreateChatPage()));
                       }
                     }
                   },
-                  icon: const Icon(Icons.settings))
-          ],
-        ),
-        floatingActionButton:
-
-// Falls das FAB gerade nur für Matrix benutzt wird, die Matrix integration des FABs aber deaktiviert ist
-            (Features.isFeatureEnabled(
-                        context, FeatureFlags.MATRIX_SHOW_CREATE_ROOM) &&
-                    _hasMoodleIntegration)
-                ? FloatingActionButton(
-                    child: const Icon(Icons.add_comment_outlined),
-                    onPressed: () {
-                      if (numberOfIntegrations > 1 &&
-                          Features.isFeatureEnabled(
-                              context, FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) {
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (context) => Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const SizedBox(height: 16),
-                                    const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                      ),
-                                      child: Text(
-                                        "Wähle einen Service aus",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    //TODO: Only show enabled Services
-                                    if (AngerApp.matrix.client.isLogged())
-                                      ListTile(
-                                        title: const Text("JSP-Matrix"),
-                                        onTap: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const MatrixCreatePage()));
-                                        },
-                                      ),
-                                    if (AngerApp.moodle.login.creds
-                                        .credentialsAvailable)
-                                      ListTile(
-                                        title: const Text("Moodle"),
-                                        onTap: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const MoodleCreateChatPage()));
-                                        },
-                                      ),
-                                  ],
-                                ));
-                      } else {
-                        if (_hasMatrixIntegration &&
-                            Features.isFeatureEnabled(context,
-                                FeatureFlags.MATRIX_SHOW_DEV_SETTINGS)) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const MatrixCreatePage()));
-                        } else if (_hasMoodleIntegration) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const MoodleCreateChatPage()));
-                        }
-                      }
-                    },
-                  )
-                : null,
-        body: (_hasMatrixIntegration || _hasMoodleIntegration)
-            ? ListView.separated(
-                itemCount: combinedList.length +
-                    (showServiceIntegrationLogin ? 1 : 0) +
-                    (_hasMatrixIntegration ? 1 : 0) +
-                    (error_moodleConversations != null &&
-                            AngerApp.moodle.login.creds.credentialsAvailable
-                        ? 1
-                        : 0),
-                itemBuilder: (context, index) {
-                  if (showServiceIntegrationLogin) {
-                    index -= 1;
-                    if (index == -1) {
-                      return _ServicePromoCard(
-                          serviceTitle:
-                              _hasMatrixIntegration ? "Moodle" : "Matrix",
-                          serviceLogo: _hasMatrixIntegration
-                              ? Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.25),
-                                  child: Image.asset(
-                                    "assets/MoodleTools.png",
-                                    height: 16,
-                                  ),
-                                )
-                              : const Text(
-                                  "JSP",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 14),
-                                ),
-                          loginPage: _hasMatrixIntegration
-                              ? const MoodleLoginPage()
-                              : const JspLoginPage());
-                    }
-                  }
-
-                  if (_hasMatrixIntegration) {
-                    index -= 1;
-                    if (index == -1 || index == -2) {
-                      return Opacity(
-                        opacity: 0.80,
-                        child: ListTile(
-                          leading: const Icon(Icons.archive_outlined),
-                          title: const Text("Archivierte Räume"),
-                          trailing: const Icon(Icons.keyboard_arrow_right),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    const MatrixArchivedRoomsPage()));
-                          },
-                        ),
-                      );
-                    }
-                  }
-
-                  if (error_moodleConversations != null &&
-                      AngerApp.moodle.login.creds.credentialsAvailable) {
-                    index -= 1;
-                    if (index < 0) {
-                      return Opacity(
-                        opacity: 0.80,
-                        child: ListTile(
-                          leading: const Icon(Icons.error_outline,
-                              color: Colors.red),
-                          title: const Text(
-                              "Moodle Nachrichten konnten nicht geladen werden",
-                              style: TextStyle(color: Colors.red)),
-                          subtitle: Text(error_moodleConversations!,
-                              style: TextStyle(color: Colors.red.shade700)),
-                          trailing: Icon(Icons.refresh),
-                          onTap: () {
-                            setState(() {
-                              error_moodleConversations = null;
-                            });
-                            this._initMoodle();
-                          },
-                        ),
-                      );
-                    }
-                  }
-
-                  final e = combinedList[index];
-                  if (e is Room) {
-                    return AngerApp.matrix.buildListTile(context, e,
-                        showLogo: numberOfIntegrations > 1);
-                  } else if (e is MoodleConversation) {
-                    return AngerApp.moodle.messaging.buildListTile(context, e,
-                        showLogo: numberOfIntegrations > 1);
-                  } else {
-                    return Container();
-                  }
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider(
-                    thickness: 0.5,
-                    height: 8,
-                  );
-                },
-              )
-            : SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 32),
-                      ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 300),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.deepOrange)),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text.rich(
-                                  TextSpan(children: [
-                                    TextSpan(
-                                        text: "BETA-Funktion: ",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.deepOrange)),
-                                    TextSpan(
-                                        text:
-                                            "Es kann zu Fehlern kommen. Bitte melde diese an den Entwickler. Nicht mit Eltern-Chats kompatibel"),
-                                  ]),
-                                  style: TextStyle(
-                                      color: Colors.deepOrange, fontSize: 15)),
-                            ),
-                          )),
-                      const SizedBox(height: 64),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 200),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              "Keine Konten verbunden",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 16),
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            const Opacity(
-                                opacity: 0.87,
-                                child: Text(
-                                    "Wähle einen Service aus, um dich anzumelden")),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const JspLoginPage(
-                                                        popOnSuccess: true,
-                                                      )));
-                                        },
-                                        icon: const Text(
-                                          "JSP",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w800,
-                                              fontSize: 14),
-                                        ),
-                                        label: const Text(
-                                            "Jenaer Schulportal Schulmessenger*")),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (Features.isFeatureEnabled(
-                                context, FeatureFlags.MOODLE_ENABLED))
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                        style: const ButtonStyle(
-                                            alignment: Alignment.centerLeft),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const MoodleLoginPage()));
-                                        },
-                                        icon: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 2.25),
-                                          child: Image.asset(
-                                            "assets/MoodleTools.png",
-                                            height: 16,
-                                          ),
-                                        ),
-                                        label: const Text("Moodle")),
-                                  )
-                                ],
-                              ),
-                            const Divider(height: 48, thickness: 2),
-                          ],
-                        ),
-                      ),
-                      const AlternativeClientsInfo(),
-                    ],
-                  ),
-                ),
-              ));
+                )
+              : null,
+    );
   }
 }
 
