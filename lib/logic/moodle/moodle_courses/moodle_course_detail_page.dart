@@ -43,7 +43,9 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
         appBar: AppBar(
           title: Text(widget.course.displayname),
         ),
-        bottomNavigationBar: sections != null
+        bottomNavigationBar: sections != null &&
+                Features.isFeatureEnabled(
+                    context, FeatureFlags.SHOW_MOODLE_CHAPTERS_BOTTOM_DRAWER)
             ? _MainBottomSectionsBar(sections: sections!)
             : null,
         body: sections == null
@@ -53,23 +55,32 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
             : Scrollbar(
                 thumbVisibility: true,
                 controller: scrollController,
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(0),
-                  children: [
-                    // ElevatedButton.icon(
-                    //     onPressed: () {
-                    //       setState(() {
-                    //         abschnitte = sections!.map((section) {
-                    //           return _MoodleCourseDetailsPageSection(section, opened: false);
-                    //         }).toList();
-                    //       });
-                    //     },
-                    //     icon: Icon(Icons.unfold_less),
-                    //     label: Text("Alle Abschnitte zusammenklappen")),
-                    ...abschnitte!
-                  ],
-                ),
+                child: Features.isFeatureEnabled(
+                        context, FeatureFlags.USE_MOODLE_LISTVIEW)
+                    ? ListView(
+                        controller: scrollController,
+                        padding: const EdgeInsets.all(0),
+                        children: [
+                          // ElevatedButton.icon(
+                          //     onPressed: () {
+                          //       setState(() {
+                          //         abschnitte = sections!.map((section) {
+                          //           return _MoodleCourseDetailsPageSection(section, opened: false);
+                          //         }).toList();
+                          //       });
+                          //     },
+                          //     icon: Icon(Icons.unfold_less),
+                          //     label: Text("Alle Abschnitte zusammenklappen")),
+                          ...abschnitte!
+                        ],
+                      )
+                    : SingleChildScrollView(
+                        controller: scrollController,
+                        padding: const EdgeInsets.all(0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: abschnitte!,
+                        )),
               ),
       ),
     );
@@ -248,12 +259,10 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
                                 const SizedBox(
                                   width: 8,
                                 ),
-                                if (getIt
-                                        .get<AppManager>()
-                                        .devtools
-                                        .valueWrapper
-                                        ?.value ??
-                                    false) ...[
+                                if (Features.isFeatureEnabled(
+                                    context,
+                                    FeatureFlags
+                                        .SHOW_MOODLE_DEV_ANNOTATIONS)) ...[
                                   Text(module.modType +
                                       " [module ${module.id}]"),
                                   const SizedBox(width: 8)
@@ -285,10 +294,7 @@ class _MoodleCourseDetailsPageSectionModule extends StatelessWidget {
                     ),
                   ),
                   if (module.description != null)
-                    Flexible(
-                        child: BasicHtml(
-                      module.description!,
-                    )),
+                    Flexible(child: BasicHtml(module.description!)),
                   if (module.contents != null &&
                       (module.contents?.isNotEmpty ?? false))
                     Padding(

@@ -3,15 +3,16 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class BasicHtml extends StatelessWidget {
-  const BasicHtml(this.data, {super.key});
+  const BasicHtml(this.data, {super.key, this.style});
 
   final String data;
+  final Map<String, Style>? style;
 
   @override
   Widget build(BuildContext context) {
     return Html(
       data: data,
-      style: {"*": Style(fontSize: FontSize(1.1, Unit.rem))},
+      style: style ?? {},
       onLinkTap: (url, attributes, element) {
         if (url != null) {
           launchURL(url, context);
