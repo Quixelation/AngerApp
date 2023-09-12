@@ -118,13 +118,15 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
       ...(klausurEventData ?? []),
       ...(ferienEvents ?? []),
     ]
-        .where((elem) => (((weekNumber(elem.dateFrom) == (weekNumber(DateTime.now().add(Duration(days: 7 * _week)))) &&
-            DateTime.now().add(Duration(days: 7 * _week)).year == elem.dateFrom.year))))
+        .where((elem) => (((weekNumber(elem.dateFrom) ==
+                (weekNumber(DateTime.now().add(Duration(days: 7 * _week)))) &&
+            DateTime.now().add(Duration(days: 7 * _week)).year ==
+                elem.dateFrom.year))))
         .toList();
     forToday.sort((a, b) => a.dateFrom.compareTo(b.dateFrom));
 
     return HomepageWidget(
-      show: true,
+      show: Features.isFeatureEnabled(context, FeatureFlags.USE_WEBPAGE_CALENDAR) == false,
       builder: (context) => Flex(
         children: [
           Card(
@@ -157,7 +159,9 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
                               Opacity(
                                 opacity: 0.87,
                                 child: Text(
-                                  _week.abs() >= 3 ? genWeekDiff() : genWeekName(),
+                                  _week.abs() >= 3
+                                      ? genWeekDiff()
+                                      : genWeekName(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
@@ -169,7 +173,8 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
                                   opacity: 0.6,
                                   child: Text(
                                     genWeekDiff(),
-                                    style: Theme.of(context).textTheme.titleMedium,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
                                   ),
                                 ),
                             ],
@@ -188,7 +193,8 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
                   const SizedBox(height: 8),
                   if (data == null)
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       child: Opacity(
                         opacity: 0.6,
                         child: Text(
@@ -221,10 +227,13 @@ class _EventsThisWeekState extends State<EventsThisWeek> {
                   //     ),
                   //   )
                   else if (forToday.isNotEmpty)
-                    ...forToday.map((elem) => _EventsThisWeekEvent(elem)).toList()
+                    ...forToday
+                        .map((elem) => _EventsThisWeekEvent(elem))
+                        .toList()
                   else
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       child: Opacity(
                         opacity: 0.6,
                         child: Text(
@@ -262,7 +271,8 @@ class _EventsThisWeekEvent extends StatelessWidget {
           Opacity(
             opacity: 0.6,
             child: Text(
-              time2string(event.dateFrom, includeWeekday: true, includeTime: false),
+              time2string(event.dateFrom,
+                  includeWeekday: true, includeTime: false),
               style: const TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w500,
@@ -274,8 +284,10 @@ class _EventsThisWeekEvent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (event.type == eventType.klausur &&
-                  (Services.currentClass.subject.value != null && event.info?["klasse"] != null
-                      ? (event.info?["klasse"] ?? 0) == Services.currentClass.subject.value
+                  (Services.currentClass.subject.value != null &&
+                          event.info?["klasse"] != null
+                      ? (event.info?["klasse"] ?? 0) ==
+                          Services.currentClass.subject.value
                       : true)) ...[
                 specialChip(context, Icons.warning),
                 const SizedBox(width: 7),

@@ -77,8 +77,7 @@ class __MoodleCourseDetailsPageState extends State<_MoodleCourseDetailsPage> {
 }
 
 class _MoodleCourseDetailsPageSection extends StatefulWidget {
-  const _MoodleCourseDetailsPageSection(this.section,
-      {this.opened = true});
+  const _MoodleCourseDetailsPageSection(this.section, {this.opened = true});
 
   final _MoodleCourseSection section;
   final bool opened;
@@ -144,8 +143,7 @@ class _MoodleCourseDetailsPageSectionState
 }
 
 class _MoodleCourseSectionContent extends StatefulWidget {
-  const _MoodleCourseSectionContent(this.section,
-      {this.allowScroll = false});
+  const _MoodleCourseSectionContent(this.section, {this.allowScroll = false});
 
   final bool allowScroll;
   final _MoodleCourseSection section;
@@ -169,7 +167,8 @@ class _MoodleCourseSectionContentState
           controller: scrollController,
           shrinkWrap: true,
           padding: const EdgeInsets.all(8),
-          physics: widget.allowScroll ? null : const NeverScrollableScrollPhysics(),
+          physics:
+              widget.allowScroll ? null : const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             if (hasSummary && index == 0) {
               return BasicHtml(

@@ -24,7 +24,8 @@ class JspMail {
     print("created iMapClient");
     await imapClient?.connectToServer("mail.jsp.jena.de", 993, isSecure: true);
     print("connected imapServer");
-    await imapClient?.login(generateMailAddressFromUsername(value.username), value.password);
+    await imapClient?.login(
+        generateMailAddressFromUsername(value.username), value.password);
 
     print("[[MailFertigGeladen]]");
   }

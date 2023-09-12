@@ -57,7 +57,8 @@ class _JspMailMainPageState extends State<JspMailMainPage> {
                           leading: getMailboxIcon(e),
                           title: Text(e.name),
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => _JspMailbox(e)));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => _JspMailbox(e)));
                           },
                         ))
                     .toList(),
@@ -107,8 +108,10 @@ class __JspMailboxState extends State<_JspMailbox> {
               itemBuilder: (context, nr) {
                 var e = messages![nr];
                 return ListTile(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => _JspMailView(e))),
-                  title: Text((e.envelope?.from?.join(", ") ?? "<Sender unbekannt>")),
+                  onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => _JspMailView(e))),
+                  title: Text(
+                      (e.envelope?.from?.join(", ") ?? "<Sender unbekannt>")),
                   subtitle: Text(e.envelope?.subject ?? "<Kein Betreff>"),
                 );
               },
@@ -139,7 +142,10 @@ class __JspMailViewState extends State<_JspMailView> {
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
-        children: [Text(widget.mail.headers?.join(", ") ?? ""), Html(data: widget.mail.decodeContentText() ?? "Nope")],
+        children: [
+          Text(widget.mail.headers?.join(", ") ?? ""),
+          Html(data: widget.mail.decodeContentText() ?? "Nope")
+        ],
       ),
     );
   }

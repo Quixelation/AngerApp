@@ -30,7 +30,8 @@ final stundenzeitenPage = json.encode(
 | **3. Stunde** | **10:00 - 10:45** |
 | **4. Stunde** | **10:55 - 11:40** |
 | *Essenspause* | *30 Minuten* |
-| **5. Stunde** | **12:10 - 12:55** |
+| **5. Stunde** | **12:10 - 12:55**|
+| --> | (5. Kl, 11:50 - 12:35) |
 | **6. Stunde** | **13:05 - 13:50** |
 | *Essenspause* | *30 Minuten* |
 | **7. Stunde** | **14:15 - 15:00** |

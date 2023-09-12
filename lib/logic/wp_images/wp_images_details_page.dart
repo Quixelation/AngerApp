@@ -10,7 +10,8 @@ class _WpImageDetails extends StatelessWidget {
     final imgUrl = image.mediaDetails?.sizes?.full.sourceUrl ?? image.sourceUrl;
     final nwImg = CachedNetworkImage(
         imageUrl: imgUrl,
-        progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+        progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+            child: CircularProgressIndicator(value: downloadProgress.progress)),
         errorWidget: (context, url, error) => const Icon(
               Icons.broken_image,
               color: Colors.red,
@@ -23,9 +24,13 @@ class _WpImageDetails extends StatelessWidget {
           constraints: const BoxConstraints(maxHeight: 400, maxWidth: 400),
           child: InkWell(
               onTap: () {
-                final imageProvider = CachedNetworkImageProvider(nwImg.imageUrl);
+                final imageProvider =
+                    CachedNetworkImageProvider(nwImg.imageUrl);
                 showImageViewer(context, imageProvider,
-                    doubleTapZoomable: true, swipeDismissible: true, immersive: false, closeButtonTooltip: "Schließen", onViewerDismissed: () {
+                    doubleTapZoomable: true,
+                    swipeDismissible: true,
+                    immersive: false,
+                    closeButtonTooltip: "Schließen", onViewerDismissed: () {
                   logger.v("ImageViewer dismissed");
                 });
               },
@@ -48,8 +53,12 @@ class _WpImageDetails extends StatelessWidget {
                 const Divider(),
                 ListTile(
                   title: const Text("Verbunden mit Blog-Post"),
-                  subtitle: Text(image.postId != null ? image.postId.toString() : "<nein>"),
-                  trailing: image.postId != null ? const Icon(Icons.open_in_new) : null,
+                  subtitle: Text(image.postId != null
+                      ? image.postId.toString()
+                      : "<nein>"),
+                  trailing: image.postId != null
+                      ? const Icon(Icons.open_in_new)
+                      : null,
                   onTap: image.postId != null
                       ? () {
                           launchURL(image.generatePostUrl(), context);
@@ -88,7 +97,8 @@ class _WpImageDetails extends StatelessWidget {
           )),
         ),
         const SizedBox(height: 8),
-        if (image.mediaDetails?.imageMeta != null) _DetailsExpandable(image.mediaDetails!.imageMeta!),
+        if (image.mediaDetails?.imageMeta != null)
+          _DetailsExpandable(image.mediaDetails!.imageMeta!),
         const SizedBox(height: 8),
       ]),
     );
@@ -126,7 +136,11 @@ class _DetailsExpandableState extends State<_DetailsExpandable> {
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   children: [
-                    Icon(!expanded ? Icons.keyboard_arrow_right : Icons.keyboard_arrow_down, size: 20),
+                    Icon(
+                        !expanded
+                            ? Icons.keyboard_arrow_right
+                            : Icons.keyboard_arrow_down,
+                        size: 20),
                     const SizedBox(width: 6),
                     // Icon(
                     //   Icons.info_outline,
@@ -135,7 +149,8 @@ class _DetailsExpandableState extends State<_DetailsExpandable> {
                     // SizedBox(width: 4),
                     const Text(
                       "Weitere Bild-Infos",
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal),
                     )
                   ],
                 ),
@@ -144,7 +159,8 @@ class _DetailsExpandableState extends State<_DetailsExpandable> {
             if (expanded) ...[
               const Divider(height: 1),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,14 +183,18 @@ class _DetailsExpandableState extends State<_DetailsExpandable> {
                     ),
                     ListTile(
                       title: const Text("Created_Timestamp"),
-                      subtitle: Text(widget.meta.createdTimestamp.trim().isNotEmpty
-                          ? time2string(
-                              DateTime.fromMillisecondsSinceEpoch(
-                                (int.tryParse(widget.meta.createdTimestamp) ?? 0) * 1000,
-                              ),
-                              includeTime: true,
-                              includeWeekday: true)
-                          : "---"),
+                      subtitle:
+                          Text(widget.meta.createdTimestamp.trim().isNotEmpty
+                              ? time2string(
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                    (int.tryParse(
+                                                widget.meta.createdTimestamp) ??
+                                            0) *
+                                        1000,
+                                  ),
+                                  includeTime: true,
+                                  includeWeekday: true)
+                              : "---"),
                     ),
                     ListTile(
                       title: const Text("Copyright"),

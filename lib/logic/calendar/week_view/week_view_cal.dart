@@ -42,8 +42,11 @@ class WeekViewCalendar {
 
       //TODO: Fix this
       // Quick and Dirty solution, wenn das Event bis 0:00 des nächsten Tages geht, dass das Event nicht für den nächsten Tag noch angezeigt wird
-      if (eventEnd != null) eventEnd = eventEnd.subtract(const Duration(minutes: 5));
-logger.v(eventData.title + " " + ( eventEnd != null ? time2string(eventEnd, includeTime: true) : ""));
+      if (eventEnd != null)
+        eventEnd = eventEnd.subtract(const Duration(minutes: 5));
+      logger.v(eventData.title +
+          " " +
+          (eventEnd != null ? time2string(eventEnd, includeTime: true) : ""));
       //TODO: IsAfter und isBefore müssen eigentlich >= statt nur > sein!!
 
       // Datum dazwischen

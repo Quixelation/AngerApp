@@ -1,7 +1,8 @@
 part of matrix;
 
 class _MatrixPowerLevelDialog extends StatelessWidget {
-  const _MatrixPowerLevelDialog({Key? key, required this.currentPowerLevel}) : super(key: key);
+  const _MatrixPowerLevelDialog({Key? key, required this.currentPowerLevel})
+      : super(key: key);
 
   final int currentPowerLevel;
 
@@ -39,7 +40,10 @@ class _MatrixPowerLevelDialog extends StatelessWidget {
     );
   }
 
-  Widget powerLevelButton({required int currentPowerLevel, required int level, required void Function(int level) onTap}) {
+  Widget powerLevelButton(
+      {required int currentPowerLevel,
+      required int level,
+      required void Function(int level) onTap}) {
     String additionalInfo = "";
 
     if (level == 0) {

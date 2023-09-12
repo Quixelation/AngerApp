@@ -47,8 +47,14 @@ class _OpenSensePageState extends State<OpenSensePage> {
   }
 
   final List<Map<String, dynamic>> timespans = [
-    {"date_start": DateTime.now().subtract(const Duration(days: 7)), "title": "7D"},
-    {"date_start": DateTime.now().subtract(const Duration(days: 30)), "title": "1M"},
+    {
+      "date_start": DateTime.now().subtract(const Duration(days: 7)),
+      "title": "7D"
+    },
+    {
+      "date_start": DateTime.now().subtract(const Duration(days: 30)),
+      "title": "1M"
+    },
     {
       "date_start": DateTime.now().subtract(const Duration(days: 30 * 3)),
       "title": "3M"
@@ -76,8 +82,8 @@ class _OpenSensePageState extends State<OpenSensePage> {
         body: ListView(
           children: [
             const Padding(
-              padding: EdgeInsets.only(
-                  top: 24.0, left: 16, right: 16, bottom: 8),
+              padding:
+                  EdgeInsets.only(top: 24.0, left: 16, right: 16, bottom: 8),
               child: Opacity(
                 opacity: 0.87,
                 child: Row(

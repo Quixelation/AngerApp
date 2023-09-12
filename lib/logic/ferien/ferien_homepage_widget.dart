@@ -19,9 +19,14 @@ class _FerienHomepageWidgetState extends State<FerienHomepageWidget> {
     ferienSub = AngerApp.ferien.subject.listen((event) {
       var firstEvent = event.data.first;
       logger.d(firstEvent.name);
-      if (firstEvent.status != FerienStatus.finished && firstEvent.diff != null) {
+      if (firstEvent.status != FerienStatus.finished &&
+          firstEvent.diff != null) {
         setState(() {
-          data = AsyncDataResponse(data: firstEvent, loadingAction: event.loadingAction, error: event.error, allowReload: event.allowReload);
+          data = AsyncDataResponse(
+              data: firstEvent,
+              loadingAction: event.loadingAction,
+              error: event.error,
+              allowReload: event.allowReload);
         });
       } else {
         setState(() {
@@ -39,7 +44,8 @@ class _FerienHomepageWidgetState extends State<FerienHomepageWidget> {
     return HomepageWidget(
         builder: (context) => Card(
                 child: Stack(children: [
-              if (data!.loadingAction == AsyncDataResponseLoadingAction.currentlyLoading)
+              if (data!.loadingAction ==
+                  AsyncDataResponseLoadingAction.currentlyLoading)
                 const Positioned(
                   child: LinearProgressIndicator(),
                   top: 0,
@@ -47,29 +53,40 @@ class _FerienHomepageWidgetState extends State<FerienHomepageWidget> {
                   right: 0,
                 ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Column(children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Text(diffWholeDays.toString() ?? "", style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700)),
-                      ),
-                      const SizedBox(width: 4),
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text("Tag${diffWholeDays == 1 ? "" : "e"}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        Opacity(
-                          opacity: 0.87,
-                          child: Text(
-                            "${data!.data!.status == FerienStatus.future ? "bis " : ""}${data!.data!.name} ${data!.data!.status == FerienStatus.running ? "übrig" : ""}",
-                            style: const TextStyle(fontSize: 15),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text(diffWholeDays.toString() ?? "",
+                                style: const TextStyle(
+                                    fontSize: 28, fontWeight: FontWeight.w700)),
                           ),
-                        )
-                      ]),
-                    ]),
+                          const SizedBox(width: 4),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Tag${diffWholeDays == 1 ? "" : "e"}",
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
+                                Opacity(
+                                  opacity: 0.87,
+                                  child: Text(
+                                    "${data!.data!.status == FerienStatus.future ? "bis " : ""}${data!.data!.name} ${data!.data!.status == FerienStatus.running ? "übrig" : ""}",
+                                    style: const TextStyle(fontSize: 15),
+                                  ),
+                                )
+                              ]),
+                        ]),
                   ),
-                  if (data!.data!.status == FerienStatus.running) const SizedBox(height: 30),
+                  if (data!.data!.status == FerienStatus.running)
+                    const SizedBox(height: 30),
                   if (data!.data!.status == FerienStatus.running)
                     Opacity(
                       opacity: 0.87,
@@ -86,7 +103,8 @@ class _FerienHomepageWidgetState extends State<FerienHomepageWidget> {
                                 ),
                               ),
                               Text(
-                                DateFormat("dd.MM.yyyy").format(data!.data!.end),
+                                DateFormat("dd.MM.yyyy")
+                                    .format(data!.data!.end),
                                 style: const TextStyle(
                                   fontSize: 16,
                                 ),
@@ -95,8 +113,14 @@ class _FerienHomepageWidgetState extends State<FerienHomepageWidget> {
                           ),
                           const SizedBox(height: 2),
                           LinearProgressIndicator(
-                            value: (data!.data!.start.difference(DateTime.now()).inDays.abs()) /
-                                data!.data!.end.difference(data!.data!.start).inDays.abs(),
+                            value: (data!.data!.start
+                                    .difference(DateTime.now())
+                                    .inDays
+                                    .abs()) /
+                                data!.data!.end
+                                    .difference(data!.data!.start)
+                                    .inDays
+                                    .abs(),
                             minHeight: 10,
                           ),
                         ],

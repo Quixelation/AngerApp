@@ -31,7 +31,13 @@ class Klausur {
   final int klassenstufe;
   final String? infos;
 
-  Klausur({required this.id, required this.name, this.zeit, required this.date, required this.klassenstufe, this.infos});
+  Klausur(
+      {required this.id,
+      required this.name,
+      this.zeit,
+      required this.date,
+      required this.klassenstufe,
+      this.infos});
 
   EventData toEventData() {
     return EventData(
@@ -56,18 +62,22 @@ Future<void> pinKlausur(Klausur klausur) async {
 }
 
 Future<void> unpinKlausur(Klausur klausur) async {
-  AppManager.stores.pinnedKlausuren.record(klausur.id).delete(getIt.get<AppManager>().db);
+  AppManager.stores.pinnedKlausuren
+      .record(klausur.id)
+      .delete(getIt.get<AppManager>().db);
 }
 
 Future<bool> getPinStatus(Klausur klausur) async {
   var db = getIt.get<AppManager>().db;
-  var result = await AppManager.stores.pinnedKlausuren.record(klausur.id).get(db);
+  var result =
+      await AppManager.stores.pinnedKlausuren.record(klausur.id).get(db);
   return result != null;
 }
 
 Future<List<Klausur>?> getPinnedKlausuren() async {
   var db = getIt.get<AppManager>().db;
-  var dbResult = await AppManager.stores.pinnedKlausuren.query().getSnapshots(db);
+  var dbResult =
+      await AppManager.stores.pinnedKlausuren.query().getSnapshots(db);
 
   if (dbResult.isNotEmpty) {
     List<Klausur> klausuren = [];
@@ -76,8 +86,13 @@ Future<List<Klausur>?> getPinnedKlausuren() async {
       var dbKlausur = await AppManager.stores.klausuren.record(id).get(db);
 
       if (dbKlausur != null) {
-        printInDebug("DT DIF ${DateTime.fromMillisecondsSinceEpoch(int.parse(dbKlausur["date"].toString())).difference(DateTime.now()).inDays}");
-        if (DateTime.fromMillisecondsSinceEpoch(int.parse(dbKlausur["date"].toString())).difference(DateTime.now()).inDays < 0) {
+        printInDebug(
+            "DT DIF ${DateTime.fromMillisecondsSinceEpoch(int.parse(dbKlausur["date"].toString())).difference(DateTime.now()).inDays}");
+        if (DateTime.fromMillisecondsSinceEpoch(
+                    int.parse(dbKlausur["date"].toString()))
+                .difference(DateTime.now())
+                .inDays <
+            0) {
           // Klausuren, welche in der Vergangenheit liegen, überspringen
           continue;
         }
@@ -86,7 +101,8 @@ Future<List<Klausur>?> getPinnedKlausuren() async {
             id: dbKlausur["id"].toString(),
             name: dbKlausur["name"].toString(),
             zeit: dbKlausur["zeit"].toString(),
-            date: DateTime.fromMillisecondsSinceEpoch(int.parse(dbKlausur["date"].toString())),
+            date: DateTime.fromMillisecondsSinceEpoch(
+                int.parse(dbKlausur["date"].toString())),
             klassenstufe: int.parse(dbKlausur["klassenstufe"].toString()),
             infos: dbKlausur["infos"].toString()));
       }
@@ -117,7 +133,8 @@ class KlausurenManager extends DataManager<Klausur> {
 
     var dbResult = await AppManager.stores.klausuren.query().getSnapshots(db);
     List<Klausur> klausuren = [];
-    for (Map<String, dynamic> klausur in dbResult.map((e) => e.value).toList()) {
+    for (Map<String, dynamic> klausur
+        in dbResult.map((e) => e.value).toList()) {
       klausuren.add(Klausur(
           id: klausur["id"],
           name: klausur["name"],
@@ -141,7 +158,10 @@ class KlausurenManager extends DataManager<Klausur> {
         List<dynamic> data = json.decode(response.body)["data"];
         List<Klausur> klausuren = [];
         for (dynamic klausur in data) {
-          if (DateTime.parse(klausur["date"]).difference(DateTime.now()).inDays < 0) {
+          if (DateTime.parse(klausur["date"])
+                  .difference(DateTime.now())
+                  .inDays <
+              0) {
             // Klausuren, welche in der Vergangenheit liegen, überspringen
             continue;
           }

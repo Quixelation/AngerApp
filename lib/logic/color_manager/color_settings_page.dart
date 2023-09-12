@@ -4,7 +4,8 @@ class PageColorManagerSettings extends StatefulWidget {
   const PageColorManagerSettings({Key? key}) : super(key: key);
 
   @override
-  _PageColorManagerSettingsState createState() => _PageColorManagerSettingsState();
+  _PageColorManagerSettingsState createState() =>
+      _PageColorManagerSettingsState();
 }
 
 class _PageColorManagerSettingsState extends State<PageColorManagerSettings> {
@@ -50,7 +51,12 @@ class _ColorItem extends StatelessWidget {
   final VoidCallback onTap;
   final bool selected;
 
-  const _ColorItem({required this.color, required this.onTap, required this.selected, Key? key}) : super(key: key);
+  const _ColorItem(
+      {required this.color,
+      required this.onTap,
+      required this.selected,
+      Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +67,10 @@ class _ColorItem extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              border: Border.fromBorderSide(BorderSide(color: Colors.black, width: selected ? 3 : 1, style: BorderStyle.solid)),
+              border: Border.fromBorderSide(BorderSide(
+                  color: Colors.black,
+                  width: selected ? 3 : 1,
+                  style: BorderStyle.solid)),
               color: color,
               borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),

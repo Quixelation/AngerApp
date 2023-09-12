@@ -20,7 +20,8 @@ class _PageVpCredsState extends State<_PageVpCreds> {
           width: 300,
           child: Form(
             key: _formKey,
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -28,10 +29,12 @@ class _PageVpCredsState extends State<_PageVpCreds> {
                   }
                   return null;
                 },
-                keyboardType: TextInputType.phone,
+                keyboardType: TextInputType.text,
                 controller: passwordController,
-                decoration:
-                    const InputDecoration(labelText: "Kennwort", helperText: "Das gleiche Kennwort wie auf Newspoint", icon: Icon(Icons.password)),
+                decoration: const InputDecoration(
+                    labelText: "Kennwort",
+                    helperText: "Das gleiche Kennwort wie auf Newspoint",
+                    icon: Icon(Icons.password)),
               ),
               const SizedBox(
                 height: 35,
@@ -39,7 +42,8 @@ class _PageVpCredsState extends State<_PageVpCreds> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    Credentials.vertretungsplan.setCredentials(passwordController.text.trim());
+                    Credentials.vertretungsplan
+                        .setCredentials(passwordController.text.trim());
                   }
                 },
                 child: const Text("Verifizieren"),
@@ -50,7 +54,8 @@ class _PageVpCredsState extends State<_PageVpCreds> {
         const Positioned(
           child: Opacity(
               opacity: 0.6,
-              child: Text("Auch wenn andere Kennwörter funktionieren, wird nur das offizielle Kennwort der Schule unterstützt.",
+              child: Text(
+                  "Auch wenn andere Kennwörter funktionieren, wird nur das offizielle Kennwort der Schule unterstützt.",
                   textAlign: TextAlign.center)),
           left: 15,
           right: 15,

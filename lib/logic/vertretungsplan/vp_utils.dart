@@ -14,7 +14,8 @@ VertretungsplanDetails _convertXmlVp(String xml) {
   var titles = document.querySelectorAll("h2").toList();
   titles.removeWhere((element) => element.parent!.localName != "body");
   logger.d(titles);
-  var targetedTitle = titles.firstWhere((element) => element.text == "Geänderte Unterrichtsstunden");
+  var targetedTitle = titles
+      .firstWhere((element) => element.text == "Geänderte Unterrichtsstunden");
   logger.d(targetedTitle);
   var targetedTable = targetedTitle.nextElementSibling;
   logger.d(targetedTable);
@@ -42,11 +43,21 @@ VertretungsplanDetails _convertXmlVp(String xml) {
     if (row.children[0].text == "Klasse/Kurs") continue;
 
     var entry = VertretungsplanEntry(
-      stunde: _VertretungsplanValue(content: row.children[1].text, changed: row.children[1].classes.contains("changed")),
-      fach: _VertretungsplanValue(content: row.children[2].text, changed: row.children[2].classes.contains("changed")),
-      lehrer: _VertretungsplanValue(content: row.children[3].text, changed: row.children[3].classes.contains("changed")),
-      raum: _VertretungsplanValue(content: row.children[4].text, changed: row.children[4].classes.contains("changed")),
-      info: _VertretungsplanValue(content: row.children[5].text, changed: row.children[5].classes.contains("changed")),
+      stunde: _VertretungsplanValue(
+          content: row.children[1].text,
+          changed: row.children[1].classes.contains("changed")),
+      fach: _VertretungsplanValue(
+          content: row.children[2].text,
+          changed: row.children[2].classes.contains("changed")),
+      lehrer: _VertretungsplanValue(
+          content: row.children[3].text,
+          changed: row.children[3].classes.contains("changed")),
+      raum: _VertretungsplanValue(
+          content: row.children[4].text,
+          changed: row.children[4].classes.contains("changed")),
+      info: _VertretungsplanValue(
+          content: row.children[5].text,
+          changed: row.children[5].classes.contains("changed")),
     );
 
     tableRows.add(VertretungsplanRow.fromEntry(entry, row.children[0].text));
@@ -68,10 +79,17 @@ VertretungsplanDetails _convertXmlVp(String xml) {
       vertretung: klassen,
       verbose: verbose,
       dateStr: document.querySelector("h1")?.text ?? "Nichts, 1. Januar 2000",
-      date: _extractTitleDate(document.querySelector("h1")?.text ?? "Nichts, 1. Januar 2000"),
-      lastChanged: _extractLastChangedDate(document.querySelector("p")?.text ?? "Nichts, 1. Januar 2000"),
+      date: _extractTitleDate(
+          document.querySelector("h1")?.text ?? "Nichts, 1. Januar 2000"),
+      lastChanged: _extractLastChangedDate(
+          document.querySelector("p")?.text ?? "Nichts, 1. Januar 2000"),
       //TODO: Really extract the infos from the page, not just fake it
-      infos: document.querySelector("table.infos")?.querySelectorAll("td").map((e) => e.text).toList() ?? [],
+      infos: document
+              .querySelector("table.infos")
+              ?.querySelectorAll("td")
+              .map((e) => e.text)
+              .toList() ??
+          [],
       html: xml,
       tableRows: tableRows);
 }
@@ -111,7 +129,8 @@ DateTime _extractTitleDate(String string) {
 }
 
 DateTime _extractLastChangedDate(String string) {
-  return DateFormat("d.M.yyyy, H:mm").parse(string.replaceAll("Stand: ", "").trim());
+  return DateFormat("d.M.yyyy, H:mm")
+      .parse(string.replaceAll("Stand: ", "").trim());
 }
 
 // Extract DateTime from last part of VpCaption (e.g. "Schüler Vertretungsplan_XML 25.11.2021")
@@ -121,12 +140,15 @@ DateTime _extractCaptionDate(String string) {
   return DateFormat("d.M.yyyy").parse(dateStringArr);
 }
 
-Future<bool> checkIfUniqueIdIsNew(String uniqueId, DateTime newChangedDate) async {
+Future<bool> checkIfUniqueIdIsNew(
+    String uniqueId, DateTime newChangedDate) async {
   var dbEntry = await Services.vp.downloads.getDbVpEntry(uniqueId);
 
   bool vpIsNew = true;
 
-  if (dbEntry != null && (int.parse(dbEntry["changed"].toString())) == newChangedDate.millisecondsSinceEpoch) {
+  if (dbEntry != null &&
+      (int.parse(dbEntry["changed"].toString())) ==
+          newChangedDate.millisecondsSinceEpoch) {
     vpIsNew = false;
   }
 

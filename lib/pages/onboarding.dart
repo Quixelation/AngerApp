@@ -20,9 +20,15 @@ class _AngerAppOnboardingState extends State<AngerAppOnboarding> {
             fit: FlexFit.tight,
             child: Center(
               child: Container(
-                  decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(18)), boxShadow: [
-                    BoxShadow(blurRadius: 15, blurStyle: BlurStyle.normal, color: Colors.blue.shade900, spreadRadius: 0)
-                  ]),
+                  decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(18)),
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 15,
+                            blurStyle: BlurStyle.normal,
+                            color: Colors.blue.shade900,
+                            spreadRadius: 0)
+                      ]),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: Image.asset(
@@ -39,13 +45,17 @@ class _AngerAppOnboardingState extends State<AngerAppOnboarding> {
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Column(children: [
-                    Text("AngerApp", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    Text("AngerApp",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold)),
                     PageCurrentClass()
                   ]),
                 ),
                 decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8))),
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8))),
               ))
         ],
       ),

@@ -14,7 +14,9 @@ class _MatrixSettingsPrivacy extends StatelessWidget {
               title: const Text("Blockierte Accounts"),
               trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const _MatrixSettingsBlockedAccounts()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        const _MatrixSettingsBlockedAccounts()));
               },
             ),
           ],
@@ -26,10 +28,12 @@ class _MatrixSettingsBlockedAccounts extends StatefulWidget {
   const _MatrixSettingsBlockedAccounts({Key? key}) : super(key: key);
 
   @override
-  State<_MatrixSettingsBlockedAccounts> createState() => __MatrixSettingsBlockedAccountsState();
+  State<_MatrixSettingsBlockedAccounts> createState() =>
+      __MatrixSettingsBlockedAccountsState();
 }
 
-class __MatrixSettingsBlockedAccountsState extends State<_MatrixSettingsBlockedAccounts> {
+class __MatrixSettingsBlockedAccountsState
+    extends State<_MatrixSettingsBlockedAccounts> {
   final client = AngerApp.matrix.client;
   StreamSubscription? eventSub;
 
@@ -79,7 +83,9 @@ class __MatrixSettingsBlockedAccountsState extends State<_MatrixSettingsBlockedA
                       }
                       return ListTile(
                           title: Text(data.displayname ?? e),
-                          leading: AngerApp.matrix.buildAvatar(context, data.avatarUrl, showLogo: false),
+                          leading: AngerApp.matrix.buildAvatar(
+                              context, data.avatarUrl,
+                              showLogo: false),
                           trailing: const Icon(Icons.more_horiz),
                           onTap: () {
                             showDialog(
@@ -91,11 +97,13 @@ class __MatrixSettingsBlockedAccountsState extends State<_MatrixSettingsBlockedA
                                             onPressed: () {
                                               Navigator.of(context2).pop();
                                             },
-                                            icon: Icon(Icons.adaptive.arrow_back),
+                                            icon:
+                                                Icon(Icons.adaptive.arrow_back),
                                             label: const Text("Zurück")),
                                         TextButton.icon(
                                             onPressed: () async {
-                                              await AngerApp.matrix.client.unignoreUser(e);
+                                              await AngerApp.matrix.client
+                                                  .unignoreUser(e);
                                               Navigator.of(context2).pop();
                                             },
                                             icon: const Icon(Icons.check),
@@ -104,7 +112,9 @@ class __MatrixSettingsBlockedAccountsState extends State<_MatrixSettingsBlockedA
                                     ));
                           });
                     } else {
-                      return const ListTile(title: Center(child: CircularProgressIndicator.adaptive()));
+                      return const ListTile(
+                          title: Center(
+                              child: CircularProgressIndicator.adaptive()));
                     }
                   },
                   future: client.getUserProfile(e)))

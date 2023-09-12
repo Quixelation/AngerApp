@@ -11,7 +11,7 @@ class _HipDataPageState extends State<HipDataPage>
     with TickerProviderStateMixin {
   String? htmlData;
   late TabController tabController;
-  int selectedIndex = 1;
+  int selectedIndex = 0;
 
   bool usedEmergBackAlready = false;
 
@@ -90,8 +90,9 @@ class _HipDataPageState extends State<HipDataPage>
                     NavigationDestination(
                         icon: Icon(Icons.web), label: "Webseite"),
                     NavigationDestination(
+                    
                         icon: Icon(Icons.lightbulb_outline),
-                        label: "Inteligent"),
+                        label: "Inteligent (Klasse 11/12)"),
                   ])
             : null,
         body: (htmlData == null)

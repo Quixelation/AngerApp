@@ -7,7 +7,9 @@ class _MoodleContacts {
 
   Future<List<_MoodleMember>> searchMembersByName(String query) async {
     logger.d("Starting searchUser Request for $query");
-    var response = await _moodleRequest(function: "core_message_message_search_users", parameters: {"search": query});
+    var response = await _moodleRequest(
+        function: "core_message_message_search_users",
+        parameters: {"search": query});
 
     if (response.hasError) {
       logger.e(response.error!);

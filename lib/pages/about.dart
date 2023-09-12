@@ -181,7 +181,8 @@ class _PageTeam extends StatelessWidget {
         ),
         ListTile(
           title: Text("Dich :)"),
-          subtitle: Text("nette Person (email: bugs.angerapp@robertstuendl.com)"),
+          subtitle:
+              Text("nette Person (email: bugs.angerapp@robertstuendl.com)"),
           isThreeLine: true,
           leading: Icon(Icons.person),
           onTap: null,

@@ -30,7 +30,8 @@ class __MatrixInviteUserPageState extends State<_MatrixInviteUserPage> {
                 context: context,
                 builder: (context2) => AlertDialog(
                       title: const Text("Keine Benutzer"),
-                      content: const Text("Füge zuerst Benutzer zum einladen hinzu."),
+                      content: const Text(
+                          "Füge zuerst Benutzer zum einladen hinzu."),
                       actions: [
                         TextButton(
                             onPressed: () {
@@ -43,7 +44,9 @@ class __MatrixInviteUserPageState extends State<_MatrixInviteUserPage> {
           }
           Navigator.of(context).pop(usersToInvite);
         },
-        child: Opacity(opacity: usersToInvite.isEmpty ? 0.5 : 1, child: const Icon(Icons.check)),
+        child: Opacity(
+            opacity: usersToInvite.isEmpty ? 0.5 : 1,
+            child: const Icon(Icons.check)),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -77,7 +80,8 @@ class __MatrixInviteUserPageState extends State<_MatrixInviteUserPage> {
                   borderRadius: BorderRadius.circular(999999),
                   onTap: () {
                     setState(() {
-                      usersToInvite.removeWhere((element) => element.userId == e.userId);
+                      usersToInvite
+                          .removeWhere((element) => element.userId == e.userId);
                     });
                   },
                   child: const Padding(

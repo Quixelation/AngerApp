@@ -168,6 +168,11 @@ class _PageMailKontaktState extends State<PageMailKontakt> {
                                                   .toLowerCase()
                                                   .contains(searchController
                                                       .text
+                                                      .toLowerCase()) ||
+                                              element.faecher
+                                                  .toLowerCase()
+                                                  .contains(searchController
+                                                      .text
                                                       .toLowerCase());
                                         }
                                       })
@@ -186,6 +191,10 @@ class _PageMailKontaktState extends State<PageMailKontakt> {
                                             element.email
                                                 .toLowerCase()
                                                 .contains(searchController.text
+                                                    .toLowerCase()) ||
+                                            element.faecher
+                                                .toLowerCase()
+                                                .contains(searchController.text
                                                     .toLowerCase());
                                       }
                                     }).toList()[index];
@@ -197,8 +206,7 @@ class _PageMailKontaktState extends State<PageMailKontakt> {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
-                                              duration:
-                                                  Duration(seconds: 1),
+                                              duration: Duration(seconds: 1),
                                               backgroundColor: Colors.green,
                                               content: Row(
                                                 children: [
@@ -231,7 +239,25 @@ class _PageMailKontaktState extends State<PageMailKontakt> {
                                           );
                                         });
                                       },
-                                      title: Text(mail.name),
+                                      title: Wrap(
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.center,
+                                          children: [
+                                            Text(
+                                              mail.name,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
+                                            Opacity(
+                                                opacity: 0.87,
+                                                child: Text(
+                                                    "(" + mail.faecher + ")",
+                                                    style: TextStyle(
+                                                        fontSize: 14)))
+                                          ]),
                                       subtitle: Text(mail.email),
                                     );
                                   }),
@@ -254,7 +280,7 @@ class _PageMailKontaktState extends State<PageMailKontakt> {
                                   controller: searchController,
                                   decoration: const InputDecoration(
                                       border: OutlineInputBorder(),
-                                      labelText: "Suche",
+                                      labelText: "Suche Namen oder Fächer",
                                       hintText:
                                           "Tipp: Versuche es ohne \"Herr\" oder \"Frau\"",
                                       prefixIcon: Icon(Icons.search,

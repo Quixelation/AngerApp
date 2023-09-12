@@ -18,7 +18,8 @@ class PageSettings extends StatefulWidget {
 }
 
 class _PageSettingsState extends State<PageSettings> {
-  bool _devToolsSwitch = getIt.get<AppManager>().devtools.valueWrapper?.value ?? false;
+  bool _devToolsSwitch =
+      getIt.get<AppManager>().devtools.valueWrapper?.value ?? false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,34 +30,52 @@ class _PageSettingsState extends State<PageSettings> {
       body: ListView(children: [
         ListTile(
           title: const Text("Vertretungsplan"),
-          leading: Icon(Icons.switch_account_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          leading: Icon(Icons.switch_account_outlined,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const SettingsPageVertretung()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => const SettingsPageVertretung()));
           },
         ),
         ListTile(
           title: const Text("Nachrichten"),
-          leading: Icon(Icons.messenger_outline, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          leading: Icon(Icons.messenger_outline,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const MessageSettings()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (ctx) => const MessageSettings()));
           },
         ),
         ListTile(
           title: const Text("Benachrichtigungen"),
-          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-          leading: Icon(Icons.notifications_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          leading: Icon(Icons.notifications_outlined,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageNotificationSettings()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => const PageNotificationSettings()));
           },
         ),
         ListTile(
           title: const Text("Farben"),
-          leading: Icon(Icons.color_lens_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
-          trailing: Icon(Icons.keyboard_arrow_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          leading: Icon(Icons.color_lens_outlined,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+          trailing: Icon(Icons.keyboard_arrow_right,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PageColorManagerSettings()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => const PageColorManagerSettings()));
           },
         ),
         // ListTile(
@@ -79,7 +98,11 @@ class _PageSettingsState extends State<PageSettings> {
             },
             title: Row(
               children: [
-                Icon(Icons.developer_mode_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.87)),
+                Icon(Icons.developer_mode_outlined,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.87)),
                 const SizedBox(width: 32),
                 const Text('Entwickler-Menu')
               ],
@@ -99,9 +122,11 @@ class SettingsPageVertretung extends StatefulWidget {
 class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
   VpSettings? _vpSettings = Services.vp.settings.subject.valueWrapper?.value;
   StreamSubscription<VpSettings>? sub;
-  int _sliderValue = Services.vp.settings.subject.valueWrapper?.value.saveDuration ?? 2;
+  int _sliderValue =
+      Services.vp.settings.subject.valueWrapper?.value.saveDuration ?? 2;
 
-  vpViewTypes? vpViewType = Services.vp.settings.subject.valueWrapper?.value.viewType;
+  vpViewTypes? vpViewType =
+      Services.vp.settings.subject.valueWrapper?.value.viewType;
 
   @override
   void initState() {
@@ -132,8 +157,10 @@ class _SettingsPageVertretungState extends State<SettingsPageVertretung> {
       ),
       body: ListView(children: [
         SwitchListTile.adaptive(
-            value: _vpSettings?.loadListOnStart ?? Services.vp.settings.defaultSettings.loadListOnStart,
-            title: const Text("Vertretungspläne beim Start der App laden (auch benötigt für Aushänge)"),
+            value: _vpSettings?.loadListOnStart ??
+                Services.vp.settings.defaultSettings.loadListOnStart,
+            title: const Text(
+                "Vertretungspläne beim Start der App laden (auch benötigt für Aushänge)"),
             onChanged: _vpSettings == null
                 ? null
                 : (newVal) {

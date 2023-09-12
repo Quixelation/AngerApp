@@ -5,7 +5,8 @@ class _MoodleCoursesManager {
   final modules = _MoodleCourseModuleDatabase();
 
   Future<List<_MoodleCourse>> fetchEnrolledCourses() async {
-    var response = await _moodleRequest(function: "core_enrol_get_users_courses");
+    var response =
+        await _moodleRequest(function: "core_enrol_get_users_courses");
     if (response.hasError) {
       logger.e(response.error);
       throw response.error?.error ?? response.error?.exception ?? "Errro";
@@ -16,7 +17,10 @@ class _MoodleCoursesManager {
   }
 
   Future<List<_MoodleCourseSection>> fetchCourseContents(int courseId) async {
-    var response = await _moodleRequest(function: "core_course_get_contents", includeUserId: false, parameters: {"courseid": courseId.toString()});
+    var response = await _moodleRequest(
+        function: "core_course_get_contents",
+        includeUserId: false,
+        parameters: {"courseid": courseId.toString()});
     if (response.hasError) {
       logger.e(response.error);
       throw response.error?.error ?? response.error?.exception ?? "Errro";
@@ -33,7 +37,8 @@ class _MoodleCoursesManager {
 }
 
 class _MoodleCourseModuleDatabase {
-  final StoreRef<int, Map<String, Object?>> store = AppManager.stores.moodleModules;
+  final StoreRef<int, Map<String, Object?>> store =
+      AppManager.stores.moodleModules;
 
   Future<List<int>> getModuleIdsForCourse(int courseId) async {
     final db = getIt.get<AppManager>().db;
@@ -41,7 +46,8 @@ class _MoodleCourseModuleDatabase {
     return List.from((result?["modules"] as Iterable?) ?? []);
   }
 
-  Future<void> saveModuleIdsForCourse(int courseId, List<int> moduleIds, {bool overwriteAll = false}) async {
+  Future<void> saveModuleIdsForCourse(int courseId, List<int> moduleIds,
+      {bool overwriteAll = false}) async {
     final db = getIt.get<AppManager>().db;
 
     // if overwrite is active, we ignore if there any previously saved moduleIds. We only want the new ones.

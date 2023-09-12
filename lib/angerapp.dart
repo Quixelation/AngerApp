@@ -17,9 +17,10 @@ import 'package:anger_buddy/logic/news/news.dart';
 import 'package:anger_buddy/logic/opensense/opensense.dart';
 import 'package:anger_buddy/logic/whatsnew/whatsnew.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+import 'logic/stadtradeln/stadtradeln.dart';
 
 class _ServicesManager {
   /* -- Funktions-Seiten -- */
@@ -43,6 +44,7 @@ class _ServicesManager {
   final whatsnew = WhatsnewManager();
   final statuspage = StatuspageManager();
   final hip = HipService();
+  final stadtradeln = StadtRadelnManager();
   /* -- Plugins -- */
   late final String version;
   late final deviceName;

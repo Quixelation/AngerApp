@@ -19,7 +19,8 @@ class __UserSelectorState extends State<_UserSelector> {
   List<Profile> _usersForSuggestion = [];
 
   void searchUsers(String query) async {
-    var users = await AngerApp.matrix.client.searchUserDirectory(query, limit: 10);
+    var users =
+        await AngerApp.matrix.client.searchUserDirectory(query, limit: 10);
     logger.d(users.results);
     setState(() {
       _usersForSuggestion = users.results;
@@ -36,9 +37,15 @@ class __UserSelectorState extends State<_UserSelector> {
             shrinkWrap: true,
             itemCount: widget.controller.selectedUsers.length,
             itemBuilder: (context, index) => Chip(
-                backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-                label: Text(widget.controller.selectedUsers[index].displayName ?? widget.controller.selectedUsers[index].userId,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onTertiaryContainer))),
+                backgroundColor:
+                    Theme.of(context).colorScheme.tertiaryContainer,
+                label: Text(
+                    widget.controller.selectedUsers[index].displayName ??
+                        widget.controller.selectedUsers[index].userId,
+                    style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onTertiaryContainer))),
           )),
       TextField(
         controller: _controller,
@@ -54,13 +61,15 @@ class __UserSelectorState extends State<_UserSelector> {
         itemCount: _usersForSuggestion.length,
         key: ValueKey(_usersForSuggestion),
         itemBuilder: (context, index) => ListTile(
-            enabled: !widget.controller.selectedUsers.contains(_usersForSuggestion[index]),
+            enabled: !widget.controller.selectedUsers
+                .contains(_usersForSuggestion[index]),
             onTap: () {
               setState(() {
                 widget.controller.selectedUsers.add(_usersForSuggestion[index]);
               });
             },
-            title: Text(_usersForSuggestion[index].displayName ?? _usersForSuggestion[index].userId)),
+            title: Text(_usersForSuggestion[index].displayName ??
+                _usersForSuggestion[index].userId)),
       )
     ]);
   }

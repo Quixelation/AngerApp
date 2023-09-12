@@ -5,6 +5,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:sembast/sembast.dart';
 
 class SyncManager {
+  // SyncManager returned sich selber, dann kann hier dieses Feld vorher gesetzt werden und vom Programm aussgelesen werden
   late DateTime syncDate;
 
   bool get never {

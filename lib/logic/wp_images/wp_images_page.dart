@@ -35,7 +35,10 @@ class _WpImagesPageState extends State<WpImagesPage> {
       wpImages.fetchImages(page: page).then((value) {
         if (!mounted) return;
         setState(() {
-          imagesForPage[page] = value.where((element) => element.mediaDetails != null && element.mediaType == "image").toList();
+          imagesForPage[page] = value
+              .where((element) =>
+                  element.mediaDetails != null && element.mediaType == "image")
+              .toList();
           _currentlyLoading = false;
         });
       }).catchError((err) {
@@ -43,7 +46,8 @@ class _WpImagesPageState extends State<WpImagesPage> {
             context: context,
             builder: (context2) => AlertDialog(
                   title: const Text("Fehler"),
-                  content: const Text("Es gab einen Fehler beim Laden der Bilder"),
+                  content:
+                      const Text("Es gab einen Fehler beim Laden der Bilder"),
                   actions: [
                     TextButton.icon(
                         onPressed: () {
@@ -119,7 +123,9 @@ class _WpImagesPageState extends State<WpImagesPage> {
                             imageGridSize += 20;
                           });
                         },
-                        icon: Icon(Icons.zoom_in, size: 26, color: Theme.of(context).colorScheme.onPrimary)),
+                        icon: Icon(Icons.zoom_in,
+                            size: 26,
+                            color: Theme.of(context).colorScheme.onPrimary)),
                     IconButton(
                         onPressed: () {
                           setState(() {
@@ -129,12 +135,15 @@ class _WpImagesPageState extends State<WpImagesPage> {
                             }
                           });
                         },
-                        icon: Icon(Icons.zoom_out, size: 26, color: Theme.of(context).colorScheme.onPrimary))
+                        icon: Icon(Icons.zoom_out,
+                            size: 26,
+                            color: Theme.of(context).colorScheme.onPrimary))
                   ],
                 ),
                 Text(
                   "Größe: ${imageGridSize / 100}",
-                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
                 const SizedBox(height: 4),
               ],
@@ -146,7 +155,8 @@ class _WpImagesPageState extends State<WpImagesPage> {
                 ? GridView.builder(
                     controller: _scrollController,
                     itemCount: images.length + 1,
-                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: imageGridSize),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: imageGridSize),
                     itemBuilder: (context, index) {
                       if (index == images.length) {
                         return _currentlyLoading
@@ -154,10 +164,16 @@ class _WpImagesPageState extends State<WpImagesPage> {
                             : Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(
-                                  decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(8)),
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: BorderRadius.circular(8)),
                                   child: InkWell(
                                     child: Center(
-                                      child: Icon(Icons.cloud_sync_sharp, size: imageGridSize * 0.5, color: Theme.of(context).colorScheme.onPrimary),
+                                      child: Icon(Icons.cloud_sync_sharp,
+                                          size: imageGridSize * 0.5,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary),
                                     ),
                                     onTap: () {
                                       _fetchForNextPage();
@@ -168,15 +184,24 @@ class _WpImagesPageState extends State<WpImagesPage> {
                       } else {
                         return InkWell(
                           child: CachedNetworkImage(
-                              imageUrl: images[index].mediaDetails!.sizes?.thumbnail.sourceUrl ?? images[index].sourceUrl,
-                              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                              imageUrl: images[index]
+                                      .mediaDetails!
+                                      .sizes
+                                      ?.thumbnail
+                                      .sourceUrl ??
+                                  images[index].sourceUrl,
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) => Center(
+                                      child: CircularProgressIndicator(
+                                          value: downloadProgress.progress)),
                               errorWidget: (context, url, error) => const Icon(
                                     Icons.broken_image,
                                     color: Colors.red,
                                   )),
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => _WpImageDetails(images[index])));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    _WpImageDetails(images[index])));
                           },
                         );
                       }

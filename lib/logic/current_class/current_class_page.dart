@@ -34,7 +34,9 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
                 Services.currentClass.setCurrentClass(classS);
                 Navigator.of(context).pop();
               },
-              child: Text(text, style: TextStyle(color: Theme.of(context).colorScheme.secondary))),
+              child: Text(text,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary))),
     ));
   }
 
@@ -73,7 +75,10 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
         ),
         child: OutlinedButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => parsePage(() => _infoPage)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => parsePage(() => _infoPage)));
           },
           child: const Opacity(
             child: Text("Was wird angepasst?", style: TextStyle()),
@@ -88,7 +93,8 @@ class _PageCurrentClassState extends State<PageCurrentClass> {
           ),
           child: Text(
             "Die eingestellte Klasse wird ausschließlich lokal auf diesem Gerät gespeichert und niemals zu unseren Servern gesendet.",
-            style: TextStyle(color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
+            style: TextStyle(
+                color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
           ))
     ]);
   }

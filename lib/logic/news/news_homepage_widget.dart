@@ -60,16 +60,20 @@ class _NewsHomepageWidgetState extends State<NewsHomepageWidget> {
                     Opacity(
                       opacity: 0.87,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20),
-                        child: (newsData!.data[0].desc != null && newsData!.data[0].desc!.isNotEmpty) ?
-                             Text(
-                                newsData!.data[0].desc!,
-                                style:
-                                    const TextStyle(height: 1.25, fontSize: 15),
-                              )
-                                    : const Text("Der Inhalt ist vermutlich ein Bild. Öffne den Artikel um mehr zu sehen.", style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15))
-                      ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 20),
+                          child: (newsData!.data[0].desc != null &&
+                                  newsData!.data[0].desc!.isNotEmpty)
+                              ? Text(
+                                  newsData!.data[0].desc!,
+                                  style: const TextStyle(
+                                      height: 1.25, fontSize: 15),
+                                )
+                              : const Text(
+                                  "Der Inhalt ist vermutlich ein Bild. Öffne den Artikel um mehr zu sehen.",
+                                  style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 15))),
                     ),
                   (newsData!.error == true || newsData!.data.isEmpty)
                       ? Container()

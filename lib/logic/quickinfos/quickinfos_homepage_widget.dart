@@ -9,6 +9,8 @@ class QuickInfoHomepageWidget extends StatefulWidget {
 }
 
 class _QuickInfoHomepageWidgetState extends State<QuickInfoHomepageWidget> {
+//  AsyncDataResponse<List<QuickInfo>>? _quickInfos;
+
   AsyncDataResponse<List<QuickInfo>>? _quickInfos;
 
   @override
@@ -80,71 +82,65 @@ class _QuickInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: getColorToType(), width: 5)),
-        color: getColorToType().withAlpha(75),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getIconToType(),
-          const SizedBox(
-            width: 16,
-          ),
-          Flexible(
-            child: InkWell(
-              onTap: quickInfo.externalLink != null
-                  ? () async {
-                      var wantsToFollow = await showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: const Text("Externer Link"),
-                                content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                          "Möchtest du den externen Link öffnen?"),
-                                      const SizedBox(height: 8),
-                                      Text(quickInfo.externalLink!,
-                                          style: const TextStyle(
-                                              fontStyle: FontStyle.italic))
-                                    ]),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, false),
-                                      child: const Text("Nein")),
-                                  TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, true),
-                                      child: const Text("Ja")),
-                                ],
-                              ));
-                      if (wantsToFollow == true) {
-                        launchURL(quickInfo.externalLink!, context);
-                      }
-                    }
-                  : null,
-              child: Opacity(
-                opacity: 0.87,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ((quickInfo.title?.trim() == "") ||
-                                (quickInfo.title == null))
-                            ? Container()
-                            : Text(quickInfo.title!,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
-                        MarkdownBody(
+    return InkWell(
+      onTap: quickInfo.externalLink != null
+          ? () async {
+              var wantsToFollow = await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: const Text("Externer Link"),
+                        content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                  "Möchtest du den externen Link öffnen?"),
+                              const SizedBox(height: 8),
+                              Text(quickInfo.externalLink!,
+                                  style: const TextStyle(
+                                      fontStyle: FontStyle.italic))
+                            ]),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text("Nein")),
+                          TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text("Ja")),
+                        ],
+                      ));
+              if (wantsToFollow == true) {
+                launchURL(quickInfo.externalLink!, context);
+              }
+            }
+          : null,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: getColorToType(), width: 5)),
+          color: getColorToType().withAlpha(75),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getIconToType(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Opacity(
+                  opacity: 0.87,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ((quickInfo.title?.trim() == "") ||
+                              (quickInfo.title == null))
+                          ? Container()
+                          : Text(quickInfo.title!,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                      Flexible(
+                        child: MarkdownBody(
                           data: quickInfo.content,
                           onTapLink: (String text, String? href, String title) {
                             linkOnTapHandler(context, text, href, title);
@@ -152,18 +148,17 @@ class _QuickInfo extends StatelessWidget {
                           styleSheet: MarkdownStyleSheet(
                               p: const TextStyle(fontSize: 15)),
                         ),
-                      ],
-                    ),
-                    if (quickInfo.externalLink != null) ...[
-                      const SizedBox(width: 16),
-                      const Icon(Icons.open_in_new)
-                    ]
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          )
-        ],
+            if (quickInfo.externalLink != null) ...[
+              const Icon(Icons.open_in_new)
+            ]
+          ],
+        ),
       ),
     );
   }

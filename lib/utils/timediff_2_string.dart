@@ -1,4 +1,3 @@
-
 String timediff2string(DateTime dateTime, {bool maxDays = false}) {
   DateTime now = DateTime.now();
   bool timeNegative = dateTime.difference(now).isNegative;
@@ -17,7 +16,9 @@ String timediff2string(DateTime dateTime, {bool maxDays = false}) {
   }
   // Falls mehr als 1,5 Monate (45 Tage) (else von siehe oben) übrig sind, soll es in Monaten angezeigt werden.
   else {
-    timeDiff = (dateTime.difference(now).inDays.abs() / 30).toStringAsFixed(1).replaceAll(".", ",");
+    timeDiff = (dateTime.difference(now).inDays.abs() / 30)
+        .toStringAsFixed(1)
+        .replaceAll(".", ",");
     suffix = timeDiff == 1 ? "Monat" : "Monaten";
   }
 

@@ -28,7 +28,8 @@ Future<Database> openDB() async {
   }
 
 // We use the database factory to open the database
-  Database db = await dbFactory.openDatabase(dbPath!, mode: DatabaseMode.neverFails);
+  Database db =
+      await dbFactory.openDatabase(dbPath!, mode: DatabaseMode.neverFails);
 
   return db;
 }

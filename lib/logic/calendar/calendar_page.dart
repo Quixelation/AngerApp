@@ -139,7 +139,7 @@ class _PageCalendarState extends State<PageCalendar>
       ...(ferienEvents ?? []),
     ];
     if (MediaQuery.of(context).size.width > 600) {
-            //TODO: remove entire callcontroller setup, idk why it's still here, (and remove enough mail while youre at it)
+      //TODO: remove entire callcontroller setup, idk why it's still here, (and remove enough mail while youre at it)
 //      for (var e in AppManager.calController.events) {
 //        AppManager.calController.remove(e);
 //      }

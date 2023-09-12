@@ -127,7 +127,8 @@ class _MatrixCreatePageState extends State<MoodleCreateChatPage> {
                     ),
                     SizedBox(height: 16),
                     _typeaheadUsers == null
-                        ? Text("Beende deine Suche (z.B. durch \"Enter\"), um Vorschläge zu sehen")
+                        ? Text(
+                            "Beende deine Suche (z.B. durch \"Enter\"), um Vorschläge zu sehen")
                         : _typeaheadUsers!.length == 0
                             ? Text("Keine Benutzer gefunden")
                             : (Column(

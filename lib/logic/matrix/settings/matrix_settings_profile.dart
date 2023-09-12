@@ -70,15 +70,19 @@ class _MatrixProfileColumnState extends State<_MatrixProfileColumn> {
                                     title: const Text("Avatar entfernen"),
                                     leading: const Icon(Icons.remove),
                                     onTap: () async {
-                                      await AngerApp.matrix.client.setAvatar(null);
+                                      await AngerApp.matrix.client
+                                          .setAvatar(null);
                                       Navigator.of(context2).pop();
                                     }),
                                 ListTile(
-                                    title: const Text("Bild von Gallerie auswählen"),
+                                    title: const Text(
+                                        "Bild von Gallerie auswählen"),
                                     leading: const Icon(Icons.image),
                                     onTap: () async {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(content: Text("Bitte benutze die Webseite, um das Avatar zu ändern.")));
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  "Bitte benutze die Webseite, um das Avatar zu ändern.")));
 
                                       // final bytes = await _getCroppedLibraryImage(context);
                                       // Navigator.of(context2).pop();
@@ -111,7 +115,9 @@ class _MatrixProfileColumnState extends State<_MatrixProfileColumn> {
                 const SizedBox(height: 32),
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(label: Text("Anzeige-Name"), border: OutlineInputBorder()),
+                  decoration: const InputDecoration(
+                      label: Text("Anzeige-Name"),
+                      border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton.icon(
@@ -119,7 +125,8 @@ class _MatrixProfileColumnState extends State<_MatrixProfileColumn> {
                       Future<void> doSave(BuildContext dialogContext) async {
                         try {
                           final client = AngerApp.matrix.client;
-                          await client.setDisplayName(client.userID!, nameController.text);
+                          await client.setDisplayName(
+                              client.userID!, nameController.text);
 
                           Navigator.pop(dialogContext);
                         } catch (err) {

@@ -71,7 +71,8 @@ class DefaultMessageListTile extends StatelessWidget {
                 padding: const EdgeInsets.all(6),
                 child: Text(
                   unreadCount == 0 ? " " : unreadCount.toString(),
-                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
               )
             : null,
@@ -82,23 +83,31 @@ class DefaultMessageListTile extends StatelessWidget {
             children: [
               Text(
                 sender,
-                style: TextStyle(fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400),
+                style: TextStyle(
+                    fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400),
               ),
               Opacity(
                 opacity: 0.57,
                 child: Text(
                   datetime == null
                       ? ""
-                      : (datetime!.millisecondsSinceEpoch > DateTime.now().at0.subtract(const Duration(seconds: 1)).millisecondsSinceEpoch
+                      : (datetime!.millisecondsSinceEpoch >
+                              DateTime.now()
+                                  .at0
+                                  .subtract(const Duration(seconds: 1))
+                                  .millisecondsSinceEpoch
                           ? time2string(datetime!, onlyTime: true)
-                          : (DateTime.now().at0.difference(datetime!).inDays <= 6
-                              ? time2string(datetime!, includeTime: false, onlyWeekday: true)
+                          : (DateTime.now().at0.difference(datetime!).inDays <=
+                                  6
+                              ? time2string(datetime!,
+                                  includeTime: false, onlyWeekday: true)
                               : time2string(
                                   datetime!,
                                   includeTime: false,
                                   useStringMonth: false,
                                 ))),
-                  style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w400, fontSize: 14),
                 ),
               )
             ],
@@ -114,7 +123,7 @@ class DefaultMessageListTile extends StatelessWidget {
                 padding: HtmlPaddings.all(0),
                 margin: Margins.all(0),
                 maxLines: 2,
-                textOverflow: TextOverflow.ellipsis, 
+                textOverflow: TextOverflow.ellipsis,
               ),
             },
           ),
@@ -128,14 +137,24 @@ class _DefaultMessagingColors {
   final Color messageRecieved;
   final Color textColor;
 
-  _DefaultMessagingColors({required this.messageRecieved, required this.messageSent, required this.textColor});
+  _DefaultMessagingColors(
+      {required this.messageRecieved,
+      required this.messageSent,
+      required this.textColor});
 }
 
 _DefaultMessagingColors DefaultMessagingColors(BuildContext context) {
   return _DefaultMessagingColors(
       textColor: Theme.of(context).colorScheme.onSurface,
-      messageRecieved: (Theme.of(context).brightness == Brightness.dark ? Colors.blueGrey.shade900 : Colors.grey.shade100),
+      messageRecieved: (Theme.of(context).brightness == Brightness.dark
+          ? Colors.blueGrey.shade900
+          : Colors.grey.shade100),
       messageSent: (Theme.of(context).brightness == Brightness.dark
-          ? TinyColor.fromColor(Theme.of(context).colorScheme.primary).darken(32).desaturate(55).color
-          : TinyColor.fromColor(Theme.of(context).colorScheme.primary).brighten(40).color));
+          ? TinyColor.fromColor(Theme.of(context).colorScheme.primary)
+              .darken(32)
+              .desaturate(55)
+              .color
+          : TinyColor.fromColor(Theme.of(context).colorScheme.primary)
+              .brighten(40)
+              .color));
 }

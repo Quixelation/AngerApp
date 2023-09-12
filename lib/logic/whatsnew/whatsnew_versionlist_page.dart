@@ -11,10 +11,13 @@ class WhatsNewVersionListPage extends StatelessWidget {
         itemCount: _whatsnewUpdates.length,
         itemBuilder: (context, index) => ListTile(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => _WhatsnewPage(_whatsnewUpdates[index].version)));
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    _WhatsnewPage(_whatsnewUpdates[index].version)));
           },
           title: Text(_whatsnewUpdates[index].version),
-          trailing: const Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+          trailing: const Opacity(
+              opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
         ),
       ),
     );

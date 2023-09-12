@@ -11,7 +11,7 @@ import "package:universal_html/html.dart" as uhtml;
 
 class AppManager {
   GlobalKey<ScaffoldState> mainScaffoldState;
-    BuildContext? mainScaffoldContext;
+  BuildContext? mainScaffoldContext;
   late final BehaviorSubject<bool> devtools;
   late final sb.Database db;
 
@@ -32,7 +32,8 @@ class AppManager {
   static String angergymnasiumWebsiteUrl = "https://angergymnasium.jena.de/";
 
   static String directusUrl = (() {
-    final isRobertStuendlCom = uhtml.window.location.host.endsWith("robertstuendl.com");
+    final isRobertStuendlCom =
+        uhtml.window.location.host.endsWith("robertstuendl.com");
 
     if (kIsWeb) {
       if (kDebugMode) {
@@ -48,12 +49,16 @@ class AppManager {
       return "https://angerapp.angergymnasium.jena.de/cms/";
     }
   })();
-  static String moodleApi = "https://moodle.jsp.jena.de/webservice/rest/server.php";
+
+  //TODO: What the fuck went wrong here ?? --> why does this exist?
+  static String moodleApi =
+      "https://moodle.jsp.jena.de/webservice/rest/server.php";
   static String moodleApiPath = "/webservice/rest/server.php";
   static String moodleSiteUrl = "https://moodle.jsp.jena.de/";
   static String moodleSiteHost = "moodle.jsp.jena.de";
   static String apiUrl = (() {
-    final isRobertStuendlCom = uhtml.window.location.host.endsWith("robertstuendl.com");
+    final isRobertStuendlCom =
+        uhtml.window.location.host.endsWith("robertstuendl.com");
 
     if (kIsWeb) {
       if (kDebugMode || isRobertStuendlCom) {
@@ -149,21 +154,28 @@ class _tableNames {
 class _stores {
   final vp = stringMapStoreFactory.store(AppManager.tables.vp);
   final ags = stringMapStoreFactory.store(AppManager.tables.ags);
-  final pinnedKlausuren = stringMapStoreFactory.store(AppManager.tables.pinnedKlausuren);
+  final pinnedKlausuren =
+      stringMapStoreFactory.store(AppManager.tables.pinnedKlausuren);
   final klausuren = stringMapStoreFactory.store(AppManager.tables.klausuren);
   final ferien = stringMapStoreFactory.store(AppManager.tables.ferien);
   final data = stringMapStoreFactory.store(AppManager.tables.data);
   final lastsync = stringMapStoreFactory.store(AppManager.tables.lastsync);
   final events = stringMapStoreFactory.store(AppManager.tables.events);
   final news = stringMapStoreFactory.store(AppManager.tables.news);
-  final fcmSubscriptions = stringMapStoreFactory.store(AppManager.tables.fcmSubscriptions);
+  final fcmSubscriptions =
+      stringMapStoreFactory.store(AppManager.tables.fcmSubscriptions);
   final quickinfos = stringMapStoreFactory.store(AppManager.tables.quickinfos);
-  final lessontimes = stringMapStoreFactory.store(AppManager.tables.lessontimes);
+  final lessontimes =
+      stringMapStoreFactory.store(AppManager.tables.lessontimes);
   final aushaenge = stringMapStoreFactory.store(AppManager.tables.aushaenge);
-  final aushaengeLastRead = stringMapStoreFactory.store(AppManager.tables.aushaengeLastRead);
-  final schwarzesBrett = stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
+  final aushaengeLastRead =
+      stringMapStoreFactory.store(AppManager.tables.aushaengeLastRead);
+  final schwarzesBrett =
+      stringMapStoreFactory.store(AppManager.tables.schwarzesBrett);
   final srNews = stringMapStoreFactory.store(AppManager.tables.srNews);
-  final moodleModules = intMapStoreFactory.store(AppManager.tables.moodleModules);
+  final moodleModules =
+      intMapStoreFactory.store(AppManager.tables.moodleModules);
+  final webpageIntegration = stringMapStoreFactory.store("webpage_integration");
 
   List<StoreRef> get allStores {
     return [
@@ -182,13 +194,18 @@ class _stores {
       aushaenge,
       aushaengeLastRead,
       schwarzesBrett,
-      srNews
+      srNews,
+      webpageIntegration
     ];
   }
 }
 
 class _urlManager {
-  String _urlSwitcher({required String webUrl, required String appUrl, String? webDebugUrl, String? appDebugUrl}) {
+  String _urlSwitcher(
+      {required String webUrl,
+      required String appUrl,
+      String? webDebugUrl,
+      String? appDebugUrl}) {
     if (kIsWeb) {
       if (kDebugMode && webDebugUrl != null) {
         return webDebugUrl;
@@ -207,7 +224,8 @@ class _urlManager {
   String get cal {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/cal",
-        appUrl: "https://calendar.google.com/calendar/ical/6ahlh7g35b4qk7afp96j51iee0%40group.calendar.google.com/public/basic.ics",
+        appUrl:
+            "https://calendar.google.com/calendar/ical/6ahlh7g35b4qk7afp96j51iee0%40group.calendar.google.com/public/basic.ics",
         webDebugUrl: "${AppManager.apiUrl}/webproxy/cal");
   }
 
@@ -228,9 +246,15 @@ class _urlManager {
   String get mailkontakt {
     return _urlSwitcher(
         webUrl: "${AppManager.apiUrl}/webproxy/mailkontakt",
-        appUrl: "https://angergymnasium.jena.de/kontaktliste-lehrpersonal/",
+        appUrl: "https://angergymnasium.jena.de/kontaktliste-lehrer/",
         webDebugUrl: "${AppManager.apiUrl}/webproxy/mailkontakt");
   }
+
+  String  beratungslehrer_homepage = "https://angergymnasium.jena.de/beratungslehrer/";
+  String  schuso_homepage ="https://angergymnasium.jena.de/schulsozialarbeit/";
+  String calendar_homepage = "https://angergymnasium.jena.de/kalender/";
+
+
 
   String get wplogin {
     return _urlSwitcher(
@@ -256,8 +280,11 @@ class _urlManager {
 
   String vpdetail(String url) {
     var uri = Uri.parse(url);
-    var queryString = "?guid=${uri.queryParameters['guid']}&uniquename=${uri.queryParameters['uniquename']}&client=${uri.queryParameters['client']}";
+    var queryString =
+        "?guid=${uri.queryParameters['guid']}&uniquename=${uri.queryParameters['uniquename']}&client=${uri.queryParameters['client']}";
     return _urlSwitcher(
-        webUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString", appUrl: url, webDebugUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString");
+        webUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString",
+        appUrl: url,
+        webDebugUrl: "${AppManager.apiUrl}/webproxy/vpdetail$queryString");
   }
 }

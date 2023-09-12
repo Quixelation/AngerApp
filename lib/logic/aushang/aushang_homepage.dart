@@ -33,7 +33,8 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
         return;
       }
 
-      logger.d("[AushangHomepage] Subect-Event --> Data-Length: ${event.data.length}");
+      logger.d(
+          "[AushangHomepage] Subect-Event --> Data-Length: ${event.data.length}");
 
       setState(() {
         aushaenge = event;
@@ -45,7 +46,8 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
         return;
       }
 
-      logger.d("[AushangHomepage] SubectVP-Event --> Data-Length: ${event.length}");
+      logger.d(
+          "[AushangHomepage] SubectVP-Event --> Data-Length: ${event.length}");
 
       setState(() {
         vpAushaenge = event;
@@ -68,16 +70,22 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
     var filteredList = [...aushaenge, ...vpAushaenge.map((e) => e.toAushang())];
 
     filteredList = filteredList.where((element) {
-      if (element.fixed && (currentClass == null || (currentClass != null && element.klassenstufen.contains(currentClass)))) {
+      if (element.fixed &&
+          (currentClass == null ||
+              (currentClass != null &&
+                  element.klassenstufen.contains(currentClass)))) {
         return true;
-      } else if (((currentClass == null || element.klassenstufen.isEmpty) && element.read == ReadStatusBasic.notRead)) {
+      } else if (((currentClass == null || element.klassenstufen.isEmpty) &&
+          element.read == ReadStatusBasic.notRead)) {
         logger.d("How did whe get here? Let's see...");
         logger.d("currentClass == null " + (currentClass == null).toString());
-        logger.d("element.klassenstufen.isEmpty " + element.klassenstufen.isEmpty.toString());
+        logger.d("element.klassenstufen.isEmpty " +
+            element.klassenstufen.isEmpty.toString());
         logger.d("element.read " + element.read.toString());
         return true;
       } else {
-        return element.klassenstufen.contains(currentClass) && element.read == ReadStatusBasic.notRead;
+        return element.klassenstufen.contains(currentClass) &&
+            element.read == ReadStatusBasic.notRead;
       }
     }).toList();
 
@@ -120,10 +128,14 @@ class _AushangHomepageWidgetState extends State<AushangHomepageWidget> {
               constraints: const BoxConstraints(maxHeight: 130),
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: filteredAushaenge.map((e) => _AushangHomepageCard(e)).toList(),
+                children: filteredAushaenge
+                    .map((e) => _AushangHomepageCard(e))
+                    .toList(),
               ),
             ),
-        show: (aushaenge != null && aushaenge?.error == false && (filteredAushaenge.length) != 0));
+        show: (aushaenge != null &&
+            aushaenge?.error == false &&
+            (filteredAushaenge.length) != 0));
   }
 }
 
@@ -146,17 +158,28 @@ class __AushangHomepageCardState extends State<_AushangHomepageCard> {
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
               padding: const EdgeInsets.all(16),
               child: Flex(
                 direction: Axis.horizontal,
                 children: [
                   widget.aushang.fixed
-                      ? Flexible(child: Transform.rotate(angle: 0.5, child: const Icon(Icons.push_pin, color: Colors.grey)), flex: 0)
+                      ? Flexible(
+                          child: Transform.rotate(
+                              angle: 0.5,
+                              child: const Icon(Icons.push_pin,
+                                  color: Colors.grey)),
+                          flex: 0)
                       : Container(),
                   widget.aushang.files.isNotEmpty
-                      ? Flexible(child: Transform.rotate(angle: 45, child: const Icon(Icons.attachment, color: Colors.grey)), flex: 0)
+                      ? Flexible(
+                          child: Transform.rotate(
+                              angle: 45,
+                              child: const Icon(Icons.attachment,
+                                  color: Colors.grey)),
+                          flex: 0)
                       : Container(),
                   const Flexible(child: SizedBox(width: 4), flex: 0),
                   Flexible(
@@ -165,7 +188,9 @@ class __AushangHomepageCardState extends State<_AushangHomepageCard> {
                       widget.aushang.name,
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: widget.aushang.read == ReadStatusBasic.read ? FontWeight.normal : FontWeight.w600,
+                        fontWeight: widget.aushang.read == ReadStatusBasic.read
+                            ? FontWeight.normal
+                            : FontWeight.w600,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -196,7 +221,8 @@ class __AushangHomepageCardState extends State<_AushangHomepageCard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PageAushangDetail(widget.aushang),
+                                builder: (context) =>
+                                    PageAushangDetail(widget.aushang),
                               ),
                             );
                           },

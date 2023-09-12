@@ -1,13 +1,19 @@
 part of opensense;
 
 class OpenSenseOverviewWidget extends StatefulWidget {
-  const OpenSenseOverviewWidget({Key? key, this.onSensorTap, this.showOnError = false, this.showTitle = true}) : super(key: key);
+  const OpenSenseOverviewWidget(
+      {Key? key,
+      this.onSensorTap,
+      this.showOnError = false,
+      this.showTitle = true})
+      : super(key: key);
 
   final void Function(String sensorId)? onSensorTap;
   final bool showTitle;
   final bool showOnError;
   @override
-  State<OpenSenseOverviewWidget> createState() => _OpenSenseOverviewWidgetState();
+  State<OpenSenseOverviewWidget> createState() =>
+      _OpenSenseOverviewWidgetState();
 }
 
 class _OpenSenseOverviewWidgetState extends State<OpenSenseOverviewWidget> {
@@ -62,14 +68,18 @@ class _OpenSenseOverviewWidgetState extends State<OpenSenseOverviewWidget> {
         color: Theme.of(context).colorScheme.secondary,
       ),
       title: Text(sensor.title),
-      subtitle: Text(sensor.lastMeasurement.value.toString() + " " + sensor.unit),
+      subtitle:
+          Text(sensor.lastMeasurement.value.toString() + " " + sensor.unit),
       dense: true,
       visualDensity: const VisualDensity(vertical: -3),
       contentPadding: const EdgeInsets.all(2),
       trailing: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [const Icon(Icons.bar_chart), Icon(Icons.adaptive.arrow_forward)]),
+          children: [
+            const Icon(Icons.bar_chart),
+            Icon(Icons.adaptive.arrow_forward)
+          ]),
     );
   }
 
@@ -90,11 +100,16 @@ class _OpenSenseOverviewWidgetState extends State<OpenSenseOverviewWidget> {
               Text(sensor.title),
               const SizedBox(height: 2),
               RichText(
-                  text: TextSpan(style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 16), children: [
-                TextSpan(text: sensor.lastMeasurement.value.toString()),
-                const TextSpan(text: " "),
-                TextSpan(text: sensor.unit),
-              ]))
+                  text: TextSpan(
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(fontSize: 16),
+                      children: [
+                    TextSpan(text: sensor.lastMeasurement.value.toString()),
+                    const TextSpan(text: " "),
+                    TextSpan(text: sensor.unit),
+                  ]))
             ],
           )
         ],
@@ -110,22 +125,30 @@ class _OpenSenseOverviewWidgetState extends State<OpenSenseOverviewWidget> {
         child: openSenseData?.data != null
             ? Padding(
                 padding: const EdgeInsets.all(20),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  if (widget.showTitle) ...[
-                    const Text(
-                      "openSense-Box",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                  ...openSenseData!.data!.sensors.map((e) => widget.onSensorTap != null ? SensorListTile(e) : SensorRow(e)).toList()
-                ]),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (widget.showTitle) ...[
+                        const Text(
+                          "openSense-Box",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                      ...openSenseData!.data!.sensors
+                          .map((e) => widget.onSensorTap != null
+                              ? SensorListTile(e)
+                              : SensorRow(e))
+                          .toList()
+                    ]),
               )
             : (widget.showOnError
                 ? NoConnectionColumn(
                     showImage: true,
                     title: "Keine Daten",
-                    subtitle: "Sensordaten konnten nicht abgerufen werden. Überprüfe ggf. deine Internetverbindung.",
+                    subtitle:
+                        "Sensordaten konnten nicht abgerufen werden. Überprüfe ggf. deine Internetverbindung.",
                     footerWidgets: [
                       Center(
                         child: TextButton.icon(
@@ -147,10 +170,12 @@ class SenseboxOutdoorTempTextHomepage extends StatefulWidget {
   const SenseboxOutdoorTempTextHomepage({Key? key}) : super(key: key);
 
   @override
-  State<SenseboxOutdoorTempTextHomepage> createState() => Sensebox_OutdoorTempTextStateHomepage();
+  State<SenseboxOutdoorTempTextHomepage> createState() =>
+      Sensebox_OutdoorTempTextStateHomepage();
 }
 
-class Sensebox_OutdoorTempTextStateHomepage extends State<SenseboxOutdoorTempTextHomepage> {
+class Sensebox_OutdoorTempTextStateHomepage
+    extends State<SenseboxOutdoorTempTextHomepage> {
   ErrorableData<_OpenSenseFullData?>? openSenseData;
   StreamSubscription? dataSubscription;
 
@@ -177,7 +202,8 @@ class Sensebox_OutdoorTempTextStateHomepage extends State<SenseboxOutdoorTempTex
   @override
   Widget build(BuildContext context) {
     if (openSenseData?.data == null) return Container();
-    var sensor = openSenseData!.data!.sensors.firstWhere((element) => element.title == "Temperatur");
+    var sensor = openSenseData!.data!.sensors
+        .firstWhere((element) => element.title == "Temperatur");
 
     return Padding(
       padding: const EdgeInsets.only(top: 4.0),
@@ -185,8 +211,12 @@ class Sensebox_OutdoorTempTextStateHomepage extends State<SenseboxOutdoorTempTex
           text: TextSpan(style: DefaultTextStyle.of(context).style, children: [
         const TextSpan(text: "Außentemperatur am Anger: "),
         TextSpan(
-            text: sensor.lastMeasurement.value.toString().replaceAll(".", ",") + " " + sensor.unit,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
+            text: sensor.lastMeasurement.value.toString().replaceAll(".", ",") +
+                " " +
+                sensor.unit,
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
         const TextSpan(text: ". "),
       ])),
     );

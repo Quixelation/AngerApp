@@ -87,15 +87,21 @@ class BasilTheme extends ThemeExtension<BasilTheme> {
       tabBarTheme: TabBarTheme(
           labelColor: colorScheme.onSurface,
           unselectedLabelColor: colorScheme.onSurface,
-          indicator: BoxDecoration(border: Border(bottom: BorderSide(color: colorScheme.primary, width: 2)))),
-      floatingActionButtonTheme:
-          FloatingActionButtonThemeData(backgroundColor: colorScheme.secondaryContainer, foregroundColor: colorScheme.onSecondaryContainer),
+          indicator: BoxDecoration(
+              border: Border(
+                  bottom: BorderSide(color: colorScheme.primary, width: 2)))),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: colorScheme.secondaryContainer,
+          foregroundColor: colorScheme.onSecondaryContainer),
       navigationRailTheme: NavigationRailThemeData(
           backgroundColor: isLight ? neutralColor : colorScheme.surface,
-          selectedIconTheme: IconThemeData(color: colorScheme.onSecondaryContainer),
+          selectedIconTheme:
+              IconThemeData(color: colorScheme.onSecondaryContainer),
           indicatorColor: colorScheme.secondaryContainer),
-      appBarTheme: AppBarTheme(backgroundColor: isLight ? neutralColor : colorScheme.surface),
-      chipTheme: ChipThemeData(backgroundColor: isLight ? neutralColor : colorScheme.surface),
+      appBarTheme: AppBarTheme(
+          backgroundColor: isLight ? neutralColor : colorScheme.surface),
+      chipTheme: ChipThemeData(
+          backgroundColor: isLight ? neutralColor : colorScheme.surface),
     );
   }
 

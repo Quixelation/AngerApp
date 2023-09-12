@@ -93,15 +93,18 @@ class NewsManager extends DataManager<NewsApiDataElement> {
     for (final newsItem in test) {
       final tempData = NewsApiDataElement(
           //TODO: Use better alternative to "!"...
-          id: int.parse(Uri.tryParse(newsItem.getElement("guid")!.text)!.queryParameters["p"]!),
+          id: int.parse(Uri.tryParse(newsItem.getElement("guid")!.text)!
+              .queryParameters["p"]!),
           title: newsItem.getElement("title")?.text,
           content: newsItem.getElement("content:encoded")?.text,
           creator: newsItem.getElement("dc:creator")?.text,
           link: Uri.parse(newsItem.getElement("link")!.text),
           category: newsItem.getElement("category")!.text,
           //TODO: Use better alternative to "!"...
-          pubDate: DateFormat("EEE, dd MMM yyyy HH:mm:ss Z").parse(newsItem.getElement("pubDate")!.text),
-          desc: HtmlCharacterEntities.decode(newsItem.getElement("description")?.text ?? ""));
+          pubDate: DateFormat("EEE, dd MMM yyyy HH:mm:ss Z")
+              .parse(newsItem.getElement("pubDate")!.text),
+          desc: HtmlCharacterEntities.decode(
+              newsItem.getElement("description")?.text ?? ""));
 
       outputList.add(tempData);
     }
@@ -134,7 +137,8 @@ class NewsManager extends DataManager<NewsApiDataElement> {
           title: dbQueryRes["title"].toString(),
           content: dbQueryRes["content"].toString(),
           desc: dbQueryRes["desc"].toString(),
-          pubDate: DateTime.fromMillisecondsSinceEpoch(int.parse(dbQueryRes["pubDate"].toString())),
+          pubDate: DateTime.fromMillisecondsSinceEpoch(
+              int.parse(dbQueryRes["pubDate"].toString())),
           link: Uri.parse(dbQueryRes["link"].toString()),
           category: dbQueryRes["category"].toString(),
           creator: dbQueryRes["creator"].toString()));
@@ -149,7 +153,9 @@ class NewsManager extends DataManager<NewsApiDataElement> {
     await db.transaction((transaction) async {
       try {
         for (final newsItem in newsData) {
-          final createt = await AppManager.stores.news.record(newsItem.id.toString()).put(transaction, {
+          final createt = await AppManager.stores.news
+              .record(newsItem.id.toString())
+              .put(transaction, {
             "id": newsItem.id.toString(),
             "title": newsItem.title,
             "desc": newsItem.desc,

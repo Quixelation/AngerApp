@@ -3,6 +3,7 @@ library calendar;
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/extensions.dart';
 import 'package:anger_buddy/logic/calendar/week_view/week_view_cal.dart';
@@ -12,6 +13,7 @@ import 'package:anger_buddy/logic/sync_manager.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
 import 'package:anger_buddy/utils/network_assistant.dart';
+import 'package:feature_flags/feature_flags.dart';
 import 'package:icalendar_parser/icalendar_parser.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -215,7 +217,8 @@ class CalendarManager extends DataManager<EventData> {
                 DateTime.fromMicrosecondsSinceEpoch(0);
 
         //skip events, that are too old (or too new), to save ressources
-        if (fromDate.difference(DateTime.now()).abs() > const Duration(days: 365)) {
+        if (fromDate.difference(DateTime.now()).abs() >
+            const Duration(days: 365)) {
           continue;
         }
         logger.d("[Calendar] Event: $currentEvent");
@@ -223,8 +226,8 @@ class CalendarManager extends DataManager<EventData> {
         final tempCalData = EventData.fromIcalJson(currentEvent);
         events.add(tempCalData);
       } catch (err) {
-        logger.e(
-            "[Calendar] Error parsing event $currentEvent with error: $err");
+        logger
+            .e("[Calendar] Error parsing event $currentEvent with error: $err");
       }
     }
     return events;

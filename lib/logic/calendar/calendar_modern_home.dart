@@ -70,7 +70,7 @@ class _TagesRow extends StatelessWidget {
                 border: Border(
                     left: BorderSide(
                         width: 4,
-                        color: Theme.of(context).colorScheme.primaryVariant))),
+                        color: Theme.of(context).colorScheme.primary))),
             child: Padding(
                 padding:
                     EdgeInsets.only(left: 30, top: 10, bottom: 20, right: 10),
@@ -89,19 +89,22 @@ class _TagesRow extends StatelessWidget {
                                     style: TextStyle(fontSize: 14)),
                               ))
                           .toList(),
-                      if (this.events.isEmpty) Padding(padding: const EdgeInsets.all(8), child: Text("Keine Termine", style: TextStyle(color: Colors.grey.shade500))),
-                        if (this.showGotoCalendarButton) ...[
-                          SizedBox(height: 12),
-                          Center(
-                              child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => WeekView()));
-                                  },
-                                  icon: Icon(Icons.calendar_month),
-                                  label: Text("Zum Kalender")))
-                        ]
+                      if (this.events.isEmpty)
+                        Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Text("Keine Termine",
+                                style: TextStyle(color: Colors.grey.shade500))),
+                      if (this.showGotoCalendarButton) ...[
+                        SizedBox(height: 12),
+                        Center(
+                            child: OutlinedButton.icon(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => WeekView()));
+                                },
+                                icon: Icon(Icons.calendar_month),
+                                label: Text("Zum Kalender")))
+                      ]
                     ]))),
       ),
       Positioned(child: CircleAvatar(child: Text(this.date.day.toString()))),

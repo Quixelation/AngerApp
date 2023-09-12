@@ -120,7 +120,8 @@ class _MatrixSettingsState extends State<MatrixSettings> {
             const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: const Text(
-                    "Weitere Funktionen in der Web-Version vom Jenaer Schulportal oder in anderen Clients.", style: TextStyle(fontSize: 14))),
+                    "Weitere Funktionen in der Web-Version vom Jenaer Schulportal oder in anderen Clients.",
+                    style: TextStyle(fontSize: 14))),
             const Divider(height: 64),
             const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),

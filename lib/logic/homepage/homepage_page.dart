@@ -147,6 +147,13 @@ class _HomePageContent extends StatelessWidget {
 
             actions: [
               IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => WebpageIntegration(
+                            url: AppManager.urls.beratungslehrer_homepage)));
+                  },
+                  icon: Icon(Icons.health_and_safety)),
+              IconButton(
                   iconSize: 26,
                   icon: const Icon(
                     Icons.feedback,
@@ -229,6 +236,7 @@ class _HomePageContent extends StatelessWidget {
                     MatrixHomepageQuicklook(),
                     VpWidget(),
                     AushangHomepageWidget(),
+                    StadtradelnWidget(),
                     KlausurenHomepageWidget(),
                     if (Features.isFeatureEnabled(
                         context, FeatureFlags.USE_MODERN_CALENDAR))
@@ -259,6 +267,7 @@ class _HomePageContent extends StatelessWidget {
                           FerienHomepageWidget(),
                           EventsThisWeek(),
                           NewsHomepageWidget(),
+                          StadtradelnWidget(),
                         ],
                         direction: Axis.vertical,
                       ),
@@ -317,7 +326,8 @@ class _HomePageContent extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           WhatsnewHomepageWidget(),
-                          OpenSenseOverviewWidget()
+                          OpenSenseOverviewWidget(),
+                          StadtradelnWidget(),
                         ],
                         direction: Axis.vertical,
                       ),

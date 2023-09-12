@@ -52,7 +52,8 @@ class _MoodleCourseCard extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => _MoodleCourseDetailsPage(course)));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => _MoodleCourseDetailsPage(course)));
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -60,7 +61,9 @@ class _MoodleCourseCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(course.displayname, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(course.displayname,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
               if (course.progress != null) ...[
                 const SizedBox(height: 12),
                 Column(
@@ -86,7 +89,10 @@ class _MoodleCourseCard extends StatelessWidget {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           gradient: LinearGradient(
-                            colors: [Theme.of(context).colorScheme.primary, Colors.black.withAlpha(22)],
+                            colors: [
+                              Theme.of(context).colorScheme.primary,
+                              Colors.black.withAlpha(22)
+                            ],
                             stops: List.filled(2, course.progress! / 100),
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,

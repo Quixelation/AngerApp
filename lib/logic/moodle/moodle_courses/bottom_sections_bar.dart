@@ -83,8 +83,7 @@ class _MainBottomSectionsBarState extends State<_MainBottomSectionsBar>
                                     if ((content.timeModified ?? 0) >
                                         lastmodifiedAsint) {
                                       // timeModified can't be null, bc then it wouldn't pass above "if greater as lastModified_asInt(== 0)"
-                                      lastmodifiedAsint =
-                                          content.timeModified!;
+                                      lastmodifiedAsint = content.timeModified!;
                                     }
                                   }
                                 }

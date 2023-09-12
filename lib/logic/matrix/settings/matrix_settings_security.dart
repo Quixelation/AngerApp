@@ -4,7 +4,8 @@ class _MatrixSettingsSecurity extends StatefulWidget {
   const _MatrixSettingsSecurity();
 
   @override
-  State<_MatrixSettingsSecurity> createState() => __MatrixSettingsSecurityState();
+  State<_MatrixSettingsSecurity> createState() =>
+      __MatrixSettingsSecurityState();
 }
 
 class __MatrixSettingsSecurityState extends State<_MatrixSettingsSecurity> {
@@ -16,13 +17,23 @@ class __MatrixSettingsSecurityState extends State<_MatrixSettingsSecurity> {
           children: [
             ListTile(
               title: const Text("Verschlüsselung aktiviert"),
-              trailing: Icon(AngerApp.matrix.client.encryption?.enabled ?? false ? Icons.check : Icons.close),
+              trailing: Icon(AngerApp.matrix.client.encryption?.enabled ?? false
+                  ? Icons.check
+                  : Icons.close),
             ),
             ListTile(
               title: const Text("CrossSigning aktiviert"),
-              trailing: Icon(AngerApp.matrix.client.encryption?.crossSigning.enabled ?? false ? Icons.check : Icons.close),
+              trailing: Icon(
+                  AngerApp.matrix.client.encryption?.crossSigning.enabled ??
+                          false
+                      ? Icons.check
+                      : Icons.close),
             ),
-            ListTile(title: const Text("SSSS defaultKeyId"), subtitle: Text(AngerApp.matrix.client.encryption?.ssss.defaultKeyId ?? "<none>")),
+            ListTile(
+                title: const Text("SSSS defaultKeyId"),
+                subtitle: Text(
+                    AngerApp.matrix.client.encryption?.ssss.defaultKeyId ??
+                        "<none>")),
             ListTile(
               title: const Text("SSSS Schlüssel erstellen"),
               onTap: () async {

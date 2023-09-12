@@ -19,12 +19,12 @@ class _MiniWebViewState extends State<MiniWebView> {
   @override
   Widget build(BuildContext context) {
     return WebView(
+    
       onWebViewCreated: (controller) {
         _controllerCompleter.complete(controller);
         this.controller = controller;
         controller.loadHtmlString(widget.htmlString);
       },
-
       initialUrl: 'about:blank',
       javascriptMode: JavascriptMode.unrestricted,
       gestureNavigationEnabled: false,

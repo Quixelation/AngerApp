@@ -27,11 +27,14 @@ class _WhatsnewPage extends StatelessWidget {
             )
           : ListView(padding: const EdgeInsets.all(16), children: [
               typeColumn(_ChangeType.critical, availableUpdates.first.whatsnew),
-              typeColumn(_ChangeType.newFeature, availableUpdates.first.whatsnew),
-              typeColumn(_ChangeType.improvement, availableUpdates.first.whatsnew),
+              typeColumn(
+                  _ChangeType.newFeature, availableUpdates.first.whatsnew),
+              typeColumn(
+                  _ChangeType.improvement, availableUpdates.first.whatsnew),
               typeColumn(_ChangeType.bugfix, availableUpdates.first.whatsnew),
               typeColumn(_ChangeType.cosmetic, availableUpdates.first.whatsnew),
-              typeColumn(_ChangeType.performance, availableUpdates.first.whatsnew),
+              typeColumn(
+                  _ChangeType.performance, availableUpdates.first.whatsnew),
               typeColumn(_ChangeType.text, availableUpdates.first.whatsnew),
             ]),
     );
@@ -56,18 +59,21 @@ class _WhatsnewPage extends StatelessWidget {
               children: [
                 Text(
                   type.emoji,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   type.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 24),
                 ),
               ],
             ),
             const SizedBox(height: 12),
             ...updatesForType.map((e) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4).copyWith(left: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 4)
+                      .copyWith(left: 16),
                   child: Opacity(
                     opacity: 0.87,
                     child: Row(

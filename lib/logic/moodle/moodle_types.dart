@@ -90,13 +90,17 @@ class MoodleConversation {
 
   MoodleConversation.fromApi(Map<String, dynamic> apiMap)
       : id = apiMap["id"],
-        members = (List<Map<String, dynamic>>.from((apiMap)["members"])).map(_MoodleMember.fromApi).toList(),
+        members = (List<Map<String, dynamic>>.from((apiMap)["members"]))
+            .map(_MoodleMember.fromApi)
+            .toList(),
         name = apiMap["name"],
         subname = apiMap["subname"],
         unreadCount = apiMap["unreadcount"],
         isRead = apiMap["isread"],
         isFav = apiMap["isfavourite"],
-        messages = (List<Map<String, dynamic>>.from((apiMap)["messages"])).map(MoodleMessage.fromApi).toList(),
+        messages = (List<Map<String, dynamic>>.from((apiMap)["messages"]))
+            .map(MoodleMessage.fromApi)
+            .toList(),
         isMuted = apiMap["ismuted"],
         memberCount = apiMap["membercount"];
 
@@ -126,13 +130,18 @@ class MoodleMessage {
   final String text;
   final DateTime timeCreated;
 
-  MoodleMessage({required this.id, required this.text, required this.timeCreated, required this.userIdFrom});
+  MoodleMessage(
+      {required this.id,
+      required this.text,
+      required this.timeCreated,
+      required this.userIdFrom});
 
   MoodleMessage.fromApi(Map<String, dynamic> apiMap)
       : id = apiMap["id"],
         userIdFrom = apiMap["useridfrom"],
         text = apiMap["text"],
-        timeCreated = DateTime.fromMillisecondsSinceEpoch((apiMap["timecreated"] as int) * 1000);
+        timeCreated = DateTime.fromMillisecondsSinceEpoch(
+            (apiMap["timecreated"] as int) * 1000);
 }
 
 enum _MoodleInstantMessageType {
@@ -172,7 +181,9 @@ class _MoodleCourse {
         enrolledUserCount = apiData["enrolledusercount"],
         summary = apiData["summary"],
         courseFormat = apiData["format"],
-        progress = apiData["progress"] != null ? double.tryParse(apiData["progress"].toString()) : null,
+        progress = apiData["progress"] != null
+            ? double.tryParse(apiData["progress"].toString())
+            : null,
         completed = apiData["completed"],
         isFavourite = apiData["isfavourite"],
         hidden = apiData["hidden"];
@@ -196,7 +207,9 @@ class _MoodleCourseSection {
         summary = apiMap["summary"],
         section = apiMap["section"],
         userVisible = apiMap["uservisible"],
-        modules = List.from(apiMap["modules"]).map((e) => _MoodleCourseModule.fromApi(e)).toList();
+        modules = List.from(apiMap["modules"])
+            .map((e) => _MoodleCourseModule.fromApi(e))
+            .toList();
 }
 
 // Index matches with completion in course_modules
@@ -256,9 +269,17 @@ class _MoodleCourseModule {
         modIconUrl = apiMap["modicon"],
         modType = apiMap["modname"],
         modTypePlural = apiMap["modplural"],
-        completionTracking = apiMap["completion"] != null ? _MoodleCompletionTracking.fromInt(apiMap["completion"]) : null,
-        completionData = apiMap["completiondata"] != null ? _MoodleCompletionData.fromApi(apiMap["completiondata"]) : null,
-        contents = apiMap["contents"] != null ? List.from(apiMap["contents"]).map((e) => _MoodleCourseModuleContent.fromApi(e)).toList() : null;
+        completionTracking = apiMap["completion"] != null
+            ? _MoodleCompletionTracking.fromInt(apiMap["completion"])
+            : null,
+        completionData = apiMap["completiondata"] != null
+            ? _MoodleCompletionData.fromApi(apiMap["completiondata"])
+            : null,
+        contents = apiMap["contents"] != null
+            ? List.from(apiMap["contents"])
+                .map((e) => _MoodleCourseModuleContent.fromApi(e))
+                .toList()
+            : null;
 }
 
 class _MoodleCourseModuleContent extends _MoodleFile {
@@ -300,7 +321,9 @@ class _MoodleAssignmentsForCourse {
         fullname = apiMap["fullname"],
         shortname = apiMap["shortname"],
         timemodified = apiMap["timemodified"],
-        assignments = List.from(apiMap["assignments"]).map((e) => _MoodleAssignment.fromApi(e)).toList();
+        assignments = List.from(apiMap["assignments"])
+            .map((e) => _MoodleAssignment.fromApi(e))
+            .toList();
 }
 
 class _MoodleAssignment {
@@ -339,8 +362,12 @@ class _MoodleAssignment {
         cutoffDate = apiMap["cutoffdate"],
         maxAttempts = apiMap["maxattempts"],
         intro = apiMap["intro"],
-        introAttachments = List.from(apiMap["introattachments"]).map((e) => _MoodleFile.fromApi(e)).toList(),
-        introFile = List.from(apiMap["introfile"]).map((e) => _MoodleFile.fromApi(e)).toList();
+        introAttachments = List.from(apiMap["introattachments"])
+            .map((e) => _MoodleFile.fromApi(e))
+            .toList(),
+        introFile = List.from(apiMap["introfile"])
+            .map((e) => _MoodleFile.fromApi(e))
+            .toList();
 }
 
 class _MoodleFile {

@@ -23,10 +23,19 @@ class __MatrixCreatePollPageState extends State<_MatrixCreatePollPage> {
   void sendPoll(BuildContext context) async {
     var generatedEventId = await widget.room.sendEvent({
       "org.matrix.msc3381.poll.start": {
-        "question": {"body": _pollNameController.text, "msgtype": "m.text", "org.matrix.msc1767.text": _pollNameController.text},
+        "question": {
+          "body": _pollNameController.text,
+          "msgtype": "m.text",
+          "org.matrix.msc1767.text": _pollNameController.text
+        },
         "kind": "org.matrix.msc3381.poll.disclosed",
         "max_selections": 1,
-        "answers": _pollOptions.map((e) => {"org.matrix.msc1767.text": e.text, "id": const uuid.Uuid().v4()}).toList()
+        "answers": _pollOptions
+            .map((e) => {
+                  "org.matrix.msc1767.text": e.text,
+                  "id": const uuid.Uuid().v4()
+                })
+            .toList()
       }
     }, type: "org.matrix.msc3381.poll.start");
     logger.d("Sent Poll with id $generatedEventId");
@@ -40,12 +49,14 @@ class __MatrixCreatePollPageState extends State<_MatrixCreatePollPage> {
       body: ListView(padding: const EdgeInsets.all(16), children: [
         TextField(
           controller: _pollNameController,
-          decoration: const InputDecoration(label: Text("Titel"), border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+              label: Text("Titel"), border: OutlineInputBorder()),
         ),
         const SizedBox(
           height: 16,
         ),
-        for (var option in _pollOptions) pollOptionField(optionTextController: option),
+        for (var option in _pollOptions)
+          pollOptionField(optionTextController: option),
         TextButton(
             onPressed: () {
               addOption();
@@ -63,12 +74,14 @@ class __MatrixCreatePollPageState extends State<_MatrixCreatePollPage> {
     );
   }
 
-  Widget pollOptionField({required TextEditingController optionTextController}) {
+  Widget pollOptionField(
+      {required TextEditingController optionTextController}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: TextField(
         controller: optionTextController,
-        decoration: const InputDecoration(label: Text("Options-Text"), border: OutlineInputBorder()),
+        decoration: const InputDecoration(
+            label: Text("Options-Text"), border: OutlineInputBorder()),
       ),
     );
   }

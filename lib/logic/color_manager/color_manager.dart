@@ -20,14 +20,18 @@ Future<void> initColorSubject() async {
     logger.i("[ColorManager] Db Color is empty");
     colorSubject.add(AngerAppColor.colors[16]);
   } else {
-    colorSubject.add(AngerAppColor.colors[int.parse(dbResp["value"].toString())]);
+    colorSubject
+        .add(AngerAppColor.colors[int.parse(dbResp["value"].toString())]);
   }
 }
 
 Future<void> setMainColor(AngerAppColor color) async {
   colorSubject.add(color);
   var db = getIt.get<AppManager>().db;
-  var dbEntry = {"key": "maincolor", "value": AngerAppColor.colors.indexOf(color).toString()};
+  var dbEntry = {
+    "key": "maincolor",
+    "value": AngerAppColor.colors.indexOf(color).toString()
+  };
   await AppManager.stores.data.record("maincolor").put(db, dbEntry);
 
   return;

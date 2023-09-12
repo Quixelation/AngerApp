@@ -187,7 +187,8 @@ class _MatrixMessage extends StatelessWidget {
                                           opacity: 0.67,
                                           child: Text("(" +
                                               displayEvent.redactedBecause!
-                                                  .content["reason"] +
+                                                  .content["reason"]
+                                                  .toString() +
                                               ")"))
                                   ],
                                 ),
@@ -273,7 +274,12 @@ class _MatrixMessage extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: relatedEvents
-                            .where((element) => element.type == "m.reaction")
+                            //TODO: Check if Map? is correct / casn cause issues
+                            .where((element) =>
+                                element.type == "m.reaction" &&
+                                (element.content["m.relates_to"]
+                                        as Map?)?["key"] !=
+                                    null)
                             .map((e) {
                           logger.d(e.toJson());
                           return Padding(
@@ -282,7 +288,8 @@ class _MatrixMessage extends StatelessWidget {
                               //TODO: add real badge number
                               label: const Text("1"),
                               avatar: Text(
-                                e.content["m.relates_to"]["key"],
+                                //TODO: Check if Map? is correct / casn cause issues
+                                (e.content["m.relates_to"]! as Map?)?["key"],
                                 style: TextStyle(color: textColor),
                               ),
                             ),

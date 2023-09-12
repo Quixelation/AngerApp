@@ -79,7 +79,6 @@ class _VpWidgetState extends State<VpWidget> {
         (Services.vp.settings.subject.value?.loadListOnStart ??
             Services.vp.settings.defaultSettings.loadListOnStart);
     return HomepageWidget(
-            
         builder: (context) => Card(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -134,9 +133,10 @@ class _VpWidgetState extends State<VpWidget> {
                               OutlinedButton(
                                   child: const Text("Seite öffnen"),
                                   onPressed: () {
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            const PageVp()));
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PageVp()));
                                   })
                             ],
                           )),

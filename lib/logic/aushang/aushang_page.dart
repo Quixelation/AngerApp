@@ -63,12 +63,17 @@ class _PageAushangListState extends State<PageAushangList> {
   @override
   Widget build(BuildContext context) {
     final needToLogin = aushangCreds == null;
-    final List<Aushang> finalList = [...data?.data.toList() ?? [], ...vpData ?? []];
+    final List<Aushang> finalList = [
+      ...data?.data.toList() ?? [],
+      ...vpData ?? []
+    ];
 
     return Scaffold(
       appBar: AppBar(title: const Text("Aushänge")),
       body: (data == null || needToLogin)
-          ? (needToLogin == true ? const _PageAushangCreds() : const Center(child: CircularProgressIndicator()))
+          ? (needToLogin == true
+              ? const _PageAushangCreds()
+              : const Center(child: CircularProgressIndicator()))
           : ListView(children: [
               _LoggedInAs(aushangCreds!),
               if (data!.error == true)
@@ -102,12 +107,20 @@ class _PageAushangListState extends State<PageAushangList> {
     return listData.map((e) {
       return ListTile(
         title: Text(
-          (e.klassenstufen.isNotEmpty ? "[${e.klassenstufen.join(", ")}] " : "") + e.name,
-          style: TextStyle(fontWeight: e.read == ReadStatusBasic.read ? FontWeight.normal : FontWeight.bold),
+          (e.klassenstufen.isNotEmpty
+                  ? "[${e.klassenstufen.join(", ")}] "
+                  : "") +
+              e.name,
+          style: TextStyle(
+              fontWeight: e.read == ReadStatusBasic.read
+                  ? FontWeight.normal
+                  : FontWeight.bold),
         ),
         subtitle: e.dateUpdated.millisecondsSinceEpoch == 0
-            ? Text("Erstellt: ${time2string(e.dateCreated, includeTime: true, includeWeekday: true)}")
-            : Text("Zuletzt geändert: ${time2string(e.dateUpdated, includeTime: true, includeWeekday: true)}"),
+            ? Text(
+                "Erstellt: ${time2string(e.dateCreated, includeTime: true, includeWeekday: true)}")
+            : Text(
+                "Zuletzt geändert: ${time2string(e.dateUpdated, includeTime: true, includeWeekday: true)}"),
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -152,12 +165,15 @@ class __LoggedInAsState extends State<_LoggedInAs> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Opacity(
                   opacity: 0.6,
-                  child: Text("Eingeloggt als:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  child: Text("Eingeloggt als:",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
                 Opacity(
                   opacity: 0.87,
-                  child: Text(widget.creds, 
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                  child: Text(widget.creds,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20)),
                 ),
               ]),
               const Spacer(),

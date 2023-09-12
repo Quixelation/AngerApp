@@ -9,7 +9,8 @@ class MatrixCreatePage extends StatefulWidget {
 
 class _MatrixCreatePageState extends State<MatrixCreatePage> {
   var groupNameController = TextEditingController();
-  final _UserSelectorController _userSelectorController = _UserSelectorController();
+  final _UserSelectorController _userSelectorController =
+      _UserSelectorController();
   List<Profile> usersToAdd = [];
 
   void addUserToUsersToAdd(Profile user) {
@@ -26,11 +27,14 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
         enableEncryption: true,
         groupName: groupNameController.text.trim(),
         visibility: matrix.Visibility.private,
-        invite: _userSelectorController.selectedUsers.map((e) => e.userId).toList(),
+        invite:
+            _userSelectorController.selectedUsers.map((e) => e.userId).toList(),
       );
 
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => RoomPage(room: AngerApp.matrix.client.rooms.firstWhere((element) => element.id == id))));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => RoomPage(
+              room: AngerApp.matrix.client.rooms
+                  .firstWhere((element) => element.id == id))));
     } catch (err) {
       showDialog(
           context: context,
@@ -58,7 +62,8 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
         children: [
           TextField(
             controller: groupNameController,
-            decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Chat-Name"),
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(), labelText: "Chat-Name"),
           ),
           const SizedBox(
             height: 32,
@@ -97,7 +102,11 @@ class _MatrixCreatePageState extends State<MatrixCreatePage> {
           // ),
           const Divider(),
           const SizedBox(height: 8),
-          Text("Mitglieder:", style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500)),
+          Text("Mitglieder:",
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(fontWeight: FontWeight.w500)),
           _UserSelector(controller: _userSelectorController),
           const SizedBox(height: 32),
           OutlinedButton.icon(

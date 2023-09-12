@@ -34,7 +34,8 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
               context: context,
               builder: (context2) => AlertDialog(
                     title: const Text("Ungespeicherte Änderungen"),
-                    content: const Text("Seite wirklich verlassen, ohne die Änderungen zu speichern?"),
+                    content: const Text(
+                        "Seite wirklich verlassen, ohne die Änderungen zu speichern?"),
                     actions: [
                       OutlinedButton.icon(
                           onPressed: () {
@@ -70,10 +71,14 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                     padding: const EdgeInsets.all(8.0),
                     child: Transform.scale(
                       child: InkWell(
-                        onTap: widget.room.ownPowerLevel >= widget.room.powerForChangingStateEvent("m.room.avatar")
+                        onTap: widget.room.ownPowerLevel >=
+                                widget.room
+                                    .powerForChangingStateEvent("m.room.avatar")
                             ? () async {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(content: Text("Bitte benutze die Webseite, um das Avatar zu ändern.")));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            "Bitte benutze die Webseite, um das Avatar zu ändern.")));
 
                                 // final bytes = await _getCroppedLibraryImage(context);
                                 // if (bytes == null) return;
@@ -115,7 +120,9 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                                 // }
                               }
                             : null,
-                        child: AngerApp.matrix.buildAvatar(context, widget.room.avatar, showLogo: false, room: widget.room),
+                        child: AngerApp.matrix.buildAvatar(
+                            context, widget.room.avatar,
+                            showLogo: false, room: widget.room),
                       ),
                       scale: 1.25,
                     ),
@@ -127,9 +134,12 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextField(
-                          enabled: widget.room.ownPowerLevel >= widget.room.powerForChangingStateEvent("m.room.name"),
+                          enabled: widget.room.ownPowerLevel >=
+                              widget.room
+                                  .powerForChangingStateEvent("m.room.name"),
                           controller: _roomNameController,
-                          decoration: const InputDecoration(label: Text("Name")),
+                          decoration:
+                              const InputDecoration(label: Text("Name")),
                         )
                       ],
                     ),
@@ -158,7 +168,8 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                       context: context,
                       builder: (context) => AlertDialog(
                             title: const Text("Chat verlassen"),
-                            content: const Text("Möchtest du den Chat wirklich verlassen?"),
+                            content: const Text(
+                                "Möchtest du den Chat wirklich verlassen?"),
                             actions: [
                               OutlinedButton.icon(
                                   icon: const Icon(Icons.exit_to_app),
@@ -176,7 +187,8 @@ class __MatrixRoomInfoState extends State<_MatrixRoomInfo> {
                           ));
                   if (result == true) {
                     await widget.room.leave();
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Chat verlassen")));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Chat verlassen")));
                   }
                 },
                 icon: const Icon(
@@ -213,13 +225,18 @@ class ParticipantTile extends StatelessWidget {
                     color: Colors.amberAccent.shade700,
                     size: 20,
                   )
-                : (participant.powerLevel == 50 ? const Icon(Icons.shield, size: 20, color: Colors.blueAccent) : Container()))),
-        title: Text(participant.calcDisplayname() + (participant.id == AngerApp.matrix.client.id ? " (Du)" : "")),
+                : (participant.powerLevel == 50
+                    ? const Icon(Icons.shield,
+                        size: 20, color: Colors.blueAccent)
+                    : Container()))),
+        title: Text(participant.calcDisplayname() +
+            (participant.id == AngerApp.matrix.client.id ? " (Du)" : "")),
         onTap: () {
           showModalBottomSheet(
               context: context,
               builder: (context2) {
-                final userIsSelf = participant.id == AngerApp.matrix.client.userID;
+                final userIsSelf =
+                    participant.id == AngerApp.matrix.client.userID;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
@@ -234,16 +251,18 @@ class ParticipantTile extends StatelessWidget {
                           : Transform.translate(
                               offset: const Offset(0, -35),
                               child: CircleAvatar(
-                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 radius: 60.0,
                                 child: CircleAvatar(
-                                  backgroundImage: NetworkImage(participant.avatarUrl!
-                                      .getThumbnail(
-                                        AngerApp.matrix.client,
-                                        width: 56,
-                                        height: 56,
-                                      )
-                                      .toString()),
+                                  backgroundImage:
+                                      NetworkImage(participant.avatarUrl!
+                                          .getThumbnail(
+                                            AngerApp.matrix.client,
+                                            width: 56,
+                                            height: 56,
+                                          )
+                                          .toString()),
                                   radius: 55.0,
                                 ),
                               ),
@@ -253,8 +272,10 @@ class ParticipantTile extends StatelessWidget {
                         child: Transform.translate(
                           offset: const Offset(0, -15),
                           child: Text(
-                            participant.calcDisplayname() + (userIsSelf ? " (Du)" : ""),
-                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            participant.calcDisplayname() +
+                                (userIsSelf ? " (Du)" : ""),
+                            style: const TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -267,14 +288,19 @@ class ParticipantTile extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.normal,
-                                color: Theme.of(context).colorScheme.brightness == Brightness.dark ? Colors.grey : Colors.grey.shade700),
+                                color:
+                                    Theme.of(context).colorScheme.brightness ==
+                                            Brightness.dark
+                                        ? Colors.grey
+                                        : Colors.grey.shade700),
                           ),
                         ),
                       ),
                       const Divider(),
                       if (participant.canChangePowerLevel)
                         ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 8),
                           leading: const Icon(
                             Icons.bolt,
                           ),
@@ -291,10 +317,13 @@ class ParticipantTile extends StatelessWidget {
                           title: const Text(
                             "Power-Level ändern",
                           ),
-                          trailing: const Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+                          trailing: const Opacity(
+                              opacity: 0.87,
+                              child: Icon(Icons.keyboard_arrow_right)),
                         ),
                       ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 8),
                         leading: const Icon(
                           Icons.how_to_reg,
                         ),
@@ -302,19 +331,24 @@ class ParticipantTile extends StatelessWidget {
                         title: const Text(
                           "Verifizieren",
                         ),
-                        trailing: const Opacity(opacity: 0.87, child: Icon(Icons.keyboard_arrow_right)),
+                        trailing: const Opacity(
+                            opacity: 0.87,
+                            child: Icon(Icons.keyboard_arrow_right)),
                       ),
                       const Divider(),
                       if (!userIsSelf)
-                        if (AngerApp.matrix.client.ignoredUsers.contains(participant.id))
+                        if (AngerApp.matrix.client.ignoredUsers
+                            .contains(participant.id))
                           ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 8),
                             leading: const Icon(
                               Icons.check_circle_outline,
                               color: Colors.green,
                             ),
                             onTap: () async {
-                              await AngerApp.matrix.client.unignoreUser(participant.id);
+                              await AngerApp.matrix.client
+                                  .unignoreUser(participant.id);
                               Navigator.of(context2).pop();
                             },
                             title: const Text(
@@ -324,13 +358,15 @@ class ParticipantTile extends StatelessWidget {
                           )
                         else
                           ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 8),
                             leading: const Icon(
                               Icons.block,
                               color: Colors.red,
                             ),
                             onTap: () async {
-                              await AngerApp.matrix.client.ignoreUser(participant.id);
+                              await AngerApp.matrix.client
+                                  .ignoreUser(participant.id);
                               Navigator.of(context2).pop();
                             },
                             title: const Text(
@@ -340,7 +376,8 @@ class ParticipantTile extends StatelessWidget {
                           ),
                       if (participant.canKick)
                         ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 8),
                           leading: const Icon(
                             Icons.person_remove,
                             color: Colors.red,
@@ -355,7 +392,8 @@ class ParticipantTile extends StatelessWidget {
                         )
                       else if (userIsSelf)
                         ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 8),
                           leading: const Icon(
                             Icons.exit_to_app,
                             color: Colors.red,
@@ -368,7 +406,8 @@ class ParticipantTile extends StatelessWidget {
                         ),
                       if (participant.canBan)
                         ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 8),
                           leading: const Icon(
                             Icons.gavel,
                             color: Colors.red,
@@ -393,7 +432,9 @@ class ParticipantTile extends StatelessWidget {
           children: [
             Text("Power-Level: " +
                 participant.powerLevel.toString() +
-                (participant.powerLevel == 100 ? " (Admin)" : (participant.powerLevel == 50 ? " (Moderator)" : ""))),
+                (participant.powerLevel == 100
+                    ? " (Admin)"
+                    : (participant.powerLevel == 50 ? " (Moderator)" : ""))),
             if (participant.membership.isInvite) const Text("[Eingeladen]"),
             if (participant.membership.isKnock) const Text("[Angefragt]")
           ],
@@ -481,8 +522,10 @@ class _ParticipantsListState extends State<_ParticipantsList> {
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
             onTap: () async {
-              var usersToInvite =
-                  await Navigator.of(context).push<List<Profile>>(MaterialPageRoute(builder: (builder) => _MatrixInviteUserPage(room: widget.room)));
+              var usersToInvite = await Navigator.of(context)
+                  .push<List<Profile>>(MaterialPageRoute(
+                      builder: (builder) =>
+                          _MatrixInviteUserPage(room: widget.room)));
               if (usersToInvite != null) {
                 //TODO: async promise collect and all together
                 for (var user in usersToInvite) {

@@ -79,8 +79,7 @@ class _HipPageState extends State<HipPage> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(context).copyWith(
-      ),
+      data: Theme.of(context).copyWith(),
       child: canAccessHip != false
           // Can Access HIP
           ? (hasLoginData == null

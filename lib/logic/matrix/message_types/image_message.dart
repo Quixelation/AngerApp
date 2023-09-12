@@ -6,64 +6,70 @@ class ChatBubbleImageRenderer extends StatefulWidget {
   final Event event;
 
   @override
-  State<ChatBubbleImageRenderer> createState() => _ChatBubbleImageRendererState();
+  State<ChatBubbleImageRenderer> createState() =>
+      _ChatBubbleImageRendererState();
 }
 
 class _ChatBubbleImageRendererState extends State<ChatBubbleImageRenderer> {
+  Uint8List? bytes;
 
-    Uint8List? bytes;
+  @override
+  void initState() {
+    super.initState();
+    loadImg();
+  }
 
-
-    @override
-  void initState(){
-        super.initState();
-        loadImg();
+  void loadImg() async {
+    logger.i(widget.event.attachmentMxcUrl.toString());
+    var cachedData = AngerApp
+        .matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString() ?? ""];
+    logger.i("Cached Image: $cachedData");
+    if (cachedData != null) {
+      setState(() {
+        bytes = cachedData;
+      });
+      return;
     }
-
-    void loadImg() async {
-        logger.i(widget.event.attachmentMxcUrl.toString());
-        var cachedData = AngerApp.matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString() ?? ""];
-        logger.i("Cached Image: $cachedData");
-        if(cachedData != null){
-            setState(() {
-                bytes = cachedData;
-            }); 
-            return;
-        }
-        if(await widget.event.isAttachmentInLocalStore() && widget.event.attachmentMxcUrl != null){
-            // Wir können hier database! schreiben, weil isAttachmentInLocalStore bereit sicherstellt, dass database != null ist.
-            var data = (await AngerApp.matrix.client.database!.getFile(widget.event.attachmentMxcUrl!))!;
-            setState((){
-                bytes = data;
-            });
-            AngerApp.matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString()] = data;
-        }
-        var data = (await widget.event.downloadAndDecryptAttachment()).bytes;
-        setState((){
-            bytes = data;
-        });
-            AngerApp.matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString()] = data;
-
+    if (await widget.event.isAttachmentInLocalStore() &&
+        widget.event.attachmentMxcUrl != null) {
+      // Wir können hier database! schreiben, weil isAttachmentInLocalStore bereit sicherstellt, dass database != null ist.
+      var data = (await AngerApp.matrix.client.database!
+          .getFile(widget.event.attachmentMxcUrl!))!;
+      setState(() {
+        bytes = data;
+      });
+      AngerApp.matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString()] =
+          data;
     }
-
+    var data = (await widget.event.downloadAndDecryptAttachment()).bytes;
+    setState(() {
+      bytes = data;
+    });
+    AngerApp.matrix.imageCacheMap[widget.event.attachmentMxcUrl.toString()] =
+        data;
+  }
 
   @override
   Widget build(BuildContext context) {
-              if (bytes == null) {
-          return Center(
-            child: CircularProgressIndicator.adaptive(
-              valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.onPrimaryContainer),
-            ),
-          );
-        } else {
-          return GestureDetector(
-              onTap: () {
-                showImageViewer(context, Image.memory(bytes!).image, doubleTapZoomable: true, swipeDismissible: true, immersive: false);
-                // context.pushTransparentRoute(_DismissableImage(
-                //     snapshot.data!.bytes, widget.event.eventId));
-              },
-              child: Hero(tag: widget.event.eventId, child: Image.memory(bytes!)));
-        }
+    if (bytes == null) {
+      return Center(
+        child: CircularProgressIndicator.adaptive(
+          valueColor: AlwaysStoppedAnimation(
+              Theme.of(context).colorScheme.onPrimaryContainer),
+        ),
+      );
+    } else {
+      return GestureDetector(
+          onTap: () {
+            showImageViewer(context, Image.memory(bytes!).image,
+                doubleTapZoomable: true,
+                swipeDismissible: true,
+                immersive: false);
+            // context.pushTransparentRoute(_DismissableImage(
+            //     snapshot.data!.bytes, widget.event.eventId));
+          },
+          child: Hero(tag: widget.event.eventId, child: Image.memory(bytes!)));
+    }
   }
 }
 

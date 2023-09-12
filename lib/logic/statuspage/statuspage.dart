@@ -15,7 +15,8 @@ class StatuspageManager {
   static String statuspageUrl = "https://status.jsp.jena.de";
 
   Future<_StatuspageApiResponse> fetchMonitors() async {
-    var response = await http.get(Uri.parse(statuspageUrl + "/api/status-page/jsp"));
+    var response =
+        await http.get(Uri.parse(statuspageUrl + "/api/status-page/jsp"));
     if (response.statusCode != 200) {
       logger.e(response.body);
       throw ErrorDescription("JSP Status didn't answer with 200");
@@ -27,7 +28,8 @@ class StatuspageManager {
   }
 
   Future<_StatuspageApiHeartbeatResponse> fetchHeartbeats() async {
-    var response = await http.get(Uri.parse(statuspageUrl + "/api/status-page/heartbeat/jsp"));
+    var response = await http
+        .get(Uri.parse(statuspageUrl + "/api/status-page/heartbeat/jsp"));
     if (response.statusCode != 200) {
       logger.e(response.body);
       throw ErrorDescription("JSP Status didn't answer with 200");

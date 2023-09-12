@@ -102,14 +102,13 @@ Future<ApiDataComplete> htmlToHipData(String html) async {
     // # NOTEN
     List<DataNote> noten = [];
 
-        // Sanitized die Note für int.parse
-String convertNote(String stringNote){
-if(stringNote.contains("+") || stringNote.contains("-")){
-                return stringNote.substring(0, 1);
-            }
-return stringNote;
-        }
-
+    // Sanitized die Note für int.parse
+    String convertNote(String stringNote) {
+      if (stringNote.contains("+") || stringNote.contains("-")) {
+        return stringNote.substring(0, 1);
+      }
+      return stringNote;
+    }
 
     try {
       var dataRows = element.children[0].children;

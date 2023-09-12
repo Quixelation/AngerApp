@@ -194,9 +194,8 @@ class _FileListTileState extends State<_FileListTile>
                         ),
                       );
                     });
-                var data =
-                    await Services.files.client!.webdav.download(file.path);
-                await File(path.join(dirPath, file.name)).writeAsBytes(data);
+                AngerApp.files.client!.webdav.getFile(
+                    Uri.parse(file.path), File(path.join(dirPath, file.name)));
                 if (dcontext != null) {
                   Navigator.pop(dcontext!);
                 }
@@ -299,7 +298,7 @@ class _LoggedInAs extends StatelessWidget {
                           height: 2,
                         ),
                         Text(
-                          (Services.files.client!.username ?? "Unbekant"),
+                          (Services.files.client!.loginName ?? "Unbekant"),
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),

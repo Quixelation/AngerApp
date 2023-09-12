@@ -38,25 +38,43 @@ int daysBetween(DateTime from, DateTime to) {
 }
 
 String intToMonth(int monthNr) {
-  return ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"][monthNr - 1];
+  return [
+    "Januar",
+    "Februar",
+    "März",
+    "April",
+    "Mai",
+    "Juni",
+    "Juli",
+    "August",
+    "September",
+    "Oktober",
+    "November",
+    "Dezember"
+  ][monthNr - 1];
 }
 
 enum ReadStatusBasic { read, notRead }
 
-Future<T> retryManager<T>({required Future<T> Function() function, int maxRetries = 5, Duration delay = const Duration(milliseconds: 500)}) async {
+Future<T> retryManager<T>(
+    {required Future<T> Function() function,
+    int maxRetries = 5,
+    Duration delay = const Duration(milliseconds: 500)}) async {
   bool taskCompleted = false;
   int tryNo = 0;
 
   while (!taskCompleted && tryNo < maxRetries) {
     try {
       var result = await function();
-      logger.v("[RetryManager] Function Exec successful after ${tryNo + 1} tries");
+      logger.v(
+          "[RetryManager] Function Exec successful after ${tryNo + 1} tries");
       return result;
     } catch (err) {
       final completer = Completer();
       Timer(delay, () => completer.complete());
       await completer.future;
-      logger.w("[RetryManager] Function Exec (#${tryNo + 1}) failed (${(maxRetries - tryNo) - 1} retries remaining with a delay of $delay)");
+      logger.w(
+          "[RetryManager] Function Exec (#${tryNo + 1}) failed (${(maxRetries - tryNo) - 1} retries remaining with a delay of $delay)");
     }
     tryNo++;
   }
@@ -66,5 +84,9 @@ Future<T> retryManager<T>({required Future<T> Function() function, int maxRetrie
 Future<String> getDeviceNameString() async {
   var deviceInfo = await DeviceInfoPlugin().deviceInfo;
   var data = deviceInfo.data;
-  return (data["brand"] ?? "--") + " " + (data["model"] ?? "--") + " " + (data["name"] ?? "--");
+  return (data["brand"] ?? "--") +
+      " " +
+      (data["model"] ?? "--") +
+      " " +
+      (data["name"] ?? "--");
 }

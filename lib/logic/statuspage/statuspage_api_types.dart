@@ -23,7 +23,9 @@ class _StatuspageApiResponsePublicGroupListItem {
       : id = apiMap["id"],
         name = apiMap["name"],
         weight = apiMap["weight"],
-        monitorList = List.from(apiMap["monitorList"]).map((e) => _StatuspageApiResponseMonitor.fromApi(e)).toList();
+        monitorList = List.from(apiMap["monitorList"])
+            .map((e) => _StatuspageApiResponseMonitor.fromApi(e))
+            .toList();
 }
 
 class _StatuspageApiResponseMonitor {
@@ -43,7 +45,9 @@ class _StatuspageApiResponse {
   final List<_StatuspageApiResponsePublicGroupListItem> publicGroupList;
   _StatuspageApiResponse.fromApi(Map<String, dynamic> apiMap)
       : config = _StatuspageApiResponseConfig.fromApi(apiMap["config"]),
-        publicGroupList = List.from(apiMap["publicGroupList"]).map((e) => _StatuspageApiResponsePublicGroupListItem.fromApi(e)).toList();
+        publicGroupList = List.from(apiMap["publicGroupList"])
+            .map((e) => _StatuspageApiResponsePublicGroupListItem.fromApi(e))
+            .toList();
 }
 
 class _StatuspageApiHeartbeat {
@@ -52,7 +56,11 @@ class _StatuspageApiHeartbeat {
   final String time;
   final String msg;
   final int? ping;
-  _StatuspageApiHeartbeat({required this.msg, required this.ping, required this.status, required this.time});
+  _StatuspageApiHeartbeat(
+      {required this.msg,
+      required this.ping,
+      required this.status,
+      required this.time});
   _StatuspageApiHeartbeat.fromApi(Map<String, dynamic> apiMap)
       : status = apiMap["status"],
         time = apiMap["time"],
@@ -70,7 +78,9 @@ class _StatuspageApiHeartbeatResponse {
     Map<int, List<_StatuspageApiHeartbeat>> tempHeartbeatList = {};
     for (var heartbeatEntryList in Map.from(apiMap["heartbeatList"]).entries) {
       tempHeartbeatList[int.parse(heartbeatEntryList.key)] =
-          List.from(heartbeatEntryList.value).map((e) => _StatuspageApiHeartbeat.fromApi(e)).toList();
+          List.from(heartbeatEntryList.value)
+              .map((e) => _StatuspageApiHeartbeat.fromApi(e))
+              .toList();
     }
     heartbeatList = tempHeartbeatList;
 
@@ -78,7 +88,9 @@ class _StatuspageApiHeartbeatResponse {
     Map<int, double> tempUptimeList = {};
     try {
       for (var uptimeEntry in Map.from(apiMap["uptimeList"]).entries) {
-        tempUptimeList[int.parse((uptimeEntry.key as String).replaceAll("_24", ""))] = double.parse(uptimeEntry.value.toString());
+        tempUptimeList[
+                int.parse((uptimeEntry.key as String).replaceAll("_24", ""))] =
+            double.parse(uptimeEntry.value.toString());
       }
     } catch (err) {
       logger.w(err);

@@ -20,6 +20,7 @@ import 'package:anger_buddy/logic/schuelerrat/schuelerrat_page.dart';
 import 'package:anger_buddy/logic/statuspage/statuspage.dart';
 import 'package:anger_buddy/logic/univention_links/univention_links.dart';
 import 'package:anger_buddy/logic/vertretungsplan/vertretungsplan.dart';
+import 'package:anger_buddy/logic/website_integration/website_integration.dart';
 import 'package:anger_buddy/logic/wp_images/wp_images.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -203,7 +204,11 @@ class MainDrawer extends StatelessWidget {
                           Feature(FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED,
                               name: "Intelligente Noten-Ansicht"),
                           Feature(FeatureFlags.USE_MODERN_CALENDAR,
-                              name: "Moderner Start-Kalender")
+                              name: "Moderner Start-Kalender"),
+                          Feature(FeatureFlags.SHOW_WEBPAGE_INTEGRATION,
+                              name: "WebpageIntegration bei Beraatung, SchuSo"),
+                          Feature(FeatureFlags.USE_WEBPAGE_CALENDAR,
+                              name: "WebpageIntegration im Kalender"),
                         ]))
                   ]);
                 } else {
@@ -243,17 +248,23 @@ class MainDrawer extends StatelessWidget {
                 icon: Icons.article_outlined,
                 page: PageNewsList(),
               ),
-              const _DrawerLink(
+              _DrawerLink(
                 title: "Kalender",
                 icon: Icons.calendar_today_outlined,
-                page: PageCalendar(),
+                page: Features.isFeatureEnabled(
+                        context, FeatureFlags.USE_WEBPAGE_CALENDAR)
+                    ? WebpageIntegration(url: AppManager.urls.calendar_homepage)
+                    : PageCalendar(),
               ),
-              const _DrawerLink(
-                title: "Wochen",
-                subtitle: "(Experimentell)",
-                icon: Icons.view_week_outlined,
-                page: WeekView(),
-              ),
+              if (Features.isFeatureEnabled(
+                      context, FeatureFlags.USE_WEBPAGE_CALENDAR) ==
+                  false)
+                const _DrawerLink(
+                  title: "Wochen",
+                  subtitle: "(Experimentell)",
+                  icon: Icons.view_week_outlined,
+                  page: WeekView(),
+                ),
               const _DrawerLink(
                 title: "Vertretung",
                 icon: Icons.switch_account_outlined,
@@ -282,7 +293,7 @@ class MainDrawer extends StatelessWidget {
               ),
             ]),
             const Divider(),
-            const _Category("Schule", [
+            _Category("Schule", [
               _DrawerLink(
                 title: "Prüfungen",
                 icon: Icons.label_important_outline,
@@ -304,7 +315,40 @@ class MainDrawer extends StatelessWidget {
                 title: "openSense",
                 icon: Icons.sensors_outlined,
                 page: OpenSensePage(),
-              )
+              ),
+              if (Features.isFeatureEnabled(
+                  context, FeatureFlags.SHOW_WEBPAGE_INTEGRATION))
+                _DrawerLink(
+                    title: "Beratung",
+                    icon: Icons.emoji_people_outlined,
+                    page: WebpageIntegration(
+                        url: AppManager.urls.beratungslehrer_homepage)),
+              const _DrawerLink(
+                title: "Schülerrat",
+                icon: Icons.groups_outlined,
+                page: SchuelerratMainPage(),
+              ),
+              const _DrawerLink(
+                title: "Bilder",
+                badge: "NEU",
+                icon: Icons.perm_media_outlined,
+                page: WpImagesPage(),
+              ),
+              _DrawerLink(
+                title: "Stundenzeiten",
+                icon: Icons.access_time_outlined,
+                page: parsePage(() => stundenzeitenPage),
+              ),
+              _DrawerLink(
+                title: "SchuSo",
+                icon: Icons.person_outline,
+                page: Features.isFeatureEnabled(
+                        context, FeatureFlags.SHOW_WEBPAGE_INTEGRATION)
+                    ? WebpageIntegration(url: AppManager.urls.schuso_homepage)
+                    : parsePage(() {
+                        return schuSoPage;
+                      }),
+              ),
             ]),
             const Divider(),
             const _Category("Jenaer-Schulportal", [
@@ -340,31 +384,8 @@ class MainDrawer extends StatelessWidget {
                   url: "https://jsp.jena.de/",
                   icon: Icons.home_outlined),
             ]),
-            const Divider(),
-            _Category("Informationen", [
-              const _DrawerLink(
-                title: "Schülerrat",
-                icon: Icons.groups_outlined,
-                page: SchuelerratMainPage(),
-              ),
-              const _DrawerLink(
-                title: "Bilder",
-                badge: "NEU",
-                icon: Icons.perm_media_outlined,
-                page: WpImagesPage(),
-              ),
-              _DrawerLink(
-                title: "Stundenzeiten",
-                icon: Icons.access_time_outlined,
-                page: parsePage(() => stundenzeitenPage),
-              ),
-              _DrawerLink(
-                title: "SchuSo",
-                icon: Icons.person_outline,
-                page: parsePage(() {
-                  return schuSoPage;
-                }),
-              ),
+//            const Divider(),
+            //_Category("Informationen", [
 //              const _DrawerLink(
 //                title: "AGs",
 //                subtitle: "Siehe Downloads",
@@ -374,12 +395,12 @@ class MainDrawer extends StatelessWidget {
 //                  page: PageAgs(),
 //                ),
 //              ),
-              // const _DrawerLink(
-              //   title: "Chor/Orchester",
-              //   icon: Icons.piano,
-              //   page: PageChorOrchesteR(),
-              // ),
-            ]),
+            // const _DrawerLink(
+            //   title: "Chor/Orchester",
+            //   icon: Icons.piano,
+            //   page: PageChorOrchesteR(),
+            // ),
+//            ]),
 
             /*
             const Divider(),
@@ -578,36 +599,37 @@ class _DrawerLink extends StatelessWidget {
   Widget build(BuildContext context) {
     if (Features.isFeatureEnabled(context, FeatureFlags.USE_NEW_DRAWER)) {
       /// NEW CARD DESIGN
-      return InkWell(
-        onTap: wip != true
-            ? () {
-                _navigate(page, context);
-              }
-            : null,
-        child: Badge(
-          label: Text(badge ?? ""),
-          isLabelVisible: badge != null,
-          alignment: Alignment.topRight,
-          offset: const Offset(-15, 0),
-          child: Opacity(
-            opacity: wip ? 0.5 : 1,
-            child: Card(
+      return Badge(
+        label: Text(badge ?? ""),
+        isLabelVisible: badge != null,
+        alignment: Alignment.topRight,
+        offset: const Offset(-15, 0),
+        child: Opacity(
+          opacity: wip ? 0.5 : 1,
+          child: Card(
+              clipBehavior: Clip.hardEdge,
+              child: InkWell(
+                onTap: wip != true
+                    ? () {
+                        _navigate(page, context);
+                      }
+                    : null,
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Column(
-                  children: [
-                    Icon(icon, color: _drawerLinkColor(context)),
-                    const SizedBox(height: 8),
-                    Text(title,
-                        style: TextStyle(color: _drawerLinkColor(context)))
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Icon(icon, color: _drawerLinkColor(context)),
+                        const SizedBox(height: 8),
+                        Text(title,
+                            style: TextStyle(color: _drawerLinkColor(context)))
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                    ),
+                  ),
                 ),
-              ),
-            )),
-          ),
+              )),
         ),
       );
     }

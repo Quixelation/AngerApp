@@ -50,7 +50,8 @@ class _MatrixSasDialogState extends State<MatrixSasDialog> {
       switch (currentState) {
         case KeyVerificationState.askAccept:
           return AlertDialog(
-            title: Text("${widget.event.userId} möchte eine Verifizierung starten"),
+            title: Text(
+                "${widget.event.userId} möchte eine Verifizierung starten"),
             actions: [
               OutlinedButton.icon(
                   onPressed: () async {
@@ -82,13 +83,15 @@ class _MatrixSasDialogState extends State<MatrixSasDialog> {
                     widget.event.rejectSas();
                   },
                   icon: const Icon(Icons.error, color: Colors.red),
-                  label: Text("Emojis stimmen NICHT überein", style: TextStyle(color: Colors.red.shade600))),
+                  label: Text("Emojis stimmen NICHT überein",
+                      style: TextStyle(color: Colors.red.shade600))),
               OutlinedButton.icon(
                   onPressed: () {
                     widget.event.acceptSas();
                   },
                   icon: const Icon(Icons.verified_user, color: Colors.green),
-                  label: Text("Emojis stimmen überein", style: TextStyle(color: Colors.green.shade700)))
+                  label: Text("Emojis stimmen überein",
+                      style: TextStyle(color: Colors.green.shade700)))
             ],
             title: const Text("Emoji-Verifizierung"),
             content: Column(
@@ -159,24 +162,31 @@ class _MatrixSasDialogState extends State<MatrixSasDialog> {
             content: Builder(builder: (context) {
               switch (widget.event.canceledCode) {
                 case "m.user":
-                  return const Text("Der Benutzer hat die Verifizierung abgebrochen.");
+                  return const Text(
+                      "Der Benutzer hat die Verifizierung abgebrochen.");
                 case "m.timeout":
-                  return const Text("Die Verifizierung hat zu lange gedauert und wurde automatisch abgebrochen.");
+                  return const Text(
+                      "Die Verifizierung hat zu lange gedauert und wurde automatisch abgebrochen.");
                 case "m.unknown_transaction":
-                  return const Text("Das Gerät kennt die angegebene Transaktions-ID nicht.");
+                  return const Text(
+                      "Das Gerät kennt die angegebene Transaktions-ID nicht.");
                 case "m.unknown_method":
-                  return const Text("Das Gerät weiß nicht, wie es mit der angeforderten Verifizierungs-Methode umgehen soll.");
+                  return const Text(
+                      "Das Gerät weiß nicht, wie es mit der angeforderten Verifizierungs-Methode umgehen soll.");
                 case "m.unexpected_message":
-                  return const Text("Das Gerät hat eine unerwartete Nachricht erhalten.");
+                  return const Text(
+                      "Das Gerät hat eine unerwartete Nachricht erhalten.");
                 case "m.key_mismatch":
                   return const Text("Der Schlüssel wurde nicht verifiziert.");
                 case "m.mismatched_commitment":
-                  return const Text("Das Hash-Commitment stimmte nicht überein.");
+                  return const Text(
+                      "Das Hash-Commitment stimmte nicht überein.");
                 case "m.mismatched_sas":
                   return const Text(
                       "Die kurzen Authentifizierungs-Zeichenketten stimmten nicht überein. Höchstwahrscheinlich ist die Verbindung nicht sicher und ein/e Gerät, Server oder Internetverbindung komprimiert.");
                 case "m.user_mismatch":
-                  return const Text("Der erwartete Benutzer stimmte nicht mit dem verifizierten Benutzer überein.");
+                  return const Text(
+                      "Der erwartete Benutzer stimmte nicht mit dem verifizierten Benutzer überein.");
                 case "m.invalid_message":
                   return const Text("Die empfangene Nachricht war ungültig.");
                 case "m.accepted":

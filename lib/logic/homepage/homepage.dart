@@ -4,9 +4,12 @@ import 'package:anger_buddy/FeatureFlags.dart';
 import 'package:anger_buddy/angerapp.dart';
 import 'package:anger_buddy/extensions.dart';
 import 'package:anger_buddy/logic/feedback/feedback.dart';
+import 'package:anger_buddy/logic/stadtradeln/stadtradeln.dart';
+import 'package:anger_buddy/logic/website_integration/website_integration.dart';
 import 'package:anger_buddy/logic/whatsnew/whatsnew.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
+import 'package:anger_buddy/pages/under_construction.dart';
 import 'package:anger_buddy/partials/drawer.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:feature_flags/feature_flags.dart';
@@ -42,13 +45,16 @@ class HomepageSettings {
   set useNavBar(bool val) {
     _useNavBar = val;
     var db = getIt.get<AppManager>().db;
-    AppManager.stores.data.record("homepage_usenavbar").put(db, {"value": val.toString()});
+    AppManager.stores.data
+        .record("homepage_usenavbar")
+        .put(db, {"value": val.toString()});
     logger.v("[Homepage] useNavBar set to " + _useNavBar.toString());
   }
 
   Future<void> init() async {
     var db = getIt.get<AppManager>().db;
-    var items = await AppManager.stores.data.records(["homepage_usenavbar"]).get(db);
+    var items =
+        await AppManager.stores.data.records(["homepage_usenavbar"]).get(db);
 
     _useNavBar = (items[0]?["value"]?.toString() ?? "true") == "true";
 

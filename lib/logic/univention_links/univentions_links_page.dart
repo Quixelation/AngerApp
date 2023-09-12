@@ -40,16 +40,20 @@ class _UniventionLinksPageState extends State<UniventionLinksPage> {
               ...data!.content
                   .where((element) => element.entries.isNotEmpty)
                   .map((e) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 4),
                         child: Card(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(top: 16, bottom: 4, left: 12, right: 12),
+                                padding: const EdgeInsets.only(
+                                    top: 16, bottom: 4, left: 12, right: 12),
                                 child: Text(
                                   e.category.display_name.de_DE!,
-                                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Column(
@@ -63,8 +67,10 @@ class _UniventionLinksPageState extends State<UniventionLinksPage> {
                                             width: 50,
                                             height: 50,
                                           ),
-                                          onTap: () => launchURL(f.link.toString(), context),
-                                          trailing: const Icon(Icons.open_in_new),
+                                          onTap: () => launchURL(
+                                              f.link.toString(), context),
+                                          trailing:
+                                              const Icon(Icons.open_in_new),
                                           subtitle: Text(f.description.de_DE!),
                                           title: Text(f.name.de_DE!)),
                                     )

@@ -12,9 +12,8 @@ extension MapWithIndex<E> on List {
     return mapList;
   }
 
-
-
-  List<T> mapWithIndexAndLength<T, E>(T Function(E element, int index, int length) cb) {
+  List<T> mapWithIndexAndLength<T, E>(
+      T Function(E element, int index, int length) cb) {
     List<T> mapList = [];
     for (var i = 0; i < length; i++) {
       mapList.add(cb(this[i], i, length));
@@ -56,15 +55,15 @@ extension FileFormatter on num {
     if (this <= 0) return "0";
     final units = ["B", "kB", "MB", "GB", "TB"];
     int digitGroups = (log(this) / log(base)).round();
-    return NumberFormat("#,##0.#").format(this / pow(base, digitGroups)) + " " + units[digitGroups];
+    return NumberFormat("#,##0.#").format(this / pow(base, digitGroups)) +
+        " " +
+        units[digitGroups];
   }
 }
-
-
 
 extension Between on DateTime {
   bool isBetween(DateTime date_start, DateTime date_end) {
-    return this.isSameOrAfterDateAt0(date_start) && this.isSameOrBeforeDateAt0(date_end);
+    return this.isSameOrAfterDateAt0(date_start) &&
+        this.isSameOrBeforeDateAt0(date_end);
   }
 }
-

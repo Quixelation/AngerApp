@@ -4,7 +4,8 @@ class MatrixHomepageQuicklook extends StatefulWidget {
   const MatrixHomepageQuicklook({Key? key}) : super(key: key);
 
   @override
-  State<MatrixHomepageQuicklook> createState() => _MatrixHomepageQuicklookState();
+  State<MatrixHomepageQuicklook> createState() =>
+      _MatrixHomepageQuicklookState();
 }
 
 class _MatrixHomepageQuicklookState extends State<MatrixHomepageQuicklook> {
@@ -18,7 +19,10 @@ class _MatrixHomepageQuicklookState extends State<MatrixHomepageQuicklook> {
 
     final client = Services.matrix.client;
     setState(() {
-      unreadRooms = client.rooms.where((element) => element.notificationCount > 0 || element.isUnreadOrInvited).toList();
+      unreadRooms = client.rooms
+          .where((element) =>
+              element.notificationCount > 0 || element.isUnreadOrInvited)
+          .toList();
     });
     client.onEvent.stream.listen((event) {
       if (!mounted) {
@@ -26,7 +30,10 @@ class _MatrixHomepageQuicklookState extends State<MatrixHomepageQuicklook> {
         return;
       }
       setState(() {
-        unreadRooms = client.rooms.where((element) => element.notificationCount > 0 || element.isUnreadOrInvited).toList();
+        unreadRooms = client.rooms
+            .where((element) =>
+                element.notificationCount > 0 || element.isUnreadOrInvited)
+            .toList();
       });
     });
   }
@@ -50,7 +57,8 @@ class _MatrixHomepageQuicklookState extends State<MatrixHomepageQuicklook> {
                     padding: EdgeInsets.only(left: 16, top: 16),
                     child: Text(
                       "Neue Nachrichten",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -83,15 +91,22 @@ class _MatrixHomepageQuicklookState extends State<MatrixHomepageQuicklook> {
                                 : null,
                             trailing: Container(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4.0, horizontal: 8.0),
                                 child: Text(
                                   e.notificationCount.toString(),
-                                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer),
                                 ),
                               ),
                               decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primaryContainer,
-                                  borderRadius: const BorderRadius.all(Radius.circular(999999999))),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(999999999))),
                             ),
                           ))
                       .toList()

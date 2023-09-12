@@ -23,7 +23,9 @@ class WpImagesManager {
   // Future<AssetImage> fetchAndCacheImageFromServer(String imageUrl) async {}
 
   Future<List<WpImage>> fetchImages({int page = 1}) async {
-    var response = await http.get(Uri.parse(AppManager.angergymnasiumWebsiteUrl + "wp-json/wp/v2/media?per_page=100&page=$page"));
+    var response = await http.get(Uri.parse(
+        AppManager.angergymnasiumWebsiteUrl +
+            "wp-json/wp/v2/media?per_page=100&page=$page"));
     if (response.statusCode != 200) {
       try {
         var json = jsonDecode(response.body);

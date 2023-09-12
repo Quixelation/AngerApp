@@ -87,15 +87,14 @@ class _SchwarzesBrettHomeState extends State<SchwarzesBrettHome> {
           ),
           const PopupMenuItem(
             value: 2,
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.visibility_off,
-                  ),
-                  SizedBox(width: 10),
-                  Text("Verstecken")
-                ]),
+            child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Icon(
+                Icons.visibility_off,
+              ),
+              SizedBox(width: 10),
+              Text("Verstecken")
+            ]),
           ),
         ];
       },

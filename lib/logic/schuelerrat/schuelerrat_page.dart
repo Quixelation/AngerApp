@@ -33,8 +33,10 @@ class _SchuelerratMainPageState extends State<SchuelerratMainPage> {
             });
           },
           destinations: const [
-            NavigationDestination(icon: Icon(Icons.info_outline), label: "Information"),
-            NavigationDestination(icon: Icon(Icons.newspaper_outlined), label: "Nachrichten"),
+            NavigationDestination(
+                icon: Icon(Icons.info_outline), label: "Information"),
+            NavigationDestination(
+                icon: Icon(Icons.newspaper_outlined), label: "Nachrichten"),
           ]),
     );
   }
@@ -62,7 +64,10 @@ class __SrInfoPageState extends State<_SrInfoPage> {
             const Divider(),
             Text(
               text,
-              style: TextStyle(height: 1.25, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.9)),
+              style: TextStyle(
+                  height: 1.25,
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.9)),
             )
           ],
         ),
@@ -78,7 +83,9 @@ class __SrInfoPageState extends State<_SrInfoPage> {
         Card(
           child: InkWell(
             onTap: () {
-              launchURL("https://www.instagram.com/_schuelerrat_angergymnasium_/", context);
+              launchURL(
+                  "https://www.instagram.com/_schuelerrat_angergymnasium_/",
+                  context);
             },
             child: const Padding(
               padding: EdgeInsets.all(16),
@@ -93,9 +100,13 @@ class __SrInfoPageState extends State<_SrInfoPage> {
                     children: [
                       Text(
                         "Neues auf Instagram",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
-                      Opacity(opacity: 0.87, child: Text("Wie willst du denn auf dem laufenden bleiben, wenn du uns nicht auf Instagram folgst?"))
+                      Opacity(
+                          opacity: 0.87,
+                          child: Text(
+                              "Wie willst du denn auf dem laufenden bleiben, wenn du uns nicht auf Instagram folgst?"))
                     ],
                   ),
                 ),
@@ -132,7 +143,8 @@ class _SrNewsPage extends StatefulWidget {
 }
 
 class __SrNewsPageState extends State<_SrNewsPage> {
-  AsyncDataResponse<List<SrNewsElement>>? newsElems = Services.srNews.subject.valueWrapper?.value;
+  AsyncDataResponse<List<SrNewsElement>>? newsElems =
+      Services.srNews.subject.valueWrapper?.value;
   StreamSubscription? newsElemsSub;
 
   @override
@@ -170,7 +182,9 @@ class __SrNewsPageState extends State<_SrNewsPage> {
               .map((e) => ListTile(
                     trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchuelerratNachrichtPage(id: e.id)));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              SchuelerratNachrichtPage(id: e.id)));
                     },
                     title: Text(
                       e.title,
@@ -180,10 +194,13 @@ class __SrNewsPageState extends State<_SrNewsPage> {
                       data: e.content,
                       style: {
                         '#': Style(
-                          padding:HtmlPaddings.all(0), 
+                          padding: HtmlPaddings.all(0),
                           margin: Margins.all(0),
                           maxLines: 2,
-                          color: Theme.of(context).colorScheme.onSurface.withAlpha(187),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withAlpha(187),
                           textOverflow: TextOverflow.ellipsis,
                         ),
                       },
@@ -200,12 +217,14 @@ class __SrNewsPageState extends State<_SrNewsPage> {
 }
 
 class SchuelerratNachrichtPage extends StatefulWidget {
-  const SchuelerratNachrichtPage({Key? key, required this.id}) : super(key: key);
+  const SchuelerratNachrichtPage({Key? key, required this.id})
+      : super(key: key);
 
   final String id;
 
   @override
-  State<SchuelerratNachrichtPage> createState() => _SchuelerratNachrichtPageState();
+  State<SchuelerratNachrichtPage> createState() =>
+      _SchuelerratNachrichtPageState();
 }
 
 class _SchuelerratNachrichtPageState extends State<SchuelerratNachrichtPage> {
@@ -214,7 +233,8 @@ class _SchuelerratNachrichtPageState extends State<SchuelerratNachrichtPage> {
   @override
   void initState() {
     var subjectValue = Services.srNews.subject.valueWrapper?.value;
-    var subjectSearchValue = subjectValue?.data.where((element) => element.id == widget.id);
+    var subjectSearchValue =
+        subjectValue?.data.where((element) => element.id == widget.id);
 
     if (subjectSearchValue == null && (subjectSearchValue?.length ?? 0) > 0) {
       Services.srNews.fetchFromServerWithId(widget.id).then((value) {
@@ -245,7 +265,9 @@ class _SchuelerratNachrichtPageState extends State<SchuelerratNachrichtPage> {
         Opacity(
           opacity: 0.87,
           child: Text(
-            newsElem!.dateCreated.realDate != null ? time2string(newsElem!.dateCreated.realDate!) : newsElem!.dateCreated.date,
+            newsElem!.dateCreated.realDate != null
+                ? time2string(newsElem!.dateCreated.realDate!)
+                : newsElem!.dateCreated.date,
             style: const TextStyle(fontSize: 15),
           ),
         ),
@@ -253,7 +275,10 @@ class _SchuelerratNachrichtPageState extends State<SchuelerratNachrichtPage> {
           Opacity(
             opacity: 0.87,
             child: Text(
-              "Geändert: " + (newsElem!.dateUpdated?.realDate != null ? time2string(newsElem!.dateUpdated!.realDate!) : newsElem!.dateUpdated!.date),
+              "Geändert: " +
+                  (newsElem!.dateUpdated?.realDate != null
+                      ? time2string(newsElem!.dateUpdated!.realDate!)
+                      : newsElem!.dateUpdated!.date),
               style: const TextStyle(fontSize: 15),
             ),
           ),

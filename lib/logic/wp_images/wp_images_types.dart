@@ -52,7 +52,10 @@ class WpImage {
         postId = apiMap["post"],
         slug = apiMap["slug"],
         sourceUrl = apiMap["source_url"],
-        mediaDetails = (apiMap["media_details"] as Map<String, dynamic>).isNotEmpty ? _WpImageMediaDetails.fromApiMap(apiMap["media_details"]) : null,
+        mediaDetails =
+            (apiMap["media_details"] as Map<String, dynamic>).isNotEmpty
+                ? _WpImageMediaDetails.fromApiMap(apiMap["media_details"])
+                : null,
         title = apiMap["title"]["rendered"];
 }
 
@@ -63,14 +66,23 @@ class _WpImageMediaDetails {
   final _WpImageMeta? imageMeta;
 
   _WpImageMediaDetails.fromApiMap(Map<String, dynamic> apiMap)
-      : height = apiMap["height"] != null ? (apiMap["height"].runtimeType == String ? int.parse(apiMap["height"]) : apiMap["height"]) : null,
+      : height = apiMap["height"] != null
+            ? (apiMap["height"].runtimeType == String
+                ? int.parse(apiMap["height"])
+                : apiMap["height"])
+            : null,
         width = apiMap["width"] != null
             ? apiMap["width"].runtimeType == String
                 ? int.parse(apiMap["width"])
                 : apiMap["width"]
             : null,
-        imageMeta = apiMap["image_meta"] != null && (apiMap["image_meta"] as Map).isNotEmpty ? _WpImageMeta.fromApiMap(apiMap["image_meta"]) : null,
-        sizes = apiMap["sizes"] != null && (apiMap["sizes"] as Map).isNotEmpty ? _WpImageSizes.fromApiMap(apiMap["sizes"]) : null;
+        imageMeta = apiMap["image_meta"] != null &&
+                (apiMap["image_meta"] as Map).isNotEmpty
+            ? _WpImageMeta.fromApiMap(apiMap["image_meta"])
+            : null,
+        sizes = apiMap["sizes"] != null && (apiMap["sizes"] as Map).isNotEmpty
+            ? _WpImageSizes.fromApiMap(apiMap["sizes"])
+            : null;
 }
 
 class _WpImageSizes {
@@ -82,9 +94,15 @@ class _WpImageSizes {
 
   _WpImageSizes.fromApiMap(Map<String, dynamic> apiMap)
       : thumbnail = _WpImageSize.fromApiMap(apiMap["thumbnail"]),
-        medium = apiMap["medium"] != null ? _WpImageSize.fromApiMap(apiMap["medium"]) : null,
-        mediumLarge = apiMap["medium_large"] != null ? _WpImageSize.fromApiMap(apiMap["medium_large"]) : null,
-        large = apiMap["large"] != null ? _WpImageSize.fromApiMap(apiMap["large"]) : null,
+        medium = apiMap["medium"] != null
+            ? _WpImageSize.fromApiMap(apiMap["medium"])
+            : null,
+        mediumLarge = apiMap["medium_large"] != null
+            ? _WpImageSize.fromApiMap(apiMap["medium_large"])
+            : null,
+        large = apiMap["large"] != null
+            ? _WpImageSize.fromApiMap(apiMap["large"])
+            : null,
         full = _WpImageSize.fromApiMap(apiMap["full"]);
 }
 
@@ -93,8 +111,12 @@ class _WpImageSize {
   final int width;
   final String sourceUrl;
   _WpImageSize.fromApiMap(Map<String, dynamic> apiMap)
-      : height = apiMap["height"].runtimeType == String ? int.parse(apiMap["height"]) : apiMap["height"],
-        width = apiMap["width"].runtimeType == String ? int.parse(apiMap["width"]) : apiMap["width"],
+      : height = apiMap["height"].runtimeType == String
+            ? int.parse(apiMap["height"])
+            : apiMap["height"],
+        width = apiMap["width"].runtimeType == String
+            ? int.parse(apiMap["width"])
+            : apiMap["width"],
         sourceUrl = apiMap["source_url"];
 }
 
@@ -138,5 +160,6 @@ class _WpImageMeta {
         shutterSpeed = apiMap["shutter_speed"].toString(),
         title = apiMap["title"].toString(),
         orientation = apiMap["orientation"].toString(),
-        keywords = apiMap["keywords"] != null ? List.from(apiMap["keywords"]) : [];
+        keywords =
+            apiMap["keywords"] != null ? List.from(apiMap["keywords"]) : [];
 }

@@ -1,6 +1,7 @@
 import 'package:anger_buddy/logic/notifications.dart';
 import 'package:anger_buddy/utils/logger.dart';
 import 'package:anger_buddy/utils/mini_utils.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,8 @@ class PageNotificationSettings extends StatefulWidget {
   const PageNotificationSettings({Key? key}) : super(key: key);
 
   @override
-  State<PageNotificationSettings> createState() => _PageNotificationSettingsState();
+  State<PageNotificationSettings> createState() =>
+      _PageNotificationSettingsState();
 }
 
 class _PageNotificationSettingsState extends State<PageNotificationSettings> {
@@ -50,7 +52,9 @@ class _PageNotificationSettingsState extends State<PageNotificationSettings> {
                 const SizedBox(height: 48),
                 const Opacity(
                   opacity: 0.87,
-                  child: Text("Benachrichtigungen", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  child: Text("Benachrichtigungen",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 16),
                 ConstrainedBox(
@@ -66,11 +70,13 @@ class _PageNotificationSettingsState extends State<PageNotificationSettings> {
             ),
             Padding(
                 padding: const EdgeInsets.all(12),
-                child: ((notiSettings?.authorizationStatus ?? AuthorizationStatus.provisional) ==
+                child: ((notiSettings?.authorizationStatus ??
+                            AuthorizationStatus.provisional) ==
                         AuthorizationStatus.notDetermined)
                     ? ElevatedButton.icon(
                         onPressed: () async {
-                          var settings = await FirebaseMessaging.instance.requestPermission(
+                          var settings = await FirebaseMessaging.instance
+                              .requestPermission(
                             alert: true,
                             announcement: false,
                             badge: true,
@@ -85,23 +91,45 @@ class _PageNotificationSettingsState extends State<PageNotificationSettings> {
                         },
                         icon: const Icon(Icons.notifications),
                         label: const Text("Benachrichtigungen erlauben"))
-                    : ((notiSettings?.authorizationStatus ?? AuthorizationStatus.authorized) ==
+                    : ((notiSettings?.authorizationStatus ??
+                                AuthorizationStatus.authorized) ==
                             AuthorizationStatus.denied)
-                        ? const Row(
-                            children: [
-                              Icon(
-                                Icons.warning,
-                                color: Colors.orange,
+                        ? FilledButton(
+                            onPressed: () {
+                              AppSettings.openAppSettings(
+                                  type: AppSettingsType.notification);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.warning,
+                                    color: Colors.orange,
+                                  ),
+                                  SizedBox(width: 16),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Flexible(
+                                          child: Text(
+                                        "Aktiviere Mitteilungen",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                      Flexible(
+                                          child: Opacity(
+                                              opacity: 0.87,
+                                              child: Text("(Hier klicken)")))
+                                    ],
+                                  )
+                                ],
                               ),
-                              SizedBox(width: 8),
-                              Flexible(
-                                  child: Text(
-                                "Aktiviere Mitteilungen in deinen Einstellungen",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))
-                            ],
+                            ),
                           )
-                        : (((notiSettings?.authorizationStatus ?? AuthorizationStatus.authorized) ==
+                        : (((notiSettings?.authorizationStatus ??
+                                    AuthorizationStatus.authorized) ==
                                 AuthorizationStatus.authorized)
                             ? const Row(
                                 children: [
@@ -113,7 +141,8 @@ class _PageNotificationSettingsState extends State<PageNotificationSettings> {
                                   Flexible(
                                       child: Text(
                                     "Benachrichtigungen zugelassen",
-                                    style: TextStyle(fontWeight: FontWeight.normal),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal),
                                   ))
                                 ],
                               )
@@ -136,7 +165,8 @@ class _PageNotificationSettingsState extends State<PageNotificationSettings> {
                   .map((e) => Column(
                         children: [
                           const Divider(),
-                          _NotificationSwitch(e.topic, title: e.title, description: e.description)
+                          _NotificationSwitch(e.topic,
+                              title: e.title, description: e.description)
                         ],
                       ))
                   .toList(),
@@ -151,7 +181,9 @@ class _NotificationSwitch extends StatefulWidget {
   final String title;
   final String description;
 
-  const _NotificationSwitch(this.topic, {Key? key, required this.title, required this.description}) : super(key: key);
+  const _NotificationSwitch(this.topic,
+      {Key? key, required this.title, required this.description})
+      : super(key: key);
 
   @override
   __NotificationSwitchState createState() => __NotificationSwitchState();
@@ -167,7 +199,9 @@ class __NotificationSwitchState extends State<_NotificationSwitch> {
     checkIfSubscribedToTopic(widget.topic).then((value) {
       if (value == fcmSubscriptionStatus.none) {
         setState(() {
-          subbedTo = allFcmTopics.firstWhere((element) => element.topic == widget.topic).defaultSubscriptionValue;
+          subbedTo = allFcmTopics
+              .firstWhere((element) => element.topic == widget.topic)
+              .defaultSubscriptionValue;
         });
       } else {
         setState(() {
@@ -204,7 +238,8 @@ class __NotificationSwitchState extends State<_NotificationSwitch> {
           Opacity(
               opacity: waiting ? 0.25 : 0.7,
               child: Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 12),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 4, bottom: 12),
                 child: Text(widget.description),
               ))
         ],

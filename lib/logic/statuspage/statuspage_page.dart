@@ -18,7 +18,8 @@ class _StatuspagePageState extends State<StatuspagePage> {
           context: context,
           builder: (context2) => AlertDialog(
                 title: const Text("Fehler"),
-                content: const Text("Es gab einen Fehler. Status konnte nicht abgerufen werden."),
+                content: const Text(
+                    "Es gab einen Fehler. Status konnte nicht abgerufen werden."),
                 actions: [
                   TextButton.icon(
                       onPressed: () {
@@ -59,9 +60,11 @@ class _StatuspagePageState extends State<StatuspagePage> {
               padding: const EdgeInsets.all(8),
               children: [
                 ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
+                    constraints:
+                        const BoxConstraints(maxHeight: 200, maxWidth: 200),
                     child: CachedNetworkImage(
-                      imageUrl: StatuspageManager.statuspageUrl + config!.config.icon,
+                      imageUrl:
+                          StatuspageManager.statuspageUrl + config!.config.icon,
                     )),
                 Padding(
                   padding: const EdgeInsets.all(4),
@@ -84,7 +87,8 @@ class _StatuspagePageState extends State<StatuspagePage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             group.name,
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w500),
                           ),
                         ),
                         ...group.monitorList.map((monitor) {
@@ -97,30 +101,63 @@ class _StatuspagePageState extends State<StatuspagePage> {
                                     monitor.name,
                                     style: const TextStyle(fontSize: 16),
                                   ),
-                                  subtitle: heartbeats?.heartbeatList[monitor.id] != null
-                                      ? Text((heartbeats?.heartbeatList[monitor.id]!.last.ping?.toString() ?? "") + "ms")
+                                  subtitle: heartbeats
+                                              ?.heartbeatList[monitor.id] !=
+                                          null
+                                      ? Text((heartbeats
+                                                  ?.heartbeatList[monitor.id]!
+                                                  .last
+                                                  .ping
+                                                  ?.toString() ??
+                                              "") +
+                                          "ms")
                                       : null,
                                   trailing: Container(
                                       decoration: BoxDecoration(
                                           color: heartbeats == null
                                               ? Colors.transparent
-                                              : heartbeats!.heartbeatList[monitor.id]?.last.status == 1
+                                              : heartbeats!
+                                                          .heartbeatList[
+                                                              monitor.id]
+                                                          ?.last
+                                                          .status ==
+                                                      1
                                                   ? Colors.green
-                                                  : (heartbeats!.heartbeatList[monitor.id]?.last.status == 0 ? Colors.red : Colors.orange),
-                                          borderRadius: BorderRadius.circular(99999)),
+                                                  : (heartbeats!
+                                                              .heartbeatList[
+                                                                  monitor.id]
+                                                              ?.last
+                                                              .status ==
+                                                          0
+                                                      ? Colors.red
+                                                      : Colors.orange),
+                                          borderRadius:
+                                              BorderRadius.circular(99999)),
                                       child: Padding(
                                         padding: const EdgeInsets.all(6),
                                         child: heartbeats == null
                                             ? const Icon(Icons.pending_outlined)
                                             : Text(
-                                                heartbeats?.uptimeList[monitor.id] != null
-                                                    ? ((heartbeats!.uptimeList[monitor.id]! * 100).toStringAsFixed(2) + "%")
+                                                heartbeats?.uptimeList[
+                                                            monitor.id] !=
+                                                        null
+                                                    ? ((heartbeats!.uptimeList[
+                                                                    monitor
+                                                                        .id]! *
+                                                                100)
+                                                            .toStringAsFixed(
+                                                                2) +
+                                                        "%")
                                                     : "OFFLINE",
-                                                style: const TextStyle(color: Colors.white)),
+                                                style: const TextStyle(
+                                                    color: Colors.white)),
                                       ))),
-                              if (heartbeats?.heartbeatList[monitor.id] != null) ...[
+                              if (heartbeats?.heartbeatList[monitor.id] !=
+                                  null) ...[
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(bottom: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0)
+                                      .copyWith(bottom: 16),
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
@@ -128,16 +165,21 @@ class _StatuspagePageState extends State<StatuspagePage> {
                                     clipBehavior: Clip.hardEdge,
                                     child: Flex(
                                       direction: Axis.horizontal,
-                                      children: heartbeats!.heartbeatList[monitor.id]!
-                                          .map((heartbeat) => Flexible(
-                                              flex: 1,
-                                              fit: FlexFit.tight,
-                                              child: Container(
-                                                width: double.infinity,
-                                                height: 10,
-                                                color: heartbeat.status == 1 ? Colors.green : (heartbeat.status == 0 ? Colors.red : Colors.orange),
-                                              )))
-                                          .toList(),
+                                      children:
+                                          heartbeats!.heartbeatList[monitor.id]!
+                                              .map((heartbeat) => Flexible(
+                                                  flex: 1,
+                                                  fit: FlexFit.tight,
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    height: 10,
+                                                    color: heartbeat.status == 1
+                                                        ? Colors.green
+                                                        : (heartbeat.status == 0
+                                                            ? Colors.red
+                                                            : Colors.orange),
+                                                  )))
+                                              .toList(),
                                     ),
                                   ),
                                 )

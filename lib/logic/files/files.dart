@@ -18,7 +18,8 @@ import "package:http/http.dart" as http;
 part "file_explorer.dart";
 
 class JspFilesClient {
-  static const nextcloudUrl = "https://nextcloud.jsp.jena.de";
+//  static const nextcloudUrl = "https://nextcloud.jsp.jena.de";
+  static const nextcloudUrl = "https://cloudy.robertstuendl.com";
 
   NextcloudClient? client;
 
@@ -27,7 +28,8 @@ class JspFilesClient {
 
     if (manualUsername != null || manualPassword != null) {
       assert(manualPassword != null && manualUsername != null);
-      client = NextcloudClient(nextcloudUrl, username: manualUsername!, password: manualPassword!, loginName: manualUsername);
+      client = NextcloudClient(Uri.parse(nextcloudUrl),
+          password: manualPassword!, loginName: manualUsername);
       return;
     }
 
@@ -35,17 +37,19 @@ class JspFilesClient {
       logger.v("[JspFilesClient] called setWithSavedCreds()");
       var username = Credentials.jsp.subject.valueWrapper?.value?.username;
       var password = Credentials.jsp.subject.valueWrapper?.value?.password;
-      if (username == null || password == null || username == "" || password == "") {
+      if (username == null ||
+          password == null ||
+          username == "" ||
+          password == "") {
         logger.i("ClientData not set bc password or username is empty");
       }
       logger.d("Set Client to specific $username : $password");
       client = Credentials.jsp.subject.valueWrapper?.value != null
           ? NextcloudClient(
-              'https://nextcloud.jsp.jena.de',
+              Uri.parse('https://nextcloud.jsp.jena.de'),
               appType: AppType.nextcloud,
               loginName: username,
               userAgentOverride: "AngerApp<angerapp@robertstuendl.com>",
-              username: username,
               password: password,
             )
           : null;
@@ -61,7 +65,9 @@ class JspFilesClient {
 
   Future<Uint8List> getPreview(WebDavFile file) async {
     if (!_previewCache.containsKey(file.fileId)) {
-      var resp = await http.get(Uri.parse("https://nextcloud.jsp.jena.de/core/preview?fileId=${file.fileId!}&x=32&y=32&a=0&forceIcon=0"),
+      var resp = await http.get(
+          Uri.parse(
+              "https://nextcloud.jsp.jena.de/core/preview?fileId=${file.fileId!}&x=32&y=32&a=0&forceIcon=0"),
           headers: client!.authentications.first.headers);
 
       var bodyBytes = resp.bodyBytes;
@@ -81,13 +87,18 @@ class JspFilesClient {
 
       //  .ls(dir, props: {WebDavProps.ocFileId.name, WebDavProps.ncHasPreview.name, WebDavProps.ocId.name, WebDavProps.davContentType.name});
 
-      var list = await client!.webdav
-          .ls(dir, prop: WebDavPropfindProp(davgetcontenttype: ["name"], ocid: ["name"], nchaspreview: ["name"], ocfileid: ["name"]));
+      var list = await client!.webdav.propfind(Uri.parse(dir),
+          prop: WebDavPropWithoutValues(
+              ocfileid: ["name"],
+              davgetcontenttype: ["name"],
+              ocid: ["name"],
+              nchaspreview: ["name"]));
 
-      var files = list.toWebDavFiles(client!.webdav);
+      List<WebDavFile> files = [];
 
-      for (var f in files) {
-        logger.d('${f.name} ${f.path}');
+      for (var response in list.responses) {
+        logger.d('${response.href}');
+        files.add(WebDavFile(response: response));
       }
 
       return files;
@@ -97,9 +108,6 @@ class JspFilesClient {
     }
   }
 }
-
-
-
 
 // class WebDavClient {
 //   webdav.Client? client;

@@ -6,7 +6,8 @@ class _MoodleCourseAssignPage extends StatefulWidget {
   final _MoodleCourseModule module;
 
   @override
-  State<_MoodleCourseAssignPage> createState() => __MoodleCourseAssignPageState();
+  State<_MoodleCourseAssignPage> createState() =>
+      __MoodleCourseAssignPageState();
 }
 
 class __MoodleCourseAssignPageState extends State<_MoodleCourseAssignPage> {

@@ -4,7 +4,8 @@ class KlausurenHomepageWidget extends StatefulWidget {
   const KlausurenHomepageWidget({super.key});
 
   @override
-  State<KlausurenHomepageWidget> createState() => _KlausurenHomepageWidgetState();
+  State<KlausurenHomepageWidget> createState() =>
+      _KlausurenHomepageWidgetState();
 }
 
 class _KlausurenHomepageWidgetState extends State<KlausurenHomepageWidget> {
@@ -20,7 +21,8 @@ class _KlausurenHomepageWidgetState extends State<KlausurenHomepageWidget> {
       final now = DateTime.now();
 
       setState(() {
-        pinnedKlausuren = temp?.where((element) => element.date.isAfter(now)).toList();
+        pinnedKlausuren =
+            temp?.where((element) => element.date.isAfter(now)).toList();
         showingPinned = true;
       });
     });
@@ -28,7 +30,10 @@ class _KlausurenHomepageWidgetState extends State<KlausurenHomepageWidget> {
   }
 
   void loadKlausuren(int klasse) {
-    var temp = Services.klausuren.subject.valueWrapper?.value.data.where((element) => element.klassenstufe == klasse).toList() ?? [];
+    var temp = Services.klausuren.subject.valueWrapper?.value.data
+            .where((element) => element.klassenstufe == klasse)
+            .toList() ??
+        [];
 
     temp.sort((a, b) {
       return a.date.compareTo(b.date);
@@ -36,7 +41,8 @@ class _KlausurenHomepageWidgetState extends State<KlausurenHomepageWidget> {
     final now = DateTime.now();
 
     setState(() {
-      pinnedKlausuren = temp.where((element) => element.date.isAfter(now)).toList();
+      pinnedKlausuren =
+          temp.where((element) => element.date.isAfter(now)).toList();
       showingPinned = false;
     });
   }
@@ -58,7 +64,8 @@ class _KlausurenHomepageWidgetState extends State<KlausurenHomepageWidget> {
       } else {
         loadKlausuren(value);
         pinnedSub?.cancel();
-        klausurenSub = Services.klausuren.subject.listen((klausurenValue) => loadKlausuren(value));
+        klausurenSub = Services.klausuren.subject
+            .listen((klausurenValue) => loadKlausuren(value));
       }
     });
   }
@@ -82,7 +89,9 @@ class _KlausurenHomepageWidgetState extends State<KlausurenHomepageWidget> {
                 shrinkWrap: true,
                 addAutomaticKeepAlives: true,
                 children: [
-                  for (Klausur klausur in pinnedKlausuren ?? []) _KlausurTerminCard(klausur, cb: () => loadPinned(), showMenu: showingPinned),
+                  for (Klausur klausur in pinnedKlausuren ?? [])
+                    _KlausurTerminCard(klausur,
+                        cb: () => loadPinned(), showMenu: showingPinned),
                 ],
               ),
             ),
@@ -95,7 +104,9 @@ class _KlausurTerminCard extends StatelessWidget {
   final void Function() cb;
   final bool showMenu;
 
-  const _KlausurTerminCard(this.klausur, {required this.cb, required this.showMenu, Key? key}) : super(key: key);
+  const _KlausurTerminCard(this.klausur,
+      {required this.cb, required this.showMenu, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -105,18 +116,23 @@ class _KlausurTerminCard extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20.0).add(const EdgeInsets.only(right: 30)),
+            padding: const EdgeInsets.all(20.0)
+                .add(const EdgeInsets.only(right: 30)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Opacity(
                   opacity: 0.87,
-                  child: Text(daysDiff.toString(), style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700)),
+                  child: Text(daysDiff.toString(),
+                      style: const TextStyle(
+                          fontSize: 28, fontWeight: FontWeight.w700)),
                 ),
                 Opacity(
                   opacity: 0.87,
-                  child: Text(daysDiff == 1 ? "Tag" : "Tage", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: Text(daysDiff == 1 ? "Tag" : "Tage",
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
                 Opacity(opacity: 0.60, child: Text(klausur.name))
               ],
