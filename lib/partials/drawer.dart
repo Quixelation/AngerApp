@@ -209,6 +209,8 @@ class MainDrawer extends StatelessWidget {
                               name: "WebpageIntegration bei Beraatung, SchuSo"),
                           Feature(FeatureFlags.USE_WEBPAGE_CALENDAR,
                               name: "WebpageIntegration im Kalender"),
+                          Feature(FeatureFlags.WORDPRESS_CRUISER_ENABLED,
+                              name: "Wordpress Cruiser - Webseite Navigieren"),
                         ]))
                   ]);
                 } else {
@@ -320,6 +322,7 @@ class MainDrawer extends StatelessWidget {
                   context, FeatureFlags.SHOW_WEBPAGE_INTEGRATION))
                 _DrawerLink(
                     title: "Beratung",
+                    badge: "NEU",
                     icon: Icons.emoji_people_outlined,
                     page: WebpageIntegration(
                         url: AppManager.urls.beratungslehrer_homepage)),
@@ -330,7 +333,6 @@ class MainDrawer extends StatelessWidget {
               ),
               const _DrawerLink(
                 title: "Bilder",
-                badge: "NEU",
                 icon: Icons.perm_media_outlined,
                 page: WpImagesPage(),
               ),
@@ -349,6 +351,13 @@ class MainDrawer extends StatelessWidget {
                         return schuSoPage;
                       }),
               ),
+              if (Features.isFeatureEnabled(
+                  context, FeatureFlags.WORDPRESS_CRUISER_ENABLED))
+                const _DrawerLink(
+                    title: "Web-Inhalte",
+                    badge: "NEU",
+                    icon: Icons.public,
+                    page: WordPressCruiserNavigation()),
             ]),
             const Divider(),
             const _Category("Jenaer-Schulportal", [

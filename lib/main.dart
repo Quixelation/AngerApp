@@ -246,6 +246,7 @@ class _MainAppState extends State<MainApp> {
         FeatureFlags.INTELLIGENT_GRADE_VIEW_ENABLED,
         FeatureFlags.MOODLE_ENABLED,
         FeatureFlags.MATRIX_SHOW_CREATE_ROOM,
+        FeatureFlags.USE_WEBPAGE_CALENDAR,
       ],
       child: MaterialApp(
         title: 'AngerApp',

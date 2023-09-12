@@ -253,7 +253,7 @@ class _urlManager {
   String  beratungslehrer_homepage = "https://angergymnasium.jena.de/beratungslehrer/";
   String  schuso_homepage ="https://angergymnasium.jena.de/schulsozialarbeit/";
   String calendar_homepage = "https://angergymnasium.jena.de/kalender/";
-
+String wordpress_homepage = "https://angergymnasium.jena.de/";
 
 
   String get wplogin {

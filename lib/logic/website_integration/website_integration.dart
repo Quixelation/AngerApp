@@ -1,7 +1,5 @@
 library website_integration;
 
-import 'dart:collection';
-
 import 'package:anger_buddy/components/mini_webview.dart';
 import 'package:anger_buddy/main.dart';
 import 'package:anger_buddy/manager.dart';
@@ -10,7 +8,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
 import "package:html/parser.dart";
+import "package:html/dom.dart" as dom;
 import 'package:sembast/sembast.dart';
+
+part "wordpress_menu_analyzer.dart";
+part "wordpress_cruiser.dart";
 
 class _WebpageIntegrationConnector {
   StoreRef _store;
