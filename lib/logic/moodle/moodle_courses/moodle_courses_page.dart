@@ -31,6 +31,7 @@ class _MoodleCoursesPageState extends State<MoodleCoursesPage> {
       body: ListView(padding: const EdgeInsets.all(8), children: [
         if (courses != null)
           MasonryGridView.extent(
+        
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             maxCrossAxisExtent: 400,
@@ -49,59 +50,31 @@ class _MoodleCourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => _MoodleCourseDetailsPage(course)));
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(course.displayname,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold)),
-              if (course.progress != null) ...[
-                const SizedBox(height: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.start,
-                    //   children: [
-                    //     Icon(
-                    //       Icons.radio_button_on,
-                    //       size: 20,
-                    //     ),
-                    //     const SizedBox(width: 4),
-                    //     Text("optionText"),
-                    //     const Expanded(child: SizedBox()),
-                    //     Opacity(opacity: 0.87, child: Text("Stimmen"))
-                    //   ],
-                    // ),
-                    // const SizedBox(height: 4),
-                    Container(
-                      width: double.infinity,
-                      height: 8,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              Colors.black.withAlpha(22)
-                            ],
-                            stops: List.filled(2, course.progress! / 100),
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          )),
-                    ),
-                  ],
-                ),
-              ]
-            ],
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Card(
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => _MoodleCourseDetailsPage(course)));
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator.adaptive(
+                      value: (course.progress ?? 0) / 100,
+                      backgroundColor:
+                          Theme.of(context).hintColor.withOpacity(0.05)),
+                  SizedBox(width: 16),
+                  Flexible(
+                    child: Text(course.displayname,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                  )
+                ]),
           ),
         ),
       ),

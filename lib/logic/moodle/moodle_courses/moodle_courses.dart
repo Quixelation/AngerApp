@@ -60,7 +60,12 @@ class _MoodleCourseModuleDatabase {
   }
 }
 
-class _MoodleAssignmentsManager {}
+class _MoodleAssignmentsManager {
+
+
+
+
+    }
 
 extension Duplicates<E> on List<E> {
   List<E> removeDuplicates() {
